@@ -24,10 +24,18 @@ typedef enum {
   CBOR_TYPE_FLOAT        /* 7 - also bool, null, undefined, and others */
 } cbor_type;
 
+/* Possible widths of CBOR_TYPE_UINT */
+typedef enum {
+  CBOR_UINT_8,
+  CBOR_UINT_16,
+  CBOR_UINT_32,
+  CBOR_UINT_64
+} cbor_uint_width;
+
 typedef struct cbor_item_t {
   cbor_type type;
-  size_t    refcount;
-  char *    data;
+  size_t  refcount;
+  char *  data;
 } cbor_item_t;
 
 struct cbor_error {
@@ -54,7 +62,7 @@ bool cbor_isa_bytestring(cbor_item_t * item);
 bool cbor_isa_string(cbor_item_t * item);
 bool cbor_isa_array(cbor_item_t * item);
 bool cbor_isa_map(cbor_item_t * item);
- bool cbor_isa_tag(cbor_item_t * item);
+bool cbor_isa_tag(cbor_item_t * item);
 bool cbor_isa_float(cbor_item_t * item);
 
 /* Practical types with respect to their semantics (but no tag values) */
@@ -70,9 +78,9 @@ bool cbor_is_null(cbor_item_t * item);
 bool cbor_is_undef(cbor_item_t * item);
 
 /* uint manipulation */
-uint_fast8_t cbor_get_uint8(cbor_item_t * item);
-uint_fast16_t cbor_get_uint16(cbor_item_t * item);
-uint_fast32_t cbor_get_uint32(cbor_item_t * item);
-uint_fast64_t cbor_get_uint64(cbor_item_t * item);
+uint8_t cbor_get_uint8(cbor_item_t * item);
+uint16_t cbor_get_uint16(cbor_item_t * item);
+uint32_t cbor_get_uint32(cbor_item_t * item);
+uint64_t cbor_get_uint64(cbor_item_t * item);
 
 #endif

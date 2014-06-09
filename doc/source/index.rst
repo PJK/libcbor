@@ -1,6 +1,7 @@
 
 libcbor
 ===================================
+
 Documentation for version |release|, updated on |today|.
 
 Overview
@@ -20,8 +21,9 @@ Main features
 Contents
 ----------
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
+   internal
 
 
 
