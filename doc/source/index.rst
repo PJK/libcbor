@@ -24,6 +24,7 @@ Contents
    :maxdepth: 3
 
    internal
+   tests
 
 
 

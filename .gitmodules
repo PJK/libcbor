@@ -1,0 +1,3 @@
+[submodule "test/cmocka"]
+	path = test/cmocka
+	url = git://git.cryptomilk.org/projects/cmocka.git
