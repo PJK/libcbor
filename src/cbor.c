@@ -1,12 +1,6 @@
 #include "cbor.h"
 #include "cbor_internal.h"
 
-#define assert_avail_bytes(num) do {  \
-  if (source_size < (num))            \
-    goto missing_source;              \
-} while (0)
-
-
 cbor_item_t * cbor_load(const unsigned char * source,
                         size_t source_size,
                         size_t flags,
