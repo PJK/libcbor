@@ -82,7 +82,7 @@ bool cbor_is_bool(cbor_item_t * item);
 bool cbor_is_null(cbor_item_t * item);
 bool cbor_is_undef(cbor_item_t * item);
 
-/* uint manipulation */
+/* uint manipulation - both uint and negint*/
 uint8_t cbor_get_uint8(cbor_item_t * item);
 uint16_t cbor_get_uint16(cbor_item_t * item);
 uint32_t cbor_get_uint32(cbor_item_t * item);

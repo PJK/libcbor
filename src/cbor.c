@@ -104,11 +104,40 @@ cbor_item_t * cbor_load(const unsigned char * source,
     case 0x35:
     case 0x36:
     case 0x37:
-    /* Embedded one byte negint */
+        /* Embedded one byte negint */
         {
             res->type = CBOR_TYPE_NEGINT;
             handle_load_uint8(source, source_size, res, result);
             result->read--; /* Restart the handler at the MTB */
+            // TOOD fix this using some `set` mechanism
+            break;
+        }
+    case 0x38:
+        /* One byte negint */
+        {
+            res->type = CBOR_TYPE_NEGINT;
+            handle_load_uint8(source + 1, source_size - 1, res, result);
+            break;
+        }
+    case 0x39:
+        /* Two byte negint */
+        {
+            res->type = CBOR_TYPE_NEGINT;
+            handle_load_uint16(source + 1, source_size - 1, res, result);
+            break;
+        }
+    case 0x3a:
+        /* Four byte negint */
+        {
+            res->type = CBOR_TYPE_NEGINT;
+            handle_load_uint32(source + 1, source_size - 1, res, result);
+            break;
+        }
+    case 0x3b:
+        /* Eight byte negint */
+        {
+            res->type = CBOR_TYPE_NEGINT;
+            handle_load_uint64(source + 1, source_size - 1, res, result);
             break;
         }
     /* TODO */
