@@ -1,6 +1,38 @@
 #include "cbor.h"
 #include "cbor_internal.h"
 
+void cbor_incref(cbor_item_t * item)
+{
+    item->refcount++;
+}
+
+void cbor_decref(cbor_item_t * * item)
+{
+    if (--(*item)->refcount == 0) {
+        switch((*item)->type) {
+            case CBOR_TYPE_UINT:
+            case CBOR_TYPE_NEGINT:
+                /* Fixed size, simple free suffices */
+                {
+                    free((*item)->data);
+                    break;
+                }
+            case CBOR_TYPE_BYTESTRING:
+            case CBOT_TYPE_STRING:
+            case CBOR_TYPE_ARRAY:
+            case CBOR_TYPE_MAP:
+            case CBOR_TYPE_TAG:
+            case CBOR_TYPE_FLOAT:
+                break;
+                //TODO
+        }
+        free(*item);
+        //TODO
+        *item = NULL;
+    }
+}
+
+
 cbor_item_t * cbor_load(const unsigned char * source,
                         size_t source_size,
                         size_t flags,

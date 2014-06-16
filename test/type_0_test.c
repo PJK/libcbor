@@ -17,9 +17,6 @@ unsigned char data4[] = { 0x1a, 0xa5, 0xf7, 0x02, 0xb3, 0xFF };
 unsigned char data5[] = { 0x1b, 0xa5, 0xf7, 0x02, 0xb3, 0xa5, 0xf7, 0x02, 0xb3, 0xFF };
 
 
-static void test_(void **state) {
-}
-
 static void test_very_short_int(void **state) {
   number = cbor_load(data1, 2, 0, &res);
   assert_true(cbor_typeof(number) == CBOR_TYPE_UINT);
@@ -30,6 +27,7 @@ static void test_very_short_int(void **state) {
   assert_true(res.error.code == 0);
   assert_true(res.read == 1);
   assert_true(cbor_is_int(number));
+  cbor_decref(&number);
 }
 
 static void test_short_int(void **state) {
@@ -42,6 +40,7 @@ static void test_short_int(void **state) {
   assert_true(res.error.code == 0);
   assert_true(res.read == 2);
   assert_true(cbor_is_int(number));
+  cbor_decref(&number);
 }
 
 static void test_half_int(void **state) {
@@ -54,6 +53,7 @@ static void test_half_int(void **state) {
   assert_true(res.error.code == 0);
   assert_true(res.read == 3);
   assert_true(cbor_is_int(number));
+  cbor_decref(&number);
 }
 
 static void test_int(void **state) {
@@ -66,6 +66,7 @@ static void test_int(void **state) {
   assert_true(res.error.code == 0);
   assert_true(res.read == 5);
   assert_true(cbor_is_int(number));
+  cbor_decref(&number);
 }
 
 static void test_long_int(void **state) {
@@ -78,6 +79,7 @@ static void test_long_int(void **state) {
   assert_true(res.error.code == 0);
   assert_true(res.read == 9);
   assert_true(cbor_is_int(number));
+  cbor_decref(&number);
 }
 
 

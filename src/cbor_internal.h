@@ -4,8 +4,10 @@
 #include "cbor.h"
 
 typedef enum {
-  METADATA_EMPTY    = 0x00,
-  METADATA_COMPLETE = 0x01
+  METADATA_EMPTY     = 0x00,
+  METADATA_COMPLETE  = 0x01,
+  METADATA_RESUMABLE = 0x02,    /* Parsing may be resumed */
+  METADATA_MADE      = 0x04     /* Created by a cbor_make_<X> */
 } metadata;
 
 #define METADATA_WIDTH sizeof(metadata)

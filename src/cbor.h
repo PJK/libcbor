@@ -55,8 +55,8 @@ struct cbor_load_result {
 
 cbor_item_t * cbor_load(const unsigned char * source, size_t source_size, size_t flags, struct cbor_load_result * result);
 
-cbor_item_t * cbor_incref(cbor_item_t * item);
-cbor_item_t * cbor_decref(cbor_item_t * item);
+void cbor_incref(cbor_item_t * item);
+void cbor_decref(cbor_item_t * * item);
 
 cbor_type cbor_typeof(cbor_item_t * item); /* will be inlined iff link-time opt is enabled */
 
@@ -88,5 +88,10 @@ uint16_t cbor_get_uint16(cbor_item_t * item);
 uint32_t cbor_get_uint32(cbor_item_t * item);
 uint64_t cbor_get_uint64(cbor_item_t * item);
 cbor_int_width cbor_uint_get_width(cbor_item_t * item);
+
+cbor_item_t * cbor_make_int8();
+cbor_item_t * cbor_make_int16();
+cbor_item_t * cbor_make_int32();
+cbor_item_t * cbor_make_int64();
 
 #endif
