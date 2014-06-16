@@ -28,6 +28,7 @@ static void test_very_short_int(void **state) {
   assert_true(res.read == 1);
   assert_true(cbor_is_int(number));
   cbor_decref(&number);
+  assert_null(number);
 }
 
 static void test_short_int(void **state) {
@@ -41,6 +42,7 @@ static void test_short_int(void **state) {
   assert_true(res.read == 2);
   assert_true(cbor_is_int(number));
   cbor_decref(&number);
+  assert_null(number);
 }
 
 static void test_half_int(void **state) {
@@ -54,6 +56,7 @@ static void test_half_int(void **state) {
   assert_true(res.read == 3);
   assert_true(cbor_is_int(number));
   cbor_decref(&number);
+  assert_null(number);
 }
 
 static void test_int(void **state) {
@@ -67,6 +70,7 @@ static void test_int(void **state) {
   assert_true(res.read == 5);
   assert_true(cbor_is_int(number));
   cbor_decref(&number);
+  assert_null(number);
 }
 
 static void test_long_int(void **state) {
@@ -80,6 +84,7 @@ static void test_long_int(void **state) {
   assert_true(res.read == 9);
   assert_true(cbor_is_int(number));
   cbor_decref(&number);
+  assert_null(number);
 }
 
 

@@ -45,8 +45,6 @@ cbor_item_t * cbor_load(const unsigned char * source,
   result->read = 1; /* We always attempt to read the MTB */
   result->error = (struct cbor_error) { 0, CBOR_ERR_NONE };
   switch (*source) {
-    /* General loops in macros are impossible */
-    /* Inline unsigned integer */
     case 0x00:
     case 0x01:
     case 0x02:
