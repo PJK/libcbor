@@ -74,6 +74,40 @@ cbor_item_t * cbor_load(const unsigned char * source, size_t source_size, size_t
         *(uint16_t *)&res->data[METADATA_WIDTH + UINT_METADATA_WIDTH] = value;
         break;
       }
+    /* Four byte uint */
+    case 0x1a:
+      {
+        assert_avail_bytes(5);
+        result->read = 5;
+        res->data = malloc(METADATA_WIDTH + UINT_METADATA_WIDTH + 4);
+        *(cbor_uint_width *)&res->data[METADATA_WIDTH] = CBOR_UINT_32;
+        /* TODO endianness */
+        uint32_t value =  ((uint32_t)(uint8_t)*(source + 1) << 0x18) +
+                          ((uint32_t)(uint8_t)*(source + 2) << 0x10) +
+                          ((uint16_t)(uint8_t)*(source + 3) << 0x08) +
+                           (uint8_t )(uint8_t)*(source + 4);
+        *(uint32_t *)&res->data[METADATA_WIDTH + UINT_METADATA_WIDTH] = value;
+        break;
+      }
+    /* Glorious eight byte uint */
+    case 0x1b:
+      {
+        assert_avail_bytes(9);
+        result->read = 9;
+        res->data = malloc(METADATA_WIDTH + UINT_METADATA_WIDTH + 8);
+        *(cbor_uint_width *)&res->data[METADATA_WIDTH] = CBOR_UINT_64;
+        /* TODO endianness */
+        uint64_t value =  ((uint64_t)(uint8_t)*(source + 1) << 0x38) +
+                          ((uint64_t)(uint8_t)*(source + 2) << 0x30) +
+                          ((uint64_t)(uint8_t)*(source + 3) << 0x28) +
+                          ((uint64_t)(uint8_t)*(source + 4) << 0x20) +
+                          ((uint32_t)(uint8_t)*(source + 5) << 0x18) +
+                          ((uint32_t)(uint8_t)*(source + 6) << 0x10) +
+                          ((uint16_t)(uint8_t)*(source + 7) << 0x08) +
+                           (uint8_t )(uint8_t)*(source + 8);
+        *(uint64_t *)&res->data[METADATA_WIDTH + UINT_METADATA_WIDTH] = value;
+        break;
+      }
     /* TODO */
     /* Short arrays */
     case 0x80:
@@ -93,10 +127,93 @@ inline cbor_type cbor_typeof(cbor_item_t * item) {
   return item->type;
 }
 
+
+cbor_uint_width cbor_uint_get_width(cbor_item_t * item) {
+  return *(cbor_uint_width *)(item->data + METADATA_WIDTH);
+}
+
 uint8_t cbor_get_uint8(cbor_item_t * item) {
   return *(uint8_t *)(item->data + METADATA_WIDTH + UINT_METADATA_WIDTH);
 }
 
 uint16_t cbor_get_uint16(cbor_item_t * item) {
   return *(uint16_t *)(item->data + METADATA_WIDTH + UINT_METADATA_WIDTH);
+}
+
+uint32_t cbor_get_uint32(cbor_item_t * item) {
+  return *(uint32_t *)(item->data + METADATA_WIDTH + UINT_METADATA_WIDTH);
+}
+
+uint64_t cbor_get_uint64(cbor_item_t * item) {
+  return *(uint64_t *)(item->data + METADATA_WIDTH + UINT_METADATA_WIDTH);
+}
+/** ========================================================== */
+
+inline bool cbor_isa_uint(cbor_item_t * item) {
+	return item->type == CBOR_TYPE_UINT;
+}
+
+inline bool cbor_isa_negint(cbor_item_t * item) {
+	return item->type == CBOR_TYPE_NEGINT;
+}
+
+inline bool cbor_isa_bytestring(cbor_item_t * item) {
+	return item->type == CBOR_TYPE_BYTESTRING;
+}
+
+inline bool cbor_isa_string(cbor_item_t * item) {
+	return item->type == CBOT_TYPE_STRING;
+}
+
+inline bool cbor_isa_array(cbor_item_t * item) {
+	return item->type == CBOR_TYPE_ARRAY;
+}
+
+inline bool cbor_isa_map(cbor_item_t * item) {
+	return item->type == CBOR_TYPE_MAP;
+}
+
+inline bool cbor_isa_tag(cbor_item_t * item) {
+	return item->type == CBOR_TYPE_TAG;
+}
+
+inline bool cbor_isa_float(cbor_item_t * item) {
+	return item->type == CBOR_TYPE_FLOAT;
+}
+
+
+/** ========================================================== */
+
+
+inline bool cbor_is_int(cbor_item_t * item) {
+  return cbor_isa_uint(item) || cbor_isa_negint(item);
+}
+
+inline bool cbor_is_uint(cbor_item_t * item) {
+  /* Negative all 'signed' ints are negints */
+  return cbor_is_uint(item);
+}
+
+inline bool cbor_is_bytestring(cbor_item_t * item) {
+}
+
+inline bool cbor_is_string(cbor_item_t * item) {
+}
+
+inline bool cbor_is_array(cbor_item_t * item) {
+}
+
+inline bool cbor_is_map(cbor_item_t * item) {
+}
+
+inline bool cbor_is_float(cbor_item_t * item) {
+}
+
+inline bool cbor_is_bool(cbor_item_t * item) {
+}
+
+inline bool cbor_is_null(cbor_item_t * item) {
+}
+
+inline bool cbor_is_undef(cbor_item_t * item) {
 }

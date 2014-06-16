@@ -1,0 +1,10 @@
+file(GLOB TESTS "*_test.c")
+
+foreach(TEST ${TESTS})
+  string(REGEX REPLACE ".*/([^/]+).c" "\\1" NAME ${TEST})
+  message(${NAME})
+  add_executable(${NAME} "${NAME}.c")
+  target_link_libraries(${NAME} cmocka)
+  target_link_libraries(${NAME} cbor)
+  add_test(${NAME} ${NAME})
+endforeach(TEST)

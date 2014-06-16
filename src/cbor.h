@@ -82,5 +82,6 @@ uint8_t cbor_get_uint8(cbor_item_t * item);
 uint16_t cbor_get_uint16(cbor_item_t * item);
 uint32_t cbor_get_uint32(cbor_item_t * item);
 uint64_t cbor_get_uint64(cbor_item_t * item);
+cbor_uint_width cbor_uint_get_width(cbor_item_t * item);
 
 #endif
