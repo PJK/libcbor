@@ -1,1 +1,1 @@
-add_library(cbor cbor.c)
+add_library(cbor cbor.c cbor_internal.c)

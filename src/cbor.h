@@ -24,23 +24,28 @@ typedef enum {
   CBOR_TYPE_FLOAT        /* 7 - also bool, null, undefined, and others */
 } cbor_type;
 
+typedef enum {
+    CBOR_ERR_NONE,
+    CBOR_ERR_NOTENOUGHDATA
+} cbor_error_code;
+
 /* Possible widths of CBOR_TYPE_UINT */
 typedef enum {
-  CBOR_UINT_8,
-  CBOR_UINT_16,
-  CBOR_UINT_32,
-  CBOR_UINT_64
-} cbor_uint_width;
+  CBOR_INT_8,
+  CBOR_INT_16,
+  CBOR_INT_32,
+  CBOR_INT_64
+} cbor_int_width;
 
 typedef struct cbor_item_t {
   cbor_type type;
-  size_t  refcount;
-  char *  data;
+  size_t    refcount;
+  char *    data;
 } cbor_item_t;
 
 struct cbor_error {
-  size_t  postion;
-  int     code;
+  size_t          postion;
+  cbor_error_code code;
 };
 
 struct cbor_load_result {
@@ -82,6 +87,6 @@ uint8_t cbor_get_uint8(cbor_item_t * item);
 uint16_t cbor_get_uint16(cbor_item_t * item);
 uint32_t cbor_get_uint32(cbor_item_t * item);
 uint64_t cbor_get_uint64(cbor_item_t * item);
-cbor_uint_width cbor_uint_get_width(cbor_item_t * item);
+cbor_int_width cbor_uint_get_width(cbor_item_t * item);
 
 #endif

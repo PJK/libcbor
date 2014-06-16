@@ -10,6 +10,25 @@ typedef enum {
 
 #define METADATA_WIDTH sizeof(metadata)
 
-#define UINT_METADATA_WIDTH sizeof(cbor_uint_width)
+#define INT_METADATA_WIDTH sizeof(cbor_int_width)
 
+void handle_load_uint8(const unsigned char * source,
+                       size_t source_size,
+                       cbor_item_t * item,
+                       struct cbor_load_result * result);
+
+void handle_load_uint16(const unsigned char * source,
+                       size_t source_size,
+                       cbor_item_t * item,
+                       struct cbor_load_result * result);
+
+void handle_load_uint32(const unsigned char * source,
+                       size_t source_size,
+                       cbor_item_t * item,
+                       struct cbor_load_result * result);
+
+void handle_load_uint64(const unsigned char * source,
+                       size_t source_size,
+                       cbor_item_t * item,
+                       struct cbor_load_result * result);
 #endif

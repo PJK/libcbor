@@ -7,11 +7,17 @@
 } while (0)
 
 
-cbor_item_t * cbor_load(const unsigned char * source, size_t source_size, size_t flags, struct cbor_load_result * result) {
+cbor_item_t * cbor_load(const unsigned char * source,
+                        size_t source_size,
+                        size_t flags,
+                        struct cbor_load_result * result)
+{
   assert_avail_bytes(1);
   cbor_item_t * res = malloc(sizeof(cbor_item_t));
   res->refcount = 1;
-  result->error = (struct cbor_error) { 0, 0 };
+  /* TODO empty source */
+  result->read = 1; /* We always attempt to read the MTB */
+  result->error = (struct cbor_error) { 0, CBOR_ERR_NONE };
   switch (*source) {
     /* General loops in macros are impossible */
     /* Inline unsigned integer */
@@ -39,75 +45,72 @@ cbor_item_t * cbor_load(const unsigned char * source, size_t source_size, size_t
     case 0x15:
     case 0x16:
     case 0x17:
-    /*
-     * Do these blocks look redundant to you? They indeed are, for the most part. However, only a demonic macro voodoo
-     * could solve this -- and because of the nested expansion semantics, it would have to be about 10 levels deep...
-     */
-     /* Embedded one byte uint */
+    /* Embedded one byte uint */
       {
-        result->read = 1;
         res->type = CBOR_TYPE_UINT;
-        res->data = malloc(METADATA_WIDTH + UINT_METADATA_WIDTH + 1);
-        *(cbor_uint_width *)&res->data[METADATA_WIDTH] = CBOR_UINT_8;
-        *(uint8_t *)&res->data[METADATA_WIDTH + UINT_METADATA_WIDTH] = (uint8_t)*source;
+        handle_load_uint8(source, source_size, res, result);
+        result->read--; /* Restart the handler at the MTB */
         break;
       }
     /* One byte uint */
     case 0x18:
       {
-        assert_avail_bytes(2);
-        result->read = 2;
-        res->data = malloc(METADATA_WIDTH + UINT_METADATA_WIDTH + 1);
-        *(cbor_uint_width *)&res->data[METADATA_WIDTH] = CBOR_UINT_8;
-        *(uint8_t *)&res->data[METADATA_WIDTH + UINT_METADATA_WIDTH] = (uint8_t)*(source + 1);
+        res->type = CBOR_TYPE_UINT;
+        handle_load_uint8(source + 1, source_size - 1, res, result);
         break;
       }
     /* Two byte uint */
     case 0x19:
       {
-        assert_avail_bytes(3);
-        result->read = 3;
-        res->data = malloc(METADATA_WIDTH + UINT_METADATA_WIDTH + 2);
-        *(cbor_uint_width *)&res->data[METADATA_WIDTH] = CBOR_UINT_16;
-        /* TODO endianness */
-        uint16_t value = ((uint8_t)*(source + 1) << 8) + (uint8_t)*(source + 2);
-        *(uint16_t *)&res->data[METADATA_WIDTH + UINT_METADATA_WIDTH] = value;
+        res->type = CBOR_TYPE_UINT;
+        handle_load_uint16(source + 1, source_size - 1, res, result);
         break;
       }
     /* Four byte uint */
     case 0x1a:
       {
-        assert_avail_bytes(5);
-        result->read = 5;
-        res->data = malloc(METADATA_WIDTH + UINT_METADATA_WIDTH + 4);
-        *(cbor_uint_width *)&res->data[METADATA_WIDTH] = CBOR_UINT_32;
-        /* TODO endianness */
-        uint32_t value =  ((uint32_t)(uint8_t)*(source + 1) << 0x18) +
-                          ((uint32_t)(uint8_t)*(source + 2) << 0x10) +
-                          ((uint16_t)(uint8_t)*(source + 3) << 0x08) +
-                           (uint8_t )(uint8_t)*(source + 4);
-        *(uint32_t *)&res->data[METADATA_WIDTH + UINT_METADATA_WIDTH] = value;
+        res->type = CBOR_TYPE_UINT;
+        handle_load_uint32(source + 1, source_size - 1, res, result);
         break;
       }
     /* Glorious eight byte uint */
     case 0x1b:
       {
-        assert_avail_bytes(9);
-        result->read = 9;
-        res->data = malloc(METADATA_WIDTH + UINT_METADATA_WIDTH + 8);
-        *(cbor_uint_width *)&res->data[METADATA_WIDTH] = CBOR_UINT_64;
-        /* TODO endianness */
-        uint64_t value =  ((uint64_t)(uint8_t)*(source + 1) << 0x38) +
-                          ((uint64_t)(uint8_t)*(source + 2) << 0x30) +
-                          ((uint64_t)(uint8_t)*(source + 3) << 0x28) +
-                          ((uint64_t)(uint8_t)*(source + 4) << 0x20) +
-                          ((uint32_t)(uint8_t)*(source + 5) << 0x18) +
-                          ((uint32_t)(uint8_t)*(source + 6) << 0x10) +
-                          ((uint16_t)(uint8_t)*(source + 7) << 0x08) +
-                           (uint8_t )(uint8_t)*(source + 8);
-        *(uint64_t *)&res->data[METADATA_WIDTH + UINT_METADATA_WIDTH] = value;
+        res->type = CBOR_TYPE_UINT;
+        handle_load_uint64(source + 1, source_size - 1, res, result);
         break;
       }
+    case 0x20:
+    case 0x21:
+    case 0x22:
+    case 0x23:
+    case 0x24:
+    case 0x25:
+    case 0x26:
+    case 0x27:
+    case 0x28:
+    case 0x29:
+    case 0x2A:
+    case 0x2B:
+    case 0x2C:
+    case 0x2D:
+    case 0x2E:
+    case 0x2F:
+    case 0x30:
+    case 0x31:
+    case 0x32:
+    case 0x33:
+    case 0x34:
+    case 0x35:
+    case 0x36:
+    case 0x37:
+    /* Embedded one byte negint */
+        {
+            res->type = CBOR_TYPE_NEGINT;
+            handle_load_uint8(source, source_size, res, result);
+            result->read--; /* Restart the handler at the MTB */
+            break;
+        }
     /* TODO */
     /* Short arrays */
     case 0x80:
@@ -128,24 +131,24 @@ inline cbor_type cbor_typeof(cbor_item_t * item) {
 }
 
 
-cbor_uint_width cbor_uint_get_width(cbor_item_t * item) {
-  return *(cbor_uint_width *)(item->data + METADATA_WIDTH);
+cbor_int_width cbor_uint_get_width(cbor_item_t * item) {
+  return *(cbor_int_width *)(item->data + METADATA_WIDTH);
 }
 
 uint8_t cbor_get_uint8(cbor_item_t * item) {
-  return *(uint8_t *)(item->data + METADATA_WIDTH + UINT_METADATA_WIDTH);
+  return *(uint8_t *)(item->data + METADATA_WIDTH + INT_METADATA_WIDTH);
 }
 
 uint16_t cbor_get_uint16(cbor_item_t * item) {
-  return *(uint16_t *)(item->data + METADATA_WIDTH + UINT_METADATA_WIDTH);
+  return *(uint16_t *)(item->data + METADATA_WIDTH + INT_METADATA_WIDTH);
 }
 
 uint32_t cbor_get_uint32(cbor_item_t * item) {
-  return *(uint32_t *)(item->data + METADATA_WIDTH + UINT_METADATA_WIDTH);
+  return *(uint32_t *)(item->data + METADATA_WIDTH + INT_METADATA_WIDTH);
 }
 
 uint64_t cbor_get_uint64(cbor_item_t * item) {
-  return *(uint64_t *)(item->data + METADATA_WIDTH + UINT_METADATA_WIDTH);
+  return *(uint64_t *)(item->data + METADATA_WIDTH + INT_METADATA_WIDTH);
 }
 /** ========================================================== */
 

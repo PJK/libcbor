@@ -3,6 +3,12 @@ Internal mechanics
 
 Internal workings of libcbor are mostly derived from the specification. The purpose of this document is to describe technical choices made during design & implementation and to explicate the reasoning behind these choices.
 
+Terminology
+---------------
+=== =================  ===
+MTB Major Type Byte    http://tools.ietf.org/html/rfc7049#section-2.1
+=== =================  ===
+
 Memory layout
 ---------------
 CBOR is very dynamic in the sense that it contains many data elements of variable length, sometimes even indefinite length. This section describes internal representation of all CBOR data types.
@@ -29,3 +35,11 @@ Type 0
 Unsigned integers have a fixed size of either 1, 2, 4, or 8 bytes. ``UINT_METADATA_WITDTH`` is ``sizeof(cbor_uint_width)``, the enum describing these possibilities. Then the appropriate number of bytes representing the particular uint [#]_ follow.
 
 .. [#] The integer is encoded in platform's native encoding using ``uint<X>_t``
+
+Type 1
+^^^^^^^^^^^^
+Negative integers are very much the same as unsigned integers. Their memory layout is identical.
+
+Unfortunately, the RFC specifies the smallest representable value to be :math:`-1 - (2^{64} - 1) = -2^{64}`, hence libcbor can provide no simple API for manipulation, since a suitable signed integral type might not exist (``int64_t`` is the widest signed type universally available, bounded at :math:`-2^{63}+1`)
+
+TODO static assert check
