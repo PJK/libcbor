@@ -195,6 +195,11 @@ cbor_item_t * cbor_load(const unsigned char * source,
 	case 0x57:
 		/* Byte string with embedded length */
 		{
+			res->type = CBOR_TYPE_BYTESTRING;
+			uint8_t length = load_uint8(source);
+			result->read--; /* Restart the handler at the MTB */
+			cbor_set_uint8(res, cbor_get_uint8(res) - 0x20); /* Offset by 0x20 */
+			break;
 		}
 	/* TODO */
 	/* Short arrays */

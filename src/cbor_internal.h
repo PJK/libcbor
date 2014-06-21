@@ -14,6 +14,12 @@ typedef enum {
 
 #define INT_METADATA_WIDTH sizeof(cbor_int_width)
 
+/* Read the give uint from the given location, no questions asked */
+uint8_t load_uint8(const unsigned char * source);
+uint16_t load_uint16(const unsigned char * source);
+uint32_t load_uint32(const unsigned char * source);
+uint64_t load_uint64(const unsigned char * source);
+
 void handle_load_uint8(const unsigned char * source,
 					   size_t source_size,
 					   cbor_item_t * item,
