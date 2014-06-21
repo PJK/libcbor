@@ -21,7 +21,7 @@ void handle_load_uint8(const unsigned char * source,
 	result->read += 1;
 	item->data = malloc(METADATA_WIDTH + INT_METADATA_WIDTH + 1);
 	*(cbor_int_width *)&item->data[METADATA_WIDTH] = CBOR_INT_8;
-	*(uint8_t *)&item->data[METADATA_WIDTH + INT_METADATA_WIDTH] = (uint8_t)*source;
+	cbor_set_uint8(item, (uint8_t)*source);
 }
 
 void handle_load_uint16(const unsigned char * source,
@@ -36,7 +36,7 @@ void handle_load_uint16(const unsigned char * source,
 	/* TODO endianness */
 	uint16_t value = ((uint16_t)*(source + 0) << 8) +
 					  (uint8_t )*(source + 1);
-	*(uint16_t *)&item->data[METADATA_WIDTH + INT_METADATA_WIDTH] = value;
+	cbor_set_uint16(item, value);
 }
 
 void handle_load_uint32(const unsigned char * source,
@@ -53,7 +53,7 @@ void handle_load_uint32(const unsigned char * source,
 					 ((uint32_t)*(source + 1) << 0x10) +
 					 ((uint16_t)*(source + 2) << 0x08) +
 					  (uint8_t )*(source + 3);
-	*(uint32_t *)&item->data[METADATA_WIDTH + INT_METADATA_WIDTH] = value;
+	cbor_set_uint32(item, value);
 }
 
 
@@ -76,5 +76,5 @@ void handle_load_uint64(const unsigned char * source,
 					 ((uint16_t)*(source + 6) << 0x08) +
 					  (uint8_t )*(source + 7);
 
-	*(uint64_t *)&item->data[METADATA_WIDTH + INT_METADATA_WIDTH] = value;
+	cbor_set_uint64(item, value);
 }

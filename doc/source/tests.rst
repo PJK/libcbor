@@ -16,6 +16,12 @@ Every release is extensively tested for memory correctness. You can run these te
 .. [#] Project should be configured with ``-DCMAKE_BUILD_TYPE=Debug`` to obtain meaningful description of location of the leak.
 
 
+Code coverage
+-------------------
+
+Every release is inspected using `GCOV/LCOV <http://ltp.sourceforge.net/coverage/lcov.php>`_. This toolchain is specific to Linux and GCC. Platform-independent code is typically fully covered by the test suite.
+
+
 Fuzz testing
 -----------------
 
