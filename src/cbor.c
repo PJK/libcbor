@@ -1,5 +1,6 @@
 #include "cbor.h"
 #include "cbor_internal.h"
+#include <assert.h>
 
 void cbor_incref(cbor_item_t * item)
 {
@@ -11,6 +12,7 @@ void cbor_decref(cbor_item_t * * item)
 	if (--(*item)->refcount == 0) {
 		switch((*item)->type) {
 		case CBOR_TYPE_UINT:
+			/* Fallthrough */
 		case CBOR_TYPE_NEGINT:
 			/* Fixed size, simple free suffices */
 			{
@@ -133,7 +135,7 @@ cbor_item_t * cbor_load(const unsigned char * source,
 			res->type = CBOR_TYPE_NEGINT;
 			handle_load_uint8(source, source_size, res, result);
 			result->read--; /* Restart the handler at the MTB */
-			// TOOD fix this using some `set` mechanism
+			cbor_set_uint8(res, cbor_get_uint8(res) - 0x20); /* Offset by 0x20 */
 			break;
 		}
 	case 0x38:
@@ -217,6 +219,7 @@ cbor_int_width cbor_uint_get_width(cbor_item_t * item)
 }
 
 uint8_t cbor_get_uint8(cbor_item_t * item)
+{
 	return *(uint8_t *)(item->data + METADATA_WIDTH + INT_METADATA_WIDTH);
 }
 
@@ -237,12 +240,32 @@ uint64_t cbor_get_uint64(cbor_item_t * item)
 
 void cbor_set_uint8(cbor_item_t * item, uint8_t value) 
 {
-
+	assert(cbor_is_int(item));
+	assert(cbor_uint_get_width(item) == CBOR_INT_8);
+	*(uint8_t *)&item->data[METADATA_WIDTH + INT_METADATA_WIDTH] = value;
 }
 
-void cbor_set_uint16(cbor_item_t * item, uint16_t value);
-void cbor_set_uint32(cbor_item_t * item, uint32_t value);
-void cbor_set_uint64(cbor_item_t * item, uint32_t value);
+void cbor_set_uint16(cbor_item_t * item, uint16_t value)
+{
+	assert(cbor_is_int(item));
+	assert(cbor_uint_get_width(item) == CBOR_INT_16);
+	*(uint16_t *)&item->data[METADATA_WIDTH + INT_METADATA_WIDTH] = value;
+}
+
+
+void cbor_set_uint32(cbor_item_t * item, uint32_t value)
+{
+	assert(cbor_is_int(item));
+	assert(cbor_uint_get_width(item) == CBOR_INT_32);
+	*(uint32_t *)&item->data[METADATA_WIDTH + INT_METADATA_WIDTH] = value;
+}
+
+void cbor_set_uint64(cbor_item_t * item, uint64_t value)
+{
+	assert(cbor_is_int(item));
+	assert(cbor_uint_get_width(item) == CBOR_INT_64);
+	*(uint64_t *)&item->data[METADATA_WIDTH + INT_METADATA_WIDTH] = value;
+}
 
 
 /** ========================================================== */

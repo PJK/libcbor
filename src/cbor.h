@@ -91,7 +91,7 @@ uint64_t cbor_get_uint64(cbor_item_t * item);
 void cbor_set_uint8(cbor_item_t * item, uint8_t value);
 void cbor_set_uint16(cbor_item_t * item, uint16_t value);
 void cbor_set_uint32(cbor_item_t * item, uint32_t value);
-void cbor_set_uint64(cbor_item_t * item, uint32_t value);
+void cbor_set_uint64(cbor_item_t * item, uint64_t value);
 
 cbor_int_width cbor_uint_get_width(cbor_item_t * item);
 

@@ -1,4 +1,7 @@
 #include "cbor_internal.h"
+#include <assert.h>
+
+// TODO asserts
 
 void assert_avail_bytes(size_t num,
 						size_t source_size,
