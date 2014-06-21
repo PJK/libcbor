@@ -197,8 +197,9 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		{
 			res->type = CBOR_TYPE_BYTESTRING;
 			uint8_t length = _cbor_load_uint8(source) - 0x40; /* Offset by 0x40 */
-			_cbor_assert_avail_bytes(length, source_size, result);
-			
+			if (!_cbor_assert_avail_bytes(length, source_size, result))
+				break;
+			_cbor_handle_load_bytestring()
 			break;
 		}
 	/* TODO */

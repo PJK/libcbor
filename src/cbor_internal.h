@@ -25,22 +25,22 @@ uint32_t _cbor_load_uint32(const unsigned char * source);
 uint64_t _cbor_load_uint64(const unsigned char * source);
 
 void _cbor_handle_load_uint8(const unsigned char * source,
-					   size_t source_size,
-					   cbor_item_t * item,
-					   struct cbor_load_result * result);
+					   		 size_t source_size,
+					   		 cbor_item_t * item,
+					   		 struct cbor_load_result * result);
 
 void _cbor_handle_load_uint16(const unsigned char * source,
-						size_t source_size,
-						cbor_item_t * item,
-						struct cbor_load_result * result);
+							  size_t source_size,
+							  cbor_item_t * item,
+							  struct cbor_load_result * result);
 
 void _cbor_handle_load_uint32(const unsigned char * source,
-						size_t source_size,
-						cbor_item_t * item,
-						struct cbor_load_result * result);
+							  size_t source_size,
+							  cbor_item_t * item,
+							  struct cbor_load_result * result);
 
 void _cbor_handle_load_uint64(const unsigned char * source,
-						size_t source_size,
-						cbor_item_t * item,
-						struct cbor_load_result * result);
+							  size_t source_size,
+							  cbor_item_t * item,
+							  struct cbor_load_result * result);
 #endif
