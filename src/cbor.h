@@ -26,7 +26,8 @@ typedef enum {
 
 typedef enum {
 	  CBOR_ERR_NONE,
-	  CBOR_ERR_NOTENOUGHDATA
+	  CBOR_ERR_NOTENOUGHDATA,
+	  CBOR_ERR_NODATA
 } cbor_error_code;
 
 /* Possible widths of CBOR_TYPE_UINT */

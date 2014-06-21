@@ -40,10 +40,12 @@ cbor_item_t * cbor_load(const unsigned char * source,
 						size_t flags,
 						struct cbor_load_result * result)
 {
-	assert_avail_bytes(1);
+	if (source_size < 1) {
+		result->error = (struct cbor_error) { 0, CBOR_ERR_NODATA };
+		return;
+	}
 	cbor_item_t * res = malloc(sizeof(cbor_item_t));
 	res->refcount = 1;
-	/* TODO empty source */
 	result->read = 1; /* We always attempt to read the MTB */
 	result->error = (struct cbor_error) { 0, CBOR_ERR_NONE };
 	switch (*source) {
@@ -88,23 +90,23 @@ cbor_item_t * cbor_load(const unsigned char * source,
 	/* Two byte uint */
 	case 0x19:
 		{
-		res->type = CBOR_TYPE_UINT;
-		handle_load_uint16(source + 1, source_size - 1, res, result);
-		break;
+			res->type = CBOR_TYPE_UINT;
+			handle_load_uint16(source + 1, source_size - 1, res, result);
+			break;
 		}
 	/* Four byte uint */
 	case 0x1a:
 		{
-		res->type = CBOR_TYPE_UINT;
-		handle_load_uint32(source + 1, source_size - 1, res, result);
-		break;
+			res->type = CBOR_TYPE_UINT;
+			handle_load_uint32(source + 1, source_size - 1, res, result);
+			break;
 		}
 	/* Glorious eight byte uint */
 	case 0x1b:
 		{
-		res->type = CBOR_TYPE_UINT;
-		handle_load_uint64(source + 1, source_size - 1, res, result);
-		break;
+			res->type = CBOR_TYPE_UINT;
+			handle_load_uint64(source + 1, source_size - 1, res, result);
+			break;
 		}
 	case 0x20:
 	case 0x21:
@@ -321,7 +323,7 @@ inline bool cbor_is_int(cbor_item_t * item)
 
 inline bool cbor_is_uint(cbor_item_t * item)
 {
-	/* Negative all 'signed' ints are negints */
+	/* Negative 'signed' ints are negints */
 	return cbor_is_uint(item);
 }
 
