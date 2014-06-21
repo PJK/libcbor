@@ -31,6 +31,12 @@ static void test_very_short_int(void **state) {
   assert_null(number);
 }
 
+static void test_incomplete_data(void **state) {
+  number = cbor_load(data2, 1, 0, &res);
+  assert_null(number);
+  assert_true(res.error.code == CBOR_ERR_NOTENOUGHDATA);
+}
+
 static void test_short_int(void **state) {
   number = cbor_load(data2, 3, 0, &res);
   assert_true(cbor_typeof(number) == CBOR_TYPE_UINT);
@@ -87,6 +93,21 @@ static void test_long_int(void **state) {
   assert_null(number);
 }
 
+static void test_refcounting(void **state) {
+  number = cbor_load(data5, 10, 0, &res);
+  cbor_incref(number);
+  assert_true(number->refcount == 2);
+  cbor_decref(&number);
+  assert_non_null(number);
+  cbor_decref(&number);
+  assert_null(number);
+}
+
+static void test_empty_input(void **state) {
+  number = cbor_load(data5, 0, 0, &res);
+  assert_null(number);
+  assert_true(res.error.code == CBOR_ERR_NODATA);
+}
 
 int main(void) {
   const UnitTest tests[] = {
@@ -94,7 +115,10 @@ int main(void) {
     unit_test(test_short_int),
     unit_test(test_half_int),
     unit_test(test_int),
-    unit_test(test_long_int)
+    unit_test(test_long_int),
+    unit_test(test_incomplete_data),
+    unit_test(test_refcounting),
+    unit_test(test_empty_input)
   };
   return run_tests(tests);
 }

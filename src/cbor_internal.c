@@ -3,27 +3,29 @@
 
 // TODO asserts
 
-void assert_avail_bytes(size_t num,
+bool _cbor_assert_avail_bytes(size_t num,
 						size_t source_size,
 						struct cbor_load_result * result)
 {
 	if (source_size < num) {
 		result->error = (struct cbor_error) { 0, CBOR_ERR_NOTENOUGHDATA };
+		return false;
 	}
+	return true;
 }
 
-uint8_t load_uint8(const unsigned char * source)
+uint8_t _cbor_load_uint8(const unsigned char * source)
 {
 	return (uint8_t)*source;
 }
 
-uint16_t load_uint16(const unsigned char * source)
+uint16_t _cbor_load_uint16(const unsigned char * source)
 {
 	return ((uint16_t)*(source + 0) << 8) +
 			(uint8_t )*(source + 1);
 }
 
-uint32_t load_uint32(const unsigned char * source)
+uint32_t _cbor_load_uint32(const unsigned char * source)
 {
 	return ((uint32_t)*(source + 0) << 0x18) +
 		   ((uint32_t)*(source + 1) << 0x10) +
@@ -31,7 +33,7 @@ uint32_t load_uint32(const unsigned char * source)
 			(uint8_t )*(source + 3);
 }
 
-uint64_t load_uint64(const unsigned char * source)
+uint64_t _cbor_load_uint64(const unsigned char * source)
 {
 	return ((uint64_t)*(source + 0) << 0x38) +
 		   ((uint64_t)*(source + 1) << 0x30) +
@@ -43,51 +45,55 @@ uint64_t load_uint64(const unsigned char * source)
 		    (uint8_t )*(source + 7);
 }
 
-void handle_load_uint8(const unsigned char * source,
+void _cbor_handle_load_uint8(const unsigned char * source,
 					   size_t source_size,
 					   cbor_item_t * item,
 					   struct cbor_load_result * result)
 {
-	assert_avail_bytes(1, source_size, result);
+	if (!_cbor_assert_avail_bytes(1, source_size, result))
+		return;
 	result->read += 1;
 	item->data = malloc(METADATA_WIDTH + INT_METADATA_WIDTH + 1);
 	*(cbor_int_width *)&item->data[METADATA_WIDTH] = CBOR_INT_8;
-	cbor_set_uint8(item, load_uint8(source));
+	cbor_set_uint8(item, _cbor_load_uint8(source));
 }
 
-void handle_load_uint16(const unsigned char * source,
+void _cbor_handle_load_uint16(const unsigned char * source,
 						size_t source_size,
 						cbor_item_t * item,
 						struct cbor_load_result * result)
 {
-	assert_avail_bytes(2, source_size, result);
+	if (!_cbor_assert_avail_bytes(2, source_size, result))
+		return;
 	result->read += 2;
 	item->data = malloc(METADATA_WIDTH + INT_METADATA_WIDTH + 2);
 	*(cbor_int_width *)&item->data[METADATA_WIDTH] = CBOR_INT_16;
-	cbor_set_uint16(item, load_uint16(source));
+	cbor_set_uint16(item, _cbor_load_uint16(source));
 }
 
-void handle_load_uint32(const unsigned char * source,
+void _cbor_handle_load_uint32(const unsigned char * source,
 					    size_t source_size,
 					    cbor_item_t * item,
 					    struct cbor_load_result * result)
 {
-	assert_avail_bytes(4, source_size, result);
+	if (!_cbor_assert_avail_bytes(4, source_size, result))
+		return;
 	result->read += 4;
 	item->data = malloc(METADATA_WIDTH + INT_METADATA_WIDTH + 4);
 	*(cbor_int_width *)&item->data[METADATA_WIDTH] = CBOR_INT_32;
-	cbor_set_uint32(item, load_uint32(source));
+	cbor_set_uint32(item, _cbor_load_uint32(source));
 }
 
 
-void handle_load_uint64(const unsigned char * source,
+void _cbor_handle_load_uint64(const unsigned char * source,
 						size_t source_size,
 						cbor_item_t * item,
 						struct cbor_load_result * result)
 {
-	assert_avail_bytes(8, source_size, result);
+	if (!_cbor_assert_avail_bytes(8, source_size, result))
+		return;
 	result->read += 8;
 	item->data = malloc(METADATA_WIDTH + INT_METADATA_WIDTH + 8);
 	*(cbor_int_width *)&item->data[METADATA_WIDTH] = CBOR_INT_64;
-	cbor_set_uint64(item, load_uint64(source));
+	cbor_set_uint64(item, _cbor_load_uint64(source));
 }

@@ -76,7 +76,7 @@ cbor_item_t * cbor_load(const unsigned char * source,
 	/* Embedded one byte uint */
 		{
 			res->type = CBOR_TYPE_UINT;
-			handle_load_uint8(source, source_size, res, result);
+			_cbor_handle_load_uint8(source, source_size, res, result);
 			result->read--; /* Restart the handler at the MTB */
 			break;
 		}
@@ -84,28 +84,28 @@ cbor_item_t * cbor_load(const unsigned char * source,
 	case 0x18:
 		{
 			res->type = CBOR_TYPE_UINT;
-			handle_load_uint8(source + 1, source_size - 1, res, result);
+			_cbor_handle_load_uint8(source + 1, source_size - 1, res, result);
 			break;
 		}
 	/* Two byte uint */
 	case 0x19:
 		{
 			res->type = CBOR_TYPE_UINT;
-			handle_load_uint16(source + 1, source_size - 1, res, result);
+			_cbor_handle_load_uint16(source + 1, source_size - 1, res, result);
 			break;
 		}
 	/* Four byte uint */
 	case 0x1a:
 		{
 			res->type = CBOR_TYPE_UINT;
-			handle_load_uint32(source + 1, source_size - 1, res, result);
+			_cbor_handle_load_uint32(source + 1, source_size - 1, res, result);
 			break;
 		}
 	/* Glorious eight byte uint */
 	case 0x1b:
 		{
 			res->type = CBOR_TYPE_UINT;
-			handle_load_uint64(source + 1, source_size - 1, res, result);
+			_cbor_handle_load_uint64(source + 1, source_size - 1, res, result);
 			break;
 		}
 	case 0x20:
@@ -135,7 +135,7 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		/* Embedded one byte negint */
 		{
 			res->type = CBOR_TYPE_NEGINT;
-			handle_load_uint8(source, source_size, res, result);
+			_cbor_handle_load_uint8(source, source_size, res, result);
 			result->read--; /* Restart the handler at the MTB */
 			cbor_set_uint8(res, cbor_get_uint8(res) - 0x20); /* Offset by 0x20 */
 			break;
@@ -144,28 +144,28 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		/* One byte negint */
 		{
 			res->type = CBOR_TYPE_NEGINT;
-			handle_load_uint8(source + 1, source_size - 1, res, result);
+			_cbor_handle_load_uint8(source + 1, source_size - 1, res, result);
 			break;
 		}
 	case 0x39:
 		/* Two byte negint */
 		{
 			res->type = CBOR_TYPE_NEGINT;
-			handle_load_uint16(source + 1, source_size - 1, res, result);
+			_cbor_handle_load_uint16(source + 1, source_size - 1, res, result);
 			break;
 		}
 	case 0x3a:
 		/* Four byte negint */
 		{
 			res->type = CBOR_TYPE_NEGINT;
-			handle_load_uint32(source + 1, source_size - 1, res, result);
+			_cbor_handle_load_uint32(source + 1, source_size - 1, res, result);
 			break;
 		}
 	case 0x3b:
 		/* Eight byte negint */
 		{
 			res->type = CBOR_TYPE_NEGINT;
-			handle_load_uint64(source + 1, source_size - 1, res, result);
+			_cbor_handle_load_uint64(source + 1, source_size - 1, res, result);
 			break;
 		}
 	/* RESERVED */
@@ -196,9 +196,9 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		/* Byte string with embedded length */
 		{
 			res->type = CBOR_TYPE_BYTESTRING;
-			uint8_t length = load_uint8(source);
-			result->read--; /* Restart the handler at the MTB */
-			cbor_set_uint8(res, cbor_get_uint8(res) - 0x20); /* Offset by 0x20 */
+			uint8_t length = _cbor_load_uint8(source) - 0x40; /* Offset by 0x40 */
+			_cbor_assert_avail_bytes(length, source_size, result);
+			
 			break;
 		}
 	/* TODO */
@@ -211,7 +211,11 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		}
 	}
 
-	return res;
+	if (result->error.code != CBOR_ERR_NONE) {
+		free(res);
+		return NULL;
+	} else
+		return res;
 }
 
 inline cbor_type cbor_typeof(cbor_item_t * item)
