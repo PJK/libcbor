@@ -43,3 +43,7 @@ Negative integers are very much the same as unsigned integers. Their memory layo
 Unfortunately, the RFC specifies the smallest representable value to be :math:`-1 - (2^{64} - 1) = -2^{64}`, hence libcbor can provide no simple API for manipulation, since a suitable signed integral type might not exist (``int64_t`` is the widest signed type universally available, bounded at :math:`-2^{63}+1`)
 
 TODO static assert check
+
+Coding style
+-------------
+This code loosely follows the `Linux kernel coding style <https://www.kernel.org/doc/Documentation/CodingStyle>`. Tabs are tabs, and they are 4 characters wide.

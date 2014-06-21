@@ -14,43 +14,43 @@
 #define CBOR_VERSION TO_STR(CBOR_MAJOR_VERSION) "." TO_STR(CBOR_MINOR_VERSION) "." TO_STR(CBOR_PATCH_VERSION)
 
 typedef enum {
-  CBOR_TYPE_UINT,        /* 0 */
-  CBOR_TYPE_NEGINT,      /* 1 */
-  CBOR_TYPE_BYTESTRING,  /* 2 */
-  CBOT_TYPE_STRING,      /* 3 */
-  CBOR_TYPE_ARRAY,       /* 4 */
-  CBOR_TYPE_MAP,         /* 5 */
-  CBOR_TYPE_TAG,         /* 6 - additional semantics*/
-  CBOR_TYPE_FLOAT        /* 7 - also bool, null, undefined, and others */
+	CBOR_TYPE_UINT,        /* 0 */
+	CBOR_TYPE_NEGINT,      /* 1 */
+	CBOR_TYPE_BYTESTRING,  /* 2 */
+	CBOT_TYPE_STRING,      /* 3 */
+	CBOR_TYPE_ARRAY,       /* 4 */
+	CBOR_TYPE_MAP,         /* 5 */
+	CBOR_TYPE_TAG,         /* 6 - additional semantics*/
+	CBOR_TYPE_FLOAT        /* 7 - also bool, null, undefined, and others */
 } cbor_type;
 
 typedef enum {
-    CBOR_ERR_NONE,
-    CBOR_ERR_NOTENOUGHDATA
+	  CBOR_ERR_NONE,
+	  CBOR_ERR_NOTENOUGHDATA
 } cbor_error_code;
 
 /* Possible widths of CBOR_TYPE_UINT */
 typedef enum {
-  CBOR_INT_8,
-  CBOR_INT_16,
-  CBOR_INT_32,
-  CBOR_INT_64
+	CBOR_INT_8,
+	CBOR_INT_16,
+	CBOR_INT_32,
+	CBOR_INT_64
 } cbor_int_width;
 
 typedef struct cbor_item_t {
-  cbor_type type;
-  size_t    refcount;
-  char *    data;
+	cbor_type type;
+	size_t    refcount;
+	char *    data;
 } cbor_item_t;
 
 struct cbor_error {
-  size_t          postion;
-  cbor_error_code code;
+	size_t          postion;
+	cbor_error_code code;
 };
 
 struct cbor_load_result {
-  struct cbor_error error;
-  size_t            read;
+	struct cbor_error error;
+	size_t            read;
 };
 
 cbor_item_t * cbor_load(const unsigned char * source, size_t source_size, size_t flags, struct cbor_load_result * result);
@@ -87,6 +87,12 @@ uint8_t cbor_get_uint8(cbor_item_t * item);
 uint16_t cbor_get_uint16(cbor_item_t * item);
 uint32_t cbor_get_uint32(cbor_item_t * item);
 uint64_t cbor_get_uint64(cbor_item_t * item);
+
+void cbor_set_uint8(cbor_item_t * item, uint8_t value);
+void cbor_set_uint16(cbor_item_t * item, uint16_t value);
+void cbor_set_uint32(cbor_item_t * item, uint32_t value);
+void cbor_set_uint64(cbor_item_t * item, uint32_t value);
+
 cbor_int_width cbor_uint_get_width(cbor_item_t * item);
 
 cbor_item_t * cbor_make_int8();
