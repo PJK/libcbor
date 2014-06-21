@@ -1,11 +1,13 @@
 #include "cbor_internal.h"
 #include <assert.h>
+#include <string.h>
 
 // TODO asserts
+// TODO check mallocs
 
 bool _cbor_assert_avail_bytes(size_t num,
-						size_t source_size,
-						struct cbor_load_result * result)
+							  size_t source_size,
+							  struct cbor_load_result * result)
 {
 	if (source_size < num) {
 		result->error = (struct cbor_error) { 0, CBOR_ERR_NOTENOUGHDATA };
@@ -96,4 +98,21 @@ void _cbor_handle_load_uint64(const unsigned char * source,
 	item->data = malloc(METADATA_WIDTH + INT_METADATA_WIDTH + 8);
 	*(cbor_int_width *)&item->data[METADATA_WIDTH] = CBOR_INT_64;
 	cbor_set_uint64(item, _cbor_load_uint64(source));
+}
+
+// TODO what if size_t < uint64_t ?
+// TODO chunked decoding
+// TODO what
+void _cbor_handle_load_bytestring(const unsigned char * source,
+								  size_t source_size,
+								  size_t length,
+								  cbor_item_t * item,
+								  struct cbor_load_result * result)
+{
+	if (!_cbor_assert_avail_bytes(length, source_size, result))
+		return;
+	result->read += length;
+	item->data = malloc(METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH + length);
+	*(struct _cbor_bytesting_metadata *)&item->data[METADATA_WIDTH] = (struct _cbor_bytesting_metadata) { length };
+	memcpy(item->data, source, length);
 }

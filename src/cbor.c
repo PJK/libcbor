@@ -42,7 +42,7 @@ cbor_item_t * cbor_load(const unsigned char * source,
 {
 	if (source_size < 1) {
 		result->error = (struct cbor_error) { 0, CBOR_ERR_NODATA };
-		return;
+		return NULL;
 	}
 	cbor_item_t * res = malloc(sizeof(cbor_item_t));
 	res->refcount = 1;
@@ -197,9 +197,7 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		{
 			res->type = CBOR_TYPE_BYTESTRING;
 			uint8_t length = _cbor_load_uint8(source) - 0x40; /* Offset by 0x40 */
-			if (!_cbor_assert_avail_bytes(length, source_size, result))
-				break;
-			_cbor_handle_load_bytestring()
+			_cbor_handle_load_bytestring(source + 1, source_size - 1, length, res, result);
 			break;
 		}
 	/* TODO */
@@ -367,4 +365,11 @@ inline bool cbor_is_null(cbor_item_t * item)
 
 inline bool cbor_is_undef(cbor_item_t * item)
 {
+}
+
+
+
+size_t cbor_bytestring_length(cbor_item_t * item) {
+	assert(cbor_isa_bytestring(item));
+	return ((struct _cbor_bytesting_metadata *)&item->data[METADATA_WIDTH])->length;
 }

@@ -13,6 +13,8 @@
 
 #define CBOR_VERSION TO_STR(CBOR_MAJOR_VERSION) "." TO_STR(CBOR_MINOR_VERSION) "." TO_STR(CBOR_PATCH_VERSION)
 
+_Static_assert(sizeof(size_t) >= 8, "size_t must be at least 64-bits");
+
 typedef enum {
 	CBOR_TYPE_UINT,        /* 0 */
 	CBOR_TYPE_NEGINT,      /* 1 */
@@ -100,5 +102,7 @@ cbor_item_t * cbor_make_int8();
 cbor_item_t * cbor_make_int16();
 cbor_item_t * cbor_make_int32();
 cbor_item_t * cbor_make_int64();
+
+size_t cbor_bytestring_length(cbor_item_t * item);
 
 #endif

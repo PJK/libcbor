@@ -6,11 +6,11 @@ Documentation for version |release|, updated on |today|.
 
 Overview
 --------
-Libcbor is a C library for parsing and generating CBOR_, the general-purpose schema-less binary data format.
+*libcbor* is a C library for parsing and generating CBOR_, the general-purpose schema-less binary data format.
 
 
 Main features
- - Robust, standard compliant C99 implementation
+ - Robust, standard compliant C11 [#]_ implementation
  - Performant, yet quite general - suitable for embedding or binding to higher level languages
  - Proper handling of UTF-8
  - Stream & chunked processing - works great with event-driven network applications
@@ -18,14 +18,16 @@ Main features
  - No runtime dependencies, small footprint
  - Thread safe and scalable
 
+.. [#] The code itself is C99 compliant, C11 features are only used for static assertions and it is therefore possible to build *libcbor* on most C99 platforms.
+
 Contents
 ----------
 .. toctree::
-   :maxdepth: 3
 
-   internal
    getting_started
    tests
+   rfc_conformance
+   internal
 
 
 

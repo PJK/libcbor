@@ -10,9 +10,15 @@ typedef enum {
 	METADATA_MADE	   = 0x04	/* Created by a cbor_make_<X> */
 } metadata;
 
+struct _cbor_bytesting_metadata {
+	size_t length;
+};
+
 #define METADATA_WIDTH sizeof(metadata)
 
 #define INT_METADATA_WIDTH sizeof(cbor_int_width)
+
+#define _CBOR_BYTESTRING_METADATA_WIDTH sizeof(struct _cbor_bytesting_metadata)
 
 bool _cbor_assert_avail_bytes(size_t num,
 							  size_t source_size,
@@ -43,4 +49,10 @@ void _cbor_handle_load_uint64(const unsigned char * source,
 							  size_t source_size,
 							  cbor_item_t * item,
 							  struct cbor_load_result * result);
+
+void _cbor_handle_load_bytestring(const unsigned char * source,
+								  size_t source_size,
+								  uint64_t length,
+								  cbor_item_t * item,
+								  struct cbor_load_result * result);
 #endif
