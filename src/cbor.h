@@ -23,7 +23,7 @@ typedef enum {
 	CBOR_TYPE_ARRAY,       /* 4 */
 	CBOR_TYPE_MAP,         /* 5 */
 	CBOR_TYPE_TAG,         /* 6 - additional semantics*/
-	CBOR_TYPE_FLOAT        /* 7 - also bool, null, undefined, and others */
+	CBOR_TYPE_FLOAT_CTRL   /* 7 - also bool, null, undefined, and others */
 } cbor_type;
 
 typedef enum {

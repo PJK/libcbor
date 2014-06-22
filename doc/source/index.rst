@@ -11,12 +11,12 @@ Overview
 
 Main features
  - Robust, standard compliant C11 [#]_ implementation
- - Performant, yet quite general - suitable for embedding or binding to higher level languages
+ - Performant, yet quite general – suitable for embedding or binding to higher level languages
  - Proper handling of UTF-8
- - Stream & chunked processing - works great with event-driven network applications
+ - Stream & chunked processing – works great with event-driven network applications
  - Extensive documentation and test suite
  - No runtime dependencies, small footprint
- - Thread safe and scalable
+ - Thread-safe and scalable
 
 .. [#] The code itself is C99 compliant, C11 features are only used for static assertions and it is therefore possible to build *libcbor* on most C99 platforms.
 

@@ -4,19 +4,19 @@
 #include "cbor.h"
 
 typedef enum {
-	METADATA_EMPTY	   = 0x00,
-	METADATA_COMPLETE  = 0x01,
-	METADATA_RESUMABLE = 0x02,	/* Parsing may be resumed */
-	METADATA_MADE	   = 0x04	/* Created by a cbor_make_<X> */
+	_CBOR_METADATA_EMPTY	 = 0x00,
+	_CBOR_METADATA_COMPLETE	 = 0x01,
+	_CBOR_METADATA_RESUMABLE = 0x02,	/* Parsing may be resumed */
+	_CBOR_METADATA_MADE		 = 0x04		/* Created by a cbor_make_<X> */
 } metadata;
 
 struct _cbor_bytesting_metadata {
 	size_t length;
 };
 
-#define METADATA_WIDTH sizeof(metadata)
+#define _CBOR_METADATA_WIDTH sizeof(metadata)
 
-#define INT_METADATA_WIDTH sizeof(cbor_int_width)
+#define _CBOR_INT_METADATA_WIDTH sizeof(cbor_int_width)
 
 #define _CBOR_BYTESTRING_METADATA_WIDTH sizeof(struct _cbor_bytesting_metadata)
 
