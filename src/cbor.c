@@ -15,11 +15,13 @@ void cbor_decref(cbor_item_t * * item)
 			/* Fallthrough */
 		case CBOR_TYPE_NEGINT:
 			/* Fixed size, simple free suffices */
+			/* Fallthrough */
+		case CBOR_TYPE_BYTESTRING:
+			// TODO variable chunking
 			{
 				free((*item)->data);
 				break;
 			}
-		case CBOR_TYPE_BYTESTRING:
 		case CBOT_TYPE_STRING:
 		case CBOR_TYPE_ARRAY:
 		case CBOR_TYPE_MAP:
@@ -48,6 +50,7 @@ cbor_item_t * cbor_load(const unsigned char * source,
 	res->refcount = 1;
 	result->read = 1; /* We always attempt to read the MTB */
 	result->error = (struct cbor_error) { 0, CBOR_ERR_NONE };
+
 	switch (*source) {
 	case 0x00:
 	case 0x01:
@@ -95,14 +98,14 @@ cbor_item_t * cbor_load(const unsigned char * source,
 			break;
 		}
 	/* Four byte uint */
-	case 0x1a:
+	case 0x1A:
 		{
 			res->type = CBOR_TYPE_UINT;
 			_cbor_handle_load_uint32(source + 1, source_size - 1, res, result);
 			break;
 		}
 	/* Glorious eight byte uint */
-	case 0x1b:
+	case 0x1B:
 		{
 			res->type = CBOR_TYPE_UINT;
 			_cbor_handle_load_uint64(source + 1, source_size - 1, res, result);
@@ -154,21 +157,21 @@ cbor_item_t * cbor_load(const unsigned char * source,
 			_cbor_handle_load_uint16(source + 1, source_size - 1, res, result);
 			break;
 		}
-	case 0x3a:
+	case 0x3A:
 		/* Four byte negint */
 		{
 			res->type = CBOR_TYPE_NEGINT;
 			_cbor_handle_load_uint32(source + 1, source_size - 1, res, result);
 			break;
 		}
-	case 0x3b:
+	case 0x3B:
 		/* Eight byte negint */
 		{
 			res->type = CBOR_TYPE_NEGINT;
 			_cbor_handle_load_uint64(source + 1, source_size - 1, res, result);
 			break;
 		}
-	/* RESERVED */
+	/* RESERVED - 0x3C - 0x3F*/
 	case 0x40:
 	case 0x41:
 	case 0x42:
@@ -200,10 +203,79 @@ cbor_item_t * cbor_load(const unsigned char * source,
 			_cbor_handle_load_bytestring(source + 1, source_size - 1, length, res, result);
 			break;
 		}
+	case 0x58:
+		/* Bytestring with one byte length */
+		{
+			res->type = CBOR_TYPE_BYTESTRING;
+			/* We have read one byte, need at least one more for the uint8_t */
+			if (!_cbor_assert_avail_bytes(1, source_size - 1, result)) { 
+				result->error.position = 1;
+			} else {
+				result->read++;
+				uint8_t length = _cbor_load_uint8(source + 1);
+				_cbor_handle_load_bytestring(source + 2, source_size - 2, length, res, result);
+			}
+			break;
+		}
+	case 0x59:
+		/* Bytestring with two bytes length */
+		{
+			res->type = CBOR_TYPE_BYTESTRING;
+			/* We have read one byte, need at least one more for the uint8_t */
+			if (!_cbor_assert_avail_bytes(2, source_size - 1, result)) { 
+				result->error.position = 1;
+			} else {
+				result->read += 2;
+				uint16_t length = _cbor_load_uint16(source + 1);
+				_cbor_handle_load_bytestring(source + 3, source_size - 3, length, res, result);
+			}
+			break;
+		}
+	case 0x5A:
+		/* Bytestring with four bytes length */
+		{
+			res->type = CBOR_TYPE_BYTESTRING;
+			/* We have read one byte, need at least one more for the uint8_t */
+			if (!_cbor_assert_avail_bytes(4, source_size - 1, result)) { 
+				result->error.position = 1;
+			} else {
+				result->read += 4;
+				uint32_t length = _cbor_load_uint32(source + 1);
+				_cbor_handle_load_bytestring(source + 5, source_size - 5, length, res, result);
+			}
+			break;
+		}
+	case 0x5B:
+		/* Bytestring with eight bytes length */
+		{
+			res->type = CBOR_TYPE_BYTESTRING;
+			/* We have read one byte, need at least one more for the uint8_t */
+			if (!_cbor_assert_avail_bytes(8, source_size - 1, result)) { 
+				result->error.position = 1;
+			} else {
+				result->read += 8;
+				uint64_t length = _cbor_load_uint64(source + 1);
+				_cbor_handle_load_bytestring(source + 9, source_size - 9, length, res, result);
+			}
+			break;
+		}
+	/* RESERVED - 0x5C - 0x5E */
+	case 0x5F:
+		/* Indefinite length bytestring */
+		{
+
+		}
+
 	/* TODO */
 	/* Short arrays */
 	case 0x80:
 		{
+		}
+	case 0xFF:
+		/* Indefinite length item break */
+		{
+			
+			break;
 		}
 	default:
 		{
@@ -372,4 +444,9 @@ inline bool cbor_is_undef(cbor_item_t * item)
 size_t cbor_bytestring_length(cbor_item_t * item) {
 	assert(cbor_isa_bytestring(item));
 	return ((struct _cbor_bytesting_metadata *)&item->data[METADATA_WIDTH])->length;
+}
+
+unsigned char * cbor_bytestring_handle(cbor_item_t * item) {
+	assert(cbor_isa_bytestring(item));
+	return &item->data[METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH];
 }
