@@ -48,9 +48,9 @@ uint64_t _cbor_load_uint64(const unsigned char * source)
 }
 
 void _cbor_handle_load_uint8(const unsigned char * source,
-					   size_t source_size,
-					   cbor_item_t * item,
-					   struct cbor_load_result * result)
+							 size_t source_size,
+							 cbor_item_t * item,
+							 struct cbor_load_result * result)
 {
 	if (!_cbor_assert_avail_bytes(1, source_size, result))
 		return;
@@ -74,9 +74,9 @@ void _cbor_handle_load_uint16(const unsigned char * source,
 }
 
 void _cbor_handle_load_uint32(const unsigned char * source,
-					    size_t source_size,
-					    cbor_item_t * item,
-					    struct cbor_load_result * result)
+							  size_t source_size,
+							  cbor_item_t * item,
+							  struct cbor_load_result * result)
 {
 	if (!_cbor_assert_avail_bytes(4, source_size, result))
 		return;
@@ -88,9 +88,9 @@ void _cbor_handle_load_uint32(const unsigned char * source,
 
 
 void _cbor_handle_load_uint64(const unsigned char * source,
-						size_t source_size,
-						cbor_item_t * item,
-						struct cbor_load_result * result)
+							  size_t source_size,
+							  cbor_item_t * item,
+							  struct cbor_load_result * result)
 {
 	if (!_cbor_assert_avail_bytes(8, source_size, result))
 		return;
@@ -113,6 +113,6 @@ void _cbor_handle_load_bytestring(const unsigned char * source,
 		return;
 	result->read += length;
 	item->data = malloc(_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH + length);
-	*(struct _cbor_bytesting_metadata *)&item->data[_CBOR_METADATA_WIDTH] = (struct _cbor_bytesting_metadata) { length, _CBOR_BYTESTRING_METADATA_DEFINITE };
+	*(struct _cbor_bytestring_metadata *)&item->data[_CBOR_METADATA_WIDTH] = (struct _cbor_bytestring_metadata) { length, _CBOR_BYTESTRING_METADATA_DEFINITE };
 	memcpy(&item->data[_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH], source, length);
 }

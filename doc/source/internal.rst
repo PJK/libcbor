@@ -23,13 +23,13 @@ Generally speaking, data items are stored in a contiguous block of memory, takin
   cbor_item_t.data
   |
   V
-  +------------------------+------------------------------------+-------------------------------------+
-  |                        |                                    |                                     |
-  |  METADATA_WIDTH bytes  |  <X>_METADATA_WIDTH bytes          |  fixed or variable number of bytes  |
-  |  of generic metadata   |  of data-type specific metadata    |  specific to <X>                    |
-  |                        |                                    |                                     |
-  +------------------------+------------------------------------+-------------------------------------+
-                                  (X is cbor_item_t.type)
+  +------------------------------+------------------------------------+-------------------------------------+
+  |                              |                                    |                                     |
+  |  _CBOR_METADATA_WIDTH bytes  |  <X>_METADATA_WIDTH bytes          |  fixed or variable number of bytes  |
+  |  of generic metadata         |  of data-type specific metadata    |  specific to <X>                    |
+  |                              |                                    |                                     |
+  +------------------------------+------------------------------------+-------------------------------------+
+                                        (X is cbor_item_t.type)
 
 
 .. [#] ``<X>_METADATA_WIDTH`` is used instead of union because it would be larger than necessary for some data types (TODO example)
@@ -51,6 +51,21 @@ TODO static assert check
 
 Type 2
 ^^^^^^^^^^^^^^^
+Bytestrings have either fixed or indefinite length. This is described by :type:`_cbor_bytesting_type_metadata` and reflected in the metadata.
+
+::
+
+  cbor_item_t.data
+  |
+  V
+  +------------------------------+-----------------------------------------+--------------------------------------------+
+  |                              |                                         |                                            |
+  |  _CBOR_METADATA_WIDTH bytes  |  _CBOR_BYTESTRING_METADATA_WIDTH        |  (struct _cbor_bytesting_metadata).length  |
+  |  of generic metadata         |  for a struct _cbor_bytesting_metadata  |  or sizeof(cbor_item_t *) bytes            |
+  |                              |                                         |                                            |
+  +------------------------------+-----------------------------------------+--------------------------------------------+
+                                        (X is cbor_item_t.type)
+
 
 
 Coding style

@@ -71,15 +71,11 @@ bool cbor_isa_string(cbor_item_t * item);
 bool cbor_isa_array(cbor_item_t * item);
 bool cbor_isa_map(cbor_item_t * item);
 bool cbor_isa_tag(cbor_item_t * item);
-bool cbor_isa_float(cbor_item_t * item);
+bool cbor_isa_float_ctrl(cbor_item_t * item);
 
 /* Practical types with respect to their semantics (but no tag values) */
 bool cbor_is_int(cbor_item_t * item);
 bool cbor_is_uint(cbor_item_t * item);
-bool cbor_is_bytestring(cbor_item_t * item);
-bool cbor_is_string(cbor_item_t * item);
-bool cbor_is_array(cbor_item_t * item);
-bool cbor_is_map(cbor_item_t * item);
 bool cbor_is_float(cbor_item_t * item);
 bool cbor_is_bool(cbor_item_t * item);
 bool cbor_is_null(cbor_item_t * item);
@@ -105,6 +101,7 @@ cbor_item_t * cbor_make_int64();
 
 size_t cbor_bytestring_length(cbor_item_t * item);
 unsigned char * cbor_bytestring_handle(cbor_item_t * item);
+bool cbor_bytestring_is_definite(cbor_item_t * item);
 bool cbor_bytestring_is_indefinite(cbor_item_t * item);
 /* has to be called at least one - to decref the chunk */
 cbor_item_t * cbor_bytestring_get_chunk(cbor_item_t * item);

@@ -208,7 +208,7 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		{
 			res->type = CBOR_TYPE_BYTESTRING;
 			/* We have read one byte, need at least one more for the uint8_t */
-			if (!_cbor_assert_avail_bytes(1, source_size - 1, result)) { 
+			if (!_cbor_assert_avail_bytes(1, source_size - 1, result)) {
 				result->error.position = 1;
 			} else {
 				result->read++;
@@ -222,7 +222,7 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		{
 			res->type = CBOR_TYPE_BYTESTRING;
 			/* We have read one byte, need at least one more for the uint8_t */
-			if (!_cbor_assert_avail_bytes(2, source_size - 1, result)) { 
+			if (!_cbor_assert_avail_bytes(2, source_size - 1, result)) {
 				result->error.position = 1;
 			} else {
 				result->read += 2;
@@ -236,7 +236,7 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		{
 			res->type = CBOR_TYPE_BYTESTRING;
 			/* We have read one byte, need at least one more for the uint8_t */
-			if (!_cbor_assert_avail_bytes(4, source_size - 1, result)) { 
+			if (!_cbor_assert_avail_bytes(4, source_size - 1, result)) {
 				result->error.position = 1;
 			} else {
 				result->read += 4;
@@ -250,7 +250,7 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		{
 			res->type = CBOR_TYPE_BYTESTRING;
 			/* We have read one byte, need at least one more for the uint8_t */
-			if (!_cbor_assert_avail_bytes(8, source_size - 1, result)) { 
+			if (!_cbor_assert_avail_bytes(8, source_size - 1, result)) {
 				result->error.position = 1;
 			} else {
 				result->read += 8;
@@ -263,7 +263,13 @@ cbor_item_t * cbor_load(const unsigned char * source,
 	case 0x5F:
 		/* Indefinite length bytestring */
 		{
-
+			/* Return "handle" object that will allow access to single chunks */
+			res->type = CBOR_TYPE_BYTESTRING;
+			res->data = malloc(_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH + sizeof(cbor_item_t *));
+			// TODO metadata
+			*(struct _cbor_bytestring_metadata *)&res->data[_CBOR_METADATA_WIDTH] = (struct _cbor_bytestring_metadata) { 0, _CBOR_BYTESTRING_METADATA_INDEFINITE };
+			*(cbor_item_t **)&res->data[_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH] = NULL;
+			break;
 		}
 
 	/* TODO */
@@ -320,7 +326,7 @@ uint64_t cbor_get_uint64(cbor_item_t * item)
 	return *(uint64_t *)(item->data + _CBOR_METADATA_WIDTH + _CBOR_INT_METADATA_WIDTH);
 }
 
-void cbor_set_uint8(cbor_item_t * item, uint8_t value) 
+void cbor_set_uint8(cbor_item_t * item, uint8_t value)
 {
 	assert(cbor_is_int(item));
 	assert(cbor_uint_get_width(item) == CBOR_INT_8);
@@ -387,7 +393,7 @@ inline bool cbor_isa_tag(cbor_item_t * item)
 	return item->type == CBOR_TYPE_TAG;
 }
 
-inline bool cbor_isa_float(cbor_item_t * item)
+inline bool cbor_isa_float_ctrl(cbor_item_t * item)
 {
 	return item->type == CBOR_TYPE_FLOAT_CTRL;
 }
@@ -405,22 +411,6 @@ inline bool cbor_is_uint(cbor_item_t * item)
 {
 	/* Negative 'signed' ints are negints */
 	return cbor_is_uint(item);
-}
-
-inline bool cbor_is_bytestring(cbor_item_t * item)
-{
-}
-
-inline bool cbor_is_string(cbor_item_t * item)
-{
-}
-
-inline bool cbor_is_array(cbor_item_t * item)
-{
-}
-
-inline bool cbor_is_map(cbor_item_t * item)
-{
 }
 
 inline bool cbor_is_float(cbor_item_t * item)
@@ -441,7 +431,7 @@ inline bool cbor_is_undef(cbor_item_t * item)
 
 size_t cbor_bytestring_length(cbor_item_t * item) {
 	assert(cbor_isa_bytestring(item));
-	return ((struct _cbor_bytesting_metadata *)&item->data[_CBOR_METADATA_WIDTH])->length;
+	return ((struct _cbor_bytestring_metadata *)&item->data[_CBOR_METADATA_WIDTH])->length;
 }
 
 unsigned char * cbor_bytestring_handle(cbor_item_t * item) {
@@ -449,8 +439,22 @@ unsigned char * cbor_bytestring_handle(cbor_item_t * item) {
 	return &item->data[_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH];
 }
 
-bool cbor_bytestring_is_indefinite(cbor_item_t * item);
-/* has to be called at least one - to decref the chunk */
-cbor_item_t * cbor_bytestring_get_chunk(cbor_item_t * item);
-/* once you call this, previous chunk is lost (avoiding realloc)*/
+bool cbor_bytestring_is_definite(cbor_item_t * item)
+{
+	assert(cbor_isa_bytestring(item));
+	return ((struct _cbor_bytestring_metadata *)&item->data[_CBOR_METADATA_WIDTH])->type == _CBOR_BYTESTRING_METADATA_DEFINITE;
+}
+
+bool cbor_bytestring_is_indefinite(cbor_item_t * item)
+{
+	return !cbor_bytestring_is_definite(item);
+}
+
+cbor_item_t * cbor_bytestring_get_chunk(cbor_item_t * item)
+{
+	assert(cbor_isa_bytestring(item));
+	assert(cbor_bytestring_is_indefinite(item));
+	return (cbor_item_t *)&item->data[_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH];
+}
+
 void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source, size_t source_size, struct cbor_load_result * result);
