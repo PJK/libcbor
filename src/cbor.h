@@ -53,8 +53,8 @@ typedef enum {
 } cbor_ctrl;
 
 typedef struct cbor_item_t {
-	cbor_type 		type;
-	size_t    		refcount;
+	cbor_type 	  type;
+	size_t    	  refcount;
 	unsigned char * data;
 } cbor_item_t;
 
@@ -106,10 +106,12 @@ void cbor_set_uint64(cbor_item_t * item, uint64_t value);
 
 cbor_int_width cbor_uint_get_width(cbor_item_t * item);
 
-cbor_item_t * cbor_make_int8();
-cbor_item_t * cbor_make_int16();
-cbor_item_t * cbor_make_int32();
-cbor_item_t * cbor_make_int64();
+void cbor_mark_uint(cbor_item_t * item);
+void cbor_mark_negint(cbor_item_t * item);
+cbor_item_t * cbor_new_int8();
+cbor_item_t * cbor_new_int16();
+cbor_item_t * cbor_new_int32();
+cbor_item_t * cbor_new_int64();
 
 size_t cbor_bytestring_length(cbor_item_t * item);
 unsigned char * cbor_bytestring_handle(cbor_item_t * item);

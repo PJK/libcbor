@@ -358,6 +358,27 @@ void cbor_set_uint64(cbor_item_t * item, uint64_t value)
 	*(uint64_t *)&item->data[_CBOR_METADATA_WIDTH + _CBOR_INT_METADATA_WIDTH] = value;
 }
 
+void cbor_mark_uint(cbor_item_t * item)
+{
+	assert(cbor_is_int(item));
+	item->type = CBOR_TYPE_UINT;
+}
+
+void cbor_mark_negint(cbor_item_t * item)
+{
+	assert(cbor_is_int(item));
+	item->type = CBOR_TYPE_NEGINT;
+}
+
+cbor_item_t * cbor_new_int8()
+{
+	
+}
+
+cbor_item_t * cbor_new_int16();
+cbor_item_t * cbor_new_int32();
+cbor_item_t * cbor_new_int64();
+
 
 /** ========================================================== */
 
