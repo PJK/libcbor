@@ -9,6 +9,10 @@ Terminology
 MTB Major Type Byte    http://tools.ietf.org/html/rfc7049#section-2.1
 === =================  ===
 
+Convetions
+--------------
+API symbols start with `cbor_` or `CBOR_` prefix, internal symbols have `_cbor_` or `_CBOR_` prefix.
+
 Memory layout
 ---------------
 CBOR is very dynamic in the sense that it contains many data elements of variable length, sometimes even indefinite length. This section describes internal representation of all CBOR data types.
