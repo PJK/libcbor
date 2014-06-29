@@ -40,6 +40,18 @@ typedef enum {
 	CBOR_INT_64
 } cbor_int_width;
 
+typedef enum {
+	CBOR_FLOAT_0, /* Registered for internal use */
+	CBOR_FLOAT_16,
+	CBOR_FLOAT_32,
+	CBOR_FLOAT_64
+} cbor_float_width;
+
+typedef enum {
+	CBOR_CTRL_NONE,
+	CBOR_CTRL_BREAK
+} cbor_ctrl;
+
 typedef struct cbor_item_t {
 	cbor_type 		type;
 	size_t    		refcount;
@@ -108,4 +120,6 @@ cbor_item_t * cbor_bytestring_get_chunk(cbor_item_t * item);
 /* once you call this, previous chunk is lost (avoiding realloc)*/
 void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source, size_t source_size, struct cbor_load_result * result);
 
+cbor_float_width cbor_float_ctrl_get_width(cbor_item_t * item);
+cbor_ctrl cbor_float_ctrl_get_ctrl(cbor_item_t * item);
 #endif

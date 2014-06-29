@@ -7,7 +7,7 @@ void cbor_incref(cbor_item_t * item)
 	item->refcount++;
 }
 
-void cbor_decref(cbor_item_t * * item)
+void cbor_decref(cbor_item_t ** item)
 {
 	if (--(*item)->refcount == 0) {
 		switch((*item)->type) {
@@ -15,11 +15,16 @@ void cbor_decref(cbor_item_t * * item)
 			/* Fallthrough */
 		case CBOR_TYPE_NEGINT:
 			/* Fixed size, simple free suffices */
-			/* Fallthrough */
+			{
+				free((*item)->data);
+				break;
+			}
 		case CBOR_TYPE_BYTESTRING:
 			// TODO variable chunking
 			{
-				free((*item)->data);
+				if (!cbor_bytestring_is_indefinite(*item)) {
+					free((*item)->data);
+				}
 				break;
 			}
 		case CBOT_TYPE_STRING:
@@ -280,7 +285,9 @@ cbor_item_t * cbor_load(const unsigned char * source,
 	case 0xFF:
 		/* Indefinite length item break */
 		{
-
+			res->type = CBOR_TYPE_FLOAT_CTRL;
+			res->data = malloc(_CBOR_METADATA_WIDTH + _CBOR_FLOAT_CTRL_METADATA_WIDTH);
+			*(struct _cbor_float_ctrl_metadata *)&res->data[_CBOR_METADATA_WIDTH] = (struct _cbor_float_ctrl_metadata) { CBOR_FLOAT_0, CBOR_CTRL_BREAK };
 			break;
 		}
 	default:
@@ -429,6 +436,11 @@ inline bool cbor_is_undef(cbor_item_t * item)
 {
 }
 
+inline bool cbor_is_break(cbor_item_t * item)
+{
+	return cbor_isa_float_ctrl(item) && cbor_float_ctrl_get_ctrl(item) == CBOR_CTRL_BREAK;
+}
+
 size_t cbor_bytestring_length(cbor_item_t * item) {
 	assert(cbor_isa_bytestring(item));
 	return ((struct _cbor_bytestring_metadata *)&item->data[_CBOR_METADATA_WIDTH])->length;
@@ -457,4 +469,24 @@ cbor_item_t * cbor_bytestring_get_chunk(cbor_item_t * item)
 	return (cbor_item_t *)&item->data[_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH];
 }
 
-void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source, size_t source_size, struct cbor_load_result * result);
+void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source, size_t source_size, struct cbor_load_result * result)
+{
+	assert(cbor_isa_bytestring(item));
+	assert(cbor_bytestring_is_indefinite(item));
+	// TODO save original flags
+	cbor_item_t * chunk = cbor_load(source, source_size, 0, result);
+	assert((cbor_isa_bytestring(chunk) && cbor_bytestring_is_definite(chunk)) || (cbor_isa_float_ctrl(chunk) && cbor_float_ctrl_get_ctrl(chunk) == CBOR_CTRL_BREAK));
+	*(cbor_item_t **)&item->data[_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH] = chunk;
+}
+
+cbor_float_width cbor_float_ctrl_get_width(cbor_item_t * item)
+{
+	assert(cbor_isa_float_ctrl(item));
+	return ((struct _cbor_float_ctrl_metadata *)(item->data + _CBOR_METADATA_WIDTH))->width;
+}
+
+cbor_ctrl cbor_float_ctrl_get_ctrl(cbor_item_t * item)
+{
+	assert(cbor_isa_float_ctrl(item));
+	assert(cbor_float_ctrl_get_width(item) == CBOR_FLOAT_0);
+}

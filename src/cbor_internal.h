@@ -12,8 +12,8 @@ typedef enum {
 } _cbor_metadata;
 
 typedef enum {
-	_CBOR_BYTESTRING_METADATA_DEFINITE   = 0x00,
-	_CBOR_BYTESTRING_METADATA_INDEFINITE = 0x01
+	_CBOR_BYTESTRING_METADATA_DEFINITE,
+	_CBOR_BYTESTRING_METADATA_INDEFINITE
 } _cbor_bytestring_type_metadata;
 
 struct _cbor_bytestring_metadata {
@@ -21,11 +21,19 @@ struct _cbor_bytestring_metadata {
 	_cbor_bytestring_type_metadata type;
 };
 
+struct _cbor_float_ctrl_metadata {
+	cbor_float_width width;
+	cbor_ctrl type;
+};
+
 #define _CBOR_METADATA_WIDTH sizeof(_cbor_metadata)
 
 #define _CBOR_INT_METADATA_WIDTH sizeof(cbor_int_width)
 
 #define _CBOR_BYTESTRING_METADATA_WIDTH sizeof(struct _cbor_bytestring_metadata)
+
+#define _CBOR_FLOAT_CTRL_METADATA_WIDTH sizeof(struct _cbor_float_ctrl_metadata)
+
 
 bool _cbor_assert_avail_bytes(size_t num,
 							  size_t source_size,
