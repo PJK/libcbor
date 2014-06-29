@@ -47,6 +47,8 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		result->error = (struct cbor_error) { 0, CBOR_ERR_NODATA };
 		return NULL;
 	}
+	// TODO fuse malloc fro simple types
+
 	cbor_item_t * res = malloc(sizeof(cbor_item_t));
 	res->refcount = 1;
 	result->read = 1; /* We always attempt to read the MTB */
