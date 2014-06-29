@@ -15,16 +15,10 @@ void cbor_decref(cbor_item_t ** item)
 			/* Fallthrough */
 		case CBOR_TYPE_NEGINT:
 			/* Fixed size, simple free suffices */
-			{
-				free((*item)->data);
-				break;
-			}
+			/* Fallthrough */
 		case CBOR_TYPE_BYTESTRING:
-			// TODO variable chunking
 			{
-				if (!cbor_bytestring_is_indefinite(*item)) {
 					free((*item)->data);
-				}
 				break;
 			}
 		case CBOT_TYPE_STRING:
@@ -32,8 +26,10 @@ void cbor_decref(cbor_item_t ** item)
 		case CBOR_TYPE_MAP:
 		case CBOR_TYPE_TAG:
 		case CBOR_TYPE_FLOAT_CTRL:
-			break;
-			//TODO
+			{
+				free((*item)->data);
+				break;
+			}
 		}
 		free(*item);
 		//TODO
@@ -466,7 +462,7 @@ cbor_item_t * cbor_bytestring_get_chunk(cbor_item_t * item)
 {
 	assert(cbor_isa_bytestring(item));
 	assert(cbor_bytestring_is_indefinite(item));
-	return (cbor_item_t *)&item->data[_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH];
+	return *(cbor_item_t **)&item->data[_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH];
 }
 
 void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source, size_t source_size, struct cbor_load_result * result)
@@ -475,7 +471,7 @@ void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source
 	assert(cbor_bytestring_is_indefinite(item));
 	// TODO save original flags
 	cbor_item_t * chunk = cbor_load(source, source_size, 0, result);
-	assert((cbor_isa_bytestring(chunk) && cbor_bytestring_is_definite(chunk)) || (cbor_isa_float_ctrl(chunk) && cbor_float_ctrl_get_ctrl(chunk) == CBOR_CTRL_BREAK));
+	/* If failed, will be NULL, no memory lost */
 	*(cbor_item_t **)&item->data[_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH] = chunk;
 }
 
@@ -489,4 +485,5 @@ cbor_ctrl cbor_float_ctrl_get_ctrl(cbor_item_t * item)
 {
 	assert(cbor_isa_float_ctrl(item));
 	assert(cbor_float_ctrl_get_width(item) == CBOR_FLOAT_0);
+	return ((struct _cbor_float_ctrl_metadata *)(item->data + _CBOR_METADATA_WIDTH))->type;
 }
