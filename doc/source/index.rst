@@ -25,6 +25,7 @@ Contents
 .. toctree::
 
    getting_started
+   api
    tests
    rfc_conformance
    internal

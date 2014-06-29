@@ -71,7 +71,7 @@ struct cbor_load_result {
 cbor_item_t * cbor_load(const unsigned char * source, size_t source_size, size_t flags, struct cbor_load_result * result);
 
 void cbor_incref(cbor_item_t * item);
-void cbor_decref(cbor_item_t * * item);
+void cbor_decref(cbor_item_t ** item);
 
 cbor_type cbor_typeof(cbor_item_t * item); /* will be inlined iff link-time opt is enabled */
 
