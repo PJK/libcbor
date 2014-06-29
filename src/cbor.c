@@ -372,12 +372,32 @@ void cbor_mark_negint(cbor_item_t * item)
 
 cbor_item_t * cbor_new_int8()
 {
-	
+	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	item->data = _cbor_new_int8_data();
+	return item;
 }
 
-cbor_item_t * cbor_new_int16();
-cbor_item_t * cbor_new_int32();
-cbor_item_t * cbor_new_int64();
+cbor_item_t * cbor_new_int16()
+{
+	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	item->data = _cbor_new_int16_data();
+	return item;
+}
+
+cbor_item_t * cbor_new_int32()
+{
+	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	item->data = _cbor_new_int32_data();
+	return item;
+}
+
+cbor_item_t * cbor_new_int64()
+{
+	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	item->data = _cbor_new_int64_data();
+	return item;
+}
+
 
 
 /** ========================================================== */
