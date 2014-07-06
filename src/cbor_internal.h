@@ -51,9 +51,9 @@ unsigned char * _cbor_new_int32_data();
 unsigned char * _cbor_new_int64_data();
 
 void _cbor_handle_load_uint8(const unsigned char * source,
-					   		 size_t source_size,
-					   		 cbor_item_t * item,
-					   		 struct cbor_load_result * result);
+							 size_t source_size,
+							 cbor_item_t * item,
+							 struct cbor_load_result * result);
 
 void _cbor_handle_load_uint16(const unsigned char * source,
 							  size_t source_size,
