@@ -8,5 +8,5 @@ int main() {
 		cbor_set_uint8(i, 42);
 		cbor_decref(&i);
 	}
-    return 0;
+	return 0;
 }

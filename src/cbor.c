@@ -12,6 +12,7 @@ void cbor_decref(cbor_item_t ** item)
 	if (--(*item)->refcount == 0) {
 		switch((*item)->type) {
 		case CBOR_TYPE_UINT:
+			/* Fixed size, simple free suffices */
 			/* Fallthrough */
 		case CBOR_TYPE_NEGINT:
 			/* Fixed size, simple free suffices */
@@ -514,7 +515,7 @@ void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source
 	assert(cbor_bytestring_is_indefinite(item));
 	// TODO save original flags
 	cbor_item_t * chunk = cbor_load(source, source_size, 0, result);
-	/* If failed, will be NULL, no memory lost */
+	/* Will be NULL if failed, no memory lost */
 	*(cbor_item_t **)&item->data[_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH] = chunk;
 }
 
