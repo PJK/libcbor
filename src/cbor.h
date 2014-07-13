@@ -41,7 +41,7 @@ typedef enum {
 } cbor_int_width;
 
 typedef enum {
-	CBOR_FLOAT_0, /* Registered for internal use */
+	CBOR_FLOAT_0, /* Registered for internal use - breaks and such*/
 	CBOR_FLOAT_16,
 	CBOR_FLOAT_32,
 	CBOR_FLOAT_64
@@ -53,19 +53,19 @@ typedef enum {
 } cbor_ctrl;
 
 typedef struct cbor_item_t {
-	cbor_type 	  type;
-	size_t    	  refcount;
+	cbor_type	  type;
+	size_t		  refcount;
 	unsigned char * data;
 } cbor_item_t;
 
 struct cbor_error {
-	size_t          position;
+	size_t			position;
 	cbor_error_code code;
 };
 
 struct cbor_load_result {
 	struct cbor_error error;
-	size_t            read;
+	size_t			  read;
 };
 
 cbor_item_t * cbor_load(const unsigned char * source, size_t source_size, size_t flags, struct cbor_load_result * result);
