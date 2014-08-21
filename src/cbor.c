@@ -2,6 +2,8 @@
 #include "cbor_internal.h"
 #include <assert.h>
 
+/* TODO refactor the metadata madness using structs and unions */
+
 void cbor_incref(cbor_item_t * item)
 {
 	item->refcount++;
@@ -272,14 +274,53 @@ cbor_item_t * cbor_load(const unsigned char * source,
 			res->data = malloc(_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH + sizeof(cbor_item_t *));
 			// TODO metadata
 			*(struct _cbor_bytestring_metadata *)&res->data[_CBOR_METADATA_WIDTH] = (struct _cbor_bytestring_metadata) { 0, _CBOR_BYTESTRING_METADATA_INDEFINITE };
+			/* TODO why the hell is NULL here */
 			*(cbor_item_t **)&res->data[_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH] = NULL;
 			break;
 		}
 
-	/* TODO */
-	/* Short arrays */
+	/* TODO - utf strings*/
+	/* Arrays with embedded length */
 	case 0x80:
+	case 0x81:
+	case 0x82:
+	case 0x83:
+	case 0x84:
+	case 0x85:
+	case 0x86:
+	case 0x87:
+	case 0x88:
+	case 0x89:
+	case 0x8A:
+	case 0x8B:
+	case 0x8C:
+	case 0x8D:
+	case 0x8E:
+	case 0x8F:
+	case 0x90:
+	case 0x91:
+	case 0x92:
+	case 0x93:
+	case 0x94:
+	case 0x95:
+	case 0x96:
+	case 0x97:
+		/* Array with embedded length */
 		{
+			uint8_t size = _cbor_load_uint8(source) - 0x80; /* Offset by 0x80 */
+			res->type = CBOR_TYPE_ARRAY;
+			res->data = malloc(_CBOR_METADATA_WIDTH + _CBOR_ARRAY_METADATA_WIDTH + sizeof(cbor_item_t *) * size);
+			*(struct _cbor_array_metadata *)&res->data[_CBOR_METADATA_WIDTH] = (struct _cbor_array_metadata) { (size_t)size, _CBOR_ARRAY_METADATA_DEFINITE };
+			source++;
+			source_size--;
+			struct cbor_load_result subres;
+			for (uint8_t i = 0; i < size; i++) {
+				((cbor_item_t **)&res->data[_CBOR_ARRAY_METADATA_WIDTH])[i] = cbor_load(source, source_size, flags, &subres);
+				source += subres.read;
+				source_size -= subres.read;
+				result->read += subres.read;
+			}
+			break;
 		}
 	case 0xFF:
 		/* Indefinite length item break */
@@ -518,6 +559,15 @@ void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source
 	/* Will be NULL if failed, no memory lost */
 	*(cbor_item_t **)&item->data[_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH] = chunk;
 }
+
+size_t cbor_array_get_size(cbor_item_t * item)
+{
+	assert(cbor_isa_array(item));
+	return ((struct _cbor_array_metadata *)&item->data[_CBOR_METADATA_WIDTH])->size;
+}
+bool cbor_array_is_definite(cbor_item_t * item);
+bool cbor_array_is_indefinite(cbor_item_t * item);
+cbor_item_t ** cbor_array_handle(cbor_item_t * item);
 
 cbor_float_width cbor_float_ctrl_get_width(cbor_item_t * item)
 {

@@ -13,6 +13,11 @@
 
 #define CBOR_VERSION TO_STR(CBOR_MAJOR_VERSION) "." TO_STR(CBOR_MINOR_VERSION) "." TO_STR(CBOR_PATCH_VERSION)
 
+/*
+ * TODO - workaround this on <=32 bit platforms - now arrays and bytestrings can
+ * be up to 2^64-1 items/bytes long -- how do we ensure real size won't overflow
+ * size_t???
+ */
 _Static_assert(sizeof(size_t) >= 8, "size_t must be at least 64-bits");
 
 typedef enum {
@@ -121,6 +126,11 @@ bool cbor_bytestring_is_indefinite(cbor_item_t * item);
 cbor_item_t * cbor_bytestring_get_chunk(cbor_item_t * item);
 /* once you call this, previous chunk is lost (avoiding realloc)*/
 void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source, size_t source_size, struct cbor_load_result * result);
+
+size_t cbor_array_get_size(cbor_item_t * item);
+bool cbor_array_is_definite(cbor_item_t * item);
+bool cbor_array_is_indefinite(cbor_item_t * item);
+cbor_item_t ** cbor_array_handle(cbor_item_t * item);
 
 cbor_float_width cbor_float_ctrl_get_width(cbor_item_t * item);
 cbor_ctrl cbor_float_ctrl_get_ctrl(cbor_item_t * item);
