@@ -3,38 +3,6 @@
 
 #include "cbor.h"
 
-// TODO hook these into the parser
-typedef enum {
-	_CBOR_METADATA_EMPTY	 = 0x00,
-	_CBOR_METADATA_COMPLETE  = 0x01,
-	_CBOR_METADATA_RESUMABLE = 0x02,	/* Parsing may be resumed */
-	_CBOR_METADATA_MADE		 = 0x04 	/* Created by a cbor_make_<X> */
-} _cbor_metadata;
-
-typedef enum {
-	_CBOR_BYTESTRING_METADATA_DEFINITE,
-	_CBOR_BYTESTRING_METADATA_INDEFINITE
-} _cbor_bytestring_type_metadata;
-
-struct _cbor_bytestring_metadata {
-	size_t length;
-	_cbor_bytestring_type_metadata type;
-};
-
-typedef enum {
-	_CBOR_ARRAY_METADATA_DEFINITE,
-	_CBOR_ARRAY_METADATA_INDEFINITE
-} _cbor_array_type_metadata;
-
-struct _cbor_array_metadata {
-	size_t size;
-	_cbor_array_type_metadata type;
-};
-
-struct _cbor_float_ctrl_metadata {
-	cbor_float_width width;
-	cbor_ctrl type;
-};
 
 #define _CBOR_METADATA_WIDTH sizeof(_cbor_metadata)
 

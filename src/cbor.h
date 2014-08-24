@@ -14,7 +14,7 @@
 #define CBOR_VERSION TO_STR(CBOR_MAJOR_VERSION) "." TO_STR(CBOR_MINOR_VERSION) "." TO_STR(CBOR_PATCH_VERSION)
 
 /*
- * TODO - workaround this on <=32 bit platforms - now arrays and bytestrings can
+ * TODO - work around this on <=32 bit platforms - now arrays and bytestrings can
  * be up to 2^64-1 items/bytes long -- how do we ensure real size won't overflow
  * size_t???
  */
@@ -57,10 +57,54 @@ typedef enum {
 	CBOR_CTRL_BREAK
 } cbor_ctrl;
 
+// TODO hook these into the parser
+typedef enum {
+	_CBOR_METADATA_EMPTY	 = 0x00,
+	_CBOR_METADATA_COMPLETE  = 0x01,
+	_CBOR_METADATA_RESUMABLE = 0x02,	/* Parsing may be resumed */
+	_CBOR_METADATA_MADE		 = 0x04 	/* Created by a cbor_make_<X> */
+} _cbor_metadata;
+
+struct _cbor_int_metadata {
+	cbor_int_width width;
+};
+
+typedef enum {
+	_CBOR_BYTESTRING_METADATA_DEFINITE,
+	_CBOR_BYTESTRING_METADATA_INDEFINITE
+} _cbor_bytestring_type_metadata;
+
+struct _cbor_bytestring_metadata {
+	size_t length;
+	_cbor_bytestring_type_metadata type;
+};
+
+typedef enum {
+	_CBOR_ARRAY_METADATA_DEFINITE,
+	_CBOR_ARRAY_METADATA_INDEFINITE
+} _cbor_array_type_metadata;
+
+struct _cbor_array_metadata {
+	size_t size;
+	_cbor_array_type_metadata type;
+};
+
+struct _cbor_float_ctrl_metadata {
+	cbor_float_width width;
+	cbor_ctrl type;
+};
+
+union cbor_item_metadata {
+	struct _cbor_int_metadata		 int_metadata;
+	struct _cbor_bytestring_metadata bytestring_metadata;
+	struct _cbor_float_ctrl_metadata float_ctrl_metadata;
+};
+
 typedef struct cbor_item_t {
-	cbor_type	  type;
-	size_t		  refcount;
-	unsigned char * data;
+	cbor_type				 type;
+	size_t					 refcount;
+	union cbor_item_metadata metadata;
+	unsigned char * 		 data;
 } cbor_item_t;
 
 struct cbor_error {
@@ -109,7 +153,7 @@ void cbor_set_uint16(cbor_item_t * item, uint16_t value);
 void cbor_set_uint32(cbor_item_t * item, uint32_t value);
 void cbor_set_uint64(cbor_item_t * item, uint64_t value);
 
-cbor_int_width cbor_uint_get_width(cbor_item_t * item);
+cbor_int_width cbor_int_get_width(cbor_item_t * item);
 
 void cbor_mark_uint(cbor_item_t * item);
 void cbor_mark_negint(cbor_item_t * item);
@@ -130,6 +174,7 @@ void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source
 size_t cbor_array_get_size(cbor_item_t * item);
 bool cbor_array_is_definite(cbor_item_t * item);
 bool cbor_array_is_indefinite(cbor_item_t * item);
+/* Native handle to the underlying chunk */
 cbor_item_t ** cbor_array_handle(cbor_item_t * item);
 
 cbor_float_width cbor_float_ctrl_get_width(cbor_item_t * item);

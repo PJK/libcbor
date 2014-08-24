@@ -49,29 +49,25 @@ uint64_t _cbor_load_uint64(const unsigned char * source)
 
 unsigned char * _cbor_new_int8_data()
 {
-	unsigned char * data = malloc(_CBOR_METADATA_WIDTH + _CBOR_INT_METADATA_WIDTH + 1);
-	*(cbor_int_width *)&data[_CBOR_METADATA_WIDTH] = CBOR_INT_8;
+	unsigned char * data = malloc(1);
 	return data;
 }
 
 unsigned char * _cbor_new_int16_data()
 {
-	unsigned char * data = malloc(_CBOR_METADATA_WIDTH + _CBOR_INT_METADATA_WIDTH + 2);
-	*(cbor_int_width *)&data[_CBOR_METADATA_WIDTH] = CBOR_INT_16;
+	unsigned char * data = malloc(2);
 	return data;
 }
 
 unsigned char * _cbor_new_int32_data()
 {
-	unsigned char * data = malloc(_CBOR_METADATA_WIDTH + _CBOR_INT_METADATA_WIDTH + 4);
-	*(cbor_int_width *)&data[_CBOR_METADATA_WIDTH] = CBOR_INT_32;
+	unsigned char * data = malloc(4);
 	return data;
 }
 
 unsigned char * _cbor_new_int64_data()
 {
-	unsigned char * data = malloc(_CBOR_METADATA_WIDTH + _CBOR_INT_METADATA_WIDTH + 8);
-	*(cbor_int_width *)&data[_CBOR_METADATA_WIDTH] = CBOR_INT_64;
+	unsigned char * data = malloc(8);
 	return data;
 }
 
@@ -84,7 +80,8 @@ void _cbor_handle_load_uint8(const unsigned char * source,
 	if (!_cbor_assert_avail_bytes(1, source_size, result))
 		return;
 	result->read += 1;
-	item->data = _cbor_new_int8_data();
+	item->metadata.int_metadata = (struct _cbor_int_metadata) { CBOR_INT_8 };
+	item->data = malloc(1);
 	cbor_set_uint8(item, _cbor_load_uint8(source));
 }
 
@@ -97,7 +94,8 @@ void _cbor_handle_load_uint16(const unsigned char * source,
 	if (!_cbor_assert_avail_bytes(2, source_size, result))
 		return;
 	result->read += 2;
-	item->data = _cbor_new_int16_data();
+	item->metadata.int_metadata = (struct _cbor_int_metadata) { CBOR_INT_16 };
+	item->data = malloc(2);
 	cbor_set_uint16(item, _cbor_load_uint16(source));
 }
 
@@ -109,7 +107,8 @@ void _cbor_handle_load_uint32(const unsigned char * source,
 	if (!_cbor_assert_avail_bytes(4, source_size, result))
 		return;
 	result->read += 4;
-	item->data = _cbor_new_int32_data();
+	item->metadata.int_metadata = (struct _cbor_int_metadata) { CBOR_INT_32 };
+	item->data = malloc(4);
 	cbor_set_uint32(item, _cbor_load_uint32(source));
 }
 
@@ -122,7 +121,8 @@ void _cbor_handle_load_uint64(const unsigned char * source,
 	if (!_cbor_assert_avail_bytes(8, source_size, result))
 		return;
 	result->read += 8;
-	item->data = _cbor_new_int64_data();
+	item->metadata.int_metadata = (struct _cbor_int_metadata) { CBOR_INT_64 };
+	item->data = malloc(8);
 	cbor_set_uint64(item, _cbor_load_uint64(source));
 }
 

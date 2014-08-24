@@ -20,7 +20,7 @@ unsigned char data5[] = { 0x3b, 0xa5, 0xf7, 0x02, 0xb3, 0xa5, 0xf7, 0x02, 0xb3, 
 static void test_very_short_int(void **state) {
 	number = cbor_load(data1, 2, 0, &res);
 	assert_true(cbor_typeof(number) == CBOR_TYPE_NEGINT);
-	assert_true(cbor_uint_get_width(number) == CBOR_INT_8);
+	assert_true(cbor_int_get_width(number) == CBOR_INT_8);
 	assert_false(cbor_isa_uint(number));
 	assert_true(cbor_isa_negint(number));
 	assert_true(cbor_get_uint8(number) == 2);
@@ -34,7 +34,7 @@ static void test_very_short_int(void **state) {
 static void test_short_int(void **state) {
 	number = cbor_load(data2, 3, 0, &res);
 	assert_true(cbor_typeof(number) == CBOR_TYPE_NEGINT);
-	assert_true(cbor_uint_get_width(number) == CBOR_INT_8);
+	assert_true(cbor_int_get_width(number) == CBOR_INT_8);
 	assert_false(cbor_isa_uint(number));
 	assert_true(cbor_isa_negint(number));
 	assert_true(cbor_get_uint8(number) == 255);
@@ -48,7 +48,7 @@ static void test_short_int(void **state) {
 static void test_half_int(void **state) {
 	number = cbor_load(data3, 5, 0, &res);
 	assert_true(cbor_typeof(number) == CBOR_TYPE_NEGINT);
-	assert_true(cbor_uint_get_width(number) == CBOR_INT_16);
+	assert_true(cbor_int_get_width(number) == CBOR_INT_16);
 	assert_false(cbor_isa_uint(number));
 	assert_true(cbor_isa_negint(number));
 	assert_true(cbor_get_uint16(number) == 500);
@@ -62,7 +62,7 @@ static void test_half_int(void **state) {
 static void test_int(void **state) {
 	number = cbor_load(data4, 6, 0, &res);
 	assert_true(cbor_typeof(number) == CBOR_TYPE_NEGINT);
-	assert_true(cbor_uint_get_width(number) == CBOR_INT_32);
+	assert_true(cbor_int_get_width(number) == CBOR_INT_32);
 	assert_false(cbor_isa_uint(number));
 	assert_true(cbor_isa_negint(number));
 	assert_true(cbor_get_uint32(number) == 2784428723);
@@ -76,7 +76,7 @@ static void test_int(void **state) {
 static void test_long_int(void **state) {
 	number = cbor_load(data5, 10, 0, &res);
 	assert_true(cbor_typeof(number) == CBOR_TYPE_NEGINT);
-	assert_true(cbor_uint_get_width(number) == CBOR_INT_64);
+	assert_true(cbor_int_get_width(number) == CBOR_INT_64);
 	assert_false(cbor_isa_uint(number));
 	assert_true(cbor_isa_negint(number));
 	assert_true(cbor_get_uint64(number) == 11959030306112471731ULL);
