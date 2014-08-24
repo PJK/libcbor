@@ -18,19 +18,30 @@ void cbor_decref(cbor_item_t ** item)
 			/* Fallthrough */
 		case CBOR_TYPE_NEGINT:
 			/* Fixed size, simple free suffices */
-			/* Fallthrough */
+			{
+				free((*item)->data);
+				break;
+			}
 		case CBOR_TYPE_BYTESTRING:
 			{
+				if (cbor_bytestring_is_definite(*item)) {
 					free((*item)->data);
+				}
 				break;
 			}
 		case CBOT_TYPE_STRING:
 		case CBOR_TYPE_ARRAY:
+			/* Fallthrough */
 		case CBOR_TYPE_MAP:
 		case CBOR_TYPE_TAG:
-		case CBOR_TYPE_FLOAT_CTRL:
 			{
 				free((*item)->data);
+				break;
+			}
+		case CBOR_TYPE_FLOAT_CTRL:
+			{
+				if (cbor_float_ctrl_get_width(*item) != CBOR_FLOAT_0)
+					free((*item)->data);
 				break;
 			}
 		}
@@ -271,11 +282,9 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		{
 			/* Return "handle" object that will allow access to single chunks */
 			res->type = CBOR_TYPE_BYTESTRING;
-			res->data = malloc(_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH + sizeof(cbor_item_t *));
+			res->data = NULL;
 			// TODO metadata
-			*(struct _cbor_bytestring_metadata *)&res->data[_CBOR_METADATA_WIDTH] = (struct _cbor_bytestring_metadata) { 0, _CBOR_BYTESTRING_METADATA_INDEFINITE };
-			/* TODO why the hell is NULL here */
-			*(cbor_item_t **)&res->data[_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH] = NULL;
+			res->metadata.bytestring_metadata = (struct _cbor_bytestring_metadata) { 0, _CBOR_BYTESTRING_METADATA_INDEFINITE };
 			break;
 		}
 
@@ -326,8 +335,7 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		/* Indefinite length item break */
 		{
 			res->type = CBOR_TYPE_FLOAT_CTRL;
-			res->data = malloc(_CBOR_METADATA_WIDTH + _CBOR_FLOAT_CTRL_METADATA_WIDTH);
-			*(struct _cbor_float_ctrl_metadata *)&res->data[_CBOR_METADATA_WIDTH] = (struct _cbor_float_ctrl_metadata) { CBOR_FLOAT_0, CBOR_CTRL_BREAK };
+			res->metadata.float_ctrl_metadata = (struct _cbor_float_ctrl_metadata) { CBOR_FLOAT_0, CBOR_CTRL_BREAK };
 			break;
 		}
 	default:
@@ -558,7 +566,7 @@ void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source
 	// TODO save original flags
 	cbor_item_t * chunk = cbor_load(source, source_size, 0, result);
 	/* Will be NULL if failed, no memory lost */
-	*(cbor_item_t **)&item->data[_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH] = chunk;
+	item->data = (unsigned char *)chunk;
 }
 
 size_t cbor_array_get_size(cbor_item_t * item)
@@ -574,12 +582,12 @@ cbor_item_t ** cbor_array_handle(cbor_item_t * item);
 cbor_float_width cbor_float_ctrl_get_width(cbor_item_t * item)
 {
 	assert(cbor_isa_float_ctrl(item));
-	return ((struct _cbor_float_ctrl_metadata *)(item->data + _CBOR_METADATA_WIDTH))->width;
+	return item->metadata.float_ctrl_metadata.width;
 }
 
 cbor_ctrl cbor_float_ctrl_get_ctrl(cbor_item_t * item)
 {
 	assert(cbor_isa_float_ctrl(item));
 	assert(cbor_float_ctrl_get_width(item) == CBOR_FLOAT_0);
-	return ((struct _cbor_float_ctrl_metadata *)(item->data + _CBOR_METADATA_WIDTH))->type;
+	return item->metadata.float_ctrl_metadata.type;
 }

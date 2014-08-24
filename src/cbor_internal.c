@@ -138,7 +138,7 @@ void _cbor_handle_load_bytestring(const unsigned char * source,
 	if (!_cbor_assert_avail_bytes(length, source_size, result))
 		return;
 	result->read += length;
-	item->data = malloc(_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH + length);
-	*(struct _cbor_bytestring_metadata *)&item->data[_CBOR_METADATA_WIDTH] = (struct _cbor_bytestring_metadata) { length, _CBOR_BYTESTRING_METADATA_DEFINITE };
-	memcpy(&item->data[_CBOR_METADATA_WIDTH + _CBOR_BYTESTRING_METADATA_WIDTH], source, length);
+	item->data = malloc(length);
+	item->metadata.bytestring_metadata = (struct _cbor_bytestring_metadata) { length, _CBOR_BYTESTRING_METADATA_DEFINITE };
+	memcpy(item->data, source, length);
 }
