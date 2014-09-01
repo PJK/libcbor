@@ -40,6 +40,7 @@ void cbor_decref(cbor_item_t ** item)
 			}
 		case CBOR_TYPE_FLOAT_CTRL:
 			{
+				// unless it's a control symbol
 				if (cbor_float_ctrl_get_width(*item) != CBOR_FLOAT_0)
 					free((*item)->data);
 				break;
@@ -318,13 +319,13 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		{
 			uint8_t size = _cbor_load_uint8(source) - 0x80; /* Offset by 0x80 */
 			res->type = CBOR_TYPE_ARRAY;
-			res->data = malloc(_CBOR_METADATA_WIDTH + _CBOR_ARRAY_METADATA_WIDTH + sizeof(cbor_item_t *) * size);
-			*(struct _cbor_array_metadata *)&res->data[_CBOR_METADATA_WIDTH] = (struct _cbor_array_metadata) { (size_t)size, _CBOR_ARRAY_METADATA_DEFINITE };
+			res->data = malloc(sizeof(cbor_item_t *) * size);
+			res->metadata.array_metadata = (struct _cbor_array_metadata) { (size_t) size, _CBOR_ARRAY_METADATA_DEFINITE };
 			source++;
 			source_size--;
 			struct cbor_load_result subres;
 			for (uint8_t i = 0; i < size; i++) {
-				((cbor_item_t **)&res->data[_CBOR_ARRAY_METADATA_WIDTH])[i] = cbor_load(source, source_size, flags, &subres);
+				res->data[i] = cbor_load(source, source_size, flags, &subres);
 				source += subres.read;
 				source_size -= subres.read;
 				result->read += subres.read;
@@ -572,7 +573,7 @@ void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source
 size_t cbor_array_get_size(cbor_item_t * item)
 {
 	assert(cbor_isa_array(item));
-	return ((struct _cbor_array_metadata *)&item->data[_CBOR_METADATA_WIDTH])->size;
+	return item->metadata.array_metadata.size;
 }
 
 bool cbor_array_is_definite(cbor_item_t * item);

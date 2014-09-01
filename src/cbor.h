@@ -97,6 +97,7 @@ struct _cbor_float_ctrl_metadata {
 union cbor_item_metadata {
 	struct _cbor_int_metadata		 int_metadata;
 	struct _cbor_bytestring_metadata bytestring_metadata;
+	struct _cbor_array_metadata		 array_metadata;
 	struct _cbor_float_ctrl_metadata float_ctrl_metadata;
 };
 
