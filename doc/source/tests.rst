@@ -19,8 +19,13 @@ Every release is extensively tested for memory correctness. You can run these te
 Code coverage
 -------------------
 
-Every release is inspected using `GCOV/LCOV <http://ltp.sourceforge.net/coverage/lcov.php>`_. This toolchain is specific to Linux and GCC. Platform-independent code is typically fully covered by the test suite.
+Every release is inspected using `GCOV/LCOV <http://ltp.sourceforge.net/coverage/lcov.php>`_. Platform-independent code should be fully covered by the test suite.
 
+
+.. code-block:: bash
+
+  lcov --capture --directory . --output-file coverage.info
+  genhtml coverage.info --output-directory out
 
 Fuzz testing
 -----------------
