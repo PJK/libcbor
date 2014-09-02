@@ -31,7 +31,12 @@ void cbor_decref(cbor_item_t ** item)
 			}
 		case CBOT_TYPE_STRING:
 		case CBOR_TYPE_ARRAY:
-			/* Fallthrough */
+			{
+				cbor_item_t ** handle = cbor_array_handle(*item);
+				for (size_t i = 0; i < cbor_array_get_size(*item); i++)
+					cbor_decref(&handle[i]);
+				/* Fallthrough */
+			}
 		case CBOR_TYPE_MAP:
 		case CBOR_TYPE_TAG:
 			{
