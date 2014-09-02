@@ -325,7 +325,7 @@ cbor_item_t * cbor_load(const unsigned char * source,
 			source_size--;
 			struct cbor_load_result subres;
 			for (uint8_t i = 0; i < size; i++) {
-				res->data[i] = cbor_load(source, source_size, flags, &subres);
+				((cbor_item_t **)res->data)[i] = cbor_load(source, source_size, flags, &subres);
 				source += subres.read;
 				source_size -= subres.read;
 				result->read += subres.read;
@@ -576,9 +576,24 @@ size_t cbor_array_get_size(cbor_item_t * item)
 	return item->metadata.array_metadata.size;
 }
 
-bool cbor_array_is_definite(cbor_item_t * item);
-bool cbor_array_is_indefinite(cbor_item_t * item);
-cbor_item_t ** cbor_array_handle(cbor_item_t * item);
+bool cbor_array_is_definite(cbor_item_t * item)
+{
+	assert(cbor_isa_array(item));
+	return item->metadata.array_metadata.type == _CBOR_ARRAY_METADATA_DEFINITE;
+}
+
+bool cbor_array_is_indefinite(cbor_item_t * item)
+{
+	assert(cbor_isa_array(item));
+	return item->metadata.array_metadata.type == _CBOR_ARRAY_METADATA_INDEFINITE;
+}
+
+cbor_item_t ** cbor_array_handle(cbor_item_t * item)
+{
+	assert(cbor_isa_array(item));
+	assert(cbor_array_is_definite(item));
+	return (cbor_item_t **)item->data;
+}
 
 cbor_float_width cbor_float_ctrl_get_width(cbor_item_t * item)
 {
@@ -592,3 +607,63 @@ cbor_ctrl cbor_float_ctrl_get_ctrl(cbor_item_t * item)
 	assert(cbor_float_ctrl_get_width(item) == CBOR_FLOAT_0);
 	return item->metadata.float_ctrl_metadata.type;
 }
+
+#ifdef DEBUG
+void cbor_describe(cbor_item_t * item) {
+	printf("Address: %p\t\t Type: ", item);
+	switch(cbor_typeof(item)) {
+	case CBOR_TYPE_UINT:
+		{
+			printf("UInt\n");
+			break;
+		}
+	case CBOR_TYPE_NEGINT:
+		{
+			printf("NegInt\n");
+			// TODO
+			break;
+		}
+	case CBOR_TYPE_BYTESTRING:
+		{
+			printf("Bytestring\n");
+			// TODO
+			break;
+		}
+	case CBOT_TYPE_STRING:
+		{
+			printf("String\n");
+			// TODO
+			break;
+		}
+	case CBOR_TYPE_ARRAY:
+		{
+			printf("Array\n");
+			// TODO
+			break;
+		}
+	case CBOR_TYPE_MAP:
+		{
+			printf("Map\n");
+			// TODO
+			break;
+		}
+	case CBOR_TYPE_TAG:
+		{
+			printf("Tag\n");
+			// TODO
+			break;
+		}
+	case CBOR_TYPE_FLOAT_CTRL:
+		{
+			printf("Float/CTRL\n");
+			// TODO
+			break;
+		}
+	default:
+		{
+			printf("Invalid type! (%u)\n", cbor_typeof(item));
+		}
+	}
+}
+
+#endif

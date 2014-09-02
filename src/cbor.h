@@ -180,4 +180,11 @@ cbor_item_t ** cbor_array_handle(cbor_item_t * item);
 
 cbor_float_width cbor_float_ctrl_get_width(cbor_item_t * item);
 cbor_ctrl cbor_float_ctrl_get_ctrl(cbor_item_t * item);
+
+#ifdef DEBUG
+#include <stdio.h>
+/* Pretty-print item description to STDOUT */
+void cbor_describe(cbor_item_t * item);
+#endif
+
 #endif
