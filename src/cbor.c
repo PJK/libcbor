@@ -32,6 +32,7 @@ void cbor_decref(cbor_item_t ** item)
 		case CBOT_TYPE_STRING:
 		case CBOR_TYPE_ARRAY:
 			{
+				/* Get all items and decref them */
 				cbor_item_t ** handle = cbor_array_handle(*item);
 				for (size_t i = 0; i < cbor_array_get_size(*item); i++)
 					cbor_decref(&handle[i]);
@@ -330,6 +331,8 @@ cbor_item_t * cbor_load(const unsigned char * source,
 			source_size--;
 			struct cbor_load_result subres;
 			for (uint8_t i = 0; i < size; i++) {
+				// TODO check subres
+				// TODO extract this logic for usage with different arrays
 				((cbor_item_t **)res->data)[i] = cbor_load(source, source_size, flags, &subres);
 				source += subres.read;
 				source_size -= subres.read;
