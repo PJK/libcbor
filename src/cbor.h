@@ -113,6 +113,15 @@ struct cbor_error {
 	cbor_error_code code;
 };
 
+struct cbor_pair {
+	cbor_item_t * key, value;
+};
+
+typedef struct cbor_map_iterator {
+	struct cbor_pair data;
+	// METADATA FOR A LINKED LIST OR TREE OR WHATEVER
+} cbor_map_iterator;
+
 struct cbor_load_result {
 	struct cbor_error error;
 	size_t			  read;
@@ -172,11 +181,22 @@ cbor_item_t * cbor_bytestring_get_chunk(cbor_item_t * item);
 /* once you call this, previous chunk is lost (avoiding realloc)*/
 void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source, size_t source_size, struct cbor_load_result * result);
 
+// TODO rename this / figure out gets/sets verbs
 size_t cbor_array_get_size(cbor_item_t * item);
 bool cbor_array_is_definite(cbor_item_t * item);
 bool cbor_array_is_indefinite(cbor_item_t * item);
 /* Native handle to the underlying chunk */
 cbor_item_t ** cbor_array_handle(cbor_item_t * item);
+
+size_t cbor_map_size(cbor_item_t * item);
+struct cbor_map_iterator cbor_map_add(cbor_item_t * item, struct cbor_pair pair);
+void cbor_map_is_definite(cbor_item_t * item);
+void cbor_map_is_indefinite(cbor_item_t * item);
+struct cbor_map_iterator cbor_map_begin(cbor_item_t * item);
+bool cbor_map_iterator_end(struct cbor_map_iterator * iter);
+void cbor_map_iterator_next(struct cbor_map_iterator * iter);
+void cbor_map_delete(struct cbor_map_iterator * iter);
+
 
 cbor_float_width cbor_float_ctrl_get_width(cbor_item_t * item);
 cbor_ctrl cbor_float_ctrl_get_ctrl(cbor_item_t * item);
