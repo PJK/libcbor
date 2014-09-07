@@ -1,27 +1,23 @@
 Types 0 & 1 – Positive and negative integers
 =============================
 
-*CBOR* has two types of integers – positive (which may be effectively regarded as unsigned), and negative. There are four possible widths for an integer – 1, 2, 4, or 8 bytes. These correspond to 
+*CBOR* has two types of integers – positive (which may be effectively regarded as unsigned), and negative. There are four possible widths for an integer – 1, 2, 4, or 8 bytes. These are represented by
 
 .. type:: enum cbor_int_width
 
+   which consists of
+
    +--------------------+
-   | ``JSON_OBJECT``    |
+   | ``CBOR_INT_8``     |
    +--------------------+
-   | ``JSON_ARRAY``     |
+   | ``CBOR_INT_16``    |
    +--------------------+
-   | ``JSON_STRING``    |
+   | ``CBOR_INT_32``    |
    +--------------------+
-   | ``JSON_INTEGER``   |
+   | ``CBOR_INT_64``    |
    +--------------------+
-   | ``JSON_REAL``      |
-   +--------------------+
-   | ``JSON_TRUE``      |
-   +--------------------+
-   | ``JSON_FALSE``     |
-   +--------------------+
-   | ``JSON_NULL``      |
-   +--------------------+
+
+
 
 Retrieving values
 ------------------------
