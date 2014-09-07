@@ -18,7 +18,7 @@
  * be up to 2^64-1 items/bytes long -- how do we ensure real size won't overflow
  * size_t???
  */
-_Static_assert(sizeof(size_t) >= 8, "size_t must be at least 64-bits");
+_Static_assert(sizeof(size_t) >= 8, "size_t must be at least 64 bits");
 
 typedef enum {
 	CBOR_TYPE_UINT,        /* 0 */
@@ -152,7 +152,7 @@ bool cbor_is_bool(cbor_item_t * item);
 bool cbor_is_null(cbor_item_t * item);
 bool cbor_is_undef(cbor_item_t * item);
 
-/* uint manipulation - both uint and negint*/
+/* int manipulation - both uint and negint*/
 uint8_t cbor_get_uint8(cbor_item_t * item);
 uint16_t cbor_get_uint16(cbor_item_t * item);
 uint32_t cbor_get_uint32(cbor_item_t * item);
@@ -167,6 +167,7 @@ cbor_int_width cbor_int_get_width(cbor_item_t * item);
 
 void cbor_mark_uint(cbor_item_t * item);
 void cbor_mark_negint(cbor_item_t * item);
+
 cbor_item_t * cbor_new_int8();
 cbor_item_t * cbor_new_int16();
 cbor_item_t * cbor_new_int32();
@@ -189,6 +190,7 @@ bool cbor_array_is_indefinite(cbor_item_t * item);
 cbor_item_t ** cbor_array_handle(cbor_item_t * item);
 
 size_t cbor_map_size(cbor_item_t * item);
+cbor_item_t * cbor_new_map();
 struct cbor_map_iterator cbor_map_add(cbor_item_t * item, struct cbor_pair pair);
 void cbor_map_is_definite(cbor_item_t * item);
 void cbor_map_is_indefinite(cbor_item_t * item);
