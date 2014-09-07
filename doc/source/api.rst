@@ -29,6 +29,8 @@ The API is centered around :type:`cbor_item_t`, a generic handle for any CBOR it
 
 The single most important thing to keep in mind is: :type:`cbor_item_t` **is an opaque type and should only be manipulated using the appropriate functions!** Think of it as an object.
 
+.. type:: cbor_item_t
+
 Memory management
 ~~~~~~~~~~~~~~~~~
 
@@ -43,7 +45,7 @@ As CBOR items may require complex cleanups at the end of their lifetime, there i
 
 Items containing nested items will be destroyed recursively - refcount of every nested item will be decreased by one.
 
-The destruction is synchronous and will possibly render any pointers to items with refcount zero invalid immediately after calling the ``decref``.
+The destruction is synchronous and might possibly render any pointers to items with refcount zero invalid immediately after calling the ``decref``.
 
 
 .. function:: void cbor_incref(cbor_item_t * item)
@@ -53,3 +55,19 @@ The destruction is synchronous and will possibly render any pointers to items wi
 .. function:: void cbor_decref(cbor_item_t ** item)
 
 	Decrement the reference counter. Deallocate the item if it reaches zero and recursively decref all dependent items.
+
+.. _item-types:
+
+Item types
+~~~~~~~~~~~
+
+A :type:`cbor_item_t` can be probed for its type using these functions
+
+.. function:: bool cbor_isa_uint(const cbor_item_t * item)
+.. function:: bool cbor_isa_negint(const cbor_item_t * item)
+.. function:: bool cbor_isa_bytestring(const cbor_item_t * item)
+.. function:: bool cbor_isa_string(const cbor_item_t * item)
+.. function:: bool cbor_isa_array(const cbor_item_t * item)
+.. function:: bool cbor_isa_map(const cbor_item_t * item)
+.. function:: bool cbor_isa_tag(const cbor_item_t * item)
+.. function:: bool cbor_isa_float_ctrl(const cbor_item_t * item)

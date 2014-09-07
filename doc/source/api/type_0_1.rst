@@ -18,13 +18,18 @@ Types 0 & 1 – Positive and negative integers
    +--------------------+
 
 
+The following functions can be used for both Type 0 and Type 1 items.
+
+Actual Type of the integer can be checked using :ref:`item types API <item-types>`.
+
+An integer item is created with one of the four widths. Because integers' `TODO ref this in internal` storage is bundled with the handle, the width cannot be changed over its lifetime.
 
 Retrieving values
 ------------------------
-.. function:: uint8_t cbor_get_uint8(cbor_item_t * item)
-.. function:: uint16_t cbor_get_uint16(cbor_item_t * item)
-.. function:: uint32_t cbor_get_uint32(cbor_item_t * item)
-.. function:: uint64_t cbor_get_uint64(cbor_item_t * item)
+.. function:: uint8_t cbor_get_uint8(const cbor_item_t * item)
+.. function:: uint16_t cbor_get_uint16(const cbor_item_t * item)
+.. function:: uint32_t cbor_get_uint32(const cbor_item_t * item)
+.. function:: uint64_t cbor_get_uint64(const cbor_item_t * item)
 
 Setting values
 ------------------------
@@ -35,12 +40,13 @@ Setting values
 
 Dealing with width
 ---------------------
-.. function:: cbor_int_width cbor_int_get_width(cbor_item_t * item)
+.. function:: cbor_int_width cbor_int_get_width(const cbor_item_t * item)
 
 Dealing with signedness
 --------------------------
 .. function:: void cbor_mark_uint(cbor_item_t * item)
 .. function:: void cbor_mark_negint(cbor_item_t * item)
+
 
 Creating new items
 ------------------------
