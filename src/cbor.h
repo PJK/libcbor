@@ -173,14 +173,25 @@ cbor_item_t * cbor_new_int16();
 cbor_item_t * cbor_new_int32();
 cbor_item_t * cbor_new_int64();
 
-size_t cbor_bytestring_length(cbor_item_t * item);
-unsigned char * cbor_bytestring_handle(cbor_item_t * item);
-bool cbor_bytestring_is_definite(cbor_item_t * item);
-bool cbor_bytestring_is_indefinite(cbor_item_t * item);
+/* Bytestrings manipulation*/
+size_t cbor_bytestring_length(const cbor_item_t * item);
+
+bool cbor_bytestring_is_definite(const cbor_item_t * item);
+bool cbor_bytestring_is_indefinite(const cbor_item_t * item);
+
+unsigned char * cbor_bytestring_handle(const cbor_item_t * item);
+
 /* has to be called at least one - to decref the chunk */
-cbor_item_t * cbor_bytestring_get_chunk(cbor_item_t * item);
+cbor_item_t * cbor_bytestring_get_chunk(const cbor_item_t * item);
+
 /* once you call this, previous chunk is lost (avoiding realloc)*/
 void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source, size_t source_size, struct cbor_load_result * result);
+
+cbor_item_t * cbor_new_definite_bytestring();
+cbor_item_t * cbor_new_indefinite_bytestring();
+
+void cbor_bytestring_set_handle(cbor_item_t * item, unsigned char * data, size_t length);
+void cbor_bytestring_set_chunk(cbor_item_t * item, const cbor_item_t * chunk);
 
 // TODO rename this / figure out gets/sets verbs
 size_t cbor_array_get_size(cbor_item_t * item);

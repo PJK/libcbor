@@ -540,28 +540,28 @@ inline bool cbor_is_break(const cbor_item_t * item)
 	return cbor_isa_float_ctrl(item) && cbor_float_ctrl_get_ctrl(item) == CBOR_CTRL_BREAK;
 }
 
-size_t cbor_bytestring_length(cbor_item_t * item) {
+size_t cbor_bytestring_length(const cbor_item_t * item) {
 	assert(cbor_isa_bytestring(item));
 	return item->metadata.bytestring_metadata.length;
 }
 
-unsigned char * cbor_bytestring_handle(cbor_item_t * item) {
+unsigned char * cbor_bytestring_handle(const cbor_item_t * item) {
 	assert(cbor_isa_bytestring(item));
 	return item->data;
 }
 
-bool cbor_bytestring_is_definite(cbor_item_t * item)
+bool cbor_bytestring_is_definite(const cbor_item_t * item)
 {
 	assert(cbor_isa_bytestring(item));
 	return item->metadata.bytestring_metadata.type == _CBOR_BYTESTRING_METADATA_DEFINITE;
 }
 
-bool cbor_bytestring_is_indefinite(cbor_item_t * item)
+bool cbor_bytestring_is_indefinite(const cbor_item_t * item)
 {
 	return !cbor_bytestring_is_definite(item);
 }
 
-cbor_item_t * cbor_bytestring_get_chunk(cbor_item_t * item)
+cbor_item_t * cbor_bytestring_get_chunk(const cbor_item_t * item)
 {
 	assert(cbor_isa_bytestring(item));
 	assert(cbor_bytestring_is_indefinite(item));
