@@ -359,34 +359,34 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		return res;
 }
 
-inline cbor_type cbor_typeof(cbor_item_t * item)
+inline cbor_type cbor_typeof(const cbor_item_t * item)
 {
 	return item->type;
 }
 
 
-cbor_int_width cbor_int_get_width(cbor_item_t * item)
+cbor_int_width cbor_int_get_width(const cbor_item_t * item)
 {
 	assert(cbor_is_int(item));
 	return item->metadata.int_metadata.width;
 }
 
-uint8_t cbor_get_uint8(cbor_item_t * item)
+uint8_t cbor_get_uint8(const cbor_item_t * item)
 {
 	return *(uint8_t *)item->data;
 }
 
-uint16_t cbor_get_uint16(cbor_item_t * item)
+uint16_t cbor_get_uint16(const cbor_item_t * item)
 {
 	return *(uint16_t *)item->data;
 }
 
-uint32_t cbor_get_uint32(cbor_item_t * item)
+uint32_t cbor_get_uint32(const cbor_item_t * item)
 {
 	return *(uint32_t *)item->data;
 }
 
-uint64_t cbor_get_uint64(cbor_item_t * item)
+uint64_t cbor_get_uint64(const cbor_item_t * item)
 {
 	return *(uint64_t *)item->data;
 }
@@ -464,42 +464,42 @@ cbor_item_t * cbor_new_int64()
 
 /** ========================================================== */
 
-inline bool cbor_isa_uint(cbor_item_t * item)
+inline bool cbor_isa_uint(const cbor_item_t * item)
 {
 	return item->type == CBOR_TYPE_UINT;
 }
 
-inline bool cbor_isa_negint(cbor_item_t * item)
+inline bool cbor_isa_negint(const cbor_item_t * item)
 {
 	return item->type == CBOR_TYPE_NEGINT;
 }
 
-inline bool cbor_isa_bytestring(cbor_item_t * item)
+inline bool cbor_isa_bytestring(const cbor_item_t * item)
 {
 	return item->type == CBOR_TYPE_BYTESTRING;
 }
 
-inline bool cbor_isa_string(cbor_item_t * item)
+inline bool cbor_isa_string(const cbor_item_t * item)
 {
 	return item->type == CBOT_TYPE_STRING;
 }
 
-inline bool cbor_isa_array(cbor_item_t * item)
+inline bool cbor_isa_array(const cbor_item_t * item)
 {
 	return item->type == CBOR_TYPE_ARRAY;
 }
 
-inline bool cbor_isa_map(cbor_item_t * item)
+inline bool cbor_isa_map(const cbor_item_t * item)
 {
 	return item->type == CBOR_TYPE_MAP;
 }
 
-inline bool cbor_isa_tag(cbor_item_t * item)
+inline bool cbor_isa_tag(const cbor_item_t * item)
 {
 	return item->type == CBOR_TYPE_TAG;
 }
 
-inline bool cbor_isa_float_ctrl(cbor_item_t * item)
+inline bool cbor_isa_float_ctrl(const cbor_item_t * item)
 {
 	return item->type == CBOR_TYPE_FLOAT_CTRL;
 }
@@ -508,60 +508,60 @@ inline bool cbor_isa_float_ctrl(cbor_item_t * item)
 /** ========================================================== */
 
 
-inline bool cbor_is_int(cbor_item_t * item)
+inline bool cbor_is_int(const cbor_item_t * item)
 {
 	return cbor_isa_uint(item) || cbor_isa_negint(item);
 }
 
-inline bool cbor_is_uint(cbor_item_t * item)
+inline bool cbor_is_uint(const cbor_item_t * item)
 {
 	/* Negative 'signed' ints are negints */
 	return cbor_isa_uint(item);
 }
 
-inline bool cbor_is_float(cbor_item_t * item)
+inline bool cbor_is_float(const cbor_item_t * item)
 {
 }
 
-inline bool cbor_is_bool(cbor_item_t * item)
+inline bool cbor_is_bool(const cbor_item_t * item)
 {
 }
 
-inline bool cbor_is_null(cbor_item_t * item)
+inline bool cbor_is_null(const cbor_item_t * item)
 {
 }
 
-inline bool cbor_is_undef(cbor_item_t * item)
+inline bool cbor_is_undef(const cbor_item_t * item)
 {
 }
 
-inline bool cbor_is_break(cbor_item_t * item)
+inline bool cbor_is_break(const cbor_item_t * item)
 {
 	return cbor_isa_float_ctrl(item) && cbor_float_ctrl_get_ctrl(item) == CBOR_CTRL_BREAK;
 }
 
-size_t cbor_bytestring_length(cbor_item_t * item) {
+size_t cbor_bytestring_length(const cbor_item_t * item) {
 	assert(cbor_isa_bytestring(item));
 	return item->metadata.bytestring_metadata.length;
 }
 
-unsigned char * cbor_bytestring_handle(cbor_item_t * item) {
+unsigned char * cbor_bytestring_handle(const cbor_item_t * item) {
 	assert(cbor_isa_bytestring(item));
 	return item->data;
 }
 
-bool cbor_bytestring_is_definite(cbor_item_t * item)
+bool cbor_bytestring_is_definite(const cbor_item_t * item)
 {
 	assert(cbor_isa_bytestring(item));
 	return item->metadata.bytestring_metadata.type == _CBOR_BYTESTRING_METADATA_DEFINITE;
 }
 
-bool cbor_bytestring_is_indefinite(cbor_item_t * item)
+bool cbor_bytestring_is_indefinite(const cbor_item_t * item)
 {
 	return !cbor_bytestring_is_definite(item);
 }
 
-cbor_item_t * cbor_bytestring_get_chunk(cbor_item_t * item)
+cbor_item_t * cbor_bytestring_get_chunk(const cbor_item_t * item)
 {
 	assert(cbor_isa_bytestring(item));
 	assert(cbor_bytestring_is_indefinite(item));

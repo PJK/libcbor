@@ -132,38 +132,38 @@ cbor_item_t * cbor_load(const unsigned char * source, size_t source_size, size_t
 void cbor_incref(cbor_item_t * item);
 void cbor_decref(cbor_item_t ** item);
 
-cbor_type cbor_typeof(cbor_item_t * item); /* will be inlined iff link-time opt is enabled */
+cbor_type cbor_typeof(const cbor_item_t * item); /* will be inlined iff link-time opt is enabled */
 
 /* Standard item types as described by the RFC */
-bool cbor_isa_uint(cbor_item_t * item);
-bool cbor_isa_negint(cbor_item_t * item);
-bool cbor_isa_bytestring(cbor_item_t * item);
-bool cbor_isa_string(cbor_item_t * item);
-bool cbor_isa_array(cbor_item_t * item);
-bool cbor_isa_map(cbor_item_t * item);
-bool cbor_isa_tag(cbor_item_t * item);
-bool cbor_isa_float_ctrl(cbor_item_t * item);
+bool cbor_isa_uint(const cbor_item_t * item);
+bool cbor_isa_negint(const cbor_item_t * item);
+bool cbor_isa_bytestring(const cbor_item_t * item);
+bool cbor_isa_string(const cbor_item_t * item);
+bool cbor_isa_array(const cbor_item_t * item);
+bool cbor_isa_map(const cbor_item_t * item);
+bool cbor_isa_tag(const cbor_item_t * item);
+bool cbor_isa_float_ctrl(const cbor_item_t * item);
 
 /* Practical types with respect to their semantics (but no tag values) */
-bool cbor_is_int(cbor_item_t * item);
-bool cbor_is_uint(cbor_item_t * item);
-bool cbor_is_float(cbor_item_t * item);
-bool cbor_is_bool(cbor_item_t * item);
-bool cbor_is_null(cbor_item_t * item);
-bool cbor_is_undef(cbor_item_t * item);
+bool cbor_is_int(const cbor_item_t * item);
+bool cbor_is_uint(const cbor_item_t * item);
+bool cbor_is_float(const cbor_item_t * item);
+bool cbor_is_bool(const cbor_item_t * item);
+bool cbor_is_null(const cbor_item_t * item);
+bool cbor_is_undef(const cbor_item_t * item);
 
 /* int manipulation - both uint and negint*/
-uint8_t cbor_get_uint8(cbor_item_t * item);
-uint16_t cbor_get_uint16(cbor_item_t * item);
-uint32_t cbor_get_uint32(cbor_item_t * item);
-uint64_t cbor_get_uint64(cbor_item_t * item);
+uint8_t cbor_get_uint8(const cbor_item_t * item);
+uint16_t cbor_get_uint16(const cbor_item_t * item);
+uint32_t cbor_get_uint32(const cbor_item_t * item);
+uint64_t cbor_get_uint64(const cbor_item_t * item);
 
 void cbor_set_uint8(cbor_item_t * item, uint8_t value);
 void cbor_set_uint16(cbor_item_t * item, uint16_t value);
 void cbor_set_uint32(cbor_item_t * item, uint32_t value);
 void cbor_set_uint64(cbor_item_t * item, uint64_t value);
 
-cbor_int_width cbor_int_get_width(cbor_item_t * item);
+cbor_int_width cbor_int_get_width(const cbor_item_t * item);
 
 void cbor_mark_uint(cbor_item_t * item);
 void cbor_mark_negint(cbor_item_t * item);
@@ -173,14 +173,25 @@ cbor_item_t * cbor_new_int16();
 cbor_item_t * cbor_new_int32();
 cbor_item_t * cbor_new_int64();
 
-size_t cbor_bytestring_length(cbor_item_t * item);
-unsigned char * cbor_bytestring_handle(cbor_item_t * item);
-bool cbor_bytestring_is_definite(cbor_item_t * item);
-bool cbor_bytestring_is_indefinite(cbor_item_t * item);
+/* Bytestrings manipulation*/
+size_t cbor_bytestring_length(const cbor_item_t * item);
+
+bool cbor_bytestring_is_definite(const cbor_item_t * item);
+bool cbor_bytestring_is_indefinite(const cbor_item_t * item);
+
+unsigned char * cbor_bytestring_handle(const cbor_item_t * item);
+
 /* has to be called at least one - to decref the chunk */
-cbor_item_t * cbor_bytestring_get_chunk(cbor_item_t * item);
+cbor_item_t * cbor_bytestring_get_chunk(const cbor_item_t * item);
+
 /* once you call this, previous chunk is lost (avoiding realloc)*/
 void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source, size_t source_size, struct cbor_load_result * result);
+
+cbor_item_t * cbor_new_definite_bytestring();
+cbor_item_t * cbor_new_indefinite_bytestring();
+
+void cbor_bytestring_set_handle(cbor_item_t * item, unsigned char * data, size_t length);
+void cbor_bytestring_set_chunk(cbor_item_t * item, const cbor_item_t * chunk);
 
 // TODO rename this / figure out gets/sets verbs
 size_t cbor_array_get_size(cbor_item_t * item);

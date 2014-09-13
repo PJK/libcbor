@@ -5,44 +5,44 @@ Building libcbor
 ------------------
 
 Prerequisites:
- - C99 compiler
- - CMake_ 2.8 or newer (might be also called ``cmakesetup``, ``cmake-gui`` or ``ccmake`` depending on the installed version and system)
+ - C11 compiler
+ - CMake_ 2.8 or newer (might also be called ``cmakesetup``, ``cmake-gui`` or ``ccmake`` depending on the installed version and system)
  - C build system CMake can target (make, MSVC toolchain, Apple Xcode, ...)
  .. _CMake: http://cmake.org/
+
+
+**Executing the build**:
 
 .. code-block:: bash
 
   # Assuming you are in the directory where you want to build
-  cmake path_to_libcbor_dir
-  make cbor
-  # libcbor.a is now in the src dir
+  cmake -DCMAKE_BUILD_TYPE=Release path_to_libcbor_dir
+  make
 
-Development dependencies
----------------------------
-- `CMocka <http://cmocka.org/>`_
-- `Jansson <http://www.digip.org/jansson/>`_
-- Python and *pip*
-- `Sphinx <http://sphinx-doc.org/>`_
+Both the shared (``libcbor.so``) and the static (``libcbor.a``) libraries should now be in the ``src`` subdirectory.
 
-Building *cmocka*
-~~~~~~~~~~~~~~~~~
+If you want to pass custom configuration, please refer to `<http://stellarium.org/wiki/index.php/Configuring_Build_Options>`_.
+
+**Optional: running the tests**:
 
 .. code-block:: bash
 
-  # Starting from libcbor source directory
-  git submodule update test/cmocka
-  cd test
-  mkdir cmocka_build && cd cmocka_build
-  cmake ../cmocka
-  make -j 4
-  make install
+  ctest
 
-Installing *sphinx*
-~~~~~~~~~~~~~~~~~~~~~~
+Sample output:
 
-.. code-block:: bash
+:: 
 
-  pip install sphinx
-  pip install sphinx_rtd_theme
-  pip install https://github.com/lepture/python-livereload/archive/master.zip
-  pip install sphinx-autobuild
+    Test project /tmp/tmp.Wi5mbHfzXI
+	Start 1: type_4_test
+    1/4 Test #1: type_4_test ......................   Passed    0.00 sec
+	Start 2: type_2_test
+    2/4 Test #2: type_2_test ......................   Passed    0.00 sec
+	Start 3: type_0_test
+    3/4 Test #3: type_0_test ......................   Passed    0.00 sec
+	Start 4: type_1_test
+    4/4 Test #4: type_1_test ......................   Passed    0.00 sec
+
+    100% tests passed, 0 tests failed out of 4
+
+    Total Test time (real) =   0.01 sec
