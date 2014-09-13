@@ -22,6 +22,16 @@ Types 0 & 1 – Positive and negative integers
    +--------------------+
    | ``JSON_NULL``      |
    +--------------------+
+<<<<<<< Updated upstream
+=======
+
+
+The following functions can be used for both Type 0 and Type 1 items.
+
+Actual Type of the integer can be checked using :ref:`item types API <item-types>`.
+
+An integer item is created with one of the four widths. Because integers' `TODO ref this in internal` storage is bundled together with the handle, the width cannot be changed over its lifetime.
+>>>>>>> Stashed changes
 
 Retrieving values
 ------------------------
@@ -44,8 +54,16 @@ Dealing with width
 Dealing with signedness
 --------------------------
 .. function:: void cbor_mark_uint(cbor_item_t * item)
+
+	Mark the item to be interpreted as a positive/unsigned integer.
+
 .. function:: void cbor_mark_negint(cbor_item_t * item)
 
+<<<<<<< Updated upstream
+=======
+	Mark the item to be interpreted as a negative integer.
+
+>>>>>>> Stashed changes
 Creating new items
 ------------------------
 .. function:: cbor_item_t * cbor_new_int8()

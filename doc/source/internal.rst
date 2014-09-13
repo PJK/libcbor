@@ -29,6 +29,11 @@ Combining these two principles in practice turns out to be quite difficult. Inde
 
 Unfortunately, due to memory management limitations and some RFC requirements, the author found himself having to choose between a convenient API that could *by design* never be standard compliant, and an inconvenient API. The approach of *libcbor* is the latter. It comes at an additional cost of requiring the client to have quite deep understanding of how CBOR works. Nonetheless, I believe firmly that it was the right choice to make, as further layers of abstractions may be added if needed. At least, they will have a solid foundation to build upon.
 
+Coding style
+-------------
+This code loosely follows the `Linux kernel coding style <https://www.kernel.org/doc/Documentation/CodingStyle>`_. Tabs are tabs, and they are 4 characters wide.
+
+
 Memory layout
 ---------------
 CBOR is very dynamic in the sense that it contains many data elements of variable length, sometimes even indefinite length. This section describes internal representation of all CBOR data types.
@@ -89,7 +94,3 @@ Bytestrings have either fixed or indefinite length. This is described by :type:`
 
 
 The data is either a contiguous block of memory containing ``(struct _cbor_bytestring_metadata).length`` bytes, or a pointer to **the last** chunk read. It is initialized to ``NULL``. Upon reading an invalid chunk or failing to read a chunk, it will be set to ``NULL``. After calling :func:`cbor_bytestring_read_chunk`, the pointer is a valid, initialized :type:`cbor_item_t *`, or ``NULL``. Further manipulation (e.g. calling :func:`cbor_bytestring_get_chunk` and ``decref``-ing it) might break the guarantee.
-
-Coding style
--------------
-This code loosely follows the `Linux kernel coding style <https://www.kernel.org/doc/Documentation/CodingStyle>`_. Tabs are tabs, and they are 4 characters wide.
