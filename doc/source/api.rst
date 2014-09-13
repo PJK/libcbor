@@ -29,8 +29,6 @@ The API is centered around :type:`cbor_item_t`, a generic handle for any CBOR it
 
 The single most important thing to keep in mind is: :type:`cbor_item_t` **is an opaque type and should only be manipulated using the appropriate functions!** Think of it as an object.
 
-.. type:: cbor_item_t
-
 Memory management
 ~~~~~~~~~~~~~~~~~
 

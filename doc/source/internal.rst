@@ -5,9 +5,9 @@ Internal workings of *libcbor* are mostly derived from the specification. The pu
 
 Terminology
 ---------------
-=== =================  ===
+=== =================  ==============================================
 MTB Major Type Byte    http://tools.ietf.org/html/rfc7049#section-2.1
-=== =================  ===
+=== =================  ==============================================
 
 Conventions
 --------------
@@ -38,59 +38,63 @@ Memory layout
 ---------------
 CBOR is very dynamic in the sense that it contains many data elements of variable length, sometimes even indefinite length. This section describes internal representation of all CBOR data types.
 
-Generally speaking, data items are stored in a contiguous block of memory, taking the following form [#]_
-::
+Generally speaking, data items consist of three parts:
 
-  cbor_item_t.data
-  |
-  V
-  +------------------------------+------------------------------------+-------------------------------------+
-  |                              |                                    |                                     |
-  |  _CBOR_METADATA_WIDTH bytes  |  <X>_METADATA_WIDTH bytes          |  fixed or variable number of bytes  |
-  |  of generic metadata         |  of data-type specific metadata    |  specific to <X>                    |
-  |                              |                                    |                                     |
-  +------------------------------+------------------------------------+-------------------------------------+
-  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^--"The header"           "The data"--^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ - a generic :type:`handle <cbor_item_t>`,
+ - the associated :type:`metadata <cbor_item_metadata>`,
+ - and the :type:`actual data  <cbor_item_t.data>`
 
-  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^--"The metadata"
+.. type:: cbor_item_t
 
-         "The specific metadata"--^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    Represents the item. Used as an opaque type
 
-                                        (X is cbor_item_t.type)
+    .. member:: cbor_type type
 
-.. [#] ``<X>_METADATA_WIDTH`` is used instead of union because it would be larger than necessary for some data types (TODO example)
+        Type discriminator
 
-Type 0
-^^^^^^^^^^^^
-Unsigned integers have a fixed size of either 1, 2, 4, or 8 bytes. ``UINT_METADATA_WITDTH`` is ``sizeof(cbor_uint_width)``, the enum describing these possibilities. Then the appropriate number of bytes representing the particular uint [#]_ follow.
+    .. member:: size_t refcount
 
-.. [#] The integer is encoded in platform's native encoding using ``uint<X>_t``
+        Reference counter. Used by :func:`cbor_decref`, :func:`cbor_incref`
 
-Type 1
-^^^^^^^^^^^^
-Negative integers are very much the same as unsigned integers. Their memory layout is identical.
+    .. member:: union cbor_item_metadata metadata
 
-Unfortunately, the RFC specifies the smallest representable value to be :math:`-1 - (2^{64} - 1) = -2^{64}`, hence *libcbor* can provide no simple API for manipulation of these integers, since a suitable signed integral type might not exist (``int64_t`` is the widest signed type universally available, bounded at :math:`-2^{63}+1`)
+        Union discriminated by :member:`cbor_item_t.type`. Contains type-specific metadata
 
-TODO static assert check
+    .. member:: unsigned char * data
 
+        Contains pointer to the actual data. Small, fixed size items (:doc:`api/type_0_1`, :doc:`api/type_6`, :doc:`api/type_7`) are allocated as a single memory block.
 
-Type 2
-^^^^^^^^^^^^^^^
-Bytestrings have either fixed or indefinite length. This is described by :type:`_cbor_bytesting_type_metadata` and reflected in the metadata.
+        Consider the following snippet
 
-::
+        .. code-block:: c
 
-  cbor_item_t.data
-  |
-  V
-  +------------------------------+-----------------------------------------+--------------------------------------------+
-  |                              |                                         |                                            |
-  |  _CBOR_METADATA_WIDTH bytes  |  _CBOR_BYTESTRING_METADATA_WIDTH        |  (struct _cbor_bytesting_metadata).length  |
-  |  of generic metadata         |  for a struct _cbor_bytesting_metadata  |  or sizeof(cbor_item_t *) bytes            |
-  |                              |                                         |                                            |
-  +------------------------------+-----------------------------------------+--------------------------------------------+
-                                        (X is cbor_item_t.type)
+            cbor_item_t * item = cbor_new_int8();
+
+        then the memory is laid out as follows
+
+        ::
+
+            +-----------+---------------+---------------+-----------------------------------++-----------+
+            |           |               |               |                                   ||           |
+            |   type    |   refcount    |   metadata    |              data                 ||  uint8_t  |
+            |           |               |               |   (= item + sizeof(cbor_item_t))  ||           |
+            +-----------+---------------+---------------+-----------------------------------++-----------+
+            ^                                                                                ^
+            |                                                                                |
+            +--- item                                                                        +--- item->data
+
+        Dynamically sized types (:doc:`api/type_2`, :doc:`api/type_3`, :doc:`api/type_4`, :doc:`api/type_5`) may store handle and data in separate locations. This enables creating large items (e.g :doc:`byte strings <api/type_2>`) without :func:`realloc` or copying large blocks of memory. Once simply attaches the correct pointer to the handle.
 
 
-The data is either a contiguous block of memory containing ``(struct _cbor_bytestring_metadata).length`` bytes, or a pointer to **the last** chunk read. It is initialized to ``NULL``. Upon reading an invalid chunk or failing to read a chunk, it will be set to ``NULL``. After calling :func:`cbor_bytestring_read_chunk`, the pointer is a valid, initialized :type:`cbor_item_t *`, or ``NULL``. Further manipulation (e.g. calling :func:`cbor_bytestring_get_chunk` and ``decref``-ing it) might break the guarantee.
+.. type:: union cbor_item_metadata
+
+    .. member:: struct _cbor_int_metadata int_metadata;
+
+        Used both by both :doc:`api/type_0_1`
+
+    .. member:: struct _cbor_bytestring_metadata bytestring_metadata;
+    .. member:: struct _cbor_string_metadata string_metadata;
+    .. member:: struct _cbor_array_metadata array_metadata;
+    .. member:: struct _cbor_map_metadata map_metadata;
+    .. member:: struct _cbor_tag_metadata tag_metadata;
+    .. member:: struct _cbor_float_ctrl_metadata float_ctrl_metadata;

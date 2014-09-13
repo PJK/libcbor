@@ -79,6 +79,10 @@ struct _cbor_bytestring_metadata {
 	_cbor_bytestring_type_metadata type;
 };
 
+struct _cbor_string_metadata {
+
+};
+
 typedef enum {
 	_CBOR_ARRAY_METADATA_DEFINITE,
 	_CBOR_ARRAY_METADATA_INDEFINITE
@@ -89,6 +93,14 @@ struct _cbor_array_metadata {
 	_cbor_array_type_metadata type;
 };
 
+struct _cbor_map_metadata {
+
+};
+
+struct _cbor_tag_metadata {
+
+};
+
 struct _cbor_float_ctrl_metadata {
 	cbor_float_width width;
 	cbor_ctrl type;
@@ -97,7 +109,10 @@ struct _cbor_float_ctrl_metadata {
 union cbor_item_metadata {
 	struct _cbor_int_metadata		 int_metadata;
 	struct _cbor_bytestring_metadata bytestring_metadata;
+	struct _cbor_string_metadata	 string_metadata;
 	struct _cbor_array_metadata		 array_metadata;
+	struct _cbor_map_metadata		 map_metadata;
+	struct _cbor_tag_metadata		 tag_metadata;
 	struct _cbor_float_ctrl_metadata float_ctrl_metadata;
 };
 
