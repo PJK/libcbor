@@ -5,14 +5,30 @@ Internal workings of *libcbor* are mostly derived from the specification. The pu
 
 Terminology
 ---------------
-=== =================  ==============================================
-MTB Major Type Byte    http://tools.ietf.org/html/rfc7049#section-2.1
-=== =================  ==============================================
+===  ======================  ========================================================================================================================================
+MTB  Major Type Byte         http://tools.ietf.org/html/rfc7049#section-2.1
+---  ----------------------  ----------------------------------------------------------------------------------------------------------------------------------------
+DST  Dynamically Sized Type  Type whose storage requirements cannot be determined
+
+                             during compilation (originated in the `Rust <http://www.rust-lang.org/>`_ community)
+===  ======================  ========================================================================================================================================
 
 Conventions
 --------------
 API symbols start with ``cbor_`` or ``CBOR_`` prefix, internal symbols have ``_cbor_`` or ``_CBOR_`` prefix.
 
+Inspiration & related projects
+-------------------------------
+Most of the API is largely modelled after existing JSON libraries, including
+
+ - `Jansson <http://www.digip.org/jansson/>`_
+ - `json-c <https://github.com/json-c/json-c>`_
+ - Gnome's `JsonGlib <https://wiki.gnome.org/action/show/Projects/JsonGlib?action=show&redirect=JsonGlib>`_
+
+and also borrowing from
+
+ - `msgpack-c <https://github.com/msgpack/msgpack-c>`_
+ - `Google Protocol Buffers <http://code.google.com/p/protobuf/>`_.
 
 General notes on the API design
 --------------------------------
@@ -24,10 +40,14 @@ The API design has two main driving priciples:
 Combining these two principles in practice turns out to be quite difficult. Indefinite-length strings, arrays, and maps require client to handle every fixed-size chunk explicitly in order to
 
  - ensure the client never runs out of memory due to *libcbor*
- - never ``realloc`` memory
+ - use :func:`realloc` sparsely and predictably [#]_
+
+    - provide strong guarantees about its usage (to prevent latency spikes)
+    - provide APIs to avoid :func:`realloc` altogether
  - allow proper handling of (streamed) data bigger than available memory
 
-Unfortunately, due to memory management limitations and some RFC requirements, the author found himself having to choose between a convenient API that could *by design* never be standard compliant, and an inconvenient API. The approach of *libcbor* is the latter. It comes at an additional cost of requiring the client to have quite deep understanding of how CBOR works. Nonetheless, I believe firmly that it was the right choice to make, as further layers of abstractions may be added if needed. At least, they will have a solid foundation to build upon.
+ .. [#] Reasonable handling of DSTs requires reallocation if the API is to remain sane. *libcbor* is designed in such
+
 
 Coding style
 -------------

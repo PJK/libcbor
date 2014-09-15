@@ -3,13 +3,13 @@ Development
 
 Development dependencies
 ---------------------------
-- `CMocka <http://cmocka.org/>`_
-- `Jansson <http://www.digip.org/jansson/>`_
-- `Python <https://www.python.org/>`_ and `pip <https://pypi.python.org/pypi/pip>`_
-- `Sphinx <http://sphinx-doc.org/>`_
+- `CMocka <http://cmocka.org/>`_ (testing)
+- `Jansson <http://www.digip.org/jansson/>`_ (to benchmark against)
+- `Python <https://www.python.org/>`_ and `pip <https://pypi.python.org/pypi/pip>`_ (Sphinx platform)
+- `Sphinx <http://sphinx-doc.org/>`_ (documentation)
 - There are some `Ruby <https://www.ruby-lang.org/en/>`_ scripts in ``misc``
-- `Valgrind <http://valgrind.org/>`_
-- `GCOV/LCOV <http://ltp.sourceforge.net/coverage/lcov.php>`_
+- `Valgrind <http://valgrind.org/>`_ (memory correctness & profiling)
+- `GCOV/LCOV <http://ltp.sourceforge.net/coverage/lcov.php>`_ (test coverage)
 
 Building *cmocka*
 ~~~~~~~~~~~~~~~~~

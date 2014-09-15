@@ -32,7 +32,7 @@ When generating indefinite items, the client code has to take most of the respon
 
 The first step is to initialize your item using :func:`cbor_new_indefinite_bytestring` and encode it (TODO).
 
-Then you can start building chunks using :func:`cbor_new_definite_bytestring` and :func:`cbor_bytestring_set_handle`. Encode them so that they follow the initial indefinite item. (TODO)
+ng` and :func:`cbor_bytestring_set_handle`. Encode them so that they follow the initial indefinite item. (TODO)
 
 Finally add a Break(TODO).
 
