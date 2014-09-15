@@ -14,11 +14,28 @@
 #define CBOR_VERSION TO_STR(CBOR_MAJOR_VERSION) "." TO_STR(CBOR_MINOR_VERSION) "." TO_STR(CBOR_PATCH_VERSION)
 
 /*
- * TODO - work around this on <=32 bit platforms - now arrays and bytestrings can
+ * TODO work around this on <=32 bit platforms - now arrays and bytestrings can
  * be up to 2^64-1 items/bytes long -- how do we ensure real size won't overflow
  * size_t???
  */
 _Static_assert(sizeof(size_t) >= 8, "size_t must be at least 64 bits");
+_Static_assert(sizeof(bool) == 1, "size_t must be at least 64 bits");
+
+
+/*
+ * Packed bitfield
+ */
+// TODO ensure this works on big endian systems (I doubt it)
+typedef union {
+	struct {
+		bool no_realloc : 1;
+		bool canonical  : 1;
+		int : sizeof(int) * 8 - 3; /* Padding */
+	};
+	int raw;
+} cbor_flags_t;
+
+#define CBOR_FLAGS_NONE ((cbor_flags_t) { { 0 } })
 
 typedef enum {
 	CBOR_TYPE_UINT,        /* 0 */
@@ -142,7 +159,7 @@ struct cbor_load_result {
 	size_t			  read;
 };
 
-cbor_item_t * cbor_load(const unsigned char * source, size_t source_size, size_t flags, struct cbor_load_result * result);
+cbor_item_t * cbor_load(const unsigned char * source, size_t source_size, cbor_flags_t flags, struct cbor_load_result * result);
 
 void cbor_incref(cbor_item_t * item);
 void cbor_decref(cbor_item_t ** item);

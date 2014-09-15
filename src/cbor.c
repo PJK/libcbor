@@ -61,7 +61,7 @@ void cbor_decref(cbor_item_t ** item)
 
 cbor_item_t * cbor_load(const unsigned char * source,
 						size_t source_size,
-						size_t flags,
+						cbor_flags_t flags,
 						struct cbor_load_result * result)
 {
 	if (source_size < 1) {
@@ -573,7 +573,7 @@ void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source
 	assert(cbor_isa_bytestring(item));
 	assert(cbor_bytestring_is_indefinite(item));
 	// TODO save original flags
-	cbor_item_t * chunk = cbor_load(source, source_size, 0, result);
+	cbor_item_t * chunk = cbor_load(source, source_size, CBOR_FLAGS_NONE, result);
 	/* Will be NULL if failed, no memory lost */
 	item->data = (unsigned char *)chunk;
 }
