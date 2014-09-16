@@ -291,7 +291,7 @@ cbor_item_t * cbor_load(const unsigned char * source,
 			res->type = CBOR_TYPE_BYTESTRING;
 			res->data = NULL;
 			// TODO metadata
-			res->metadata.bytestring_metadata = (struct _cbor_bytestring_metadata) { 0, _CBOR_BYTESTRING_METADATA_INDEFINITE };
+			res->metadata.bytestring_metadata = (struct _cbor_bytestring_metadata) { 0, _CBOR_STRING_METADATA_INDEFINITE };
 			break;
 		}
 
@@ -519,20 +519,20 @@ inline bool cbor_is_uint(const cbor_item_t * item)
 	return cbor_isa_uint(item);
 }
 
-inline bool cbor_is_float(const cbor_item_t * item)
-{
-}
 
 inline bool cbor_is_bool(const cbor_item_t * item)
 {
+	return cbor_isa_float_ctrl(item) && (cbor_float_ctrl_get_ctrl(item) == CBOR_CTRL_FALSE || cbor_float_ctrl_get_ctrl(item) == CBOR_CTRL_TRUE);
 }
 
 inline bool cbor_is_null(const cbor_item_t * item)
 {
+	return cbor_isa_float_ctrl(item) && cbor_float_ctrl_get_ctrl(item) == CBOR_CTRL_NULL;
 }
 
 inline bool cbor_is_undef(const cbor_item_t * item)
 {
+	return cbor_isa_float_ctrl(item) && cbor_float_ctrl_get_ctrl(item) == CBOR_CTRL_UNDEF;
 }
 
 inline bool cbor_is_break(const cbor_item_t * item)
@@ -553,7 +553,7 @@ unsigned char * cbor_bytestring_handle(const cbor_item_t * item) {
 bool cbor_bytestring_is_definite(const cbor_item_t * item)
 {
 	assert(cbor_isa_bytestring(item));
-	return item->metadata.bytestring_metadata.type == _CBOR_BYTESTRING_METADATA_DEFINITE;
+	return item->metadata.bytestring_metadata.type == _CBOR_STRING_METADATA_DEFINITE;
 }
 
 bool cbor_bytestring_is_indefinite(const cbor_item_t * item)
@@ -603,13 +603,13 @@ cbor_item_t ** cbor_array_handle(cbor_item_t * item)
 	return (cbor_item_t **)item->data;
 }
 
-cbor_float_width cbor_float_ctrl_get_width(cbor_item_t * item)
+cbor_float_width cbor_float_ctrl_get_width(const cbor_item_t * item)
 {
 	assert(cbor_isa_float_ctrl(item));
 	return item->metadata.float_ctrl_metadata.width;
 }
 
-cbor_ctrl cbor_float_ctrl_get_ctrl(cbor_item_t * item)
+cbor_ctrl cbor_float_ctrl_get_ctrl(const cbor_item_t * item)
 {
 	assert(cbor_isa_float_ctrl(item));
 	assert(cbor_float_ctrl_get_width(item) == CBOR_FLOAT_0);

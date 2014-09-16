@@ -71,7 +71,11 @@ typedef enum {
 
 typedef enum {
 	CBOR_CTRL_NONE,
-	CBOR_CTRL_BREAK
+	CBOR_CTRL_BREAK,
+	CBOR_CTRL_FALSE,
+	CBOR_CTRL_TRUE,
+	CBOR_CTRL_NULL,
+	CBOR_CTRL_UNDEF
 } cbor_ctrl;
 
 // TODO hook these into the parser
@@ -87,17 +91,18 @@ struct _cbor_int_metadata {
 };
 
 typedef enum {
-	_CBOR_BYTESTRING_METADATA_DEFINITE,
-	_CBOR_BYTESTRING_METADATA_INDEFINITE
-} _cbor_bytestring_type_metadata;
+	_CBOR_STRING_METADATA_DEFINITE,
+	_CBOR_STRING_METADATA_INDEFINITE
+} _cbor_string_type_metadata;
 
 struct _cbor_bytestring_metadata {
 	size_t length;
-	_cbor_bytestring_type_metadata type;
+	_cbor_string_type_metadata type;
 };
 
 struct _cbor_string_metadata {
-
+	size_t length;
+	_cbor_string_type_metadata type;
 };
 
 typedef enum {
@@ -111,11 +116,7 @@ struct _cbor_array_metadata {
 };
 
 struct _cbor_map_metadata {
-
-};
-
-struct _cbor_tag_metadata {
-
+	size_t size;
 };
 
 struct _cbor_float_ctrl_metadata {
@@ -129,7 +130,6 @@ union cbor_item_metadata {
 	struct _cbor_string_metadata	 string_metadata;
 	struct _cbor_array_metadata		 array_metadata;
 	struct _cbor_map_metadata		 map_metadata;
-	struct _cbor_tag_metadata		 tag_metadata;
 	struct _cbor_float_ctrl_metadata float_ctrl_metadata;
 };
 
@@ -243,8 +243,8 @@ void cbor_map_iterator_next(struct cbor_map_iterator * iter);
 void cbor_map_delete(struct cbor_map_iterator * iter);
 
 
-cbor_float_width cbor_float_ctrl_get_width(cbor_item_t * item);
-cbor_ctrl cbor_float_ctrl_get_ctrl(cbor_item_t * item);
+cbor_float_width cbor_float_ctrl_get_width(const cbor_item_t * item);
+cbor_ctrl cbor_float_ctrl_get_ctrl(const cbor_item_t * item);
 
 #ifdef DEBUG
 #include <stdio.h>
