@@ -1,0 +1,64 @@
+#include "stream_expectations.h"
+
+/* Ordered from 0 to queue_size - 1 */
+struct test_assertion assertions_queue[MAX_QUEUE_ITEMS];
+size_t queue_size = 0;
+size_t current_expectation = 0;
+decoder_t * decoder;
+
+
+void set_decoder(decoder_t * dec)
+{
+	decoder = dec;
+}
+
+/* Assertions builders */
+
+<% [8, 16, 32, 64].each do |width| %>
+	void assert_uint<%= width %>_eq(uint<%= width %>_t actual)
+	{
+		assertions_queue[queue_size++] = (struct test_assertion) { UINT<%= width %>_EQ, (union test_expectation_data) { .int<%= width %> = actual } };
+	}
+<% end %>
+
+void assert_negint8_eq(uint8_t actual);
+void assert_negint16_eq(uint16_t actual);
+void assert_negint32_eq(uint32_t actual);
+void assert_negint64_eq(uint64_t actual);
+
+
+/* Callbacks */
+struct test_assertion current()
+{
+	return assertions_queue[current_expectation];
+}
+
+<% [8, 16, 32, 64].each do |width| %>
+	enum cbor_callback_result uint<%= width %>_callback(uint<%= width %>_t actual)
+	{
+		assert_true(current().expectation == UINT<%= width %>_EQ);
+		assert_true(current().data.int<%= width %> == actual);
+		current_expectation++;
+		return CBOR_CALLBACK_OK;
+	}
+<% end %>
+
+
+const struct cbor_callbacks asserting_callbacks = {
+	<% [8, 16, 32, 64].each do |width| %>
+		.uint<%= width %> = &uint<%= width %>_callback,
+	<% end %>
+	.indef_break = NULL
+};
+
+struct cbor_decoder_result decode(cbor_data source, size_t source_size)
+{
+	struct cbor_decoder_result result = decoder(source, source_size, &asserting_callbacks);
+	/* Check remaining assertions */
+	assert_true(current_expectation == queue_size);
+	/* Clean up */
+	current_expectation = queue_size = 0;
+	return result;
+}
+
+

@@ -186,7 +186,9 @@ struct cbor_callbacks {
 	/* Type 2 - Byte strings */
 	cbor_simple_callback byte_string_start;
 	cbor_string_callback byte_string_chunk;
-	cbor_simple_callback byte_string_end;
+
+	/* Shared indefinites */
+	cbor_simple_callback indef_break;
 };
 
 enum cbor_decoder_status {

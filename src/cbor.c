@@ -423,8 +423,29 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			return result;
 		}
 	case 0x19:
+		/* Two bytes unsigned integer */
+		{
+			if (_cbor_claim_bytes(3, source_size, &result)) {
+				callbacks->uint16(_cbor_load_uint16(source + 1));
+			}
+			return result;
+		}
 	case 0x1A:
+		/* Four bytes unsigned integer */
+		{
+			if (_cbor_claim_bytes(5, source_size, &result)) {
+				callbacks->uint32(_cbor_load_uint32(source + 1));
+			}
+			return result;
+		}
 	case 0x1B:
+		/* Eight bytes unsigned integer */
+		{
+			if (_cbor_claim_bytes(9, source_size, &result)) {
+				callbacks->uint64(_cbor_load_uint64(source + 1));
+			}
+			return result;
+		}
 	case 0x1C:
 	case 0x1D:
 	case 0x1E:
@@ -653,10 +674,13 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0xFD:
 	case 0xFE:
 	case 0xFF:
+	default:
 		{
+			// TODO
+			return result;
 		}
 	}
-};
+}
 
 
 inline cbor_type cbor_typeof(const cbor_item_t * item)
@@ -918,7 +942,7 @@ cbor_ctrl cbor_float_ctrl_get_ctrl(const cbor_item_t * item)
 
 #ifdef DEBUG
 void cbor_describe(cbor_item_t * item) {
-	printf("Address: %p\t\t Type: ", item);
+	printf("Address: %p\t\t Type: ", (void *)item);
 	switch(cbor_typeof(item)) {
 	case CBOR_TYPE_UINT:
 		{

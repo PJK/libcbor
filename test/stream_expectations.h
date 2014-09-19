@@ -18,7 +18,7 @@
 #include <cmocka.h>
 
 
-static const size_t max_queue_size = 30;
+#define MAX_QUEUE_ITEMS 30
 
 enum test_expectation {
 	UINT8_EQ,
@@ -43,14 +43,8 @@ struct test_assertion {
 	union test_expectation_data data;
 };
 
-/* Ordered from 0 to queue_size - 1 */
-static struct test_assertion assertions_queue[max_queue_size];
-static size_t queue_size = 0;
-static size_t current_expectation = 0;
-
 /* Tested function */
 typedef struct cbor_decoder_result decoder_t(cbor_data, size_t, const struct cbor_callbacks *);
-decoder_t * decoder;
 
 void set_decoder(decoder_t *);
 struct cbor_decoder_result decode(cbor_data, size_t);
