@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "cbor.h"
 #include <inttypes.h>
+#include "stream_expectations.h"
 
 
 int _assert_uint8_calls = 0;
@@ -15,7 +16,7 @@ enum cbor_callback_result _assert_uint8(uint8_t val)
 {
 	assert_int_equal(val, _assert_uint8_expectations[_assert_uint8_calls++]);
 	return CBOR_CALLBACK_OK;
-};
+}
 
 struct cbor_callbacks callbacks = { .uint8 = &_assert_uint8 };
 
@@ -41,10 +42,24 @@ static void test_simple_int_load(void **state)
 	cleanup();
 }
 
+
+unsigned char uint8_data_1[] = { 0x18, 0x83 };
+static void test_uint8_decoding(void **state)
+{
+	_assert_uint8_expectations = test_simple_int_load_expectations;
+	_assert_uint8_expected_calls = 4;
+	cbor_stream_decode(data1, 4, &callbacks);
+	cbor_stream_decode(data1 + 1, 3, &callbacks);
+	cbor_stream_decode(data1 + 2, 2, &callbacks);
+	cbor_stream_decode(data1 + 3, 1, &callbacks);
+	cleanup();
+}
+
 int main(void)
 {
 	const UnitTest tests[] = {
-		unit_test(test_simple_int_load)
+		unit_test(test_simple_int_load),
+		unit_test(test_uint8_decoding)
 	};
 	return run_tests(tests);
 }

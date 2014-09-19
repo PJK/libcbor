@@ -166,12 +166,12 @@ enum cbor_callback_result {
 
 typedef const unsigned char * cbor_data;
 
-typedef enum cbor_callback_result(*cbor_int8_callback)(uint8_t);
-typedef enum cbor_callback_result(*cbor_int16_callback)(uint16_t);
-typedef enum cbor_callback_result(*cbor_int32_callback)(uint32_t);
-typedef enum cbor_callback_result(*cbor_int64_callback)(uint64_t);
-typedef enum cbor_callback_result(*cbor_simple_callback)();
-typedef enum cbor_callback_result(*cbor_string_callback)(cbor_data, size_t);
+typedef enum cbor_callback_result(* cbor_int8_callback)(uint8_t);
+typedef enum cbor_callback_result(* cbor_int16_callback)(uint16_t);
+typedef enum cbor_callback_result(* cbor_int32_callback)(uint32_t);
+typedef enum cbor_callback_result(* cbor_int64_callback)(uint64_t);
+typedef enum cbor_callback_result(* cbor_simple_callback)();
+typedef enum cbor_callback_result(* cbor_string_callback)(cbor_data, size_t);
 
 struct cbor_callbacks {
 	/* Type 0 - Unsigned integers */

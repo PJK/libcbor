@@ -359,12 +359,27 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		return res;
 }
 
-struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_size, const struct cbor_callbacks * callbacks) {
-	/* If we have no data, we cannot read even the MSB */
+bool _cbor_assert_available_bytes(size_t required, size_t provided, struct cbor_decoder_result * result)
+{
+	if (required < provided) {
+		/* We need to keep all the metadata if parsing is to be resumed */
+		result->read = 0;
+		result->status = CBOR_DECODER_NEDATA;
+		return false;
+	} else {
+		result->status = CBOR_DECODER_FINISHED;
+		return true;
+	}
+}
+
+struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_size, const struct cbor_callbacks * callbacks)
+{
+	/* If we have no data, we cannot read even the MTB */
 	if (source_size < 1) {
 		return (struct cbor_decoder_result){ 0, CBOR_DECODER_EBUFFER };
 	}
 
+	/* If we have a byte, assume it's the MTB */
 	struct cbor_decoder_result result = { .read = 1 };
 
 	switch(*source) {
@@ -399,6 +414,13 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			return result;
 		}
 	case 0x18:
+		/* One byte unsigned integer */
+		{
+			if (_cbor_assert_available_bytes(2, source_size, &result)) {
+				callbacks->uint8(_cbor_load_uint8(source + 1));
+			}
+			return result;
+		}
 	case 0x19:
 	case 0x1A:
 	case 0x1B:
