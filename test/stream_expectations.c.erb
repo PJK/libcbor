@@ -12,41 +12,35 @@ void set_decoder(decoder_t * dec)
 	decoder = dec;
 }
 
-/* Assertions builders */
-
-<% [8, 16, 32, 64].each do |width| %>
-	void assert_uint<%= width %>_eq(uint<%= width %>_t actual)
-	{
-		assertions_queue[queue_size++] = (struct test_assertion) { UINT<%= width %>_EQ, (union test_expectation_data) { .int<%= width %> = actual } };
-	}
-<% end %>
-
-void assert_negint8_eq(uint8_t actual);
-void assert_negint16_eq(uint16_t actual);
-void assert_negint32_eq(uint32_t actual);
-void assert_negint64_eq(uint64_t actual);
-
-
 /* Callbacks */
 struct test_assertion current()
 {
 	return assertions_queue[current_expectation];
 }
 
-<% [8, 16, 32, 64].each do |width| %>
-	enum cbor_callback_result uint<%= width %>_callback(uint<%= width %>_t actual)
-	{
-		assert_true(current().expectation == UINT<%= width %>_EQ);
-		assert_true(current().data.int<%= width %> == actual);
-		current_expectation++;
-		return CBOR_CALLBACK_OK;
-	}
+/* Assertions builders */
+<% %w(u neg).each do |type| %>
+	<% [8, 16, 32, 64].each do |width| %>
+		void assert_<%= type %>int<%= width %>_eq(uint<%= width %>_t actual)
+		{
+			assertions_queue[queue_size++] = (struct test_assertion) { <%= type.upcase %>INT<%= width %>_EQ, (union test_expectation_data) { .int<%= width %> = actual } };
+		}
+
+		enum cbor_callback_result <%= type %>int<%= width %>_callback(uint<%= width %>_t actual)
+		{
+			assert_true(current().expectation == <%= type.upcase %>INT<%= width %>_EQ);
+			assert_true(current().data.int<%= width %> == actual);
+			current_expectation++;
+			return CBOR_CALLBACK_OK;
+		}
+	<% end %>
 <% end %>
 
-
 const struct cbor_callbacks asserting_callbacks = {
-	<% [8, 16, 32, 64].each do |width| %>
-		.uint<%= width %> = &uint<%= width %>_callback,
+	<% %w(u neg).each do |type| %>
+		<% [8, 16, 32, 64].each do |width| %>
+			.<%= type %>int<%= width %> = &<%= type %>int<%= width %>_callback,
+		<% end %>
 	<% end %>
 	.indef_break = NULL
 };

@@ -182,6 +182,9 @@ struct cbor_callbacks {
 
 	/* Type 1 - Negative integers */
 	cbor_int8_callback negint8;
+	cbor_int16_callback negint16;
+	cbor_int32_callback negint32;
+	cbor_int64_callback negint64;
 
 	/* Type 2 - Byte strings */
 	cbor_simple_callback byte_string_start;

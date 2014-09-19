@@ -384,29 +384,29 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	struct cbor_decoder_result result = { .read = 1 };
 
 	switch(*source) {
-	case 0x00:
-	case 0x01:
-	case 0x02:
-	case 0x03:
-	case 0x04:
-	case 0x05:
-	case 0x06:
-	case 0x07:
-	case 0x08:
-	case 0x09:
-	case 0x0A:
-	case 0x0B:
-	case 0x0C:
-	case 0x0D:
-	case 0x0E:
-	case 0x0F:
-	case 0x10:
-	case 0x11:
-	case 0x12:
-	case 0x13:
-	case 0x14:
-	case 0x15:
-	case 0x16:
+	case 0x00: /* Fallthrough */
+	case 0x01: /* Fallthrough */
+	case 0x02: /* Fallthrough */
+	case 0x03: /* Fallthrough */
+	case 0x04: /* Fallthrough */
+	case 0x05: /* Fallthrough */
+	case 0x06: /* Fallthrough */
+	case 0x07: /* Fallthrough */
+	case 0x08: /* Fallthrough */
+	case 0x09: /* Fallthrough */
+	case 0x0A: /* Fallthrough */
+	case 0x0B: /* Fallthrough */
+	case 0x0C: /* Fallthrough */
+	case 0x0D: /* Fallthrough */
+	case 0x0E: /* Fallthrough */
+	case 0x0F: /* Fallthrough */
+	case 0x10: /* Fallthrough */
+	case 0x11: /* Fallthrough */
+	case 0x12: /* Fallthrough */
+	case 0x13: /* Fallthrough */
+	case 0x14: /* Fallthrough */
+	case 0x15: /* Fallthrough */
+	case 0x16: /* Fallthrough */
 	case 0x17:
 		/* Embedded one byte unsigned integer */
 		{
@@ -446,38 +446,76 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			}
 			return result;
 		}
-	case 0x1C:
-	case 0x1D:
-	case 0x1E:
+	case 0x1C: /* Fallthrough */
+	case 0x1D: /* Fallthrough */
+	case 0x1E: /* Fallthrough */
 	case 0x1F:
-	case 0x20:
-	case 0x21:
-	case 0x22:
-	case 0x23:
-	case 0x24:
-	case 0x25:
-	case 0x26:
-	case 0x27:
-	case 0x28:
-	case 0x29:
-	case 0x2A:
-	case 0x2B:
-	case 0x2C:
-	case 0x2D:
-	case 0x2E:
-	case 0x2F:
-	case 0x30:
-	case 0x31:
-	case 0x32:
-	case 0x33:
-	case 0x34:
-	case 0x35:
-	case 0x36:
+		/* Reserved */
+		{
+			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
+		}
+	case 0x20: /* Fallthrough */
+	case 0x21: /* Fallthrough */
+	case 0x22: /* Fallthrough */
+	case 0x23: /* Fallthrough */
+	case 0x24: /* Fallthrough */
+	case 0x25: /* Fallthrough */
+	case 0x26: /* Fallthrough */
+	case 0x27: /* Fallthrough */
+	case 0x28: /* Fallthrough */
+	case 0x29: /* Fallthrough */
+	case 0x2A: /* Fallthrough */
+	case 0x2B: /* Fallthrough */
+	case 0x2C: /* Fallthrough */
+	case 0x2D: /* Fallthrough */
+	case 0x2E: /* Fallthrough */
+	case 0x2F: /* Fallthrough */
+	case 0x30: /* Fallthrough */
+	case 0x31: /* Fallthrough */
+	case 0x32: /* Fallthrough */
+	case 0x33: /* Fallthrough */
+	case 0x34: /* Fallthrough */
+	case 0x35: /* Fallthrough */
+	case 0x36: /* Fallthrough */
 	case 0x37:
+		/* Embedded one byte negative integer */
+		{
+			result.status = CBOR_DECODER_FINISHED;
+			callbacks->negint8(_cbor_load_uint8(source) - 0x20); /* 0x20 offset */
+			return result;
+		}
 	case 0x38:
+		/* One byte negative integer */
+	{
+		if (_cbor_claim_bytes(2, source_size, &result)) {
+			callbacks->negint8(_cbor_load_uint8(source + 1));
+		}
+		return result;
+	}
 	case 0x39:
+		/* Two bytes negative integer */
+	{
+		if (_cbor_claim_bytes(3, source_size, &result)) {
+			callbacks->negint16(_cbor_load_uint16(source + 1));
+		}
+		return result;
+	}
 	case 0x3A:
+		/* Four bytes negative integer */
+	{
+		if (_cbor_claim_bytes(5, source_size, &result)) {
+			callbacks->negint32(_cbor_load_uint32(source + 1));
+		}
+		return result;
+	}
 	case 0x3B:
+		/* Eight bytes negative integer */
+	{
+		if (_cbor_claim_bytes(9, source_size, &result)) {
+			callbacks->negint64(_cbor_load_uint64(source + 1));
+		}
+		return result;
+	}
 	case 0x3C:
 	case 0x3D:
 	case 0x3E:

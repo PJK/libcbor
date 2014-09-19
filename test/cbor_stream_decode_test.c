@@ -8,7 +8,6 @@
 #include "assertions.h"
 
 unsigned char embedded_uint8_data[] = { 0x00, 0x01, 0x05, 0x17 };
-
 static void test_uint8_embedded_decoding(void **state)
 {
 	assert_uint8_eq(0);
@@ -75,6 +74,73 @@ static void test_uint64_decoding(void **state)
 	);
 }
 
+unsigned char embedded_negint8_data[] = { 0x20, 0x21, 0x25, 0x37 };
+static void test_negint8_embedded_decoding(void **state)
+{
+	assert_negint8_eq(0);
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(embedded_negint8_data, 1)
+	);
+
+	assert_negint8_eq(1);
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(embedded_negint8_data + 1, 1)
+	);
+
+	assert_negint8_eq(5);
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(embedded_negint8_data + 2, 1)
+	);
+
+	assert_negint8_eq(23);
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(embedded_negint8_data + 3, 1)
+	);
+}
+
+
+unsigned char negint8_data[] = { 0x38, 0x83, 0x38, 0xFF };
+static void test_negint8_decoding(void **state)
+{
+	assert_negint8_eq(0x83);
+	assert_decoder_result(2, CBOR_DECODER_FINISHED,
+		decode(negint8_data, 2)
+	);
+
+	assert_negint8_eq(0xFF);
+	assert_decoder_result(2, CBOR_DECODER_FINISHED,
+		decode(negint8_data + 2, 2)
+	);
+}
+
+unsigned char negint16_data[] = { 0x39, 0x01, 0xf4 };
+static void test_negint16_decoding(void **state)
+{
+
+	assert_negint16_eq(500);
+	assert_decoder_result(3, CBOR_DECODER_FINISHED,
+		decode(negint16_data, 3)
+	);
+}
+
+unsigned char negint32_data[] = { 0x3a, 0xa5, 0xf7, 0x02, 0xb3 };
+static void test_negint32_decoding(void **state)
+{
+	assert_negint32_eq((uint32_t) 2784428723UL);
+	assert_decoder_result(5, CBOR_DECODER_FINISHED,
+		decode(negint32_data, 5)
+	);
+}
+
+unsigned char negint64_data[] = { 0x3b, 0xa5, 0xf7, 0x02, 0xb3, 0xa5, 0xf7, 0x02, 0xb3 };
+static void test_negint64_decoding(void **state)
+{
+	assert_negint64_eq(11959030306112471731ULL);
+	assert_decoder_result(9, CBOR_DECODER_FINISHED,
+		decode(negint64_data, 9)
+	);
+}
+
 int main(void)
 {
 	set_decoder(&cbor_stream_decode);
@@ -83,7 +149,12 @@ int main(void)
 		unit_test(test_uint8_decoding),
 		unit_test(test_uint16_decoding),
 		unit_test(test_uint32_decoding),
-		unit_test(test_uint64_decoding)
+		unit_test(test_uint64_decoding),
+		unit_test(test_negint8_embedded_decoding),
+		unit_test(test_negint8_decoding),
+		unit_test(test_negint16_decoding),
+		unit_test(test_negint32_decoding),
+		unit_test(test_negint64_decoding)
 	};
 	return run_tests(tests);
 }
