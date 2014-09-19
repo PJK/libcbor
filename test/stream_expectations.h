@@ -53,19 +53,19 @@ typedef struct cbor_decoder_result decoder_t(cbor_data, size_t, const struct cbo
 decoder_t * decoder;
 
 void set_decoder(decoder_t *);
-struct cbor_decoder_result decode(cbor_data, size_t, const struct cbor_callbacks *);
+struct cbor_decoder_result decode(cbor_data, size_t);
 
 /* Assertions builders */
 
-void assert_uint8_eq(uint8_t, union test_expectation_data);
-void assert_uint16_eq(uint16_t, union test_expectation_data);
-void assert_uint32_eq(uint32_t, union test_expectation_data);
-void assert_uint64_eq(uint64_t, union test_expectation_data);
+void assert_uint8_eq(uint8_t);
+void assert_uint16_eq(uint16_t);
+void assert_uint32_eq(uint32_t);
+void assert_uint64_eq(uint64_t);
 
-void assert_negint8_eq(uint8_t, union test_expectation_data);
-void assert_negint16_eq(uint16_t, union test_expectation_data);
-void assert_negint32_eq(uint32_t, union test_expectation_data);
-void assert_negint64_eq(uint64_t, union test_expectation_data);
+void assert_negint8_eq(uint8_t);
+void assert_negint16_eq(uint16_t);
+void assert_negint32_eq(uint32_t);
+void assert_negint64_eq(uint64_t);
 
 /* Assertions verifying callbacks */
 enum cbor_callback_result uint8_callback(uint8_t);

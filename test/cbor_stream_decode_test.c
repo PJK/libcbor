@@ -46,17 +46,13 @@ static void test_simple_int_load(void **state)
 unsigned char uint8_data_1[] = { 0x18, 0x83 };
 static void test_uint8_decoding(void **state)
 {
-	_assert_uint8_expectations = test_simple_int_load_expectations;
-	_assert_uint8_expected_calls = 4;
-	cbor_stream_decode(data1, 4, &callbacks);
-	cbor_stream_decode(data1 + 1, 3, &callbacks);
-	cbor_stream_decode(data1 + 2, 2, &callbacks);
-	cbor_stream_decode(data1 + 3, 1, &callbacks);
-	cleanup();
+	assert_uint8_eq(0x83);
+	decode(uint8_data_1, 2);
 }
 
 int main(void)
 {
+	set_decoder(&cbor_stream_decode);
 	const UnitTest tests[] = {
 		unit_test(test_simple_int_load),
 		unit_test(test_uint8_decoding)
