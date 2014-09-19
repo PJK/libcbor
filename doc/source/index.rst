@@ -24,6 +24,7 @@ Contents
 
    getting_started
    api
+   streaming
    tests
    rfc_conformance
    internal

@@ -46,7 +46,7 @@ Combining these two principles in practice turns out to be quite difficult. Inde
     - provide APIs to avoid :func:`realloc` altogether
  - allow proper handling of (streamed) data bigger than available memory
 
- .. [#] Reasonable handling of DSTs requires reallocation if the API is to remain sane. *libcbor* is designed in such
+ .. [#] Reasonable handling of DSTs requires reallocation if the API is to remain sane.
 
 
 Coding style
@@ -118,3 +118,17 @@ Generally speaking, data items consist of three parts:
     .. member:: struct _cbor_map_metadata map_metadata;
     .. member:: struct _cbor_tag_metadata tag_metadata;
     .. member:: struct _cbor_float_ctrl_metadata float_ctrl_metadata;
+
+Parsing
+---------
+TODO
+
+Streaming parser
+~~~~~~~~~~~~~~~~
+
+Encoder
+-----------
+TODO
+
+Streaming encoder
+~~~~~~~~~~~~~~~~~~~
