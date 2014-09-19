@@ -159,7 +159,51 @@ struct cbor_load_result {
 	size_t			  read;
 };
 
-cbor_item_t * cbor_load(const unsigned char * source, size_t source_size, cbor_flags_t flags, struct cbor_load_result * result);
+enum cbor_callback_result {
+	CBOR_CALLBACK_OK,
+	CBOR_CALLBACK_HALT
+};
+
+typedef const unsigned char * cbor_data;
+
+typedef enum cbor_callback_result(*cbor_int8_callback)(uint8_t);
+typedef enum cbor_callback_result(*cbor_int16_callback)(uint16_t);
+typedef enum cbor_callback_result(*cbor_int32_callback)(uint32_t);
+typedef enum cbor_callback_result(*cbor_int64_callback)(uint64_t);
+typedef enum cbor_callback_result(*cbor_simple_callback)();
+typedef enum cbor_callback_result(*cbor_string_callback)(cbor_data, size_t);
+
+struct cbor_callbacks {
+	/* Type 0 - Unsigned integers */
+	cbor_int8_callback uint8;
+	cbor_int16_callback uint16;
+	cbor_int32_callback uint32;
+	cbor_int64_callback uint64;
+
+	/* Type 1 - Negative integers */
+	cbor_int8_callback negint8;
+
+	/* Type 2 - Byte strings */
+	cbor_simple_callback byte_string_start;
+	cbor_string_callback byte_string_chunk;
+	cbor_simple_callback byte_string_end;
+};
+
+enum cbor_decoder_status {
+	CBOR_DECODER_FINISHED,
+	CBOR_DECODER_NEDATA,
+	CBOR_DECODER_EBUFFER,
+	CBOR_DECODER_ERROR
+};
+
+struct cbor_decoder_result {
+	size_t                   read;
+	enum cbor_decoder_status status;
+};
+
+struct cbor_decoder_result cbor_stream_decode(cbor_data, size_t, const struct cbor_callbacks *);
+
+cbor_item_t * cbor_load(cbor_data source, size_t source_size, cbor_flags_t flags, struct cbor_load_result * result);
 
 void cbor_incref(cbor_item_t * item);
 void cbor_decref(cbor_item_t ** item);

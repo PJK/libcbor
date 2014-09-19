@@ -16,7 +16,7 @@ bool _cbor_assert_avail_bytes(size_t num,
 	return true;
 }
 
-uint8_t _cbor_load_uint8(const unsigned char * source)
+uint8_t _cbor_load_uint8(cbor_data source)
 {
 	return (uint8_t)*source;
 }
