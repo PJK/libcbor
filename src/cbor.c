@@ -359,7 +359,7 @@ cbor_item_t * cbor_load(const unsigned char * source,
 		return res;
 }
 
-bool _cbor_assert_available_bytes(size_t required, size_t provided, struct cbor_decoder_result * result)
+bool _cbor_claim_bytes(size_t required, size_t provided, struct cbor_decoder_result * result)
 {
 	if (required < provided) {
 		/* We need to keep all the metadata if parsing is to be resumed */
@@ -367,6 +367,7 @@ bool _cbor_assert_available_bytes(size_t required, size_t provided, struct cbor_
 		result->status = CBOR_DECODER_NEDATA;
 		return false;
 	} else {
+		result->read = required;
 		result->status = CBOR_DECODER_FINISHED;
 		return true;
 	}
@@ -416,7 +417,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x18:
 		/* One byte unsigned integer */
 		{
-			if (_cbor_assert_available_bytes(2, source_size, &result)) {
+			if (_cbor_claim_bytes(2, source_size, &result)) {
 				callbacks->uint8(_cbor_load_uint8(source + 1));
 			}
 			return result;
