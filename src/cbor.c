@@ -1,6 +1,7 @@
 #include "cbor.h"
 #include "cbor_internal.h"
 #include <assert.h>
+#include <zlib.h>
 
 /* TODO refactor the metadata madness using structs and unions */
 
@@ -361,14 +362,13 @@ cbor_item_t * cbor_load(const unsigned char * source,
 
 bool _cbor_claim_bytes(size_t required, size_t provided, struct cbor_decoder_result * result)
 {
-	if (required < provided) {
+	if (required < (provided - result->read)) {
 		/* We need to keep all the metadata if parsing is to be resumed */
 		result->read = 0;
 		result->status = CBOR_DECODER_NEDATA;
 		return false;
 	} else {
-		result->read = required;
-		result->status = CBOR_DECODER_FINISHED;
+		result->read += required;
 		return true;
 	}
 }
@@ -381,7 +381,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	}
 
 	/* If we have a byte, assume it's the MTB */
-	struct cbor_decoder_result result = { .read = 1 };
+	struct cbor_decoder_result result = { 1, CBOR_DECODER_FINISHED };
 
 	switch(*source) {
 	case 0x00: /* Fallthrough */
@@ -410,14 +410,13 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x17:
 		/* Embedded one byte unsigned integer */
 		{
-			result.status = CBOR_DECODER_FINISHED;
 			callbacks->uint8(_cbor_load_uint8(source));
 			return result;
 		}
 	case 0x18:
 		/* One byte unsigned integer */
 		{
-			if (_cbor_claim_bytes(2, source_size, &result)) {
+			if (_cbor_claim_bytes(1, source_size, &result)) {
 				callbacks->uint8(_cbor_load_uint8(source + 1));
 			}
 			return result;
@@ -425,7 +424,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x19:
 		/* Two bytes unsigned integer */
 		{
-			if (_cbor_claim_bytes(3, source_size, &result)) {
+			if (_cbor_claim_bytes(2, source_size, &result)) {
 				callbacks->uint16(_cbor_load_uint16(source + 1));
 			}
 			return result;
@@ -433,7 +432,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x1A:
 		/* Four bytes unsigned integer */
 		{
-			if (_cbor_claim_bytes(5, source_size, &result)) {
+			if (_cbor_claim_bytes(4, source_size, &result)) {
 				callbacks->uint32(_cbor_load_uint32(source + 1));
 			}
 			return result;
@@ -441,7 +440,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x1B:
 		/* Eight bytes unsigned integer */
 		{
-			if (_cbor_claim_bytes(9, source_size, &result)) {
+			if (_cbor_claim_bytes(8, source_size, &result)) {
 				callbacks->uint64(_cbor_load_uint64(source + 1));
 			}
 			return result;
@@ -480,14 +479,13 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x37:
 		/* Embedded one byte negative integer */
 		{
-			result.status = CBOR_DECODER_FINISHED;
 			callbacks->negint8(_cbor_load_uint8(source) - 0x20); /* 0x20 offset */
 			return result;
 		}
 	case 0x38:
 		/* One byte negative integer */
 	{
-		if (_cbor_claim_bytes(2, source_size, &result)) {
+		if (_cbor_claim_bytes(1, source_size, &result)) {
 			callbacks->negint8(_cbor_load_uint8(source + 1));
 		}
 		return result;
@@ -495,7 +493,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x39:
 		/* Two bytes negative integer */
 	{
-		if (_cbor_claim_bytes(3, source_size, &result)) {
+		if (_cbor_claim_bytes(2, source_size, &result)) {
 			callbacks->negint16(_cbor_load_uint16(source + 1));
 		}
 		return result;
@@ -503,7 +501,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x3A:
 		/* Four bytes negative integer */
 	{
-		if (_cbor_claim_bytes(5, source_size, &result)) {
+		if (_cbor_claim_bytes(4, source_size, &result)) {
 			callbacks->negint32(_cbor_load_uint32(source + 1));
 		}
 		return result;
@@ -511,43 +509,91 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x3B:
 		/* Eight bytes negative integer */
 	{
-		if (_cbor_claim_bytes(9, source_size, &result)) {
+		if (_cbor_claim_bytes(8, source_size, &result)) {
 			callbacks->negint64(_cbor_load_uint64(source + 1));
 		}
 		return result;
 	}
-	case 0x3C:
-	case 0x3D:
-	case 0x3E:
+	case 0x3C: /* Fallthrough */
+	case 0x3D: /* Fallthrough */
+	case 0x3E: /* Fallthrough */
 	case 0x3F:
-	case 0x40:
-	case 0x41:
-	case 0x42:
-	case 0x43:
-	case 0x44:
-	case 0x45:
-	case 0x46:
-	case 0x47:
-	case 0x48:
-	case 0x49:
-	case 0x4A:
-	case 0x4B:
-	case 0x4C:
-	case 0x4D:
-	case 0x4E:
-	case 0x4F:
-	case 0x50:
-	case 0x51:
-	case 0x52:
-	case 0x53:
-	case 0x54:
-	case 0x55:
-	case 0x56:
+		/* Reserved */
+		{
+			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
+		}
+	case 0x40: /* Fallthrough */
+	case 0x41: /* Fallthrough */
+	case 0x42: /* Fallthrough */
+	case 0x43: /* Fallthrough */
+	case 0x44: /* Fallthrough */
+	case 0x45: /* Fallthrough */
+	case 0x46: /* Fallthrough */
+	case 0x47: /* Fallthrough */
+	case 0x48: /* Fallthrough */
+	case 0x49: /* Fallthrough */
+	case 0x4A: /* Fallthrough */
+	case 0x4B: /* Fallthrough */
+	case 0x4C: /* Fallthrough */
+	case 0x4D: /* Fallthrough */
+	case 0x4E: /* Fallthrough */
+	case 0x4F: /* Fallthrough */
+	case 0x50: /* Fallthrough */
+	case 0x51: /* Fallthrough */
+	case 0x52: /* Fallthrough */
+	case 0x53: /* Fallthrough */
+	case 0x54: /* Fallthrough */
+	case 0x55: /* Fallthrough */
+	case 0x56: /* Fallthrough */
 	case 0x57:
+		/* Embedded length byte string */
+		{
+			size_t length = (size_t)_cbor_load_uint8(source) - 0x40; /* 0x40 offset */
+			if (_cbor_claim_bytes(length, source_size, &result)) {
+				callbacks->byte_string(source + 1, length);
+			}
+		}
 	case 0x58:
+		/* One byte length byte string */
+		// TODO template this?
+		{
+			if (_cbor_claim_bytes(1, source_size, &result)) {
+				size_t length = (size_t) _cbor_load_uint8(source + 1);
+				if (_cbor_claim_bytes(length, source_size, &result)) {
+					callbacks->byte_string(source + 1 + 1, length);
+				}
+			}
+		}
 	case 0x59:
+		/* Two bytes length byte string */
+		{
+			if (_cbor_claim_bytes(2, source_size, &result)) {
+				size_t length = (size_t) _cbor_load_uint16(source + 1);
+				if (_cbor_claim_bytes(length, source_size, &result)) {
+					callbacks->byte_string(source + 1 + 2, length);
+				}
+			}
+		}
 	case 0x5A:
+		/* Four bytes length byte string */
+		{
+			if (_cbor_claim_bytes(4, source_size, &result)) {
+				size_t length = (size_t) _cbor_load_uint32(source + 1);
+				if (_cbor_claim_bytes(length, source_size, &result)) {
+					callbacks->byte_string(source + 1 + 3, length);
+				}
+			}
+		}
 	case 0x5B:
+		/* Eight bytes length byte string */
+		{
+			if (_cbor_claim_bytes(8, source_size, &result)) {
+				size_t length = (size_t) _cbor_load_uint64(source + 1);
+				if (_cbor_claim_bytes(length, source_size, &result)) {
+					callbacks->byte_string(source + 1 + 4, length);
+				}
+			}
+		}
 	case 0x5C:
 	case 0x5D:
 	case 0x5E:
@@ -712,6 +758,11 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0xFD:
 	case 0xFE:
 	case 0xFF:
+		/* Break */
+		{
+			callbacks->indef_break();
+			return result;
+		}
 	default:
 		{
 			// TODO
