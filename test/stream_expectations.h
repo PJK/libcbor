@@ -37,6 +37,9 @@ enum test_expectation {
 	ARRAY_START, /* Definite arrays only */
 	ARRAY_INDEF_START,
 
+	MAP_START, /* Definite maps only */
+	MAP_INDEF_START,
+
 	INDEF_BREAK /* Expect "Break" */
 };
 
@@ -81,6 +84,9 @@ void assert_bstring_indef_start();
 void assert_array_start(size_t);
 void assert_indef_array_start();
 
+void assert_map_start(size_t);
+void map_indef_array_start();
+
 void assert_indef_break();
 
 /* Assertions verifying callbacks */
@@ -99,6 +105,9 @@ enum cbor_callback_result byte_string_start_callback();
 
 enum cbor_callback_result array_start_callback(size_t);
 enum cbor_callback_result indef_array_start_callback();
+
+enum cbor_callback_result map_start_callback(size_t);
+enum cbor_callback_result indef_map_start_callback();
 
 enum cbor_callback_result indef_break_callback();
 

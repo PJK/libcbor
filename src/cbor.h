@@ -172,7 +172,7 @@ typedef enum cbor_callback_result(* cbor_int32_callback)(uint32_t);
 typedef enum cbor_callback_result(* cbor_int64_callback)(uint64_t);
 typedef enum cbor_callback_result(* cbor_simple_callback)();
 typedef enum cbor_callback_result(* cbor_string_callback)(cbor_data, size_t);
-typedef enum cbor_callback_result(* cbor_array_callback)(size_t);
+typedef enum cbor_callback_result(* cbor_collection_callback)(size_t);
 
 struct cbor_callbacks {
 	/* Type 0 - Unsigned integers */
@@ -196,10 +196,12 @@ struct cbor_callbacks {
 	cbor_simple_callback string_start;
 
 	/* Type 4 - Arrays */
-	cbor_array_callback array_start;
+	cbor_collection_callback array_start;
 	cbor_simple_callback indef_array_start;
 
 	/* Type 5 - Maps */
+	cbor_collection_callback map_start;
+	cbor_simple_callback indef_map_start;
 
 	/* Type 6 - Tags */
 

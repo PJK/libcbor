@@ -75,30 +75,33 @@ enum cbor_callback_result indef_break_callback()
 	return CBOR_CALLBACK_OK;
 }
 
-void assert_array_start(size_t length)
-{
-	assertions_queue[queue_size++] = (struct test_assertion) { ARRAY_START, { .length = length } };
-}
+<% %w(array map).each do |type| %>
+	void assert_<%= type %>_start(size_t length)
+	{
+		assertions_queue[queue_size++] = (struct test_assertion) { <%= type.upcase %>_START, { .length = length } };
+	}
 
-enum cbor_callback_result array_start_callback(size_t length)
-{
-	assert_true(current().expectation == ARRAY_START);
-	assert_true(current().data.length == length);
-	current_expectation++;
-	return CBOR_CALLBACK_OK;
-}
 
-void assert_indef_array_start()
-{
-	assertions_queue[queue_size++] = (struct test_assertion) { .expectation = ARRAY_INDEF_START };
-}
+	enum cbor_callback_result <%= type %>_start_callback(size_t length)
+	{
+		assert_true(current().expectation == <%= type.upcase %>_START);
+		assert_true(current().data.length == length);
+		current_expectation++;
+		return CBOR_CALLBACK_OK;
+	}
 
-enum cbor_callback_result indef_array_start_callback()
-{
-	assert_true(current().expectation == ARRAY_INDEF_START);
-	current_expectation++;
-	return CBOR_CALLBACK_OK;
-}
+	void assert_indef_<%= type %>_start()
+	{
+		assertions_queue[queue_size++] = (struct test_assertion) { .expectation = <%= type.upcase %>_INDEF_START };
+	}
+
+	enum cbor_callback_result indef_<%= type %>_start_callback()
+	{
+		assert_true(current().expectation == <%= type.upcase %>_INDEF_START);
+		current_expectation++;
+		return CBOR_CALLBACK_OK;
+	}
+<% end %>
 
 const struct cbor_callbacks asserting_callbacks = {
 	<% %w(u neg).each do |type| %>
@@ -110,8 +113,10 @@ const struct cbor_callbacks asserting_callbacks = {
 	.byte_string = &byte_string_callback,
 	.byte_string_start = &byte_string_start_callback,
 
-	.array_start = &array_start_callback,
-	.indef_array_start = &indef_array_start_callback,
+	<% %w(array map).each do |type| %>
+		.<%= type %>_start = &<%= type %>_start_callback,
+		.indef_<%= type %>_start = &indef_<%= type %>_start_callback,
+	<% end %>
 
 	.indef_break = &indef_break_callback
 };

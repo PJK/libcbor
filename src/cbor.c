@@ -732,38 +732,80 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			callbacks->indef_array_start();
 			return result;
 		}
-	case 0xA0:
-	case 0xA1:
-	case 0xA2:
-	case 0xA3:
-	case 0xA4:
-	case 0xA5:
-	case 0xA6:
-	case 0xA7:
-	case 0xA8:
-	case 0xA9:
-	case 0xAA:
-	case 0xAB:
-	case 0xAC:
-	case 0xAD:
-	case 0xAE:
-	case 0xAF:
-	case 0xB0:
-	case 0xB1:
-	case 0xB2:
-	case 0xB3:
-	case 0xB4:
-	case 0xB5:
-	case 0xB6:
+	case 0xA0: /* Fallthrough */
+	case 0xA1: /* Fallthrough */
+	case 0xA2: /* Fallthrough */
+	case 0xA3: /* Fallthrough */
+	case 0xA4: /* Fallthrough */
+	case 0xA5: /* Fallthrough */
+	case 0xA6: /* Fallthrough */
+	case 0xA7: /* Fallthrough */
+	case 0xA8: /* Fallthrough */
+	case 0xA9: /* Fallthrough */
+	case 0xAA: /* Fallthrough */
+	case 0xAB: /* Fallthrough */
+	case 0xAC: /* Fallthrough */
+	case 0xAD: /* Fallthrough */
+	case 0xAE: /* Fallthrough */
+	case 0xAF: /* Fallthrough */
+	case 0xB0: /* Fallthrough */
+	case 0xB1: /* Fallthrough */
+	case 0xB2: /* Fallthrough */
+	case 0xB3: /* Fallthrough */
+	case 0xB4: /* Fallthrough */
+	case 0xB5: /* Fallthrough */
+	case 0xB6: /* Fallthrough */
 	case 0xB7:
+		/* Embedded one byte length map */
+		{
+			callbacks->map_start((size_t)_cbor_load_uint8(source) - 0xA0); /* 0xA0 offset */
+			return result;
+		}
 	case 0xB8:
+		/* One byte length map */
+		{
+			if (_cbor_claim_bytes(1, source_size, &result)) {
+				callbacks->map_start((size_t)_cbor_load_uint8(source + 1));
+			}
+			return result;
+		}
 	case 0xB9:
+		/* Two bytes length map */
+		{
+			if (_cbor_claim_bytes(2, source_size, &result)) {
+				callbacks->map_start((size_t)_cbor_load_uint16(source + 1));
+			}
+			return result;
+		}
 	case 0xBA:
+		/* Four bytes length map */
+		{
+			if (_cbor_claim_bytes(4, source_size, &result)) {
+				callbacks->map_start((size_t)_cbor_load_uint32(source + 1));
+			}
+			return result;
+		}
 	case 0xBB:
-	case 0xBC:
-	case 0xBD:
+		/* Eight bytes length map */
+		{
+			if (_cbor_claim_bytes(8, source_size, &result)) {
+				callbacks->map_start((size_t)_cbor_load_uint64(source + 1));
+			}
+			return result;
+		}
+	case 0xBC: /* Fallthrough */
+	case 0xBD: /* Fallthrough */
 	case 0xBE:
+		/* Reserved */
+		{
+			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
+		}
 	case 0xBF:
+		/* Indefinite length map */
+		{
+			callbacks->indef_map_start();
+			return result;
+		}
 	case 0xC0:
 	case 0xC1:
 	case 0xC2:
