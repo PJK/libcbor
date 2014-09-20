@@ -333,10 +333,19 @@ unsigned char array_of_arrays_data[] = { 0x82, 0x80, 0x80 };
 static void test_array_of_arrays(void **state)
 {
 	assert_array_start(2);
-	assert_decoder_result(2, CBOR_DECODER_FINISHED,
-		decode(array_of_arrays_data, 4)
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(array_of_arrays_data, 3)
 	);
 
+	assert_array_start(0);
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(array_of_arrays_data + 1, 2)
+	);
+
+	assert_array_start(0);
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(array_of_arrays_data + 2, 1)
+	);
 }
 
 int main(void)
@@ -368,7 +377,8 @@ int main(void)
 		unit_test(test_array_int8),
 		unit_test(test_array_int16),
 		unit_test(test_array_int32),
-		unit_test(test_array_int64)
+		unit_test(test_array_int64),
+		unit_test(test_array_of_arrays)
 	};
 	return run_tests(tests);
 }
