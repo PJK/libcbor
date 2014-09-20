@@ -859,9 +859,29 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0xF2:
 	case 0xF3:
 	case 0xF4:
+		/* False */
+		{
+			callbacks->boolean(false);
+			return result;
+		}
 	case 0xF5:
+		/* True */
+		{
+			callbacks->boolean(true);
+			return result;
+		}
 	case 0xF6:
+		/* Null */
+		{
+			callbacks->null();
+			return result;
+		}
 	case 0xF7:
+		/* Undefined */
+		{
+			callbacks->undefined();
+			return result;
+		}
 	case 0xF8:
 	case 0xF9:
 		/* 2B float */

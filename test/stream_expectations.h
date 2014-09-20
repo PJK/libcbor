@@ -43,6 +43,9 @@ enum test_expectation {
 	HALF_EQ,
 	FLOAT_EQ,
 	DOUBLE_EQ,
+	BOOL_EQ,
+	NIL,
+	UNDEF,
 	INDEF_BREAK /* Expect "Break" */
 };
 
@@ -59,6 +62,7 @@ union test_expectation_data {
 	double float2;
 	float float4;
 	double float8;
+	bool boolean;
 };
 
 struct test_assertion {
@@ -97,6 +101,10 @@ void assert_half(double);
 void assert_float(float);
 void assert_double(double);
 
+void assert_bool(bool);
+void assert_nil(); /* assert_null already exists */
+void assert_undef();
+
 void assert_indef_break();
 
 /* Assertions verifying callbacks */
@@ -123,5 +131,9 @@ enum cbor_callback_result half_callback(double);
 enum cbor_callback_result float_callback(float);
 enum cbor_callback_result double_callback(double);
 enum cbor_callback_result indef_break_callback();
+
+enum cbor_callback_result bool_callback(bool);
+enum cbor_callback_result null_callback();
+enum cbor_callback_result undef_callback();
 
 #endif

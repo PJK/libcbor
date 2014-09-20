@@ -118,6 +118,44 @@ enum cbor_callback_result indef_break_callback()
 	}
 <% end %>
 
+void assert_bool(bool value)
+{
+	assertions_queue[queue_size++] = (struct test_assertion) { BOOL_EQ, { .boolean = value } };
+}
+
+void assert_nil()
+{
+	assertions_queue[queue_size++] = (struct test_assertion) { .expectation = NIL };
+}
+
+void assert_undef()
+{
+	assertions_queue[queue_size++] = (struct test_assertion) { .expectation = UNDEF };
+}
+
+
+enum cbor_callback_result bool_callback(bool actual)
+{
+	assert_true(current().expectation == BOOL_EQ);
+	assert_true(current().data.boolean == actual);
+	current_expectation++;
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result null_callback()
+{
+	assert_true(current().expectation == NIL);
+	current_expectation++;
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result undef_callback()
+{
+	assert_true(current().expectation == UNDEF);
+	current_expectation++;
+	return CBOR_CALLBACK_OK;
+}
+
 const struct cbor_callbacks asserting_callbacks = {
 	<% %w(u neg).each do |type| %>
 		<% [8, 16, 32, 64].each do |width| %>
@@ -137,6 +175,9 @@ const struct cbor_callbacks asserting_callbacks = {
 		.float<%= decimal[1] %> = &<%= decimal[0] %>_callback,
 	<% end %>
 
+	.undefined = &undef_callback,
+	.boolean = &bool_callback,
+	.null = &null_callback,
 	.indef_break = &indef_break_callback
 };
 

@@ -492,7 +492,7 @@ static void test_indef_map_decoding_1(void **state)
 }
 
 unsigned char float2_data[] = { 0xF9, 0x7B, 0xFF };
-static void test_float2_data_decoding(void **state)
+static void test_float2_decoding(void **state)
 {
 	assert_half(65504.0);
 	assert_decoder_result(3, CBOR_DECODER_FINISHED,
@@ -501,7 +501,7 @@ static void test_float2_data_decoding(void **state)
 }
 
 unsigned char float4_data[] = { 0xFA, 0x47, 0xC3, 0x50, 0x00 };
-static void test_float4_data_decoding(void **state)
+static void test_float4_decoding(void **state)
 {
 	assert_float(100000.0);
 	assert_decoder_result(5, CBOR_DECODER_FINISHED,
@@ -510,13 +510,51 @@ static void test_float4_data_decoding(void **state)
 }
 
 unsigned char float8_data[] = { 0xFB, 0xC0, 0x10, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66 };
-static void test_float8_data_decoding(void **state)
+static void test_float8_decoding(void **state)
 {
 	assert_double(-4.1);
 	assert_decoder_result(9, CBOR_DECODER_FINISHED,
 		decode(float8_data, 9)
 	);
 }
+
+
+unsigned char false_data[] = { 0xF4 };
+static void test_false_decoding(void **state)
+{
+	assert_bool(false);
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(false_data, 1)
+	);
+}
+
+unsigned char true_data[] = { 0xF5 };
+static void test_true_decoding(void **state)
+{
+	assert_bool(true);
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(true_data, 1)
+	);
+}
+
+unsigned char null_data[] = { 0xF6 };
+static void test_null_decoding(void **state)
+{
+	assert_nil();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(null_data, 1)
+	);
+}
+
+unsigned char undef_data[] = { 0xF7 };
+static void test_undef_decoding(void **state)
+{
+	assert_undef();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(undef_data, 1)
+	);
+}
+
 
 int main(void)
 {
@@ -558,9 +596,14 @@ int main(void)
 		unit_test(test_map_int64_decoding),
 		unit_test(test_indef_map_decoding_1),
 
-		unit_test(test_float2_data_decoding),
-		unit_test(test_float4_data_decoding),
-		unit_test(test_float8_data_decoding)
+		unit_test(test_float2_decoding),
+		unit_test(test_float4_decoding),
+		unit_test(test_float8_decoding),
+
+		unit_test(test_false_decoding),
+		unit_test(test_true_decoding),
+		unit_test(test_null_decoding),
+		unit_test(test_undef_decoding)
 	};
 	return run_tests(tests);
 }
