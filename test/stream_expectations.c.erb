@@ -103,6 +103,21 @@ enum cbor_callback_result indef_break_callback()
 	}
 <% end %>
 
+<% [['half', 2, 'double'], ['float', 4], ['double', 8]].each do |decimal| %>
+	void assert_<%= decimal[0] %>(<%= decimal[2] || decimal[0] %> value)
+	{
+		assertions_queue[queue_size++] = (struct test_assertion) { <%= decimal[0].upcase %>_EQ, { .float<%= decimal[1] %> = value } };
+	}
+
+	enum cbor_callback_result <%= decimal[0] %>_callback(<%= decimal[2] || decimal[0] %> actual)
+	{
+		assert_true(current().expectation == <%= decimal[0].upcase %>_EQ);
+		assert_true(current().data.float<%= decimal[1] %> == actual);
+		current_expectation++;
+		return CBOR_CALLBACK_OK;
+	}
+<% end %>
+
 const struct cbor_callbacks asserting_callbacks = {
 	<% %w(u neg).each do |type| %>
 		<% [8, 16, 32, 64].each do |width| %>
@@ -116,6 +131,10 @@ const struct cbor_callbacks asserting_callbacks = {
 	<% %w(array map).each do |type| %>
 		.<%= type %>_start = &<%= type %>_start_callback,
 		.indef_<%= type %>_start = &indef_<%= type %>_start_callback,
+	<% end %>
+
+	<% [['half', 2], ['float', 4], ['double', 8]].each do |decimal| %>
+		.float<%= decimal[1] %> = &<%= decimal[0] %>_callback,
 	<% end %>
 
 	.indef_break = &indef_break_callback

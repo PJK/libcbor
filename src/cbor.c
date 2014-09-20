@@ -864,11 +864,36 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0xF7:
 	case 0xF8:
 	case 0xF9:
+		/* 2B float */
+		{
+			if (_cbor_claim_bytes(2, source_size, &result)) {
+				callbacks->float2(_cbor_load_half(source + 1));
+			}
+			return  result;
+		}
 	case 0xFA:
+		/* 4B float */
+		{
+			if (_cbor_claim_bytes(4, source_size, &result)) {
+				callbacks->float4(_cbor_load_float(source + 1));
+			}
+			return  result;
+		}
 	case 0xFB:
-	case 0xFC:
-	case 0xFD:
+		/* 8B float */
+		{
+			if (_cbor_claim_bytes(8, source_size, &result)) {
+				callbacks->float8(_cbor_load_double(source + 1));
+			}
+			return  result;
+		}
+	case 0xFC: /* Fallthrough */
+	case 0xFD: /* Fallthrough */
 	case 0xFE:
+		/* Reserved */
+		{
+			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
+		}
 	case 0xFF:
 		/* Break */
 		{

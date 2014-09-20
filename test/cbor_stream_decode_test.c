@@ -491,6 +491,33 @@ static void test_indef_map_decoding_1(void **state)
 	);
 }
 
+unsigned char float2_data[] = { 0xF9, 0x7B, 0xFF };
+static void test_float2_data_decoding(void **state)
+{
+	assert_half(65504.0);
+	assert_decoder_result(3, CBOR_DECODER_FINISHED,
+		decode(float2_data, 3)
+	);
+}
+
+unsigned char float4_data[] = { 0xFA, 0x47, 0xC3, 0x50, 0x00 };
+static void test_float4_data_decoding(void **state)
+{
+	assert_float(100000.0);
+	assert_decoder_result(5, CBOR_DECODER_FINISHED,
+		decode(float4_data, 5)
+	);
+}
+
+unsigned char float8_data[] = { 0xFB, 0xC0, 0x10, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66 };
+static void test_float8_data_decoding(void **state)
+{
+	assert_double(-4.1);
+	assert_decoder_result(9, CBOR_DECODER_FINISHED,
+		decode(float8_data, 9)
+	);
+}
+
 int main(void)
 {
 	set_decoder(&cbor_stream_decode);
@@ -529,7 +556,11 @@ int main(void)
 		unit_test(test_map_int16_decoding),
 		unit_test(test_map_int32_decoding),
 		unit_test(test_map_int64_decoding),
-		unit_test(test_indef_map_decoding_1)
+		unit_test(test_indef_map_decoding_1),
+
+		unit_test(test_float2_data_decoding),
+		unit_test(test_float4_data_decoding),
+		unit_test(test_float8_data_decoding)
 	};
 	return run_tests(tests);
 }

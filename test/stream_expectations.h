@@ -40,6 +40,9 @@ enum test_expectation {
 	MAP_START, /* Definite maps only */
 	MAP_INDEF_START,
 
+	HALF_EQ,
+	FLOAT_EQ,
+	DOUBLE_EQ,
 	INDEF_BREAK /* Expect "Break" */
 };
 
@@ -53,6 +56,9 @@ union test_expectation_data {
 		size_t    length;
 	} string;
 	size_t length;
+	double float2;
+	float float4;
+	double float8;
 };
 
 struct test_assertion {
@@ -87,6 +93,10 @@ void assert_indef_array_start();
 void assert_map_start(size_t);
 void assert_indef_map_start();
 
+void assert_half(double);
+void assert_float(float);
+void assert_double(double);
+
 void assert_indef_break();
 
 /* Assertions verifying callbacks */
@@ -109,6 +119,9 @@ enum cbor_callback_result indef_array_start_callback();
 enum cbor_callback_result map_start_callback(size_t);
 enum cbor_callback_result indef_map_start_callback();
 
+enum cbor_callback_result half_callback(double);
+enum cbor_callback_result float_callback(float);
+enum cbor_callback_result double_callback(double);
 enum cbor_callback_result indef_break_callback();
 
 #endif

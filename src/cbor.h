@@ -173,6 +173,8 @@ typedef enum cbor_callback_result(* cbor_int64_callback)(uint64_t);
 typedef enum cbor_callback_result(* cbor_simple_callback)();
 typedef enum cbor_callback_result(* cbor_string_callback)(cbor_data, size_t);
 typedef enum cbor_callback_result(* cbor_collection_callback)(size_t);
+typedef enum cbor_callback_result(* cbor_float_callback)(float);
+typedef enum cbor_callback_result(* cbor_double_callback)(double);
 
 struct cbor_callbacks {
 	/* Type 0 - Unsigned integers */
@@ -206,6 +208,10 @@ struct cbor_callbacks {
 	/* Type 6 - Tags */
 
 	/* Type 7 - Floats & misc */
+	/* Type names cannot be member names */
+	cbor_double_callback float2; /* 2B float is not supported in standard C */
+	cbor_float_callback float4;
+	cbor_double_callback float8;
 
 	/* Shared indefinites */
 	cbor_simple_callback indef_break;

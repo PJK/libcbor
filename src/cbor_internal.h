@@ -19,11 +19,15 @@ bool _cbor_assert_avail_bytes(size_t num,
 							  size_t source_size,
 							  struct cbor_load_result * result);
 
-/* Read the give uint from the given location, no questions asked */
+/* Read the given uint from the given location, no questions asked */
 uint8_t _cbor_load_uint8(const unsigned char * source);
 uint16_t _cbor_load_uint16(const unsigned char * source);
 uint32_t _cbor_load_uint32(const unsigned char * source);
 uint64_t _cbor_load_uint64(const unsigned char * source);
+
+double _cbor_load_half(cbor_data source);
+float _cbor_load_float(cbor_data source);
+double _cbor_load_double(cbor_data source);
 
 unsigned char * _cbor_new_int8_data();
 unsigned char * _cbor_new_int16_data();
