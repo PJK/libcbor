@@ -141,6 +141,109 @@ static void test_negint64_decoding(void **state)
 	);
 }
 
+unsigned char bstring_embedded_int8_data[] = { 0x41, 0xFF };
+static void test_bstring_embedded_int8_decoding(void **state)
+{
+	assert_bstring_mem_eq(bstring_embedded_int8_data + 1, 1);
+	assert_decoder_result(2, CBOR_DECODER_FINISHED,
+		decode(bstring_embedded_int8_data, 2)
+	);
+}
+
+unsigned char bstring_int8_data[] = { 0x58, 0x00 };
+static void test_bstring_int8_decoding(void **state)
+{
+	assert_bstring_mem_eq(bstring_int8_data + 2, 0);
+	assert_decoder_result(2, CBOR_DECODER_FINISHED,
+		decode(bstring_int8_data, 2)
+	);
+}
+
+unsigned char bstring_int16_data[] = { 0x59, 0x01, 0x5C /*, [348 bytes] */ };
+static void test_bstring_int16_decoding(void **state)
+{
+	assert_bstring_mem_eq(bstring_int16_data + 3, 348);
+	assert_decoder_result(3 + 348, CBOR_DECODER_FINISHED,
+		decode(bstring_int16_data, 3 + 348)
+	);
+}
+
+unsigned char bstring_int32_data[] = { 0x5A, 0x00, 0x10, 0x10, 0x10 /*, [1052688 bytes] */ };
+static void test_bstring_int32_decoding(void **state)
+{
+	assert_bstring_mem_eq(bstring_int32_data + 5, 1052688);
+	assert_decoder_result(5 + 1052688, CBOR_DECODER_FINISHED,
+		decode(bstring_int32_data, 5 + 1052688)
+	);
+}
+
+unsigned char bstring_int64_data[] = { 0x5B, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 /*, [4294967296 bytes] */ };
+static void test_bstring_int64_decoding(void **state)
+{
+	assert_bstring_mem_eq(bstring_int64_data + 9, 4294967296);
+	assert_decoder_result(9 + 4294967296, CBOR_DECODER_FINISHED,
+		decode(bstring_int64_data, 9 + 4294967296)
+	);
+}
+
+
+unsigned char bstring_indef_1_data[] = { 0x5F, 0x40 /* Empty byte string */, 0xFF };
+static void test_bstring_indef_decoding_1(void **state)
+{
+	assert_bstring_indef_start();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(bstring_indef_1_data, 3)
+	);
+
+	assert_bstring_mem_eq(bstring_indef_1_data + 2, 0);
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(bstring_indef_1_data + 1, 2)
+	);
+
+	assert_indef_break();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(bstring_indef_1_data + 2, 1)
+	);
+}
+
+unsigned char bstring_indef_2_data[] = { 0x5F, 0xFF };
+static void test_bstring_indef_decoding_2(void **state)
+{
+	assert_bstring_indef_start();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(bstring_indef_2_data, 2)
+	);
+
+	assert_indef_break();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(bstring_indef_2_data + 1, 1)
+	);
+}
+
+unsigned char bstring_indef_3_data[] = { 0x5F, 0x40 /* Empty byte string */, 0x58, 0x01, 0xFF /* 1B 1 char bytes string */, 0xFF };
+static void test_bstring_indef_decoding_3(void **state)
+{
+	assert_bstring_indef_start();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(bstring_indef_3_data, 6)
+	);
+
+	assert_bstring_mem_eq(bstring_indef_3_data + 2, 0);
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(bstring_indef_3_data + 1, 5)
+	);
+
+	assert_bstring_mem_eq(bstring_indef_3_data + 4, 1);
+	assert_decoder_result(3, CBOR_DECODER_FINISHED,
+		decode(bstring_indef_3_data + 2, 4)
+	);
+
+	assert_indef_break();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(bstring_indef_3_data + 5, 1)
+	);
+}
+
 int main(void)
 {
 	set_decoder(&cbor_stream_decode);
@@ -150,11 +253,21 @@ int main(void)
 		unit_test(test_uint16_decoding),
 		unit_test(test_uint32_decoding),
 		unit_test(test_uint64_decoding),
+
 		unit_test(test_negint8_embedded_decoding),
 		unit_test(test_negint8_decoding),
 		unit_test(test_negint16_decoding),
 		unit_test(test_negint32_decoding),
-		unit_test(test_negint64_decoding)
+		unit_test(test_negint64_decoding),
+
+		unit_test(test_bstring_embedded_int8_decoding),
+		unit_test(test_bstring_int8_decoding),
+		unit_test(test_bstring_int16_decoding),
+		unit_test(test_bstring_int32_decoding),
+		unit_test(test_bstring_int64_decoding),
+		unit_test(test_bstring_indef_decoding_1),
+		unit_test(test_bstring_indef_decoding_2),
+		unit_test(test_bstring_indef_decoding_3)
 	};
 	return run_tests(tests);
 }

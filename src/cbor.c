@@ -362,7 +362,7 @@ cbor_item_t * cbor_load(const unsigned char * source,
 
 bool _cbor_claim_bytes(size_t required, size_t provided, struct cbor_decoder_result * result)
 {
-	if (required < (provided - result->read)) {
+	if (required > (provided - result->read)) {
 		/* We need to keep all the metadata if parsing is to be resumed */
 		result->read = 0;
 		result->status = CBOR_DECODER_NEDATA;
@@ -552,6 +552,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			if (_cbor_claim_bytes(length, source_size, &result)) {
 				callbacks->byte_string(source + 1, length);
 			}
+			return result;
 		}
 	case 0x58:
 		/* One byte length byte string */
@@ -563,6 +564,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 					callbacks->byte_string(source + 1 + 1, length);
 				}
 			}
+			return result;
 		}
 	case 0x59:
 		/* Two bytes length byte string */
@@ -573,6 +575,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 					callbacks->byte_string(source + 1 + 2, length);
 				}
 			}
+			return result;
 		}
 	case 0x5A:
 		/* Four bytes length byte string */
@@ -580,9 +583,10 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			if (_cbor_claim_bytes(4, source_size, &result)) {
 				size_t length = (size_t) _cbor_load_uint32(source + 1);
 				if (_cbor_claim_bytes(length, source_size, &result)) {
-					callbacks->byte_string(source + 1 + 3, length);
+					callbacks->byte_string(source + 1 + 4, length);
 				}
 			}
+			return result;
 		}
 	case 0x5B:
 		/* Eight bytes length byte string */
@@ -590,14 +594,24 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			if (_cbor_claim_bytes(8, source_size, &result)) {
 				size_t length = (size_t) _cbor_load_uint64(source + 1);
 				if (_cbor_claim_bytes(length, source_size, &result)) {
-					callbacks->byte_string(source + 1 + 4, length);
+					callbacks->byte_string(source + 1 + 8, length);
 				}
 			}
+			return result;
 		}
-	case 0x5C:
-	case 0x5D:
+	case 0x5C: /* Fallthrough */
+	case 0x5D: /* Fallthrough */
 	case 0x5E:
+		/* Reserved */
+		{
+			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
+		}
 	case 0x5F:
+		/* Indefinite byte string */
+		{
+			callbacks->byte_string_start();
+			return result;
+		}
 	case 0x60:
 	case 0x61:
 	case 0x62:

@@ -18,7 +18,8 @@ struct test_assertion current()
 	return assertions_queue[current_expectation];
 }
 
-/* Assertions builders */
+/* Assertions builders and matcher callbacks */
+// TODO parametrize this with with width instead?
 <% %w(u neg).each do |type| %>
 	<% [8, 16, 32, 64].each do |width| %>
 		void assert_<%= type %>int<%= width %>_eq(uint<%= width %>_t actual)
@@ -36,19 +37,63 @@ struct test_assertion current()
 	<% end %>
 <% end %>
 
+void assert_bstring_mem_eq(cbor_data address, size_t length)
+{
+	assertions_queue[queue_size++] = (struct test_assertion) { BSTRING_MEM_EQ, (union test_expectation_data) { .string = { address, length } } };
+}
+
+enum cbor_callback_result byte_string_callback(cbor_data address, size_t length)
+{
+	assert_true(current().expectation == BSTRING_MEM_EQ);
+	assert_true(current().data.string.address == address);
+	assert_true(current().data.string.length == length);
+	current_expectation++;
+	return CBOR_CALLBACK_OK;
+}
+
+void assert_bstring_indef_start()
+{
+	assertions_queue[queue_size++] = (struct test_assertion) { .expectation = BSTRING_INDEF_START };
+}
+
+enum cbor_callback_result byte_string_start_callback()
+{
+	assert_true(current().expectation == BSTRING_INDEF_START);
+	current_expectation++;
+	return CBOR_CALLBACK_OK;
+}
+
+void assert_indef_break()
+{
+	assertions_queue[queue_size++] = (struct test_assertion) { .expectation = INDEF_BREAK };
+}
+
+enum cbor_callback_result indef_break_callback()
+{
+	assert_true(current().expectation == INDEF_BREAK);
+	current_expectation++;
+	return CBOR_CALLBACK_OK;
+}
+
+
 const struct cbor_callbacks asserting_callbacks = {
 	<% %w(u neg).each do |type| %>
 		<% [8, 16, 32, 64].each do |width| %>
 			.<%= type %>int<%= width %> = &<%= type %>int<%= width %>_callback,
 		<% end %>
 	<% end %>
-	.indef_break = NULL
+
+	.byte_string = &byte_string_callback,
+	.byte_string_start = &byte_string_start_callback,
+
+	.indef_break = &indef_break_callback
 };
 
 struct cbor_decoder_result decode(cbor_data source, size_t source_size)
 {
 	struct cbor_decoder_result result = decoder(source, source_size, &asserting_callbacks);
 	/* Check remaining assertions */
+
 	assert_true(current_expectation == queue_size);
 	/* Clean up */
 	current_expectation = queue_size = 0;

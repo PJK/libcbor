@@ -189,12 +189,10 @@ struct cbor_callbacks {
 	/* Type 2 - Byte strings */
 	cbor_string_callback byte_string;
 	cbor_simple_callback byte_string_start;
-	cbor_string_callback byte_string_chunk;
 
 	/* Type 2 - Strings */
 	cbor_string_callback string;
 	cbor_simple_callback string_start;
-	cbor_string_callback string_chunk;
 
 	/* Shared indefinites */
 	cbor_simple_callback indef_break;
