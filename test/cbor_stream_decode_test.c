@@ -467,6 +467,30 @@ static void test_map_int64_decoding(void **state)
 	);
 }
 
+unsigned char indef_map_data_1[] = { 0xBF, 0x00, 0x18, 0xFF, 0xFF };
+static void test_indef_map_decoding_1(void **state)
+{
+	assert_indef_map_start();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(indef_map_data_1, 5)
+	);
+
+	assert_uint8_eq(0);
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(indef_map_data_1 + 1, 4)
+	);
+
+	assert_uint8_eq(255);
+	assert_decoder_result(2, CBOR_DECODER_FINISHED,
+		decode(indef_map_data_1 + 2, 3)
+	);
+
+	assert_indef_break();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(indef_map_data_1 + 4, 1)
+	);
+}
+
 int main(void)
 {
 	set_decoder(&cbor_stream_decode);
@@ -504,7 +528,8 @@ int main(void)
 		unit_test(test_map_int8_decoding),
 		unit_test(test_map_int16_decoding),
 		unit_test(test_map_int32_decoding),
-		unit_test(test_map_int64_decoding)
+		unit_test(test_map_int64_decoding),
+		unit_test(test_indef_map_decoding_1)
 	};
 	return run_tests(tests);
 }

@@ -85,7 +85,7 @@ void assert_array_start(size_t);
 void assert_indef_array_start();
 
 void assert_map_start(size_t);
-void map_indef_array_start();
+void assert_indef_map_start();
 
 void assert_indef_break();
 
