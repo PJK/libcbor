@@ -245,7 +245,7 @@ static void test_bstring_indef_decoding_3(void **state)
 }
 
 unsigned char array_embedded_int8_data[] = { 0x80 };
-static void test_array_embedded_int8(void **state)
+static void test_array_embedded_int8_decoding(void **state)
 {
 	assert_array_start(0);
 	assert_decoder_result(1, CBOR_DECODER_FINISHED,
@@ -254,7 +254,7 @@ static void test_array_embedded_int8(void **state)
 }
 
 unsigned char array_int8_data[] = { 0x98, 0x02, 0x00, 0x01 };
-static void test_array_int8(void **state)
+static void test_array_int8_decoding(void **state)
 {
 	assert_array_start(2);
 	assert_decoder_result(2, CBOR_DECODER_FINISHED,
@@ -273,7 +273,7 @@ static void test_array_int8(void **state)
 }
 
 unsigned char array_int16_data[] = { 0x99, 0x00, 0x02, 0x00, 0x01 };
-static void test_array_int16(void **state)
+static void test_array_int16_decoding(void **state)
 {
 	assert_array_start(2);
 	assert_decoder_result(3, CBOR_DECODER_FINISHED,
@@ -292,7 +292,7 @@ static void test_array_int16(void **state)
 }
 
 unsigned char array_int32_data[] = { 0x9A, 0x00, 0x00, 0x00, 0x02, 0x00, 0x01 };
-static void test_array_int32(void **state)
+static void test_array_int32_decoding(void **state)
 {
 	assert_array_start(2);
 	assert_decoder_result(5, CBOR_DECODER_FINISHED,
@@ -311,7 +311,7 @@ static void test_array_int32(void **state)
 }
 
 unsigned char array_int64_data[] = { 0x9B, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x01 };
-static void test_array_int64(void **state)
+static void test_array_int64_decoding(void **state)
 {
 	assert_array_start(2);
 	assert_decoder_result(9, CBOR_DECODER_FINISHED,
@@ -330,7 +330,7 @@ static void test_array_int64(void **state)
 }
 
 unsigned char array_of_arrays_data[] = { 0x82, 0x80, 0x80 };
-static void test_array_of_arrays(void **state)
+static void test_array_of_arrays_decoding(void **state)
 {
 	assert_array_start(2);
 	assert_decoder_result(1, CBOR_DECODER_FINISHED,
@@ -346,6 +346,31 @@ static void test_array_of_arrays(void **state)
 	assert_decoder_result(1, CBOR_DECODER_FINISHED,
 		decode(array_of_arrays_data + 2, 1)
 	);
+}
+
+unsigned char indef_array_data_1[] = { 0x9F, 0x00, 0x18, 0xFF, 0xFF };
+static void test_indef_array_decoding_1(void **state)
+{
+	assert_indef_array_start();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(indef_array_data_1, 5)
+	);
+
+	assert_uint8_eq(0);
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(indef_array_data_1 + 1, 4)
+	);
+
+	assert_uint8_eq(255);
+	assert_decoder_result(2, CBOR_DECODER_FINISHED,
+		decode(indef_array_data_1 + 2, 3)
+	);
+
+	assert_indef_break();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(indef_array_data_1 + 4, 1)
+	);
+
 }
 
 int main(void)
@@ -373,12 +398,13 @@ int main(void)
 		unit_test(test_bstring_indef_decoding_2),
 		unit_test(test_bstring_indef_decoding_3),
 
-		unit_test(test_array_embedded_int8),
-		unit_test(test_array_int8),
-		unit_test(test_array_int16),
-		unit_test(test_array_int32),
-		unit_test(test_array_int64),
-		unit_test(test_array_of_arrays)
+		unit_test(test_array_embedded_int8_decoding),
+		unit_test(test_array_int8_decoding),
+		unit_test(test_array_int16_decoding),
+		unit_test(test_array_int32_decoding),
+		unit_test(test_array_int64_decoding),
+		unit_test(test_array_of_arrays_decoding),
+		unit_test(test_indef_array_decoding_1)
 	};
 	return run_tests(tests);
 }
