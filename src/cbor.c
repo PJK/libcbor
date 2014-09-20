@@ -612,70 +612,126 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			callbacks->byte_string_start();
 			return result;
 		}
-	case 0x60:
-	case 0x61:
-	case 0x62:
-	case 0x63:
-	case 0x64:
-	case 0x65:
-	case 0x66:
-	case 0x67:
-	case 0x68:
-	case 0x69:
-	case 0x6A:
-	case 0x6B:
-	case 0x6C:
-	case 0x6D:
-	case 0x6E:
-	case 0x6F:
-	case 0x70:
-	case 0x71:
-	case 0x72:
-	case 0x73:
-	case 0x74:
-	case 0x75:
-	case 0x76:
+	case 0x60: /* Fallthrough */
+	case 0x61: /* Fallthrough */
+	case 0x62: /* Fallthrough */
+	case 0x63: /* Fallthrough */
+	case 0x64: /* Fallthrough */
+	case 0x65: /* Fallthrough */
+	case 0x66: /* Fallthrough */
+	case 0x67: /* Fallthrough */
+	case 0x68: /* Fallthrough */
+	case 0x69: /* Fallthrough */
+	case 0x6A: /* Fallthrough */
+	case 0x6B: /* Fallthrough */
+	case 0x6C: /* Fallthrough */
+	case 0x6D: /* Fallthrough */
+	case 0x6E: /* Fallthrough */
+	case 0x6F: /* Fallthrough */
+	case 0x70: /* Fallthrough */
+	case 0x71: /* Fallthrough */
+	case 0x72: /* Fallthrough */
+	case 0x73: /* Fallthrough */
+	case 0x74: /* Fallthrough */
+	case 0x75: /* Fallthrough */
+	case 0x76: /* Fallthrough */
 	case 0x77:
+		/* Embedded one byte length string */
+		{
+			// TODO
+			return result;
+		}
 	case 0x78:
+		/* One byte length string */
 	case 0x79:
+		/* Two bytes length string */
 	case 0x7A:
+		/* Four bytes length string */
 	case 0x7B:
-	case 0x7C:
-	case 0x7D:
+		/* Eight bytes length string */
+	case 0x7C: /* Fallthrough */
+	case 0x7D: /* Fallthrough */
 	case 0x7E:
+		/* Reserved */
+		{
+			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
+		}
 	case 0x7F:
-	case 0x80:
-	case 0x81:
-	case 0x82:
-	case 0x83:
-	case 0x84:
-	case 0x85:
-	case 0x86:
-	case 0x87:
-	case 0x88:
-	case 0x89:
-	case 0x8A:
-	case 0x8B:
-	case 0x8C:
-	case 0x8D:
-	case 0x8E:
-	case 0x8F:
-	case 0x90:
-	case 0x91:
-	case 0x92:
-	case 0x93:
-	case 0x94:
-	case 0x95:
-	case 0x96:
+		/* Indefinite length string */
+	case 0x80: /* Fallthrough */
+	case 0x81: /* Fallthrough */
+	case 0x82: /* Fallthrough */
+	case 0x83: /* Fallthrough */
+	case 0x84: /* Fallthrough */
+	case 0x85: /* Fallthrough */
+	case 0x86: /* Fallthrough */
+	case 0x87: /* Fallthrough */
+	case 0x88: /* Fallthrough */
+	case 0x89: /* Fallthrough */
+	case 0x8A: /* Fallthrough */
+	case 0x8B: /* Fallthrough */
+	case 0x8C: /* Fallthrough */
+	case 0x8D: /* Fallthrough */
+	case 0x8E: /* Fallthrough */
+	case 0x8F: /* Fallthrough */
+	case 0x90: /* Fallthrough */
+	case 0x91: /* Fallthrough */
+	case 0x92: /* Fallthrough */
+	case 0x93: /* Fallthrough */
+	case 0x94: /* Fallthrough */
+	case 0x95: /* Fallthrough */
+	case 0x96: /* Fallthrough */
 	case 0x97:
+		/* Embedded one byte length array */
+		{
+			callbacks->array_start((size_t)_cbor_load_uint8(source) - 0x80); /* 0x40 offset */
+			return result;
+		}
 	case 0x98:
+		/* One byte length array */
+		{
+			if (_cbor_claim_bytes(1, source_size, &result)) {
+				callbacks->array_start((size_t)_cbor_load_uint8(source + 1));
+			}
+			return result;
+		}
 	case 0x99:
+		/* Two bytes length string */
+		{
+			if (_cbor_claim_bytes(2, source_size, &result)) {
+				callbacks->array_start((size_t)_cbor_load_uint16(source + 1));
+			}
+			return result;
+		}
 	case 0x9A:
+		/* Four bytes length string */
+		{
+			if (_cbor_claim_bytes(4, source_size, &result)) {
+				callbacks->array_start((size_t)_cbor_load_uint32(source + 1));
+			}
+			return result;
+		}
 	case 0x9B:
-	case 0x9C:
-	case 0x9D:
+		/* Eight bytes length string */
+		{
+			if (_cbor_claim_bytes(8, source_size, &result)) {
+				callbacks->array_start((size_t)_cbor_load_uint64(source + 1));
+			}
+			return result;
+		}
+	case 0x9C: /* Fallthrough */
+	case 0x9D: /* Fallthrough */
 	case 0x9E:
+		/* Reserved */
+		{
+			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
+		}
 	case 0x9F:
+		/* Indefinite length array */
+		{
+			callbacks->indef_array_start();
+			return result;
+		}
 	case 0xA0:
 	case 0xA1:
 	case 0xA2:

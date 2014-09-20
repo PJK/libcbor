@@ -34,6 +34,9 @@ enum test_expectation {
 	BSTRING_MEM_EQ, /* Matches length and memory address for definite byte strings */
 	BSTRING_INDEF_START,
 
+	ARRAY_START, /* Definite arrays only */
+	ARRAY_INDEF_START,
+
 	INDEF_BREAK /* Expect "Break" */
 };
 
@@ -46,6 +49,7 @@ union test_expectation_data {
 		cbor_data address;
 		size_t    length;
 	} string;
+	size_t length;
 };
 
 struct test_assertion {
@@ -74,6 +78,9 @@ void assert_negint64_eq(uint64_t);
 void assert_bstring_mem_eq(cbor_data, size_t);
 void assert_bstring_indef_start();
 
+void assert_array_start(size_t);
+void assert_indef_array_start();
+
 void assert_indef_break();
 
 /* Assertions verifying callbacks */
@@ -89,6 +96,9 @@ enum cbor_callback_result negint64_callback(uint64_t);
 
 enum cbor_callback_result byte_string_callback(cbor_data, size_t);
 enum cbor_callback_result byte_string_start_callback();
+
+enum cbor_callback_result array_start_callback(size_t);
+enum cbor_callback_result indef_array_start_callback();
 
 enum cbor_callback_result indef_break_callback();
 

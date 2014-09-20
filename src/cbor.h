@@ -161,7 +161,7 @@ struct cbor_load_result {
 
 enum cbor_callback_result {
 	CBOR_CALLBACK_OK,
-	CBOR_CALLBACK_HALT
+	CBOR_CALLBACK_SKIP //TODO
 };
 
 typedef const unsigned char * cbor_data;
@@ -172,6 +172,7 @@ typedef enum cbor_callback_result(* cbor_int32_callback)(uint32_t);
 typedef enum cbor_callback_result(* cbor_int64_callback)(uint64_t);
 typedef enum cbor_callback_result(* cbor_simple_callback)();
 typedef enum cbor_callback_result(* cbor_string_callback)(cbor_data, size_t);
+typedef enum cbor_callback_result(* cbor_array_callback)(size_t);
 
 struct cbor_callbacks {
 	/* Type 0 - Unsigned integers */
@@ -190,9 +191,19 @@ struct cbor_callbacks {
 	cbor_string_callback byte_string;
 	cbor_simple_callback byte_string_start;
 
-	/* Type 2 - Strings */
+	/* Type 3 - Strings */
 	cbor_string_callback string;
 	cbor_simple_callback string_start;
+
+	/* Type 4 - Arrays */
+	cbor_array_callback array_start;
+	cbor_simple_callback indef_array_start;
+
+	/* Type 5 - Maps */
+
+	/* Type 6 - Tags */
+
+	/* Type 7 - Floats & misc */
 
 	/* Shared indefinites */
 	cbor_simple_callback indef_break;
@@ -217,7 +228,7 @@ cbor_item_t * cbor_load(cbor_data source, size_t source_size, cbor_flags_t flags
 void cbor_incref(cbor_item_t * item);
 void cbor_decref(cbor_item_t ** item);
 
-cbor_type cbor_typeof(const cbor_item_t * item); /* will be inlined iff link-time opt is enabled */
+cbor_type cbor_typeof(const cbor_item_t * item); /* Will be inlined iff link-time opt is enabled */
 
 /* Standard item types as described by the RFC */
 bool cbor_isa_uint(const cbor_item_t * item);
