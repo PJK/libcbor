@@ -19,8 +19,6 @@
  * size_t???
  */
 _Static_assert(sizeof(size_t) >= 8, "size_t must be at least 64 bits");
-_Static_assert(sizeof(bool) == 1, "size_t must be at least 64 bits");
-
 
 /*
  * Packed bitfield
@@ -30,7 +28,7 @@ typedef union {
 	struct {
 		bool no_realloc : 1;
 		bool canonical  : 1;
-		int : sizeof(int) * 8 - 3; /* Padding */
+		int : sizeof(int) * 8 - 2; /* Padding */
 	};
 	int raw;
 } cbor_flags_t;
