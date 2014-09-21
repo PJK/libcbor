@@ -1,5 +1,68 @@
 API
 =======
+
+A quick CBOR primer
+--------------------------
+
+TODO, please refer to :rfc:`7049`
+
+The API
+-----------------
+
+The API is designed to allow both very tight control & flexibility and general convenience with sane defaults. [#]_ For example, client with very specific requirements (constrained environment, custom application protocol built on top of CBOR, etc.) may choose to take full control (and responsibility) of memory and data structures management by interacting directly with the decoder. Other clients might want to take control of specific aspects (streamed collections, hash maps storage), but leave other responsibilities to *libcbor*. More general clients might prefer to be abstracted away from all aforementioned details and only be presented complete data structures.
+
+  .. [#] http://softwareengineering.vazexqi.com/files/pattern.html
+
+*libcbor* provides
+ - stateless encoders and decoders
+ - encoding and decoding *drivers*, routines that coordinate encoding and decoding of complex structures
+ - data structures to represent and transform CBOR structures
+ - routines for building and manipulating these structures
+ - utilities for inspection and debugging
+
+Decoding
+~~~~~~~~~~
+::
+
+    ┌──────────────────────────────────────────────────────────────────────────────────────────────┐
+    │                                                                                              │
+    │                                      Client application                                      │
+    │                                                                                              │
+    │                                                 ┌────────────────────────────────────────────┘
+    │                                                 │                     ↕
+    │                                                 │ ┌──────────────────────────────────────────┐
+    │                                                 │ │                                          │
+    │                                                 │ │          Manipulation routines           │
+    │                                                 │ │                                          │
+    │           ┌─────────────────────────────────────┘ └──────────────────────────────────────────┘
+    │           │     ↑    ↑                  ↑                              ↑
+    │           │     │    │    ┌─────────────╫──────────┬───────────────────┴─┐
+    │           │     │   CDS   │             ║          │                     │
+    │           │     │    │   PDS            ║         PDS                   PDS
+    │           │     ↓    ↓    ↓             ↓          ↓                     ↓
+    │           │ ┌─────────────────┐   ┌────────────────────┐   ┌────────────────────────────┐
+    │           │ │                 │   │                    │   │                            │
+    │           │ │  Custom driver  │ ↔ │  Streaming driver  │ ↔ │       Default driver       │ ↔ CD
+    │           │ │                 │   │                    │   │                            │
+    └───────────┘ └─────────────────┘   └────────────────────┘   └────────────────────────────┘
+          ↕                ↕                        ↕                           ↕
+    ┌──────────────────────────────────────────────────────────────────────────────────────────────┐
+    │                                                                                              │
+    │                            Stateless event─driven decoder                                    │
+    │                                                                                              │
+    └──────────────────────────────────────────────────────────────────────────────────────────────┘
+
+                  (PSD = Provided Data Structures, CDS = Custom Data Structures)
+
+
+
+Encoding
+~~~~~~~~~~
+TODO
+
+Data API
+~~~~~~~~~~~~~
+
 The *libcbor* API closely follows the semantics outlined by `CBOR standard <http://tools.ietf.org/html/rfc7049>`_. This part of the documentation provides a short overview of the CBOR constructs, as well as a general introduction to the *libcbor* API. Remaining reference can be found in the following files structured by data types
 
 .. toctree::
@@ -12,15 +75,7 @@ The *libcbor* API closely follows the semantics outlined by `CBOR standard <http
    api/type_6
    api/type_7
 
-A quick CBOR primer
---------------------------
-
-TODO
-
-The API
------------------
-
-The API is centered around :type:`cbor_item_t`, a generic handle for any CBOR item. There are functions to
+The data API is centered around :type:`cbor_item_t`, a generic handle for any CBOR item. There are functions to
 
  - create items,
  - set items' data,
@@ -29,15 +84,16 @@ The API is centered around :type:`cbor_item_t`, a generic handle for any CBOR it
 
 The single most important thing to keep in mind is: :type:`cbor_item_t` **is an opaque type and should only be manipulated using the appropriate functions!** Think of it as an object.
 
+
 Memory management
-~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^
 
 Due to the nature of its domain *libcbor* will need to work with heap memory. It will only use ``malloc`` and ``free``.
 
 TODO custom malloc
 
 Reference counting
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^
 
 As CBOR items may require complex cleanups at the end of their lifetime, there is a reference counting mechanism in place. This also enables very simple GC when integrating *libcbor* into managed environment. Every item starts its life (by either explicit creation, or as a result of parsing) with reference count set to 1. When the refcount reaches zero, it will be destroyed.
 
@@ -57,7 +113,7 @@ The destruction is synchronous and might possibly render any pointers to items w
 .. _item-types:
 
 Loading items
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^
 
 .. function:: cbor_item_t * cbor_load(const unsigned char * source, size_t source_size, size_t flags, struct cbor_load_result * result)
 
@@ -94,7 +150,7 @@ Loading items
 
 
 Item types
-~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^
 
 A :type:`cbor_item_t` can be probed for its type using these functions
 

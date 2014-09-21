@@ -10,13 +10,16 @@ Overview
 
 
 Main features
- - Robust, standard compliant C11 implementation
- - Performant, yet quite general – suitable for embedding or binding to higher level languages
+ - Complete RFC conformance [#]_
+ - Robust C11 implementation
+ - Layered architecture offers both control and convenience
+ - Flexible memory management
  - Proper handling of UTF-8
- - Stream & chunked processing – works great with event-driven network applications
+ - Full support for streams & incremental processing
  - Extensive documentation and test suite
  - No runtime dependencies, small footprint
- - Thread-safe and scalable
+
+.. [#] :doc:`rfc_conformance`
 
 Contents
 ----------
