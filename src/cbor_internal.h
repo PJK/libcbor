@@ -29,34 +29,6 @@ double _cbor_load_half(cbor_data source);
 float _cbor_load_float(cbor_data source);
 double _cbor_load_double(cbor_data source);
 
-unsigned char * _cbor_new_int8_data();
-unsigned char * _cbor_new_int16_data();
-unsigned char * _cbor_new_int32_data();
-unsigned char * _cbor_new_int64_data();
+enum cbor_callback_result cbor_builder_uint8_callback(size_t, uint8_t);
 
-void _cbor_handle_load_uint8(const unsigned char * source,
-							 size_t source_size,
-							 cbor_item_t * item,
-							 struct cbor_load_result * result);
-
-void _cbor_handle_load_uint16(const unsigned char * source,
-							  size_t source_size,
-							  cbor_item_t * item,
-							  struct cbor_load_result * result);
-
-void _cbor_handle_load_uint32(const unsigned char * source,
-							  size_t source_size,
-							  cbor_item_t * item,
-							  struct cbor_load_result * result);
-
-void _cbor_handle_load_uint64(const unsigned char * source,
-							  size_t source_size,
-							  cbor_item_t * item,
-							  struct cbor_load_result * result);
-
-void _cbor_handle_load_bytestring(const unsigned char * source,
-								  size_t source_size,
-								  size_t length,
-								  cbor_item_t * item,
-								  struct cbor_load_result * result);
 #endif

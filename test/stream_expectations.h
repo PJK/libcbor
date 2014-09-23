@@ -108,32 +108,32 @@ void assert_undef();
 void assert_indef_break();
 
 /* Assertions verifying callbacks */
-enum cbor_callback_result uint8_callback(uint8_t);
-enum cbor_callback_result uint16_callback(uint16_t);
-enum cbor_callback_result uint32_callback(uint32_t);
-enum cbor_callback_result uint64_callback(uint64_t);
+enum cbor_callback_result uint8_callback(size_t, uint8_t);
+enum cbor_callback_result uint16_callback(size_t, uint16_t);
+enum cbor_callback_result uint32_callback(size_t, uint32_t);
+enum cbor_callback_result uint64_callback(size_t, uint64_t);
 
-enum cbor_callback_result negint8_callback(uint8_t);
-enum cbor_callback_result negint16_callback(uint16_t);
-enum cbor_callback_result negint32_callback(uint32_t);
-enum cbor_callback_result negint64_callback(uint64_t);
+enum cbor_callback_result negint8_callback(size_t, uint8_t);
+enum cbor_callback_result negint16_callback(size_t, uint16_t);
+enum cbor_callback_result negint32_callback(size_t, uint32_t);
+enum cbor_callback_result negint64_callback(size_t, uint64_t);
 
-enum cbor_callback_result byte_string_callback(cbor_data, size_t);
-enum cbor_callback_result byte_string_start_callback();
+enum cbor_callback_result byte_string_callback(size_t, cbor_data, size_t);
+enum cbor_callback_result byte_string_start_callback(size_t);
 
-enum cbor_callback_result array_start_callback(size_t);
-enum cbor_callback_result indef_array_start_callback();
+enum cbor_callback_result array_start_callback(size_t, size_t);
+enum cbor_callback_result indef_array_start_callback(size_t);
 
-enum cbor_callback_result map_start_callback(size_t);
-enum cbor_callback_result indef_map_start_callback();
+enum cbor_callback_result map_start_callback(size_t, size_t);
+enum cbor_callback_result indef_map_start_callback(size_t);
 
-enum cbor_callback_result half_callback(double);
-enum cbor_callback_result float_callback(float);
-enum cbor_callback_result double_callback(double);
-enum cbor_callback_result indef_break_callback();
+enum cbor_callback_result half_callback(size_t, double);
+enum cbor_callback_result float_callback(size_t, float);
+enum cbor_callback_result double_callback(size_t, double);
+enum cbor_callback_result indef_break_callback(size_t);
 
-enum cbor_callback_result bool_callback(bool);
-enum cbor_callback_result null_callback();
-enum cbor_callback_result undef_callback();
+enum cbor_callback_result bool_callback(size_t, bool);
+enum cbor_callback_result null_callback(size_t);
+enum cbor_callback_result undef_callback(size_t);
 
 #endif

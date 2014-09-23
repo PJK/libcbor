@@ -1,7 +1,7 @@
 #include "cbor.h"
 #include "cbor_internal.h"
 #include <assert.h>
-#include <zlib.h>
+#include "cbor_stack.h"
 
 /* TODO refactor the metadata madness using structs and unions */
 
@@ -60,12 +60,17 @@ void cbor_decref(cbor_item_t ** item)
 }
 
 
+
 cbor_item_t * cbor_load(const unsigned char * source,
 						size_t source_size,
 						cbor_flags_t flags,
 						struct cbor_load_result * result)
 {
-
+	/* Context stack */
+	struct _cbor_stack stack = _cbor_stack_init();
+	struct cbor_callbacks callbacks = {
+		.uint8 = &cbor_builder_uint8_callback
+	};
 }
 
 bool _cbor_claim_bytes(size_t required, size_t provided, struct cbor_decoder_result * result)
@@ -81,7 +86,7 @@ bool _cbor_claim_bytes(size_t required, size_t provided, struct cbor_decoder_res
 	}
 }
 
-struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_size, const struct cbor_callbacks * callbacks)
+struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_size, const struct cbor_callbacks * callbacks, size_t id)
 {
 	/* If we have no data, we cannot read even the MTB */
 	if (source_size < 1) {
@@ -118,14 +123,14 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x17:
 		/* Embedded one byte unsigned integer */
 		{
-			callbacks->uint8(_cbor_load_uint8(source));
+			callbacks->uint8(id, _cbor_load_uint8(source));
 			return result;
 		}
 	case 0x18:
 		/* One byte unsigned integer */
 		{
 			if (_cbor_claim_bytes(1, source_size, &result)) {
-				callbacks->uint8(_cbor_load_uint8(source + 1));
+				callbacks->uint8(id, _cbor_load_uint8(source + 1));
 			}
 			return result;
 		}
@@ -133,7 +138,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* Two bytes unsigned integer */
 		{
 			if (_cbor_claim_bytes(2, source_size, &result)) {
-				callbacks->uint16(_cbor_load_uint16(source + 1));
+				callbacks->uint16(id, _cbor_load_uint16(source + 1));
 			}
 			return result;
 		}
@@ -141,7 +146,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* Four bytes unsigned integer */
 		{
 			if (_cbor_claim_bytes(4, source_size, &result)) {
-				callbacks->uint32(_cbor_load_uint32(source + 1));
+				callbacks->uint32(id, _cbor_load_uint32(source + 1));
 			}
 			return result;
 		}
@@ -149,7 +154,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* Eight bytes unsigned integer */
 		{
 			if (_cbor_claim_bytes(8, source_size, &result)) {
-				callbacks->uint64(_cbor_load_uint64(source + 1));
+				callbacks->uint64(id, _cbor_load_uint64(source + 1));
 			}
 			return result;
 		}
@@ -187,14 +192,14 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x37:
 		/* Embedded one byte negative integer */
 		{
-			callbacks->negint8(_cbor_load_uint8(source) - 0x20); /* 0x20 offset */
+			callbacks->negint8(id, _cbor_load_uint8(source) - 0x20); /* 0x20 offset */
 			return result;
 		}
 	case 0x38:
 		/* One byte negative integer */
 	{
 		if (_cbor_claim_bytes(1, source_size, &result)) {
-			callbacks->negint8(_cbor_load_uint8(source + 1));
+			callbacks->negint8(id, _cbor_load_uint8(source + 1));
 		}
 		return result;
 	}
@@ -202,7 +207,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* Two bytes negative integer */
 	{
 		if (_cbor_claim_bytes(2, source_size, &result)) {
-			callbacks->negint16(_cbor_load_uint16(source + 1));
+			callbacks->negint16(id, _cbor_load_uint16(source + 1));
 		}
 		return result;
 	}
@@ -210,7 +215,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* Four bytes negative integer */
 	{
 		if (_cbor_claim_bytes(4, source_size, &result)) {
-			callbacks->negint32(_cbor_load_uint32(source + 1));
+			callbacks->negint32(id, _cbor_load_uint32(source + 1));
 		}
 		return result;
 	}
@@ -218,7 +223,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* Eight bytes negative integer */
 	{
 		if (_cbor_claim_bytes(8, source_size, &result)) {
-			callbacks->negint64(_cbor_load_uint64(source + 1));
+			callbacks->negint64(id, _cbor_load_uint64(source + 1));
 		}
 		return result;
 	}
@@ -258,7 +263,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		{
 			size_t length = (size_t)_cbor_load_uint8(source) - 0x40; /* 0x40 offset */
 			if (_cbor_claim_bytes(length, source_size, &result)) {
-				callbacks->byte_string(source + 1, length);
+				callbacks->byte_string(id, source + 1, length);
 			}
 			return result;
 		}
@@ -269,7 +274,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			if (_cbor_claim_bytes(1, source_size, &result)) {
 				size_t length = (size_t) _cbor_load_uint8(source + 1);
 				if (_cbor_claim_bytes(length, source_size, &result)) {
-					callbacks->byte_string(source + 1 + 1, length);
+					callbacks->byte_string(id, source + 1 + 1, length);
 				}
 			}
 			return result;
@@ -280,7 +285,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			if (_cbor_claim_bytes(2, source_size, &result)) {
 				size_t length = (size_t) _cbor_load_uint16(source + 1);
 				if (_cbor_claim_bytes(length, source_size, &result)) {
-					callbacks->byte_string(source + 1 + 2, length);
+					callbacks->byte_string(id, source + 1 + 2, length);
 				}
 			}
 			return result;
@@ -291,7 +296,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			if (_cbor_claim_bytes(4, source_size, &result)) {
 				size_t length = (size_t) _cbor_load_uint32(source + 1);
 				if (_cbor_claim_bytes(length, source_size, &result)) {
-					callbacks->byte_string(source + 1 + 4, length);
+					callbacks->byte_string(id, source + 1 + 4, length);
 				}
 			}
 			return result;
@@ -302,7 +307,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			if (_cbor_claim_bytes(8, source_size, &result)) {
 				size_t length = (size_t) _cbor_load_uint64(source + 1);
 				if (_cbor_claim_bytes(length, source_size, &result)) {
-					callbacks->byte_string(source + 1 + 8, length);
+					callbacks->byte_string(id, source + 1 + 8, length);
 				}
 			}
 			return result;
@@ -317,7 +322,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x5F:
 		/* Indefinite byte string */
 		{
-			callbacks->byte_string_start();
+			callbacks->byte_string_start(id);
 			return result;
 		}
 	case 0x60: /* Fallthrough */
@@ -392,14 +397,14 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x97:
 		/* Embedded one byte length array */
 		{
-			callbacks->array_start((size_t)_cbor_load_uint8(source) - 0x80); /* 0x40 offset */
+			callbacks->array_start(id, (size_t)_cbor_load_uint8(source) - 0x80); /* 0x40 offset */
 			return result;
 		}
 	case 0x98:
 		/* One byte length array */
 		{
 			if (_cbor_claim_bytes(1, source_size, &result)) {
-				callbacks->array_start((size_t)_cbor_load_uint8(source + 1));
+				callbacks->array_start(id, (size_t)_cbor_load_uint8(source + 1));
 			}
 			return result;
 		}
@@ -407,7 +412,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* Two bytes length string */
 		{
 			if (_cbor_claim_bytes(2, source_size, &result)) {
-				callbacks->array_start((size_t)_cbor_load_uint16(source + 1));
+				callbacks->array_start(id, (size_t)_cbor_load_uint16(source + 1));
 			}
 			return result;
 		}
@@ -415,7 +420,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* Four bytes length string */
 		{
 			if (_cbor_claim_bytes(4, source_size, &result)) {
-				callbacks->array_start((size_t)_cbor_load_uint32(source + 1));
+				callbacks->array_start(id, (size_t)_cbor_load_uint32(source + 1));
 			}
 			return result;
 		}
@@ -423,7 +428,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* Eight bytes length string */
 		{
 			if (_cbor_claim_bytes(8, source_size, &result)) {
-				callbacks->array_start((size_t)_cbor_load_uint64(source + 1));
+				callbacks->array_start(id, (size_t)_cbor_load_uint64(source + 1));
 			}
 			return result;
 		}
@@ -437,7 +442,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x9F:
 		/* Indefinite length array */
 		{
-			callbacks->indef_array_start();
+			callbacks->indef_array_start(id);
 			return result;
 		}
 	case 0xA0: /* Fallthrough */
@@ -466,14 +471,14 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0xB7:
 		/* Embedded one byte length map */
 		{
-			callbacks->map_start((size_t)_cbor_load_uint8(source) - 0xA0); /* 0xA0 offset */
+			callbacks->map_start(id, (size_t)_cbor_load_uint8(source) - 0xA0); /* 0xA0 offset */
 			return result;
 		}
 	case 0xB8:
 		/* One byte length map */
 		{
 			if (_cbor_claim_bytes(1, source_size, &result)) {
-				callbacks->map_start((size_t)_cbor_load_uint8(source + 1));
+				callbacks->map_start(id, (size_t)_cbor_load_uint8(source + 1));
 			}
 			return result;
 		}
@@ -481,7 +486,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* Two bytes length map */
 		{
 			if (_cbor_claim_bytes(2, source_size, &result)) {
-				callbacks->map_start((size_t)_cbor_load_uint16(source + 1));
+				callbacks->map_start(id, (size_t)_cbor_load_uint16(source + 1));
 			}
 			return result;
 		}
@@ -489,7 +494,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* Four bytes length map */
 		{
 			if (_cbor_claim_bytes(4, source_size, &result)) {
-				callbacks->map_start((size_t)_cbor_load_uint32(source + 1));
+				callbacks->map_start(id, (size_t)_cbor_load_uint32(source + 1));
 			}
 			return result;
 		}
@@ -497,7 +502,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* Eight bytes length map */
 		{
 			if (_cbor_claim_bytes(8, source_size, &result)) {
-				callbacks->map_start((size_t)_cbor_load_uint64(source + 1));
+				callbacks->map_start(id, (size_t)_cbor_load_uint64(source + 1));
 			}
 			return result;
 		}
@@ -511,7 +516,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0xBF:
 		/* Indefinite length map */
 		{
-			callbacks->indef_map_start();
+			callbacks->indef_map_start(id);
 			return result;
 		}
 	case 0xC0:
@@ -569,25 +574,25 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0xF4:
 		/* False */
 		{
-			callbacks->boolean(false);
+			callbacks->boolean(id, false);
 			return result;
 		}
 	case 0xF5:
 		/* True */
 		{
-			callbacks->boolean(true);
+			callbacks->boolean(id, true);
 			return result;
 		}
 	case 0xF6:
 		/* Null */
 		{
-			callbacks->null();
+			callbacks->null(id);
 			return result;
 		}
 	case 0xF7:
 		/* Undefined */
 		{
-			callbacks->undefined();
+			callbacks->undefined(id);
 			return result;
 		}
 	case 0xF8:
@@ -595,7 +600,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* 2B float */
 		{
 			if (_cbor_claim_bytes(2, source_size, &result)) {
-				callbacks->float2(_cbor_load_half(source + 1));
+				callbacks->float2(id, _cbor_load_half(source + 1));
 			}
 			return  result;
 		}
@@ -603,7 +608,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* 4B float */
 		{
 			if (_cbor_claim_bytes(4, source_size, &result)) {
-				callbacks->float4(_cbor_load_float(source + 1));
+				callbacks->float4(id, _cbor_load_float(source + 1));
 			}
 			return  result;
 		}
@@ -611,7 +616,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* 8B float */
 		{
 			if (_cbor_claim_bytes(8, source_size, &result)) {
-				callbacks->float8(_cbor_load_double(source + 1));
+				callbacks->float8(id, _cbor_load_double(source + 1));
 			}
 			return  result;
 		}
@@ -625,7 +630,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0xFF:
 		/* Break */
 		{
-			callbacks->indef_break();
+			callbacks->indef_break(id);
 			return result;
 		}
 	default:
