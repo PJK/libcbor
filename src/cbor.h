@@ -157,10 +157,6 @@ struct cbor_load_result {
 	size_t			  read;
 };
 
-struct cbor_decoder_context {
-	
-};
-
 enum cbor_callback_result {
 	CBOR_CALLBACK_OK,
 	CBOR_CALLBACK_SKIP //TODO
