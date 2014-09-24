@@ -24,7 +24,7 @@ static void test_empty_bs(void **state) {
 	assert_non_null(bs);
 	assert_true(cbor_typeof(bs) == CBOR_TYPE_BYTESTRING);
 	assert_true(cbor_isa_bytestring(bs));
-	assert_true(cbor_bytestring_length(bs) == 0);
+	assert_int_equal(cbor_bytestring_length(bs), 0);
 	assert_true(res.read == 1);
 	cbor_decref(&bs);
 	assert_null(bs);

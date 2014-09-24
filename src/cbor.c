@@ -1,7 +1,6 @@
 #include "cbor.h"
 #include "cbor_internal.h"
 #include <assert.h>
-#include "cbor_stack.h"
 
 /* TODO refactor the metadata madness using structs and unions */
 
@@ -65,12 +64,14 @@ cbor_item_t * cbor_load(cbor_data source,
 						struct cbor_load_result * result)
 {
 	/* Context stack */
-	struct _cbor_stack stack = _cbor_stack_init();
 	static struct cbor_callbacks callbacks = {
-		.uint8 = &cbor_builder_uint8_callback
+		.uint8 = &cbor_builder_uint8_callback,
+		.byte_string = &cbor_builder_byte_string_callback
 	};
 	/* Target for callbacks */
-	struct cbor_decoder_context * context = malloc(sizeof(struct cbor_decoder_context));
+	struct _cbor_decoder_context * context = malloc(sizeof(struct _cbor_decoder_context));
+	struct _cbor_stack stack = _cbor_stack_init();
+	context->stack = &stack;
 	struct cbor_decoder_result decode_result = cbor_stream_decode(source, source_size, &callbacks, context);
 	result->read = decode_result.read;
 	return context->result;
@@ -746,6 +747,20 @@ cbor_item_t * cbor_new_int64()
 	return item;
 }
 
+cbor_item_t * cbor_new_definite_bytestring()
+{
+	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	*item = (cbor_item_t){ .refcount = 1, .type = CBOR_TYPE_BYTESTRING, .metadata = { .bytestring_metadata = { _CBOR_STRING_METADATA_DEFINITE, 0 } } };
+	return item;
+}
+
+void cbor_bytestring_set_handle(cbor_item_t * item, unsigned char * data, size_t length)
+{
+	assert(cbor_isa_bytestring(item));
+	assert(cbor_bytestring_is_definite(item));
+	item->data = data;
+	item->metadata.bytestring_metadata.length = length;
+}
 
 
 /** ========================================================== */

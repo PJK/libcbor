@@ -84,6 +84,22 @@ enum cbor_callback_result cbor_builder_uint8_callback(void * context, uint8_t va
 	cbor_item_t * res = cbor_new_int8();
 	cbor_mark_uint(res);
 	cbor_set_uint8(res, value);
-	((struct cbor_decoder_context *)context)->result = res;
+	((struct _cbor_decoder_context *)context)->result = res;
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_byte_string_callback(void * context, cbor_data data, size_t length)
+{
+	unsigned char * new_handle = malloc(length);
+	memcpy(new_handle, data, length);
+	cbor_item_t * res = cbor_new_definite_bytestring();
+	cbor_bytestring_set_handle(res, new_handle, length);
+	((struct _cbor_decoder_context *)context)->result = res;
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_byte_string_start_callback(void * context)
+{
+	_cbor_stack_push(((struct _cbor_decoder_context *)context)->stack, CBOR_TYPE_BYTESTRING);
 	return CBOR_CALLBACK_OK;
 }

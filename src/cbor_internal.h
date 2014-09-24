@@ -2,6 +2,7 @@
 #define CBOR_INTERNAL_
 
 #include "cbor.h"
+#include "cbor_stack.h"
 
 
 #define _CBOR_METADATA_WIDTH sizeof(_cbor_metadata)
@@ -30,5 +31,13 @@ float _cbor_load_float(cbor_data source);
 double _cbor_load_double(cbor_data source);
 
 enum cbor_callback_result cbor_builder_uint8_callback(void *, uint8_t);
+
+enum cbor_callback_result cbor_builder_byte_string_callback(void *, cbor_data, size_t);
+enum cbor_callback_result cbor_builder_byte_string_start_callback(void *);
+
+struct _cbor_decoder_context {
+	cbor_item_t *        result;
+	struct _cbor_stack * stack;
+};
 
 #endif

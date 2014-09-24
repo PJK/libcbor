@@ -157,10 +157,6 @@ struct cbor_load_result {
 	size_t			  read;
 };
 
-struct cbor_decoder_context {
-	cbor_item_t * result;
-};
-
 enum cbor_callback_result {
 	CBOR_CALLBACK_OK,
 	CBOR_CALLBACK_SKIP //TODO
@@ -300,7 +296,7 @@ void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source
 cbor_item_t * cbor_new_definite_bytestring();
 cbor_item_t * cbor_new_indefinite_bytestring();
 
-void cbor_bytestring_set_handle(cbor_item_t * item, unsigned char * data, size_t length);
+void cbor_bytestring_set_handle(cbor_item_t * item,  unsigned char * data, size_t length);
 void cbor_bytestring_set_chunk(cbor_item_t * item, const cbor_item_t * chunk);
 
 // TODO rename this / figure out gets/sets verbs
