@@ -79,7 +79,7 @@ double _cbor_load_double(cbor_data source)
 	return helper.as_double;
 }
 
-enum cbor_callback_result cbor_builder_uint8_callback(size_t id, uint8_t value)
+enum cbor_callback_result cbor_builder_uint8_callback(void * context, uint8_t value)
 {
 	cbor_item_t * res = cbor_new_int8();
 	cbor_mark_uint(res);

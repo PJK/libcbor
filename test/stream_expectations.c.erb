@@ -27,7 +27,7 @@ struct test_assertion current()
 			assertions_queue[queue_size++] = (struct test_assertion) { <%= type.upcase %>INT<%= width %>_EQ, (union test_expectation_data) { .int<%= width %> = actual } };
 		}
 
-		enum cbor_callback_result <%= type %>int<%= width %>_callback(size_t id, uint<%= width %>_t actual)
+		enum cbor_callback_result <%= type %>int<%= width %>_callback(void * context, uint<%= width %>_t actual)
 		{
 			assert_true(current().expectation == <%= type.upcase %>INT<%= width %>_EQ);
 			assert_true(current().data.int<%= width %> == actual);
@@ -42,7 +42,7 @@ void assert_bstring_mem_eq(cbor_data address, size_t length)
 	assertions_queue[queue_size++] = (struct test_assertion) { BSTRING_MEM_EQ, (union test_expectation_data) { .string = { address, length } } };
 }
 
-enum cbor_callback_result byte_string_callback(size_t id, cbor_data address, size_t length)
+enum cbor_callback_result byte_string_callback(void * context, cbor_data address, size_t length)
 {
 	assert_true(current().expectation == BSTRING_MEM_EQ);
 	assert_true(current().data.string.address == address);
@@ -56,7 +56,7 @@ void assert_bstring_indef_start()
 	assertions_queue[queue_size++] = (struct test_assertion) { .expectation = BSTRING_INDEF_START };
 }
 
-enum cbor_callback_result byte_string_start_callback(size_t id)
+enum cbor_callback_result byte_string_start_callback(void * context)
 {
 	assert_true(current().expectation == BSTRING_INDEF_START);
 	current_expectation++;
@@ -68,7 +68,7 @@ void assert_indef_break()
 	assertions_queue[queue_size++] = (struct test_assertion) { .expectation = INDEF_BREAK };
 }
 
-enum cbor_callback_result indef_break_callback(size_t id)
+enum cbor_callback_result indef_break_callback(void * context)
 {
 	assert_true(current().expectation == INDEF_BREAK);
 	current_expectation++;
@@ -82,7 +82,7 @@ enum cbor_callback_result indef_break_callback(size_t id)
 	}
 
 
-	enum cbor_callback_result <%= type %>_start_callback(size_t id, size_t length)
+	enum cbor_callback_result <%= type %>_start_callback(void * context, size_t length)
 	{
 		assert_true(current().expectation == <%= type.upcase %>_START);
 		assert_true(current().data.length == length);
@@ -95,7 +95,7 @@ enum cbor_callback_result indef_break_callback(size_t id)
 		assertions_queue[queue_size++] = (struct test_assertion) { .expectation = <%= type.upcase %>_INDEF_START };
 	}
 
-	enum cbor_callback_result indef_<%= type %>_start_callback(size_t id)
+	enum cbor_callback_result indef_<%= type %>_start_callback(void * context)
 	{
 		assert_true(current().expectation == <%= type.upcase %>_INDEF_START);
 		current_expectation++;
@@ -109,7 +109,7 @@ enum cbor_callback_result indef_break_callback(size_t id)
 		assertions_queue[queue_size++] = (struct test_assertion) { <%= decimal[0].upcase %>_EQ, { .float<%= decimal[1] %> = value } };
 	}
 
-	enum cbor_callback_result <%= decimal[0] %>_callback(size_t id, <%= decimal[2] || decimal[0] %> actual)
+	enum cbor_callback_result <%= decimal[0] %>_callback(void * context, <%= decimal[2] || decimal[0] %> actual)
 	{
 		assert_true(current().expectation == <%= decimal[0].upcase %>_EQ);
 		assert_true(current().data.float<%= decimal[1] %> == actual);
@@ -134,7 +134,7 @@ void assert_undef()
 }
 
 
-enum cbor_callback_result bool_callback(size_t id, bool actual)
+enum cbor_callback_result bool_callback(void * context, bool actual)
 {
 	assert_true(current().expectation == BOOL_EQ);
 	assert_true(current().data.boolean == actual);
@@ -142,14 +142,14 @@ enum cbor_callback_result bool_callback(size_t id, bool actual)
 	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result null_callback(size_t id)
+enum cbor_callback_result null_callback(void * context)
 {
 	assert_true(current().expectation == NIL);
 	current_expectation++;
 	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result undef_callback(size_t id)
+enum cbor_callback_result undef_callback(void * context)
 {
 	assert_true(current().expectation == UNDEF);
 	current_expectation++;
@@ -183,7 +183,7 @@ const struct cbor_callbacks asserting_callbacks = {
 
 struct cbor_decoder_result decode(cbor_data source, size_t source_size)
 {
-	struct cbor_decoder_result result = decoder(source, source_size, &asserting_callbacks);
+	struct cbor_decoder_result result = decoder(source, source_size, &asserting_callbacks, NULL);
 	/* Check remaining assertions */
 
 	assert_true(current_expectation == queue_size);

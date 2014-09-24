@@ -29,6 +29,6 @@ double _cbor_load_half(cbor_data source);
 float _cbor_load_float(cbor_data source);
 double _cbor_load_double(cbor_data source);
 
-enum cbor_callback_result cbor_builder_uint8_callback(size_t, uint8_t);
+enum cbor_callback_result cbor_builder_uint8_callback(void *, uint8_t);
 
 #endif

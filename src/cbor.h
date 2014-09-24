@@ -168,16 +168,16 @@ enum cbor_callback_result {
 
 typedef const unsigned char * cbor_data;
 
-typedef enum cbor_callback_result(* cbor_int8_callback)(size_t, uint8_t);
-typedef enum cbor_callback_result(* cbor_int16_callback)(size_t, uint16_t);
-typedef enum cbor_callback_result(* cbor_int32_callback)(size_t, uint32_t);
-typedef enum cbor_callback_result(* cbor_int64_callback)(size_t, uint64_t);
-typedef enum cbor_callback_result(* cbor_simple_callback)(size_t);
-typedef enum cbor_callback_result(* cbor_string_callback)(size_t, cbor_data, size_t);
-typedef enum cbor_callback_result(* cbor_collection_callback)(size_t, size_t);
-typedef enum cbor_callback_result(* cbor_float_callback)(size_t, float);
-typedef enum cbor_callback_result(* cbor_double_callback)(size_t, double);
-typedef enum cbor_callback_result(* cbor_bool_callback)(size_t, bool);
+typedef enum cbor_callback_result(* cbor_int8_callback)(void *, uint8_t);
+typedef enum cbor_callback_result(* cbor_int16_callback)(void *, uint16_t);
+typedef enum cbor_callback_result(* cbor_int32_callback)(void *, uint32_t);
+typedef enum cbor_callback_result(* cbor_int64_callback)(void *, uint64_t);
+typedef enum cbor_callback_result(* cbor_simple_callback)(void *);
+typedef enum cbor_callback_result(* cbor_string_callback)(void *, cbor_data, size_t);
+typedef enum cbor_callback_result(* cbor_collection_callback)(void *, size_t);
+typedef enum cbor_callback_result(* cbor_float_callback)(void *, float);
+typedef enum cbor_callback_result(* cbor_double_callback)(void *, double);
+typedef enum cbor_callback_result(* cbor_bool_callback)(void *, bool);
 
 struct cbor_callbacks {
 	/* Type 0 - Unsigned integers */
@@ -235,7 +235,7 @@ struct cbor_decoder_result {
 	enum cbor_decoder_status status;
 };
 
-struct cbor_decoder_result cbor_stream_decode(cbor_data, size_t, const struct cbor_callbacks *, size_t);
+struct cbor_decoder_result cbor_stream_decode(cbor_data, size_t, const struct cbor_callbacks *, void *);
 
 cbor_item_t * cbor_load(cbor_data source, size_t source_size, cbor_flags_t flags, struct cbor_load_result * result);
 

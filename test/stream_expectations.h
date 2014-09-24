@@ -71,7 +71,7 @@ struct test_assertion {
 };
 
 /* Tested function */
-typedef struct cbor_decoder_result decoder_t(cbor_data, size_t, const struct cbor_callbacks *);
+typedef struct cbor_decoder_result decoder_t(cbor_data, size_t, const struct cbor_callbacks *, void *);
 
 void set_decoder(decoder_t *);
 struct cbor_decoder_result decode(cbor_data, size_t);
@@ -108,32 +108,32 @@ void assert_undef();
 void assert_indef_break();
 
 /* Assertions verifying callbacks */
-enum cbor_callback_result uint8_callback(size_t, uint8_t);
-enum cbor_callback_result uint16_callback(size_t, uint16_t);
-enum cbor_callback_result uint32_callback(size_t, uint32_t);
-enum cbor_callback_result uint64_callback(size_t, uint64_t);
+enum cbor_callback_result uint8_callback(void *, uint8_t);
+enum cbor_callback_result uint16_callback(void *, uint16_t);
+enum cbor_callback_result uint32_callback(void *, uint32_t);
+enum cbor_callback_result uint64_callback(void *, uint64_t);
 
-enum cbor_callback_result negint8_callback(size_t, uint8_t);
-enum cbor_callback_result negint16_callback(size_t, uint16_t);
-enum cbor_callback_result negint32_callback(size_t, uint32_t);
-enum cbor_callback_result negint64_callback(size_t, uint64_t);
+enum cbor_callback_result negint8_callback(void *, uint8_t);
+enum cbor_callback_result negint16_callback(void *, uint16_t);
+enum cbor_callback_result negint32_callback(void *, uint32_t);
+enum cbor_callback_result negint64_callback(void *, uint64_t);
 
-enum cbor_callback_result byte_string_callback(size_t, cbor_data, size_t);
-enum cbor_callback_result byte_string_start_callback(size_t);
+enum cbor_callback_result byte_string_callback(void *, cbor_data, size_t);
+enum cbor_callback_result byte_string_start_callback(void *);
 
-enum cbor_callback_result array_start_callback(size_t, size_t);
-enum cbor_callback_result indef_array_start_callback(size_t);
+enum cbor_callback_result array_start_callback(void *, size_t);
+enum cbor_callback_result indef_array_start_callback(void *);
 
-enum cbor_callback_result map_start_callback(size_t, size_t);
-enum cbor_callback_result indef_map_start_callback(size_t);
+enum cbor_callback_result map_start_callback(void *, size_t);
+enum cbor_callback_result indef_map_start_callback(void *);
 
-enum cbor_callback_result half_callback(size_t, double);
-enum cbor_callback_result float_callback(size_t, float);
-enum cbor_callback_result double_callback(size_t, double);
-enum cbor_callback_result indef_break_callback(size_t);
+enum cbor_callback_result half_callback(void *, double);
+enum cbor_callback_result float_callback(void *, float);
+enum cbor_callback_result double_callback(void *, double);
+enum cbor_callback_result indef_break_callback(void *);
 
-enum cbor_callback_result bool_callback(size_t, bool);
-enum cbor_callback_result null_callback(size_t);
-enum cbor_callback_result undef_callback(size_t);
+enum cbor_callback_result bool_callback(void *, bool);
+enum cbor_callback_result null_callback(void *);
+enum cbor_callback_result undef_callback(void *);
 
 #endif
