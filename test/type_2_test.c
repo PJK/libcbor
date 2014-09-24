@@ -119,18 +119,11 @@ static void test_zero_indef(void **state) {
 	assert_non_null(bs);
 	assert_true(cbor_typeof(bs) == CBOR_TYPE_BYTESTRING);
 	assert_true(cbor_isa_bytestring(bs));
-	assert_true(cbor_bytestring_length(bs) == 0);
-	assert_true(res.read == 1);
-	cbor_bytestring_read_chunk(bs, data9 + 1, 1, &res);
-	cbor_item_t * chunk = cbor_bytestring_get_chunk(bs);
-	assert_true(res.read == 1);
-	assert_non_null(chunk);
-	assert_true(cbor_isa_float_ctrl(chunk));
-	assert_true(cbor_float_ctrl_get_ctrl(chunk) == CBOR_CTRL_BREAK);
-	cbor_decref(&chunk);
+	assert_true(cbor_bytestring_is_indefinite(bs));
+	assert_true(cbor_bytestring_chunk_count(bs) == 0);
+	assert_true(res.read == 2);
 	cbor_decref(&bs);
 	assert_null(bs);
-	assert_null(chunk);
 }
 
 unsigned char data10[] = {  0x5F, 0x58, 0x01, 0xA1, 0xFF, 0xFF };
@@ -142,26 +135,14 @@ static void test_short_indef(void **state) {
 	assert_true(cbor_typeof(bs) == CBOR_TYPE_BYTESTRING);
 	assert_true(cbor_isa_bytestring(bs));
 	assert_true(cbor_bytestring_length(bs) == 0);
-	assert_true(res.read == 1);
-	assert_null(cbor_bytestring_get_chunk(bs));
-	cbor_bytestring_read_chunk(bs, data10 + 1, 5, &res);
-	cbor_item_t * chunk = cbor_bytestring_get_chunk(bs);
-	assert_non_null(chunk);
-	assert_true(res.read == 3);
-	assert_true(cbor_isa_bytestring(chunk));
-	assert_true(cbor_bytestring_length(chunk) == 1);
-	assert_true(*cbor_bytestring_handle(chunk) == 0xA1);
-	cbor_decref(&chunk);
-	cbor_bytestring_read_chunk(bs, data10 + 4, 2, &res);
-	assert_true(res.read == 1);
-	chunk = cbor_bytestring_get_chunk(bs);
-	assert_non_null(chunk);
-	assert_true(cbor_isa_float_ctrl(chunk));
-	assert_true(cbor_float_ctrl_get_ctrl(chunk) == CBOR_CTRL_BREAK);
-	cbor_decref(&chunk);
+	assert_true(cbor_bytestring_is_indefinite(bs));
+	assert_true(cbor_bytestring_chunk_count(bs) == 1);
+	assert_true(res.read == 5);
+	assert_true(cbor_isa_bytestring(cbor_bytestring_chunks_handle(bs)[0]));
+	assert_true(cbor_bytestring_length(cbor_bytestring_chunks_handle(bs)[0]) == 1);
+	assert_true(*cbor_bytestring_handle(cbor_bytestring_chunks_handle(bs)[0]) == 0xA1);
 	cbor_decref(&bs);
 	assert_null(bs);
-	assert_null(chunk);
 }
 
 unsigned char data11[] = {  0x5F, 0x58, 0x01, 0xA1, 0x58, 0x01, 0xA2, 0xFF, 0xFF };
@@ -173,34 +154,17 @@ static void test_two_indef(void **state) {
 	assert_true(cbor_typeof(bs) == CBOR_TYPE_BYTESTRING);
 	assert_true(cbor_isa_bytestring(bs));
 	assert_true(cbor_bytestring_length(bs) == 0);
-	assert_true(res.read == 1);
-	assert_null(cbor_bytestring_get_chunk(bs));
-	cbor_bytestring_read_chunk(bs, data11 + 1, 8, &res);
-	cbor_item_t * chunk = cbor_bytestring_get_chunk(bs);
-	assert_non_null(chunk);
-	assert_true(res.read == 3);
-	assert_true(cbor_isa_bytestring(chunk));
-	assert_true(cbor_bytestring_length(chunk) == 1);
-	assert_true(*cbor_bytestring_handle(chunk) == 0xA1);
-	cbor_decref(&chunk);
-	cbor_bytestring_read_chunk(bs, data11 + 4, 5, &res);
-	chunk = cbor_bytestring_get_chunk(bs);
-	assert_non_null(chunk);
-	assert_true(res.read == 3);
-	assert_true(cbor_isa_bytestring(chunk));
-	assert_true(cbor_bytestring_length(chunk) == 1);
-	assert_true(*cbor_bytestring_handle(chunk) == 0xA2);
-	cbor_decref(&chunk);
-	cbor_bytestring_read_chunk(bs, data11 + 7, 2, &res);
-	assert_true(res.read == 1);
-	chunk = cbor_bytestring_get_chunk(bs);
-	assert_non_null(chunk);
-	assert_true(cbor_isa_float_ctrl(chunk));
-	assert_true(cbor_float_ctrl_get_ctrl(chunk) == CBOR_CTRL_BREAK);
-	cbor_decref(&chunk);
+	assert_true(cbor_bytestring_is_indefinite(bs));
+	assert_true(cbor_bytestring_chunk_count(bs) == 2);
+	assert_true(res.read == 8);
+	assert_true(cbor_isa_bytestring(cbor_bytestring_chunks_handle(bs)[0]));
+	assert_true(cbor_bytestring_length(cbor_bytestring_chunks_handle(bs)[0]) == 1);
+	assert_true(*cbor_bytestring_handle(cbor_bytestring_chunks_handle(bs)[0]) == 0xA1);
+	assert_true(cbor_isa_bytestring(cbor_bytestring_chunks_handle(bs)[1]));
+	assert_true(cbor_bytestring_length(cbor_bytestring_chunks_handle(bs)[1]) == 1);
+	assert_true(*cbor_bytestring_handle(cbor_bytestring_chunks_handle(bs)[1]) == 0xA2);
 	cbor_decref(&bs);
 	assert_null(bs);
-	assert_null(chunk);
 }
 
 unsigned char data12[] = {  0x5F, 0x58, 0x01 };
@@ -208,18 +172,7 @@ unsigned char data12[] = {  0x5F, 0x58, 0x01 };
 
 static void test_missing_indef(void **state) {
 	bs = cbor_load(data12, 3, CBOR_FLAGS_NONE, &res);
-	assert_non_null(bs);
-	assert_true(cbor_typeof(bs) == CBOR_TYPE_BYTESTRING);
-	assert_true(cbor_isa_bytestring(bs));
-	assert_true(cbor_bytestring_length(bs) == 0);
-	assert_true(res.read == 1);
-	assert_null(cbor_bytestring_get_chunk(bs));
-	cbor_bytestring_read_chunk(bs, data10 + 1, 2, &res);
-	cbor_item_t * chunk = cbor_bytestring_get_chunk(bs);
-	assert_null(chunk);
-	assert_true(res.read == 2);
 	assert_true(res.error.code == CBOR_ERR_NOTENOUGHDATA);
-	cbor_decref(&bs);
 	assert_null(bs);
 }
 

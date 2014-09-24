@@ -47,9 +47,10 @@ typedef enum {
 } cbor_type;
 
 typedef enum {
-	  CBOR_ERR_NONE,
-	  CBOR_ERR_NOTENOUGHDATA,
-	  CBOR_ERR_NODATA
+	CBOR_ERR_NONE,
+	CBOR_ERR_NOTENOUGHDATA,
+	CBOR_ERR_NODATA,
+	CBOR_ERR_MALFORMATED
 } cbor_error_code;
 
 /* Possible widths of CBOR_TYPE_UINT */
@@ -81,7 +82,6 @@ typedef enum {
 	_CBOR_METADATA_EMPTY	 = 0x00,
 	_CBOR_METADATA_COMPLETE  = 0x01,
 	_CBOR_METADATA_RESUMABLE = 0x02,	/* Parsing may be resumed */
-	_CBOR_METADATA_MADE		 = 0x04 	/* Created by a cbor_make_<X> */
 } _cbor_metadata;
 
 struct _cbor_int_metadata {
@@ -137,6 +137,11 @@ typedef struct cbor_item_t {
 	union cbor_item_metadata metadata;
 	unsigned char * 		 data;
 } cbor_item_t;
+
+struct cbor_indefinite_bytestring_data {
+	size_t          chunk_count;
+	cbor_item_t * * chunks;
+};
 
 struct cbor_error {
 	size_t			position;
@@ -287,17 +292,16 @@ bool cbor_bytestring_is_indefinite(const cbor_item_t * item);
 
 unsigned char * cbor_bytestring_handle(const cbor_item_t * item);
 
-/* has to be called at least one - to decref the chunk */
-cbor_item_t * cbor_bytestring_get_chunk(const cbor_item_t * item);
-
-/* once you call this, previous chunk is lost (avoiding realloc)*/
-void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source, size_t source_size, struct cbor_load_result * result);
+/* Indefinite bytestrings only */
+cbor_item_t * * cbor_bytestring_chunks_handle(const cbor_item_t * item);
+size_t cbor_bytestring_chunk_count(const cbor_item_t * item);
+/* Returns NULL on realloc failure */
+cbor_item_t * cbor_bytestring_add_chunk(cbor_item_t * item, cbor_item_t * chunk);
 
 cbor_item_t * cbor_new_definite_bytestring();
 cbor_item_t * cbor_new_indefinite_bytestring();
 
 void cbor_bytestring_set_handle(cbor_item_t * item,  unsigned char * data, size_t length);
-void cbor_bytestring_set_chunk(cbor_item_t * item, const cbor_item_t * chunk);
 
 // TODO rename this / figure out gets/sets verbs
 size_t cbor_array_get_size(cbor_item_t * item);

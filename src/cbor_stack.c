@@ -10,6 +10,7 @@ void _cbor_stack_pop(struct _cbor_stack * stack)
 	struct _cbor_stack_record * top = stack->top;
 	stack->top = stack->top->lower;
 	free(top);
+	stack->size--;
 }
 
 struct _cbor_stack_record * _cbor_stack_push(struct _cbor_stack * stack, cbor_type type)
@@ -20,5 +21,6 @@ struct _cbor_stack_record * _cbor_stack_push(struct _cbor_stack * stack, cbor_ty
 	}
 	*new_top = (struct _cbor_stack_record){ stack->top, type };
 	stack->top = new_top;
+	stack->size++;
 	return new_top;
 }

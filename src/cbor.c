@@ -22,9 +22,7 @@ void cbor_decref(cbor_item_t ** item)
 			}
 		case CBOR_TYPE_BYTESTRING:
 			{
-				if (cbor_bytestring_is_definite(*item)) {
-					free((*item)->data);
-				}
+				free((*item)->data);
 				break;
 			}
 		case CBOT_TYPE_STRING:
@@ -57,6 +55,19 @@ void cbor_decref(cbor_item_t ** item)
 }
 
 
+cbor_error_code _cbor_translate_decode_error(enum cbor_decoder_status status)
+{
+	switch (status) {
+	case CBOR_DECODER_FINISHED:
+			return CBOR_ERR_NONE;
+	case CBOR_DECODER_NEDATA:
+			return CBOR_ERR_NOTENOUGHDATA;
+	case CBOR_DECODER_EBUFFER:
+			return CBOR_ERR_NODATA;
+	case CBOR_DECODER_ERROR:
+			return CBOR_ERR_MALFORMATED;
+	}
+}
 
 cbor_item_t * cbor_load(cbor_data source,
 						size_t source_size,
@@ -66,15 +77,39 @@ cbor_item_t * cbor_load(cbor_data source,
 	/* Context stack */
 	static struct cbor_callbacks callbacks = {
 		.uint8 = &cbor_builder_uint8_callback,
-		.byte_string = &cbor_builder_byte_string_callback
+
+		.byte_string = &cbor_builder_byte_string_callback,
+		.byte_string_start = &cbor_builder_byte_string_start_callback,
+
+		.indef_break = &cbor_builder_indef_break_callback
 	};
 	/* Target for callbacks */
 	struct _cbor_decoder_context * context = malloc(sizeof(struct _cbor_decoder_context));
 	struct _cbor_stack stack = _cbor_stack_init();
 	context->stack = &stack;
-	struct cbor_decoder_result decode_result = cbor_stream_decode(source, source_size, &callbacks, context);
-	result->read = decode_result.read;
-	return context->result;
+	struct cbor_decoder_result decode_result;
+	*result = (struct cbor_load_result){ .read = 0, .error = { .code = CBOR_ERR_NONE } };
+
+	// TODO unify errors
+	// TODO unify returns
+	do {
+		if (source_size > result->read) { /* Check for overflows */
+			decode_result = cbor_stream_decode(source + result->read, source_size - result->read, &callbacks, context);
+		} else {
+			// TODO free
+			result->error.code = CBOR_ERR_NOTENOUGHDATA;
+			return NULL;
+		}
+
+		if (decode_result.status == CBOR_DECODER_FINISHED) {
+			result->read += decode_result.read;
+		} else {
+			// TODO free
+			result->error.code = _cbor_translate_decode_error(decode_result.status);
+			return NULL;
+		}
+	} while (stack.size > 0);
+	return context->root;
 }
 
 bool _cbor_claim_bytes(size_t required, size_t provided, struct cbor_decoder_result * result)
@@ -754,12 +789,54 @@ cbor_item_t * cbor_new_definite_bytestring()
 	return item;
 }
 
+cbor_item_t * cbor_new_indefinite_bytestring()
+{
+	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	*item = (cbor_item_t){
+		.refcount = 1,
+		.type = CBOR_TYPE_BYTESTRING,
+		.metadata = { .bytestring_metadata = { .type = _CBOR_STRING_METADATA_INDEFINITE, .length = 0 } },
+		.data = malloc(sizeof(struct cbor_indefinite_bytestring_data))
+	};
+	*((struct cbor_indefinite_bytestring_data *)item->data) = (struct cbor_indefinite_bytestring_data){
+		.chunk_count = 0,
+		.chunks = malloc(sizeof(cbor_item_t *) * 50) //TODO dynamic alloc
+	};
+	return item;
+}
+
+
 void cbor_bytestring_set_handle(cbor_item_t * item, unsigned char * data, size_t length)
 {
 	assert(cbor_isa_bytestring(item));
 	assert(cbor_bytestring_is_definite(item));
 	item->data = data;
 	item->metadata.bytestring_metadata.length = length;
+}
+
+cbor_item_t * * cbor_bytestring_chunks_handle(const cbor_item_t * item)
+{
+	assert(cbor_isa_bytestring(item));
+	assert(cbor_bytestring_is_indefinite(item));
+	return ((struct cbor_indefinite_bytestring_data *)item->data)->chunks;
+}
+
+size_t cbor_bytestring_chunk_count(const cbor_item_t * item)
+{
+	assert(cbor_isa_bytestring(item));
+	assert(cbor_bytestring_is_indefinite(item));
+	return ((struct cbor_indefinite_bytestring_data *)item->data)->chunk_count;
+
+}
+
+cbor_item_t * cbor_bytestring_add_chunk(cbor_item_t * item, cbor_item_t * chunk)
+{
+	assert(cbor_isa_bytestring(item));
+	assert(cbor_bytestring_is_indefinite(item));
+	struct cbor_indefinite_bytestring_data * data = (struct cbor_indefinite_bytestring_data *)item->data;
+	// TODO check size/ realloc
+	data->chunks[data->chunk_count++] = chunk;
+	return item;
 }
 
 
@@ -860,23 +937,6 @@ bool cbor_bytestring_is_definite(const cbor_item_t * item)
 bool cbor_bytestring_is_indefinite(const cbor_item_t * item)
 {
 	return !cbor_bytestring_is_definite(item);
-}
-
-cbor_item_t * cbor_bytestring_get_chunk(const cbor_item_t * item)
-{
-	assert(cbor_isa_bytestring(item));
-	assert(cbor_bytestring_is_indefinite(item));
-	return (cbor_item_t *)item->data;
-}
-
-void cbor_bytestring_read_chunk(cbor_item_t * item, const unsigned char * source, size_t source_size, struct cbor_load_result * result)
-{
-	assert(cbor_isa_bytestring(item));
-	assert(cbor_bytestring_is_indefinite(item));
-	// TODO save original flags
-	cbor_item_t * chunk = cbor_load(source, source_size, CBOR_FLAGS_NONE, result);
-	/* Will be NULL if failed, no memory lost */
-	item->data = (unsigned char *)chunk;
 }
 
 size_t cbor_array_get_size(cbor_item_t * item)

@@ -34,9 +34,11 @@ enum cbor_callback_result cbor_builder_uint8_callback(void *, uint8_t);
 
 enum cbor_callback_result cbor_builder_byte_string_callback(void *, cbor_data, size_t);
 enum cbor_callback_result cbor_builder_byte_string_start_callback(void *);
+enum cbor_callback_result cbor_builder_indef_break_callback(void *);
 
 struct _cbor_decoder_context {
-	cbor_item_t *        result;
+	cbor_item_t *        root;
+	cbor_item_t *        current;
 	struct _cbor_stack * stack;
 };
 
