@@ -15,7 +15,6 @@ void cbor_decref(cbor_item_t ** item)
 	if (--(*item)->refcount == 0) {
 		switch((*item)->type) {
 		case CBOR_TYPE_UINT:
-			/* Fixed size, simple free suffices */
 			/* Fallthrough */
 		case CBOR_TYPE_NEGINT:
 			/* Fixed size, simple free suffices */
@@ -68,9 +67,12 @@ cbor_item_t * cbor_load(const unsigned char * source,
 {
 	/* Context stack */
 	struct _cbor_stack stack = _cbor_stack_init();
-	struct cbor_callbacks callbacks = {
+	static struct cbor_callbacks callbacks = {
 		.uint8 = &cbor_builder_uint8_callback
 	};
+	// atomic + stackframe begin
+	static size_t id = 0;
+
 }
 
 bool _cbor_claim_bytes(size_t required, size_t provided, struct cbor_decoder_result * result)
