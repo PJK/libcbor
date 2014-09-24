@@ -84,5 +84,6 @@ enum cbor_callback_result cbor_builder_uint8_callback(void * context, uint8_t va
 	cbor_item_t * res = cbor_new_int8();
 	cbor_mark_uint(res);
 	cbor_set_uint8(res, value);
+	((struct cbor_decoder_context *)context)->result = res;
 	return CBOR_CALLBACK_OK;
 }

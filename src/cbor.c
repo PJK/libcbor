@@ -17,9 +17,8 @@ void cbor_decref(cbor_item_t ** item)
 		case CBOR_TYPE_UINT:
 			/* Fallthrough */
 		case CBOR_TYPE_NEGINT:
-			/* Fixed size, simple free suffices */
+			/* Combined allocation, freeing the item suffices */
 			{
-				free((*item)->data);
 				break;
 			}
 		case CBOR_TYPE_BYTESTRING:
@@ -60,7 +59,7 @@ void cbor_decref(cbor_item_t ** item)
 
 
 
-cbor_item_t * cbor_load(const unsigned char * source,
+cbor_item_t * cbor_load(cbor_data source,
 						size_t source_size,
 						cbor_flags_t flags,
 						struct cbor_load_result * result)
@@ -70,9 +69,11 @@ cbor_item_t * cbor_load(const unsigned char * source,
 	static struct cbor_callbacks callbacks = {
 		.uint8 = &cbor_builder_uint8_callback
 	};
-	// atomic + stackframe begin
-	static size_t id = 0;
-
+	/* Target for callbacks */
+	struct cbor_decoder_context * context = malloc(sizeof(struct cbor_decoder_context));
+	struct cbor_decoder_result decode_result = cbor_stream_decode(source, source_size, &callbacks, context);
+	result->read = decode_result.read;
+	return context->result;
 }
 
 bool _cbor_claim_bytes(size_t required, size_t provided, struct cbor_decoder_result * result)
@@ -720,7 +721,7 @@ void cbor_mark_negint(cbor_item_t * item)
 cbor_item_t * cbor_new_int8()
 {
 	cbor_item_t * item = malloc(sizeof(cbor_item_t) + 1);
-	item->data = (unsigned char *)item + sizeof(cbor_item_t);
+	*item = (cbor_item_t){ .data = (unsigned char *)item + sizeof(cbor_item_t), .refcount = 1 };
 	return item;
 }
 
