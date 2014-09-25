@@ -15,6 +15,7 @@ Main features
  - Layered architecture offers both control and convenience
  - Flexible memory management
  - Proper handling of UTF-8
+ - No shared global state - threading friendly
  - Full support for streams & incremental processing
  - Extensive documentation and test suite
  - No runtime dependencies, small footprint
@@ -32,15 +33,5 @@ Contents
    rfc_conformance
    internal
    development
-
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
 .. _CBOR: http://tools.ietf.org/html/rfc7049

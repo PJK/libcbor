@@ -103,7 +103,7 @@ Generally speaking, data items consist of three parts:
             |                                                                                |
             +--- item                                                                        +--- item->data
 
-        Dynamically sized types (:doc:`api/type_2`, :doc:`api/type_3`, :doc:`api/type_4`, :doc:`api/type_5`) may store handle and data in separate locations. This enables creating large items (e.g :doc:`byte strings <api/type_2>`) without :func:`realloc` or copying large blocks of memory. Once simply attaches the correct pointer to the handle.
+        Dynamically sized types (:doc:`api/type_2`, :doc:`api/type_3`, :doc:`api/type_4`, :doc:`api/type_5`) may store handle and data in separate locations. This enables creating large items (e.g :doc:`byte strings <api/type_2>`) without :func:`realloc` or copying large blocks of memory. One simply attaches the correct pointer to the handle.
 
 
 .. type:: union cbor_item_metadata
@@ -119,11 +119,12 @@ Generally speaking, data items consist of three parts:
     .. member:: struct _cbor_tag_metadata tag_metadata;
     .. member:: struct _cbor_float_ctrl_metadata float_ctrl_metadata;
 
-Parsing
+Decoding
 ---------
-TODO
 
-Streaming parser
+As outlined in :doc:`api`, there decoding is based on the streaming decoder TODO. Essentially, the decoder is a custom set of callbacks for the streaming decoder.
+
+Streaming decoder
 ~~~~~~~~~~~~~~~~
 
 Encoder

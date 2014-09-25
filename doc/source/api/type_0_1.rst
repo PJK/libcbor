@@ -21,7 +21,7 @@ The following functions can be used for both Type 0 and Type 1 items.
 
 Actual Type of the integer can be checked using :ref:`item types API <item-types>`.
 
-An integer item is created with one of the four widths. Because integers' `TODO ref this in internal` storage is bundled together with the handle, the width cannot be changed over its lifetime.
+An integer item is created with one of the four widths. Because integers' `storage is bundled together with the handle </internal#c.cbor_item_t.data>`_, the width cannot be changed over its lifetime.
 
 Retrieving values
 ------------------------

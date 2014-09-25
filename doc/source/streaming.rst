@@ -7,33 +7,85 @@ This is one of the most important (and due to poor implementations, underutilize
 
 .. [#] :RFC:`6455`
 
+Streaming decoder
+----------------------------------------
 
-Understanding
+At the very heart of *libcbor* lies a decoder that *incrementally* decodes the input and invokes appropriate (possibly user-defined) callbacks:
 
-cbor_decode(
-    // primitive/finite
-    int
-    negint
-    string
-    bytestring
-    tag
-    float
+.. function:: struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_size, const struct cbor_callbacks * callbacks, void * context)
 
-    // streaming
-    start_string
-    string_chunk
-    end_string
+    ``source`` and ``source_size`` describe the input buffer.
 
-    start_bstring
-    bstring_chunk
-    end_bstring
+    One or more of ``callbacks`` will be invoked when an item is decoded.
 
-    start_array
-    array_item
-    array_end
+    In order to facilitate the notion of *context*, ``context`` will be passed to any invoked callbacks. For an example on how to use this, please see the implementation of :func:`cbor_load`.
 
-    map_start
-    map_start_key
-    map_start_value
-    map_end
-)
+.. type:: enum cbor_decoder_status
+
+    .. member:: CBOR_DECODER_FINISHED
+
+        Successfully read an item
+
+
+    .. member:: CBOR_DECODER_NEDATA
+
+        There's not enough data to decode the whole item
+
+
+    .. member:: CBOR_DECODER_EBUFFER
+
+        The supplied buffer was empty
+
+
+    .. member:: CBOR_DECODER_ERROR
+
+        An error - malformated input
+
+
+.. type:: struct cbor_decoder_result
+
+    .. member:: size_t read
+
+        Number of bytes decoded (they can be safely disposed)
+
+    .. member:: enum cbor_decoder_status status
+
+
+
+.. type:: struct cbor_callbacks
+
+    .. member:: cbor_int8_callback uint8
+    .. member:: cbor_int16_callback uint16
+    .. member:: cbor_int32_callback uint32
+    .. member:: cbor_int64_callback uint64
+
+    .. member:: cbor_int8_callback negint8
+    .. member:: cbor_int16_callback negint16
+    .. member:: cbor_int32_callback negint32
+    .. member:: cbor_int64_callback negint64
+
+    .. member:: cbor_string_callback byte_string
+    .. member:: cbor_simple_callback byte_string_start
+
+    .. member:: cbor_string_callback string
+    .. member:: cbor_simple_callback string_start
+
+    .. member:: cbor_collection_callback array_start
+    .. member:: cbor_simple_callback indef_array_start
+
+    .. member:: cbor_collection_callback map_start
+    .. member:: cbor_simple_callback indef_map_start
+
+
+    .. member:: cbor_double_callback float2
+    .. member:: cbor_float_callback float4
+    .. member:: cbor_double_callback float8
+    .. member:: cbor_simple_callback undefined
+    .. member:: cbor_simple_callback null
+    .. member:: cbor_bool_callback boolean
+
+    .. member:: cbor_simple_callback indef_break
+
+Streaming encoder
+----------------------------------------
+TODO

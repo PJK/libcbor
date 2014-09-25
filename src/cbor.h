@@ -297,11 +297,26 @@ cbor_item_t * * cbor_bytestring_chunks_handle(const cbor_item_t * item);
 size_t cbor_bytestring_chunk_count(const cbor_item_t * item);
 /* Returns NULL on realloc failure */
 cbor_item_t * cbor_bytestring_add_chunk(cbor_item_t * item, cbor_item_t * chunk);
+cbor_item_t * cbor_bytestring_delete_chunk(cbor_item_t * item, size_t index);
+cbor_item_t * cbor_bytestring_concatenate(cbor_item_t * item);
 
 cbor_item_t * cbor_new_definite_bytestring();
 cbor_item_t * cbor_new_indefinite_bytestring();
 
 void cbor_bytestring_set_handle(cbor_item_t * item,  unsigned char * data, size_t length);
+
+/* Indefinite strings only */
+cbor_item_t * * cbor_string_chunks_handle(const cbor_item_t * item);
+size_t cbor_string_chunk_count(const cbor_item_t * item);
+/* Returns NULL on realloc failure */
+cbor_item_t * cbor_string_add_chunk(cbor_item_t * item, cbor_item_t * chunk);
+cbor_item_t * cbor_string_delete_chunk(cbor_item_t * item, size_t index);
+cbor_item_t * cbor_string_concatenate(cbor_item_t * item);
+
+cbor_item_t * cbor_new_definite_string();
+cbor_item_t * cbor_new_indefinite_string();
+
+void cbor_string_set_handle(cbor_item_t * item,  unsigned char * data, size_t length);
 
 // TODO rename this / figure out gets/sets verbs
 size_t cbor_array_get_size(cbor_item_t * item);
@@ -318,8 +333,8 @@ cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee);
 size_t cbor_map_size(cbor_item_t * item);
 cbor_item_t * cbor_new_map();
 struct cbor_map_iterator cbor_map_add(cbor_item_t * item, struct cbor_pair pair);
-void cbor_map_is_definite(cbor_item_t * item);
-void cbor_map_is_indefinite(cbor_item_t * item);
+bool cbor_map_is_definite(cbor_item_t * item);
+bool cbor_map_is_indefinite(cbor_item_t * item);
 struct cbor_map_iterator cbor_map_begin(cbor_item_t * item);
 bool cbor_map_iterator_end(struct cbor_map_iterator * iter);
 void cbor_map_iterator_next(struct cbor_map_iterator * iter);
