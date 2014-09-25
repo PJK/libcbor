@@ -102,12 +102,84 @@ void _cbor_builder_append(cbor_item_t * item, struct _cbor_decoder_context * ctx
 	}
 }
 
+
+// TODO template these?
 enum cbor_callback_result cbor_builder_uint8_callback(void * context, uint8_t value)
 {
 	struct _cbor_decoder_context * ctx = context;
 	cbor_item_t * res = cbor_new_int8();
 	cbor_mark_uint(res);
 	cbor_set_uint8(res, value);
+	_cbor_builder_append(res, ctx);
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_uint16_callback(void * context, uint16_t value)
+{
+	struct _cbor_decoder_context * ctx = context;
+	cbor_item_t * res = cbor_new_int16();
+	cbor_mark_uint(res);
+	cbor_set_uint16(res, value);
+	_cbor_builder_append(res, ctx);
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_uint32_callback(void * context, uint32_t value)
+{
+	struct _cbor_decoder_context * ctx = context;
+	cbor_item_t * res = cbor_new_int32();
+	cbor_mark_uint(res);
+	cbor_set_uint32(res, value);
+	_cbor_builder_append(res, ctx);
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_uint64_callback(void * context, uint64_t value)
+{
+	struct _cbor_decoder_context * ctx = context;
+	cbor_item_t * res = cbor_new_int64();
+	cbor_mark_uint(res);
+	cbor_set_uint64(res, value);
+	_cbor_builder_append(res, ctx);
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_negint8_callback(void * context, uint8_t value)
+{
+	struct _cbor_decoder_context * ctx = context;
+	cbor_item_t * res = cbor_new_int8();
+	cbor_mark_negint(res);
+	cbor_set_uint8(res, value);
+	_cbor_builder_append(res, ctx);
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_negint16_callback(void * context, uint16_t value)
+{
+	struct _cbor_decoder_context * ctx = context;
+	cbor_item_t * res = cbor_new_int16();
+	cbor_mark_negint(res);
+	cbor_set_uint16(res, value);
+	_cbor_builder_append(res, ctx);
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_negint32_callback(void * context, uint32_t value)
+{
+	struct _cbor_decoder_context * ctx = context;
+	cbor_item_t * res = cbor_new_int32();
+	cbor_mark_negint(res);
+	cbor_set_uint32(res, value);
+	_cbor_builder_append(res, ctx);
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_negint64_callback(void * context, uint64_t value)
+{
+	struct _cbor_decoder_context * ctx = context;
+	cbor_item_t * res = cbor_new_int64();
+	cbor_mark_negint(res);
+	cbor_set_uint64(res, value);
 	_cbor_builder_append(res, ctx);
 	return CBOR_CALLBACK_OK;
 }

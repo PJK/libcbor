@@ -59,13 +59,13 @@ cbor_error_code _cbor_translate_decode_error(enum cbor_decoder_status status)
 {
 	switch (status) {
 	case CBOR_DECODER_FINISHED:
-			return CBOR_ERR_NONE;
+		return CBOR_ERR_NONE;
 	case CBOR_DECODER_NEDATA:
-			return CBOR_ERR_NOTENOUGHDATA;
+		return CBOR_ERR_NOTENOUGHDATA;
 	case CBOR_DECODER_EBUFFER:
-			return CBOR_ERR_NODATA;
+		return CBOR_ERR_NODATA;
 	case CBOR_DECODER_ERROR:
-			return CBOR_ERR_MALFORMATED;
+		return CBOR_ERR_MALFORMATED;
 	}
 }
 
@@ -77,6 +77,14 @@ cbor_item_t * cbor_load(cbor_data source,
 	/* Context stack */
 	static struct cbor_callbacks callbacks = {
 		.uint8 = &cbor_builder_uint8_callback,
+		.uint16 = &cbor_builder_uint16_callback,
+		.uint32 = &cbor_builder_uint32_callback,
+		.uint64 = &cbor_builder_uint64_callback,
+
+		.negint8 = &cbor_builder_negint8_callback,
+		.negint16 = &cbor_builder_negint16_callback,
+		.negint32 = &cbor_builder_negint32_callback,
+		.negint64 = &cbor_builder_negint64_callback,
 
 		.byte_string = &cbor_builder_byte_string_callback,
 		.byte_string_start = &cbor_builder_byte_string_start_callback,
@@ -85,6 +93,11 @@ cbor_item_t * cbor_load(cbor_data source,
 
 		.indef_break = &cbor_builder_indef_break_callback
 	};
+
+	if (source_size == 0) {
+		result->error.code = CBOR_ERR_NODATA;
+		return NULL;
+	}
 	/* Target for callbacks */
 	struct _cbor_decoder_context * context = malloc(sizeof(struct _cbor_decoder_context));
 	struct _cbor_stack stack = _cbor_stack_init();
@@ -759,28 +772,44 @@ void cbor_mark_negint(cbor_item_t * item)
 cbor_item_t * cbor_new_int8()
 {
 	cbor_item_t * item = malloc(sizeof(cbor_item_t) + 1);
-	*item = (cbor_item_t){ .data = (unsigned char *)item + sizeof(cbor_item_t), .refcount = 1 };
+	*item = (cbor_item_t){
+		.data = (unsigned char *)item + sizeof(cbor_item_t),
+		.refcount = 1,
+		.metadata = { .int_metadata = { .width = CBOR_INT_8 } }
+	};
 	return item;
 }
 
 cbor_item_t * cbor_new_int16()
 {
 	cbor_item_t * item = malloc(sizeof(cbor_item_t) + 2);
-	item->data = (unsigned char *)item + sizeof(cbor_item_t);
+	*item = (cbor_item_t){
+		.data = (unsigned char *)item + sizeof(cbor_item_t),
+		.refcount = 1,
+		.metadata = { .int_metadata = { .width = CBOR_INT_16 } }
+	};
 	return item;
 }
 
 cbor_item_t * cbor_new_int32()
 {
 	cbor_item_t * item = malloc(sizeof(cbor_item_t) + 4);
-	item->data = (unsigned char *)item + sizeof(cbor_item_t);
+	*item = (cbor_item_t){
+		.data = (unsigned char *)item + sizeof(cbor_item_t),
+		.refcount = 1,
+		.metadata = { .int_metadata = { .width = CBOR_INT_32 } }
+	};
 	return item;
 }
 
 cbor_item_t * cbor_new_int64()
 {
 	cbor_item_t * item = malloc(sizeof(cbor_item_t) + 8);
-	item->data = (unsigned char *)item + sizeof(cbor_item_t);
+	*item = (cbor_item_t){
+		.data = (unsigned char *)item + sizeof(cbor_item_t),
+		.refcount = 1,
+		.metadata = { .int_metadata = { .width = CBOR_INT_64 } }
+	};
 	return item;
 }
 
