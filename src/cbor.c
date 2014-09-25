@@ -81,6 +81,8 @@ cbor_item_t * cbor_load(cbor_data source,
 		.byte_string = &cbor_builder_byte_string_callback,
 		.byte_string_start = &cbor_builder_byte_string_start_callback,
 
+		.array_start = &cbor_builder_array_start_callback,
+
 		.indef_break = &cbor_builder_indef_break_callback
 	};
 	/* Target for callbacks */
@@ -839,6 +841,32 @@ cbor_item_t * cbor_bytestring_add_chunk(cbor_item_t * item, cbor_item_t * chunk)
 	return item;
 }
 
+
+cbor_item_t * cbor_new_definite_array(size_t size)
+{
+	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	*item = (cbor_item_t){
+		.refcount = 1,
+		.type = CBOR_TYPE_ARRAY,
+		.metadata = { .array_metadata = { .type = _CBOR_ARRAY_METADATA_DEFINITE, .size = 0 } },
+		.data = malloc(sizeof(cbor_item_t *) * size)
+	};
+	return item;
+}
+cbor_item_t * cbor_new_indefinite_array();
+
+cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee)
+{
+	assert(cbor_isa_array(array));
+	struct _cbor_array_metadata * metadata = (struct _cbor_array_metadata *)&array->metadata;
+	if (cbor_array_is_definite(array)) {
+		// TODO check size
+		((cbor_item_t * *)array->data)[metadata->size++] = pushee;
+	} else {
+		// TODO
+	}
+	return array;
+}
 
 /** ========================================================== */
 

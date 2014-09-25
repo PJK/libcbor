@@ -4,18 +4,6 @@
 #include "cbor.h"
 #include "cbor_stack.h"
 
-
-#define _CBOR_METADATA_WIDTH sizeof(_cbor_metadata)
-
-#define _CBOR_INT_METADATA_WIDTH sizeof(cbor_int_width)
-
-#define _CBOR_BYTESTRING_METADATA_WIDTH sizeof(struct _cbor_bytestring_metadata)
-
-#define _CBOR_ARRAY_METADATA_WIDTH sizeof(struct _cbor_array_metadata)
-
-#define _CBOR_FLOAT_CTRL_METADATA_WIDTH sizeof(struct _cbor_float_ctrl_metadata)
-
-
 bool _cbor_assert_avail_bytes(size_t num,
 							  size_t source_size,
 							  struct cbor_load_result * result);
@@ -34,11 +22,14 @@ enum cbor_callback_result cbor_builder_uint8_callback(void *, uint8_t);
 
 enum cbor_callback_result cbor_builder_byte_string_callback(void *, cbor_data, size_t);
 enum cbor_callback_result cbor_builder_byte_string_start_callback(void *);
+
+enum cbor_callback_result cbor_builder_array_start_callback(void *, size_t);
+enum cbor_callback_result cbor_builder_indef_array_start_callback(void *);
+
 enum cbor_callback_result cbor_builder_indef_break_callback(void *);
 
 struct _cbor_decoder_context {
 	cbor_item_t *        root;
-	cbor_item_t *        current;
 	struct _cbor_stack * stack;
 };
 

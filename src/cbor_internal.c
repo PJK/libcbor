@@ -79,12 +79,36 @@ double _cbor_load_double(cbor_data source)
 	return helper.as_double;
 }
 
+void _cbor_builder_append(cbor_item_t * item, struct _cbor_decoder_context * ctx)
+{
+	if (ctx->stack->size == 0) {
+		/* Top level item */
+		ctx->root = item;
+	} else {
+		/* Part of a bigger structure */
+		switch (ctx->stack->top->item->type) {
+		case CBOR_TYPE_ARRAY:
+			{
+				assert(ctx->stack->top->subitems > 0);
+				cbor_array_push(ctx->stack->top->item, item);
+				ctx->stack->top->subitems--;
+				if (ctx->stack->top->subitems == 0) {
+					cbor_item_t * item = ctx->stack->top->item;
+					_cbor_stack_pop(ctx->stack);
+					_cbor_builder_append(item, ctx);
+				}
+			}
+		}
+	}
+}
+
 enum cbor_callback_result cbor_builder_uint8_callback(void * context, uint8_t value)
 {
+	struct _cbor_decoder_context * ctx = context;
 	cbor_item_t * res = cbor_new_int8();
 	cbor_mark_uint(res);
 	cbor_set_uint8(res, value);
-	((struct _cbor_decoder_context *)context)->root = res;
+	_cbor_builder_append(res, ctx);
 	return CBOR_CALLBACK_OK;
 }
 
@@ -96,9 +120,9 @@ enum cbor_callback_result cbor_builder_byte_string_callback(void * context, cbor
 	cbor_item_t * res = cbor_new_definite_bytestring();
 	cbor_bytestring_set_handle(res, new_handle, length);
 	if (ctx->stack->size > 0) {
-		if (ctx->stack->top->type == CBOR_TYPE_BYTESTRING) {
+		if (ctx->stack->top->item->type == CBOR_TYPE_BYTESTRING) {
 			// TODO check success
-			cbor_bytestring_add_chunk(ctx->current, res);
+			cbor_bytestring_add_chunk(ctx->stack->top->item, res);
 		} else {
 			// TODO complain loudly
 		}
@@ -111,10 +135,22 @@ enum cbor_callback_result cbor_builder_byte_string_callback(void * context, cbor
 enum cbor_callback_result cbor_builder_byte_string_start_callback(void * context)
 {
 	struct _cbor_decoder_context * ctx = context;
-	_cbor_stack_push(ctx->stack, CBOR_TYPE_BYTESTRING);
-	ctx->current = cbor_new_indefinite_bytestring();
+	_cbor_stack_push(ctx->stack, cbor_new_indefinite_bytestring(), -1);
 	return CBOR_CALLBACK_OK;
 }
+
+enum cbor_callback_result cbor_builder_array_start_callback(void * context, size_t size)
+{
+	struct _cbor_decoder_context * ctx = context;
+	if (size > 0) {
+		_cbor_stack_push(ctx->stack, cbor_new_definite_array(size), size);
+	} else {
+		_cbor_builder_append(cbor_new_definite_array(size), ctx);
+	}
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_indef_array_start_callback(void *);
 
 enum cbor_callback_result cbor_builder_indef_break_callback(void * context)
 {
@@ -122,12 +158,8 @@ enum cbor_callback_result cbor_builder_indef_break_callback(void * context)
 	if (ctx->stack->size == 0) {
 		// TODO complain
 	} else {
+		ctx->root = ctx->stack->top->item;
 		_cbor_stack_pop(ctx->stack);
-		if (ctx->stack->size == 0) {
-			ctx->root = ctx->current;
-		} else {
-			//TODO assign this to the containing structure
-		}
 	}
 	return CBOR_CALLBACK_OK;
 }

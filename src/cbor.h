@@ -310,6 +310,11 @@ bool cbor_array_is_indefinite(cbor_item_t * item);
 /* Native handle to the underlying chunk */
 cbor_item_t ** cbor_array_handle(cbor_item_t * item);
 
+cbor_item_t * cbor_new_definite_array(size_t);
+cbor_item_t * cbor_new_indefinite_array();
+
+cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee);
+
 size_t cbor_map_size(cbor_item_t * item);
 cbor_item_t * cbor_new_map();
 struct cbor_map_iterator cbor_map_add(cbor_item_t * item, struct cbor_pair pair);
