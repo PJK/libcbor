@@ -102,11 +102,12 @@ void _cbor_builder_append(cbor_item_t * item, struct _cbor_decoder_context * ctx
 					/* Indefinite array, don't bother with subitems */
 					cbor_array_push(ctx->stack->top->item, item);
 				}
+				break;
 			}
 		default:
 			{
-				//TODO complain loudly!!!
-				exit(-1);
+				//TODO complain loudly, inidicate failure!!!
+				fprintf(stderr, "Unexpected item!\n");
 			}
 		}
 	}
@@ -217,7 +218,7 @@ enum cbor_callback_result cbor_builder_byte_string_callback(void * context, cbor
 enum cbor_callback_result cbor_builder_byte_string_start_callback(void * context)
 {
 	struct _cbor_decoder_context * ctx = context;
-	_cbor_stack_push(ctx->stack, cbor_new_indefinite_bytestring(), true, 0);
+	_cbor_stack_push(ctx->stack, cbor_new_indefinite_bytestring(), 0);
 	return CBOR_CALLBACK_OK;
 }
 
@@ -225,7 +226,7 @@ enum cbor_callback_result cbor_builder_array_start_callback(void * context, size
 {
 	struct _cbor_decoder_context * ctx = context;
 	if (size > 0) {
-		_cbor_stack_push(ctx->stack, cbor_new_definite_array(size), false, size);
+		_cbor_stack_push(ctx->stack, cbor_new_definite_array(size), size);
 	} else {
 		_cbor_builder_append(cbor_new_definite_array(size), ctx);
 	}
@@ -235,7 +236,7 @@ enum cbor_callback_result cbor_builder_array_start_callback(void * context, size
 enum cbor_callback_result cbor_builder_indef_array_start_callback(void * context)
 {
 	struct _cbor_decoder_context * ctx = context;
-	_cbor_stack_push(ctx->stack, cbor_new_indefinite_array(), true, 0);
+	_cbor_stack_push(ctx->stack, cbor_new_indefinite_array(), 0);
 	return CBOR_CALLBACK_OK;
 }
 
