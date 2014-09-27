@@ -10,7 +10,7 @@ add_custom_command(
 
 foreach(TEST ${TESTS})
   string(REGEX REPLACE ".*/([^/]+).c" "\\1" NAME ${TEST})
-  message(${NAME})
+  message("Adding test ${NAME}")
   add_executable(${NAME} "${NAME}.c" assertions.c stream_expectations.c)
   target_link_libraries(${NAME} cmocka)
   target_link_libraries(${NAME} cbor)

@@ -348,27 +348,37 @@ static void test_array_of_arrays_decoding(void **state)
 	);
 }
 
-unsigned char indef_array_data_1[] = { 0x9F, 0x00, 0x18, 0xFF, 0xFF };
+unsigned char indef_array_data_1[] = { 0x9F, 0x00, 0x18, 0xFF, 0x9F, 0xFF, 0xFF };
 static void test_indef_array_decoding_1(void **state)
 {
 	assert_indef_array_start();
 	assert_decoder_result(1, CBOR_DECODER_FINISHED,
-		decode(indef_array_data_1, 5)
+		decode(indef_array_data_1, 7)
 	);
 
 	assert_uint8_eq(0);
 	assert_decoder_result(1, CBOR_DECODER_FINISHED,
-		decode(indef_array_data_1 + 1, 4)
+		decode(indef_array_data_1 + 1, 6)
 	);
 
 	assert_uint8_eq(255);
 	assert_decoder_result(2, CBOR_DECODER_FINISHED,
-		decode(indef_array_data_1 + 2, 3)
+		decode(indef_array_data_1 + 2, 4)
+	);
+
+	assert_indef_array_start();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(indef_array_data_1 + 4, 3)
 	);
 
 	assert_indef_break();
 	assert_decoder_result(1, CBOR_DECODER_FINISHED,
-		decode(indef_array_data_1 + 4, 1)
+		decode(indef_array_data_1 + 5, 2)
+	);
+
+	assert_indef_break();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(indef_array_data_1 + 6, 1)
 	);
 }
 

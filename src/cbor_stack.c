@@ -13,13 +13,13 @@ void _cbor_stack_pop(struct _cbor_stack * stack)
 	stack->size--;
 }
 
-struct _cbor_stack_record * _cbor_stack_push(struct _cbor_stack * stack, cbor_item_t * item, size_t subitems)
+struct _cbor_stack_record * _cbor_stack_push(struct _cbor_stack * stack, cbor_item_t * item, bool indefinite, size_t subitems)
 {
 	struct _cbor_stack_record * new_top = malloc(sizeof(struct _cbor_stack_record));
 	if (new_top == NULL) {
 		return NULL;
 	}
-	*new_top = (struct _cbor_stack_record){ stack->top, item, subitems };
+	*new_top = (struct _cbor_stack_record){ stack->top, item, indefinite, subitems };
 	stack->top = new_top;
 	stack->size++;
 	return new_top;

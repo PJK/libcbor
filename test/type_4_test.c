@@ -63,11 +63,53 @@ static void test_nested_arrays(void **state)
 	assert_null(arr);
 }
 
+unsigned char test_indef_arrays_data[] = { 0x9f, 0x01, 0x02, 0xFF };
+
+static void test_indef_arrays(void **state)
+{
+	arr = cbor_load(test_indef_arrays_data, 4, CBOR_FLAGS_NONE, &res);
+	assert_non_null(arr);
+	assert_true(cbor_typeof(arr) == CBOR_TYPE_ARRAY);
+	assert_true(cbor_isa_array(arr));
+	assert_true(cbor_array_get_size(arr) == 2);
+	assert_true(res.read == 4);
+	/* Check the values */
+	assert_uint8(cbor_array_handle(arr)[0], 1);
+	assert_uint8(cbor_array_handle(arr)[1], 2);
+
+	cbor_decref(&arr);
+	assert_null(arr);
+}
+
+unsigned char test_nested_indef_arrays_data[] = { 0x9f, 0x01, 0x9f, 0x02, 0xFF, 0x03, 0xFF };
+
+static void test_nested_indef_arrays(void **state)
+{
+	arr = cbor_load(test_nested_indef_arrays_data, 7, CBOR_FLAGS_NONE, &res);
+	assert_non_null(arr);
+	assert_true(cbor_typeof(arr) == CBOR_TYPE_ARRAY);
+	assert_true(cbor_isa_array(arr));
+	assert_int_equal(cbor_array_get_size(arr), 3);
+	assert_true(res.read == 7);
+	/* Check the values */
+	assert_uint8(cbor_array_handle(arr)[0], 1);
+
+	cbor_item_t * nested = cbor_array_handle(arr)[1];
+	assert_true(cbor_isa_array(nested));
+	assert_true(cbor_array_get_size(nested) == 1);
+	assert_uint8(cbor_array_handle(nested)[0], 2);
+
+	cbor_decref(&arr);
+	assert_null(arr);
+}
+
 int main(void) {
 	const UnitTest tests[] = {
 		unit_test(test_empty_array),
 		unit_test(test_simple_array),
-		unit_test(test_nested_arrays)
+		unit_test(test_nested_arrays),
+		unit_test(test_indef_arrays),
+		unit_test(test_nested_indef_arrays)
 	};
 	return run_tests(tests);
 }
