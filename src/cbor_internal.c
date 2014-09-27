@@ -103,6 +103,11 @@ void _cbor_builder_append(cbor_item_t * item, struct _cbor_decoder_context * ctx
 					cbor_array_push(ctx->stack->top->item, item);
 				}
 			}
+		default:
+			{
+				//TODO complain loudly!!!
+				exit(-1);
+			}
 		}
 	}
 }
