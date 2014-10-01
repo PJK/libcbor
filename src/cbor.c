@@ -2,6 +2,7 @@
 #include "cbor_internal.h"
 #include <assert.h>
 #include <CoreMedia/CoreMedia.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 /* TODO refactor the metadata madness using structs and unions */
 
@@ -741,7 +742,10 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			callbacks->indef_break(context);
 			return result;
 		}
-	default: break; /* Never happens */
+	default: /* Never happens - this shuts up the compiler */
+		{
+			return result;
+		}
 	}
 }
 
@@ -866,7 +870,11 @@ cbor_item_t * cbor_new_int64()
 cbor_item_t * cbor_new_definite_bytestring()
 {
 	cbor_item_t * item = malloc(sizeof(cbor_item_t));
-	*item = (cbor_item_t){ .refcount = 1, .type = CBOR_TYPE_BYTESTRING, .metadata = { .bytestring_metadata = { _CBOR_STRING_METADATA_DEFINITE, 0 } } };
+	*item = (cbor_item_t){
+		.refcount = 1,
+		.type = CBOR_TYPE_BYTESTRING,
+		.metadata = { .bytestring_metadata = { _CBOR_STRING_METADATA_DEFINITE, 0 } }
+	};
 	return item;
 }
 
