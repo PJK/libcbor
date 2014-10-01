@@ -103,6 +103,20 @@ enum cbor_callback_result indef_break_callback(void * context)
 	}
 <% end %>
 
+void assert_tag_eq(uint64_t value)
+{
+	assertions_queue[queue_size++] = (struct test_assertion) { TAG_EQ , { .int64 = value } };
+}
+
+enum cbor_callback_result tag_callback(void * context, uint64_t value)
+{
+	assert_true(current().expectation == TAG_EQ);
+	assert_true(current().data.int64 == value);
+	current_expectation++;
+	return CBOR_CALLBACK_OK;
+}
+
+
 <% [['half', 2, 'double'], ['float', 4], ['double', 8]].each do |decimal| %>
 	void assert_<%= decimal[0] %>(<%= decimal[2] || decimal[0] %> value)
 	{
@@ -170,6 +184,8 @@ const struct cbor_callbacks asserting_callbacks = {
 		.<%= type %>_start = &<%= type %>_start_callback,
 		.indef_<%= type %>_start = &indef_<%= type %>_start_callback,
 	<% end %>
+
+	.tag = &tag_callback,
 
 	<% [['half', 2], ['float', 4], ['double', 8]].each do |decimal| %>
 		.float<%= decimal[1] %> = &<%= decimal[0] %>_callback,

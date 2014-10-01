@@ -40,6 +40,8 @@ enum test_expectation {
 	MAP_START, /* Definite maps only */
 	MAP_INDEF_START,
 
+	TAG_EQ,
+
 	HALF_EQ,
 	FLOAT_EQ,
 	DOUBLE_EQ,
@@ -97,6 +99,8 @@ void assert_indef_array_start();
 void assert_map_start(size_t);
 void assert_indef_map_start();
 
+void assert_tag_eq(uint64_t);
+
 void assert_half(double);
 void assert_float(float);
 void assert_double(double);
@@ -126,6 +130,8 @@ enum cbor_callback_result indef_array_start_callback(void *);
 
 enum cbor_callback_result map_start_callback(void *, size_t);
 enum cbor_callback_result indef_map_start_callback(void *);
+
+enum cbor_callback_result tag_callback(void *, uint64_t);
 
 enum cbor_callback_result half_callback(void *, double);
 enum cbor_callback_result float_callback(void *, float);

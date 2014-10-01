@@ -210,6 +210,7 @@ struct cbor_callbacks {
 	cbor_simple_callback indef_map_start;
 
 	/* Type 6 - Tags */
+	cbor_int64_callback tag;
 
 	/* Type 7 - Floats & misc */
 	/* Type names cannot be member names */

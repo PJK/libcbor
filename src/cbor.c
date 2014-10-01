@@ -1,6 +1,7 @@
 #include "cbor.h"
 #include "cbor_internal.h"
 #include <assert.h>
+#include <CoreMedia/CoreMedia.h>
 
 /* TODO refactor the metadata madness using structs and unions */
 
@@ -575,33 +576,74 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			return result;
 		}
 	case 0xC0:
+		/* Text date/time - RFC 3339 tag, fallthrough */
 	case 0xC1:
+		/* Epoch date tag, fallthrough */
 	case 0xC2:
+		/* Positive bignum tag, fallthrough */
 	case 0xC3:
+		/* Negative bignum tag, fallthrough */
 	case 0xC4:
+		/* Fraction, fallthrough */
 	case 0xC5:
-	case 0xC6:
-	case 0xC7:
-	case 0xC8:
-	case 0xC9:
-	case 0xCA:
-	case 0xCB:
-	case 0xCC:
-	case 0xCD:
-	case 0xCE:
-	case 0xCF:
-	case 0xD0:
-	case 0xD1:
-	case 0xD2:
-	case 0xD3:
-	case 0xD4:
-	case 0xD5:
-	case 0xD6:
-	case 0xD7:
-	case 0xD8:
-	case 0xD9:
-	case 0xDA:
-	case 0xDB:
+		/* Big float */
+		{
+			callbacks->tag(context, _cbor_load_uint8(source) - 0xC0); /* 0xC0 offset */
+			return result;
+		}
+	case 0xC6: /* Fallthrough */
+	case 0xC7: /* Fallthrough */
+	case 0xC8: /* Fallthrough */
+	case 0xC9: /* Fallthrough */
+	case 0xCA: /* Fallthrough */
+	case 0xCB: /* Fallthrough */
+	case 0xCC: /* Fallthrough */
+	case 0xCD: /* Fallthrough */
+	case 0xCE: /* Fallthrough */
+	case 0xCF: /* Fallthrough */
+	case 0xD0: /* Fallthrough */
+	case 0xD1: /* Fallthrough */
+	case 0xD2: /* Fallthrough */
+	case 0xD3: /* Fallthrough */
+	case 0xD4: /* Unassigned tag value */
+		{
+			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
+		}
+	case 0xD5: /* Expected b64url conversion tag - fallthrough */
+	case 0xD6: /* Expected b64 conversion tag - fallthrough */
+	case 0xD7: /* Expected b16 conversion tag */
+		{
+			callbacks->tag(context, _cbor_load_uint8(source) - 0xC0); /* 0xC0 offset */
+			return result;
+		}
+	case 0xD8: /* 1B tag */
+		{
+			if (_cbor_claim_bytes(1, source_size, &result)) {
+				callbacks->tag(context, _cbor_load_uint8(source + 1));
+			}
+			return result;
+		}
+	case 0xD9: /* 2B tag */
+		{
+			if (_cbor_claim_bytes(2, source_size, &result)) {
+				callbacks->tag(context, _cbor_load_uint16(source + 1));
+			}
+			return result;
+		}
+	case 0xDA: /* 4B tag */
+		{
+			if (_cbor_claim_bytes(4, source_size, &result)) {
+				callbacks->tag(context, _cbor_load_uint32(source + 1));
+			}
+			return result;
+		}
+	case 0xDB: /* 8B tag */
+		{
+			if (_cbor_claim_bytes(8, source_size, &result)) {
+				callbacks->tag(context, _cbor_load_uint64(source + 1));
+			}
+			return result;
+		}
 	case 0xDC:
 	case 0xDD:
 	case 0xDE:
