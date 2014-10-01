@@ -741,11 +741,7 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			callbacks->indef_break(context);
 			return result;
 		}
-	default:
-		{
-			// TODO
-			return result;
-		}
+	default: break; /* Never happens */
 	}
 }
 
