@@ -700,6 +700,10 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			return result;
 		}
 	case 0xF8:
+		/* 1B simple value, unassigned */
+		{
+			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
+		}
 	case 0xF9:
 		/* 2B float */
 		{
