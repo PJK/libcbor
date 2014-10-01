@@ -644,30 +644,37 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 			}
 			return result;
 		}
-	case 0xDC:
-	case 0xDD:
-	case 0xDE:
-	case 0xDF:
-	case 0xE0:
-	case 0xE1:
-	case 0xE2:
-	case 0xE3:
-	case 0xE4:
-	case 0xE5:
-	case 0xE6:
-	case 0xE7:
-	case 0xE8:
-	case 0xE9:
-	case 0xEA:
-	case 0xEB:
-	case 0xEC:
-	case 0xED:
-	case 0xEE:
-	case 0xEF:
-	case 0xF0:
-	case 0xF1:
-	case 0xF2:
-	case 0xF3:
+	case 0xDC: /* Fallthrough */
+	case 0xDD: /* Fallthrough */
+	case 0xDE: /* Fallthrough */
+	case 0xDF: /* Reserved */
+		{
+			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
+		}
+	case 0xE0: /* Fallthrough */
+	case 0xE1: /* Fallthrough */
+	case 0xE2: /* Fallthrough */
+	case 0xE3: /* Fallthrough */
+	case 0xE4: /* Fallthrough */
+	case 0xE5: /* Fallthrough */
+	case 0xE6: /* Fallthrough */
+	case 0xE7: /* Fallthrough */
+	case 0xE8: /* Fallthrough */
+	case 0xE9: /* Fallthrough */
+	case 0xEA: /* Fallthrough */
+	case 0xEB: /* Fallthrough */
+	case 0xEC: /* Fallthrough */
+	case 0xED: /* Fallthrough */
+	case 0xEE: /* Fallthrough */
+	case 0xEF: /* Fallthrough */
+	case 0xF0: /* Fallthrough */
+	case 0xF1: /* Fallthrough */
+	case 0xF2: /* Fallthrough */
+	case 0xF3: /* Simple value - unassigned */
+		// TODO pass these as valid?
+		{
+			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
+		}
 	case 0xF4:
 		/* False */
 		{
