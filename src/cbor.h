@@ -319,8 +319,7 @@ cbor_item_t * cbor_new_indefinite_string();
 
 void cbor_string_set_handle(cbor_item_t * item,  unsigned char * data, size_t length);
 
-// TODO rename this / figure out gets/sets verbs
-size_t cbor_array_get_size(cbor_item_t * item);
+size_t cbor_array_size(cbor_item_t * item);
 bool cbor_array_is_definite(cbor_item_t * item);
 bool cbor_array_is_indefinite(cbor_item_t * item);
 /* Native handle to the underlying chunk */

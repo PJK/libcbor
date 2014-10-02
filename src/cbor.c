@@ -37,7 +37,7 @@ void cbor_decref(cbor_item_t ** item)
 			{
 				/* Get all items and decref them */
 				cbor_item_t ** handle = cbor_array_handle(*item);
-				for (size_t i = 0; i < cbor_array_get_size(*item); i++)
+				for (size_t i = 0; i < cbor_array_size(*item); i++)
 					cbor_decref(&handle[i]);
 				/* Fallthrough */
 			}
@@ -1082,7 +1082,7 @@ bool cbor_bytestring_is_indefinite(const cbor_item_t * item)
 	return !cbor_bytestring_is_definite(item);
 }
 
-size_t cbor_array_get_size(cbor_item_t * item)
+size_t cbor_array_size(cbor_item_t * item)
 {
 	assert(cbor_isa_array(item));
 	return item->metadata.array_metadata.size;
