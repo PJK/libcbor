@@ -140,6 +140,7 @@ typedef struct cbor_item_t {
 
 struct cbor_indefinite_bytestring_data {
 	size_t          chunk_count;
+	size_t          chunk_capacity;
 	cbor_item_t * * chunks;
 };
 

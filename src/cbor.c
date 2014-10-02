@@ -903,7 +903,8 @@ cbor_item_t * cbor_new_indefinite_bytestring()
 	};
 	*((struct cbor_indefinite_bytestring_data *)item->data) = (struct cbor_indefinite_bytestring_data){
 		.chunk_count = 0,
-		.chunks = malloc(sizeof(cbor_item_t *) * 50) //TODO dynamic alloc
+		.chunk_capacity = 0,
+		.chunks = NULL,
 	};
 	return item;
 }
@@ -937,7 +938,15 @@ cbor_item_t * cbor_bytestring_add_chunk(cbor_item_t * item, cbor_item_t * chunk)
 	assert(cbor_isa_bytestring(item));
 	assert(cbor_bytestring_is_indefinite(item));
 	struct cbor_indefinite_bytestring_data * data = (struct cbor_indefinite_bytestring_data *)item->data;
-	// TODO check size/ realloc
+	// TODO optimize this with exponential growth
+	if (data->chunk_count == data->chunk_capacity) {
+		/* We need more space */
+		data->chunk_capacity = data->chunk_capacity == 0 ? 1 : data->chunk_capacity * 2;
+		cbor_item_t ** new_chunks_data =
+			realloc(data->chunks, data->chunk_capacity * sizeof(cbor_item_t *));
+		// TODO handle failures
+		data->chunks = new_chunks_data;
+	}
 	data->chunks[data->chunk_count++] = chunk;
 	return item;
 }
