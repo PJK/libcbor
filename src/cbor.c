@@ -1,10 +1,6 @@
 #include "cbor.h"
 #include "cbor_internal.h"
 #include <assert.h>
-#include <CoreMedia/CoreMedia.h>
-#include <CoreFoundation/CoreFoundation.h>
-
-/* TODO refactor the metadata madness using structs and unions */
 
 void cbor_incref(cbor_item_t * item)
 {
@@ -24,7 +20,16 @@ void cbor_decref(cbor_item_t ** item)
 			}
 		case CBOR_TYPE_BYTESTRING:
 			{
-				free((*item)->data);
+				if (cbor_bytestring_is_definite(*item)) {
+					free((*item)->data);
+				} else {
+					/* We need to decref all chunks */
+					cbor_item_t ** handle = cbor_bytestring_chunks_handle(*item);
+					for (size_t i = 0; i < cbor_bytestring_chunk_count(*item); i++)
+						cbor_decref(&handle[i]);
+					free(((struct cbor_indefinite_bytestring_data *)(*item)->data)->chunks);
+					free((*item)->data);
+				}
 				break;
 			}
 		case CBOT_TYPE_STRING:
@@ -113,21 +118,30 @@ cbor_item_t * cbor_load(cbor_data source,
 	do {
 		if (source_size > result->read) { /* Check for overflows */
 			decode_result = cbor_stream_decode(source + result->read, source_size - result->read, &callbacks, context);
-		} else {
-			// TODO free
-			result->error.code = CBOR_ERR_NOTENOUGHDATA;
-			return NULL;
-		}
+		} else
+			goto error;
 
 		if (decode_result.status == CBOR_DECODER_FINISHED) {
 			result->read += decode_result.read;
-		} else {
-			// TODO free
-			result->error.code = _cbor_translate_decode_error(decode_result.status);
-			return NULL;
-		}
+		} else
+			goto error;
+
 	} while (stack.size > 0);
-	return context->root;
+
+	/* Move the result before free */
+	cbor_item_t * result_item = context->root;
+	free(context);
+	return result_item;
+
+error:
+	/* Free the stack */
+	while (stack.size > 0) {
+		cbor_decref(&stack.top->item);
+		_cbor_stack_pop(&stack);
+	}
+	free(context);
+	result->error.code = CBOR_ERR_NOTENOUGHDATA;
+	return NULL;
 }
 
 bool _cbor_claim_bytes(size_t required, size_t provided, struct cbor_decoder_result * result)
