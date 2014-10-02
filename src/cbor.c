@@ -61,21 +61,6 @@ void cbor_decref(cbor_item_t ** item)
 	}
 }
 
-
-cbor_error_code _cbor_translate_decode_error(enum cbor_decoder_status status)
-{
-	switch (status) {
-	case CBOR_DECODER_FINISHED:
-		return CBOR_ERR_NONE;
-	case CBOR_DECODER_NEDATA:
-		return CBOR_ERR_NOTENOUGHDATA;
-	case CBOR_DECODER_EBUFFER:
-		return CBOR_ERR_NODATA;
-	case CBOR_DECODER_ERROR:
-		return CBOR_ERR_MALFORMATED;
-	}
-}
-
 cbor_item_t * cbor_load(cbor_data source,
 						size_t source_size,
 						cbor_flags_t flags,
@@ -985,6 +970,7 @@ cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee)
 		// TODO check size - throw
 		data[metadata->size++] = pushee;
 	} else {
+		// TODO exponential reallocs?
 		data = realloc(data, (metadata->size + 1) * sizeof(cbor_item_t *));
 		data[metadata->size++] = pushee;
 		array->data = (unsigned char *)data;
