@@ -39,7 +39,7 @@ typedef enum {
 	CBOR_TYPE_UINT,        /* 0 */
 	CBOR_TYPE_NEGINT,      /* 1 */
 	CBOR_TYPE_BYTESTRING,  /* 2 */
-	CBOT_TYPE_STRING,      /* 3 */
+	CBOR_TYPE_STRING,      /* 3 */
 	CBOR_TYPE_ARRAY,       /* 4 */
 	CBOR_TYPE_MAP,         /* 5 */
 	CBOR_TYPE_TAG,         /* 6 - additional semantics*/
@@ -138,7 +138,7 @@ typedef struct cbor_item_t {
 	unsigned char * 		 data;
 } cbor_item_t;
 
-struct cbor_indefinite_bytestring_data {
+struct cbor_indefinite_string_data {
 	size_t          chunk_count;
 	size_t          chunk_capacity;
 	cbor_item_t * * chunks;
@@ -265,7 +265,12 @@ bool cbor_is_bool(const cbor_item_t * item);
 bool cbor_is_null(const cbor_item_t * item);
 bool cbor_is_undef(const cbor_item_t * item);
 
-/* int manipulation - both uint and negint*/
+/*
+* ============================================================================
+* Integer (uints and negints) manipulation
+* ============================================================================
+*/
+
 uint8_t cbor_get_uint8(const cbor_item_t * item);
 uint16_t cbor_get_uint16(const cbor_item_t * item);
 uint32_t cbor_get_uint32(const cbor_item_t * item);
@@ -286,39 +291,60 @@ cbor_item_t * cbor_new_int16();
 cbor_item_t * cbor_new_int32();
 cbor_item_t * cbor_new_int64();
 
-/* Bytestrings manipulation*/
-size_t cbor_bytestring_length(const cbor_item_t * item);
+/*
+* ============================================================================
+* String manipulation
+* ============================================================================
+*/
 
-bool cbor_bytestring_is_definite(const cbor_item_t * item);
-bool cbor_bytestring_is_indefinite(const cbor_item_t * item);
+size_t cbor_string_length(const cbor_item_t * item);
+bool cbor_string_is_definite(const cbor_item_t * item);
+bool cbor_string_is_indefinite(const cbor_item_t * item);
+unsigned char * cbor_string_handle(const cbor_item_t * item);
 
-unsigned char * cbor_bytestring_handle(const cbor_item_t * item);
-
-/* Indefinite bytestrings only */
-cbor_item_t * * cbor_bytestring_chunks_handle(const cbor_item_t * item);
-size_t cbor_bytestring_chunk_count(const cbor_item_t * item);
-/* Returns NULL on realloc failure */
-cbor_item_t * cbor_bytestring_add_chunk(cbor_item_t * item, cbor_item_t * chunk);
-cbor_item_t * cbor_bytestring_delete_chunk(cbor_item_t * item, size_t index);
-cbor_item_t * cbor_bytestring_concatenate(cbor_item_t * item);
-
-cbor_item_t * cbor_new_definite_bytestring();
-cbor_item_t * cbor_new_indefinite_bytestring();
-
-void cbor_bytestring_set_handle(cbor_item_t * item,  unsigned char * data, size_t length);
+void cbor_string_set_handle(cbor_item_t * item, unsigned char * data, size_t length);
 
 /* Indefinite strings only */
 cbor_item_t * * cbor_string_chunks_handle(const cbor_item_t * item);
 size_t cbor_string_chunk_count(const cbor_item_t * item);
+
 /* Returns NULL on realloc failure */
 cbor_item_t * cbor_string_add_chunk(cbor_item_t * item, cbor_item_t * chunk);
-cbor_item_t * cbor_string_delete_chunk(cbor_item_t * item, size_t index);
 cbor_item_t * cbor_string_concatenate(cbor_item_t * item);
 
 cbor_item_t * cbor_new_definite_string();
 cbor_item_t * cbor_new_indefinite_string();
 
-void cbor_string_set_handle(cbor_item_t * item,  unsigned char * data, size_t length);
+
+/*
+* ============================================================================
+* Byte string manipulation
+* ============================================================================
+*/
+
+size_t cbor_bytestring_length(const cbor_item_t * item);
+bool cbor_bytestring_is_definite(const cbor_item_t * item);
+bool cbor_bytestring_is_indefinite(const cbor_item_t * item);
+unsigned char * cbor_bytestring_handle(const cbor_item_t * item);
+
+void cbor_bytestring_set_handle(cbor_item_t * item, unsigned char * data, size_t length);
+
+/* Indefinite bytestrings only */
+cbor_item_t * * cbor_bytestring_chunks_handle(const cbor_item_t * item);
+size_t cbor_bytestring_chunk_count(const cbor_item_t * item);
+
+/* Returns NULL on realloc failure */
+cbor_item_t * cbor_bytestring_add_chunk(cbor_item_t * item, cbor_item_t * chunk);
+cbor_item_t * cbor_bytestring_concatenate(cbor_item_t * item);
+
+cbor_item_t * cbor_new_definite_bytestring();
+cbor_item_t * cbor_new_indefinite_bytestring();
+
+/*
+* ============================================================================
+* Array manipulation
+* ============================================================================
+*/
 
 size_t cbor_array_size(cbor_item_t * item);
 bool cbor_array_is_definite(cbor_item_t * item);
@@ -330,6 +356,12 @@ cbor_item_t * cbor_new_definite_array(size_t);
 cbor_item_t * cbor_new_indefinite_array();
 
 cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee);
+
+/*
+* ============================================================================
+* Map manipulation
+* ============================================================================
+*/
 
 size_t cbor_map_size(cbor_item_t * item);
 cbor_item_t * cbor_new_map();
