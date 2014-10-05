@@ -100,6 +100,8 @@ cbor_item_t * cbor_load(cbor_data source,
 		.array_start = &cbor_builder_array_start_callback,
 		.indef_array_start = &cbor_builder_indef_array_start_callback,
 
+		.tag = &cbor_builder_tag_callback,
+
 		.indef_break = &cbor_builder_indef_break_callback
 	};
 
@@ -1122,6 +1124,7 @@ cbor_item_t * cbor_new_indefinite_array()
 cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee)
 {
 	assert(cbor_isa_array(array));
+	//TODO cbor_incref(pushee);
 	struct _cbor_array_metadata * metadata = (struct _cbor_array_metadata *)&array->metadata;
 	cbor_item_t * * data = (cbor_item_t * *)array->data;
 	if (cbor_array_is_definite(array)) {
@@ -1134,6 +1137,31 @@ cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee)
 		array->data = (unsigned char *)data;
 	}
 	return array;
+}
+
+cbor_item_t * cbor_new_tag(uint64_t value)
+{
+	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	*item = (cbor_item_t){
+		.refcount = 1,
+		.type = CBOR_TYPE_TAG,
+		.metadata = { .tag_metadata = { .value = value, .tagged_item = NULL } },
+		.data = NULL /* Never used */
+	};
+	return item;
+}
+
+cbor_item_t * cbor_tag_item(const cbor_item_t * item)
+{
+	assert(cbor_isa_tag(item));
+	return item->metadata.tag_metadata.tagged_item;
+}
+
+void cbor_tag_set_item(cbor_item_t * item, cbor_item_t * tagged_item)
+{
+	assert(cbor_isa_tag(item));
+	cbor_incref(tagged_item);
+	item->metadata.tag_metadata.tagged_item = tagged_item;
 }
 
 /** ========================================================== */

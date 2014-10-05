@@ -99,8 +99,8 @@ struct _cbor_bytestring_metadata {
 };
 
 struct _cbor_string_metadata {
-	size_t length;
-	size_t codepoint_count; /* Sum of chunks' codepoint_counts for indefinite strings */
+	size_t                     length;
+	size_t                     codepoint_count; /* Sum of chunks' codepoint_counts for indefinite strings */
 	_cbor_string_type_metadata type;
 };
 
@@ -110,7 +110,7 @@ typedef enum {
 } _cbor_array_type_metadata;
 
 struct _cbor_array_metadata {
-	size_t size;
+	size_t                    size;
 	_cbor_array_type_metadata type;
 };
 
@@ -118,9 +118,15 @@ struct _cbor_map_metadata {
 	size_t size;
 };
 
+/* cbor_item_metadata is 2 * sizeof(size_t) + sizeof(_cbor_string_type_metadata), lets use the space */
+struct _cbor_tag_metadata {
+	struct cbor_item_t * tagged_item;
+	uint64_t             value;
+};
+
 struct _cbor_float_ctrl_metadata {
 	cbor_float_width width;
-	cbor_ctrl type;
+	cbor_ctrl        type;
 };
 
 union cbor_item_metadata {
@@ -129,6 +135,7 @@ union cbor_item_metadata {
 	struct _cbor_string_metadata	 string_metadata;
 	struct _cbor_array_metadata		 array_metadata;
 	struct _cbor_map_metadata		 map_metadata;
+	struct _cbor_tag_metadata		 tag_metadata;
 	struct _cbor_float_ctrl_metadata float_ctrl_metadata;
 };
 
@@ -161,7 +168,7 @@ typedef struct cbor_map_iterator {
 
 struct cbor_load_result {
 	struct cbor_error error;
-	size_t			  read;
+	size_t            read;
 };
 
 enum cbor_callback_result {
@@ -375,6 +382,10 @@ bool cbor_map_iterator_end(struct cbor_map_iterator * iter);
 void cbor_map_iterator_next(struct cbor_map_iterator * iter);
 void cbor_map_delete(struct cbor_map_iterator * iter);
 
+
+cbor_item_t * cbor_new_tag(uint64_t value);
+cbor_item_t * cbor_tag_item(const cbor_item_t * item);
+void cbor_tag_set_item(cbor_item_t * item, cbor_item_t * tagged_item);
 
 cbor_float_width cbor_float_ctrl_get_width(const cbor_item_t * item);
 cbor_ctrl cbor_float_ctrl_get_ctrl(const cbor_item_t * item);

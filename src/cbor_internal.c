@@ -105,6 +105,15 @@ void _cbor_builder_append(cbor_item_t * item, struct _cbor_decoder_context * ctx
 				}
 				break;
 			}
+		case CBOR_TYPE_TAG:
+			{
+				assert(ctx->stack->top->subitems == 1);
+				cbor_tag_set_item(ctx->stack->top->item, item);
+				cbor_item_t *item = ctx->stack->top->item;
+				_cbor_stack_pop(ctx->stack);
+				_cbor_builder_append(item, ctx);
+				break;
+			}
 		default:
 			{
 				//TODO complain loudly, inidicate failure!!!
@@ -291,5 +300,12 @@ enum cbor_callback_result cbor_builder_indef_break_callback(void * context)
 		_cbor_stack_pop(ctx->stack);
 		_cbor_builder_append(item, ctx);
 	}
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_tag_callback(void * context, uint64_t value)
+{
+	struct _cbor_decoder_context * ctx = context;
+	_cbor_stack_push(ctx->stack, cbor_new_tag(value), 1);
 	return CBOR_CALLBACK_OK;
 }
