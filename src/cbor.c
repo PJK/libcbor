@@ -443,10 +443,37 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		}
 	case 0x79:
 		/* Two bytes length string */
+		{
+			if (_cbor_claim_bytes(2, source_size, &result)) {
+				size_t length = (size_t) _cbor_load_uint16(source + 1);
+				if (_cbor_claim_bytes(length, source_size, &result)) {
+					callbacks->string(context, source + 1 + 2, length);
+				}
+			}
+			return result;
+		}
 	case 0x7A:
 		/* Four bytes length string */
+		{
+			if (_cbor_claim_bytes(4, source_size, &result)) {
+				size_t length = (size_t) _cbor_load_uint32(source + 1);
+				if (_cbor_claim_bytes(length, source_size, &result)) {
+					callbacks->string(context, source + 1 + 4, length);
+				}
+			}
+			return result;
+		}
 	case 0x7B:
 		/* Eight bytes length string */
+		{
+			if (_cbor_claim_bytes(8, source_size, &result)) {
+				size_t length = (size_t) _cbor_load_uint64(source + 1);
+				if (_cbor_claim_bytes(length, source_size, &result)) {
+					callbacks->string(context, source + 1 + 8, length);
+				}
+			}
+			return result;
+		}
 	case 0x7C: /* Fallthrough */
 	case 0x7D: /* Fallthrough */
 	case 0x7E:
