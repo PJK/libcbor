@@ -483,6 +483,10 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		}
 	case 0x7F:
 		/* Indefinite length string */
+		{
+			callbacks->string_start(context);
+			return result;
+		}
 	case 0x80: /* Fallthrough */
 	case 0x81: /* Fallthrough */
 	case 0x82: /* Fallthrough */

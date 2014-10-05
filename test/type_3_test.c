@@ -131,6 +131,25 @@ static void test_int64_string(void **state) {
 	assert_null(string);
 }
 
+unsigned char short_indef_string_data[] = { 0x7F, 0x78, 0x01, 0x65, 0xFF, 0xFF };
+/*                                         start |   string      | break| extra */
+
+static void test_short_indef_string(void **state) {
+	string = cbor_load(short_indef_string_data, 6, CBOR_FLAGS_NONE, &res);
+	assert_non_null(string);
+	assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
+	assert_true(cbor_isa_string(string));
+	assert_true(cbor_string_length(string) == 0);
+	assert_true(cbor_string_is_indefinite(string));
+	assert_true(cbor_string_chunk_count(string) == 1);
+	assert_true(res.read == 5);
+	assert_true(cbor_isa_string(cbor_string_chunks_handle(string)[0]));
+	assert_true(cbor_string_length(cbor_string_chunks_handle(string)[0]) == 1);
+	assert_true(*cbor_string_handle(cbor_string_chunks_handle(string)[0]) == 'e');
+	cbor_decref(&string);
+	assert_null(string);
+}
+
 int main(void) {
 	const UnitTest tests[] = {
 		unit_test(test_empty_string),
@@ -139,7 +158,8 @@ int main(void) {
 		unit_test(test_int8_string),
 		unit_test(test_int16_string),
 		unit_test(test_int32_string),
-		unit_test(test_int64_string)
+		unit_test(test_int64_string),
+		unit_test(test_short_indef_string)
 	};
 	return run_tests(tests);
 }

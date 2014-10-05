@@ -126,7 +126,7 @@ static void test_zero_indef(void **state) {
 	assert_null(bs);
 }
 
-unsigned char data10[] = {  0x5F, 0x58, 0x01, 0xA1, 0xFF, 0xFF };
+unsigned char data10[] = { 0x5F, 0x58, 0x01, 0xA1, 0xFF, 0xFF };
 /*                          start |   bstring     | break| extra */
 
 static void test_short_indef(void **state) {
@@ -145,7 +145,7 @@ static void test_short_indef(void **state) {
 	assert_null(bs);
 }
 
-unsigned char data11[] = {  0x5F, 0x58, 0x01, 0xA1, 0x58, 0x01, 0xA2, 0xFF, 0xFF };
+unsigned char data11[] = { 0x5F, 0x58, 0x01, 0xA1, 0x58, 0x01, 0xA2, 0xFF, 0xFF };
 /*                          start |   bstring     |    bstring     | break| extra */
 
 static void test_two_indef(void **state) {
