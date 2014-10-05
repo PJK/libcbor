@@ -33,6 +33,19 @@ void cbor_decref(cbor_item_t ** item)
 				break;
 			}
 		case CBOR_TYPE_STRING:
+			{
+				if (cbor_string_is_definite(*item)) {
+					free((*item)->data);
+				} else {
+					/* We need to decref all chunks */
+					cbor_item_t ** handle = cbor_string_chunks_handle(*item);
+					for (size_t i = 0; i < cbor_string_chunk_count(*item); i++)
+						cbor_decref(&handle[i]);
+					free(((struct cbor_indefinite_string_data *)(*item)->data)->chunks);
+					free((*item)->data);
+				}
+				break;
+			}
 		case CBOR_TYPE_ARRAY:
 			{
 				/* Get all items and decref them */
@@ -80,6 +93,9 @@ cbor_item_t * cbor_load(cbor_data source,
 
 		.byte_string = &cbor_builder_byte_string_callback,
 		.byte_string_start = &cbor_builder_byte_string_start_callback,
+
+		.string = &cbor_builder_string_callback,
+		.string_start = &cbor_builder_string_start_callback,
 
 		.array_start = &cbor_builder_array_start_callback,
 		.indef_array_start = &cbor_builder_indef_array_start_callback,
@@ -407,7 +423,10 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x77:
 		/* Embedded one byte length string */
 		{
-			// TODO
+			size_t length = (size_t)_cbor_load_uint8(source) - 0x60; /* 0x60 offset */
+			if (_cbor_claim_bytes(length, source_size, &result)) {
+				callbacks->string(context, source + 1, length);
+			}
 			return result;
 		}
 	case 0x78:
@@ -945,6 +964,12 @@ size_t cbor_string_length(const cbor_item_t * item) {
 unsigned char * cbor_string_handle(const cbor_item_t * item) {
 	assert(cbor_isa_string(item));
 	return item->data;
+}
+
+size_t cbor_string_codepoint_count(const cbor_item_t * item)
+{
+	assert(cbor_isa_string(item));
+	return item->metadata.string_metadata.codepoint_count;
 }
 
 bool cbor_string_is_definite(const cbor_item_t * item)

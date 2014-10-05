@@ -100,6 +100,7 @@ struct _cbor_bytestring_metadata {
 
 struct _cbor_string_metadata {
 	size_t length;
+	size_t codepoint_count; /* Sum of chunks' codepoint_counts for indefinite strings */
 	_cbor_string_type_metadata type;
 };
 
@@ -301,6 +302,7 @@ size_t cbor_string_length(const cbor_item_t * item);
 bool cbor_string_is_definite(const cbor_item_t * item);
 bool cbor_string_is_indefinite(const cbor_item_t * item);
 unsigned char * cbor_string_handle(const cbor_item_t * item);
+size_t cbor_string_codepoint_count(const cbor_item_t * item);
 
 void cbor_string_set_handle(cbor_item_t * item, unsigned char * data, size_t length);
 

@@ -28,6 +28,9 @@ enum cbor_callback_result cbor_builder_negint16_callback(void *, uint16_t);
 enum cbor_callback_result cbor_builder_negint32_callback(void *, uint32_t);
 enum cbor_callback_result cbor_builder_negint64_callback(void *, uint64_t);
 
+enum cbor_callback_result cbor_builder_string_callback(void *, cbor_data, size_t);
+enum cbor_callback_result cbor_builder_string_start_callback(void *);
+
 enum cbor_callback_result cbor_builder_byte_string_callback(void *, cbor_data, size_t);
 enum cbor_callback_result cbor_builder_byte_string_start_callback(void *);
 

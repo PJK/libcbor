@@ -1,4 +1,5 @@
 #include "cbor_internal.h"
+#include "cbor_unicode.h"
 #include <assert.h>
 #include <string.h>
 #include <math.h>
@@ -219,6 +220,46 @@ enum cbor_callback_result cbor_builder_byte_string_start_callback(void * context
 {
 	struct _cbor_decoder_context * ctx = context;
 	_cbor_stack_push(ctx->stack, cbor_new_indefinite_bytestring(), 0);
+	return CBOR_CALLBACK_OK;
+}
+
+
+enum cbor_callback_result cbor_builder_string_callback(void * context, cbor_data data, size_t length)
+{
+	struct _cbor_decoder_context * ctx = context;
+	struct _cbor_unicode_status unicode_status;
+
+	size_t codepoint_count = _cbor_unicode_codepoint_count(data, length, &unicode_status);
+
+	if (unicode_status.status == _CBOR_UNICODE_BADCP) {
+		/* Invalid Unicode string - abort decoding */
+		//TODO complain
+		return CBOR_CALLBACK_SKIP;
+	}
+
+	unsigned char * new_handle = malloc(length);
+
+	memcpy(new_handle, data, length);
+	cbor_item_t * res = cbor_new_definite_string();
+	cbor_string_set_handle(res, new_handle, length);
+	res->metadata.string_metadata.codepoint_count = codepoint_count;
+	if (ctx->stack->size > 0) {
+		if (ctx->stack->top->item->type == CBOR_TYPE_STRING) {
+			// TODO check success
+			cbor_string_add_chunk(ctx->stack->top->item, res);
+		} else {
+			// TODO complain loudly
+		}
+	} else {
+		ctx->root = res;
+	}
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_string_start_callback(void * context)
+{
+	struct _cbor_decoder_context * ctx = context;
+	_cbor_stack_push(ctx->stack, cbor_new_indefinite_string(), 0);
 	return CBOR_CALLBACK_OK;
 }
 
