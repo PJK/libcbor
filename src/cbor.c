@@ -431,6 +431,16 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		}
 	case 0x78:
 		/* One byte length string */
+		// TODO template this?
+		{
+			if (_cbor_claim_bytes(1, source_size, &result)) {
+				size_t length = (size_t) _cbor_load_uint8(source + 1);
+				if (_cbor_claim_bytes(length, source_size, &result)) {
+					callbacks->string(context, source + 1 + 1, length);
+				}
+			}
+			return result;
+		}
 	case 0x79:
 		/* Two bytes length string */
 	case 0x7A:
