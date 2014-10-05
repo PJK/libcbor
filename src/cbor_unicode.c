@@ -35,15 +35,27 @@ uint32_t _cbor_unicode_decode(uint32_t* state, uint32_t* codep, uint32_t byte) {
 
 size_t _cbor_unicode_codepoint_count(cbor_data source, size_t source_length, struct _cbor_unicode_status * status)
 {
-	uint32_t codepoint;
-	uint32_t state = UTF8_ACCEPT;
-	size_t pos;
-	for (pos = 0; pos < source_length; pos++)
+	uint32_t codepoint, state = UTF8_ACCEPT, res;
+	size_t pos = 0, count = 0;
+
+	for (; pos < source_length; pos++)
 	{
-		if (_cbor_unicode_decode(&state, &codepoint, source[pos]) == UTF8_REJECT) {
-			*status = (struct _cbor_unicode_status) { .location = pos, .status = _CBOR_UNICODE_BADCP };
-			return -1;
+		res = _cbor_unicode_decode(&state, &codepoint, source[pos]);
+
+		if (res == UTF8_ACCEPT) {
+			count++;
+		} else if (res == UTF8_REJECT) {
+			goto error;
 		}
 	}
-	return pos;
+
+	/* Unfinished multibyte codepoint */
+	if (state != UTF8_ACCEPT)
+		goto error;
+
+	return count;
+
+error:
+	*status = (struct _cbor_unicode_status) { .location = pos, .status = _CBOR_UNICODE_BADCP };
+	return -1;
 }
