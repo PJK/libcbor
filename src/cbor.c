@@ -1157,6 +1157,12 @@ cbor_item_t * cbor_tag_item(const cbor_item_t * item)
 	return item->metadata.tag_metadata.tagged_item;
 }
 
+uint64_t cbor_tag_value(const cbor_item_t * item)
+{
+	assert(cbor_isa_tag(item));
+	return item->metadata.tag_metadata.value;
+}
+
 void cbor_tag_set_item(cbor_item_t * item, cbor_item_t * tagged_item)
 {
 	assert(cbor_isa_tag(item));

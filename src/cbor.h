@@ -385,6 +385,7 @@ void cbor_map_delete(struct cbor_map_iterator * iter);
 
 cbor_item_t * cbor_new_tag(uint64_t value);
 cbor_item_t * cbor_tag_item(const cbor_item_t * item);
+uint64_t cbor_tag_value(const cbor_item_t * item);
 void cbor_tag_set_item(cbor_item_t * item, cbor_item_t * tagged_item);
 
 cbor_float_width cbor_float_ctrl_get_width(const cbor_item_t * item);
