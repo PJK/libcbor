@@ -69,8 +69,6 @@ typedef enum {
 } cbor_float_width;
 
 typedef enum {
-	CBOR_CTRL_NONE,
-	CBOR_CTRL_BREAK,
 	CBOR_CTRL_FALSE,
 	CBOR_CTRL_TRUE,
 	CBOR_CTRL_NULL,
@@ -382,14 +380,30 @@ bool cbor_map_iterator_end(struct cbor_map_iterator * iter);
 void cbor_map_iterator_next(struct cbor_map_iterator * iter);
 void cbor_map_delete(struct cbor_map_iterator * iter);
 
+/*
+* ============================================================================
+* Tag manipulation
+* ============================================================================
+*/
 
 cbor_item_t * cbor_new_tag(uint64_t value);
 cbor_item_t * cbor_tag_item(const cbor_item_t * item);
 uint64_t cbor_tag_value(const cbor_item_t * item);
 void cbor_tag_set_item(cbor_item_t * item, cbor_item_t * tagged_item);
 
-cbor_float_width cbor_float_ctrl_get_width(const cbor_item_t * item);
-cbor_ctrl cbor_float_ctrl_get_ctrl(const cbor_item_t * item);
+/*
+* ============================================================================
+* Float manipulation
+* ============================================================================
+*/
+
+bool cbor_float_ctrl_is_ctrl(const cbor_item_t * item);
+cbor_float_width cbor_float_get_width(const cbor_item_t * item);
+float cbor_float_get_float2(const cbor_item_t * item);
+float cbor_float_get_float4(const cbor_item_t * item);
+double cbor_float_get_float8(const cbor_item_t * item);
+cbor_ctrl cbor_ctrl_code(const cbor_item_t * item);
+bool cbor_ctrl_bool(const cbor_item_t * item);
 
 #ifdef DEBUG
 #include <stdio.h>

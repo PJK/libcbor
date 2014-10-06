@@ -40,7 +40,7 @@ uint64_t _cbor_load_uint64(const unsigned char * source)
 }
 
 /* As per http://tools.ietf.org/html/rfc7049#appendix-D */
-double _cbor_decode_half(unsigned char *halfp) {
+float _cbor_decode_half(unsigned char *halfp) {
 	int half = (halfp[0] << 8) + halfp[1];
 	int exp = (half >> 10) & 0x1f;
 	int mant = half & 0x3ff;
@@ -48,7 +48,7 @@ double _cbor_decode_half(unsigned char *halfp) {
 	if (exp == 0) val = ldexp(mant, -24);
 	else if (exp != 31) val = ldexp(mant + 1024, exp - 25);
 	else val = mant == 0 ? INFINITY : NAN;
-	return half & 0x8000 ? -val : val;
+	return (float)(half & 0x8000 ? -val : val);
 }
 
 double _cbor_load_half(cbor_data source)

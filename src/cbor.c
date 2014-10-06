@@ -63,7 +63,7 @@ void cbor_decref(cbor_item_t ** item)
 		case CBOR_TYPE_FLOAT_CTRL:
 			{
 				// unless it's a control symbol
-				if (cbor_float_ctrl_get_width(*item) != CBOR_FLOAT_0)
+				if (cbor_float_get_width(*item) != CBOR_FLOAT_0)
 					free((*item)->data);
 				break;
 			}
@@ -1230,23 +1230,19 @@ inline bool cbor_is_uint(const cbor_item_t * item)
 
 inline bool cbor_is_bool(const cbor_item_t * item)
 {
-	return cbor_isa_float_ctrl(item) && (cbor_float_ctrl_get_ctrl(item) == CBOR_CTRL_FALSE || cbor_float_ctrl_get_ctrl(item) == CBOR_CTRL_TRUE);
+	return cbor_isa_float_ctrl(item) && (cbor_ctrl_code(item) == CBOR_CTRL_FALSE || cbor_ctrl_code(item) == CBOR_CTRL_TRUE);
 }
 
 inline bool cbor_is_null(const cbor_item_t * item)
 {
-	return cbor_isa_float_ctrl(item) && cbor_float_ctrl_get_ctrl(item) == CBOR_CTRL_NULL;
+	return cbor_isa_float_ctrl(item) && cbor_ctrl_code(item) == CBOR_CTRL_NULL;
 }
 
 inline bool cbor_is_undef(const cbor_item_t * item)
 {
-	return cbor_isa_float_ctrl(item) && cbor_float_ctrl_get_ctrl(item) == CBOR_CTRL_UNDEF;
+	return cbor_isa_float_ctrl(item) && cbor_ctrl_code(item) == CBOR_CTRL_UNDEF;
 }
 
-inline bool cbor_is_break(const cbor_item_t * item)
-{
-	return cbor_isa_float_ctrl(item) && cbor_float_ctrl_get_ctrl(item) == CBOR_CTRL_BREAK;
-}
 
 size_t cbor_bytestring_length(const cbor_item_t * item) {
 	assert(cbor_isa_bytestring(item));
@@ -1293,16 +1289,16 @@ cbor_item_t ** cbor_array_handle(cbor_item_t * item)
 	return (cbor_item_t **)item->data;
 }
 
-cbor_float_width cbor_float_ctrl_get_width(const cbor_item_t * item)
+cbor_float_width cbor_float_get_width(const cbor_item_t * item)
 {
 	assert(cbor_isa_float_ctrl(item));
 	return item->metadata.float_ctrl_metadata.width;
 }
 
-cbor_ctrl cbor_float_ctrl_get_ctrl(const cbor_item_t * item)
+cbor_ctrl cbor_ctrl_code(const cbor_item_t * item)
 {
 	assert(cbor_isa_float_ctrl(item));
-	assert(cbor_float_ctrl_get_width(item) == CBOR_FLOAT_0);
+	assert(cbor_float_get_width(item) == CBOR_FLOAT_0);
 	return item->metadata.float_ctrl_metadata.type;
 }
 
