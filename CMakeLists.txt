@@ -10,7 +10,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
 set(CMAKE_EXE_LINKER_FLAGS "-g --coverage")
 
 enable_testing()
-add_custom_target(test ${CMAKE_CTEST_COMMAND} -V)
 
 set(CTEST_MEMORYCHECK_COMMAND "/usr/bin/valgrind")
 set(MEMORYCHECK_COMMAND_OPTIONS "")
