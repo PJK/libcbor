@@ -44,11 +44,21 @@ static void test_float8(void **state) {
 	assert_null(float_ctrl);
 }
 
+unsigned char null_data[] = { 0xF6 };
+static void test_null(void **state) {
+	float_ctrl = cbor_load(null_data, 1, CBOR_FLAGS_NONE, &res);
+	assert_true(cbor_isa_float_ctrl(float_ctrl));
+	assert_true(cbor_is_null(float_ctrl));
+	cbor_decref(&float_ctrl);
+	assert_null(float_ctrl);
+}
+
 int main(void) {
 	const UnitTest tests[] = {
 		unit_test(test_float2),
 		unit_test(test_float4),
-		unit_test(test_float8)
+		unit_test(test_float8),
+		unit_test(test_null)
 	};
 	return run_tests(tests);
 }

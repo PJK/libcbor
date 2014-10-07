@@ -100,6 +100,7 @@ cbor_item_t * cbor_load(cbor_data source,
 
 		.tag = &cbor_builder_tag_callback,
 
+		.null = &cbor_builder_null_callback,
 		.float2 = &cbor_builder_float2_callback,
 		.float4 = &cbor_builder_float4_callback,
 		.float8 = &cbor_builder_float8_callback,
