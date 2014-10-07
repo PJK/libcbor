@@ -61,7 +61,7 @@ union test_expectation_data {
 		size_t    length;
 	} string;
 	size_t length;
-	double float2;
+	float float2;
 	float float4;
 	double float8;
 	bool boolean;
@@ -101,7 +101,7 @@ void assert_indef_map_start();
 
 void assert_tag_eq(uint64_t);
 
-void assert_half(double);
+void assert_half(float);
 void assert_float(float);
 void assert_double(double);
 
@@ -133,7 +133,7 @@ enum cbor_callback_result indef_map_start_callback(void *);
 
 enum cbor_callback_result tag_callback(void *, uint64_t);
 
-enum cbor_callback_result half_callback(void *, double);
+enum cbor_callback_result half_callback(void *, float);
 enum cbor_callback_result float_callback(void *, float);
 enum cbor_callback_result double_callback(void *, double);
 enum cbor_callback_result indef_break_callback(void *);

@@ -39,6 +39,8 @@ enum cbor_callback_result cbor_builder_indef_array_start_callback(void *);
 
 enum cbor_callback_result cbor_builder_tag_callback(void *, uint64_t);
 
+enum cbor_callback_result cbor_builder_float_callback(void *);
+enum cbor_callback_result cbor_builder_double_callback(void *);
 enum cbor_callback_result cbor_builder_indef_break_callback(void *);
 
 struct _cbor_decoder_context {

@@ -1243,6 +1243,12 @@ inline bool cbor_is_undef(const cbor_item_t * item)
 	return cbor_isa_float_ctrl(item) && cbor_ctrl_code(item) == CBOR_CTRL_UNDEF;
 }
 
+bool cbor_is_float(const cbor_item_t * item)
+{
+	return cbor_isa_float_ctrl(item) && !cbor_float_ctrl_is_ctrl(item);
+}
+
+
 
 size_t cbor_bytestring_length(const cbor_item_t * item) {
 	assert(cbor_isa_bytestring(item));
@@ -1301,6 +1307,21 @@ cbor_ctrl cbor_ctrl_code(const cbor_item_t * item)
 	assert(cbor_float_get_width(item) == CBOR_FLOAT_0);
 	return item->metadata.float_ctrl_metadata.type;
 }
+
+bool cbor_float_ctrl_is_ctrl(const cbor_item_t * item)
+{
+	assert(cbor_isa_float_ctrl(item));
+	return cbor_float_get_width(item) == CBOR_FLOAT_0;
+}
+
+float cbor_float_get_float2(const cbor_item_t * item)
+{
+	assert(cbor_is_float(item));
+	return *(float *)item->data;
+}
+
+float cbor_float_get_float4(const cbor_item_t * item);
+double cbor_float_get_float8(const cbor_item_t * item);
 
 #ifdef DEBUG
 void cbor_describe(cbor_item_t * item) {

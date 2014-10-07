@@ -221,7 +221,7 @@ struct cbor_callbacks {
 
 	/* Type 7 - Floats & misc */
 	/* Type names cannot be member names */
-	cbor_double_callback float2; /* 2B float is not supported in standard C */
+	cbor_float_callback float2; /* 2B float is not supported in standard C */
 	cbor_float_callback float4;
 	cbor_double_callback float8;
 	cbor_simple_callback undefined;

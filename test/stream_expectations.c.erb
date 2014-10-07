@@ -117,7 +117,7 @@ enum cbor_callback_result tag_callback(void * context, uint64_t value)
 }
 
 
-<% [['half', 2, 'double'], ['float', 4], ['double', 8]].each do |decimal| %>
+<% [['half', 2, 'float'], ['float', 4], ['double', 8]].each do |decimal| %>
 	void assert_<%= decimal[0] %>(<%= decimal[2] || decimal[0] %> value)
 	{
 		assertions_queue[queue_size++] = (struct test_assertion) { <%= decimal[0].upcase %>_EQ, { .float<%= decimal[1] %> = value } };
