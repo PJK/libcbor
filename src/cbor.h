@@ -409,6 +409,11 @@ cbor_item_t * cbor_new_float2();
 cbor_item_t * cbor_new_float4();
 cbor_item_t * cbor_new_float8();
 
+cbor_item_t * cbor_new_null();
+cbor_item_t * cbor_new_undef();
+cbor_item_t * cbor_new_bool(bool value);
+
+void cbor_set_ctrl(cbor_item_t * item, cbor_ctrl value);
 void cbor_set_float2(cbor_item_t * item, float value);
 void cbor_set_float4(cbor_item_t * item, float value);
 void cbor_set_float8(cbor_item_t * item, double value);

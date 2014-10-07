@@ -977,7 +977,14 @@ cbor_item_t * cbor_new_float8()
 	return item;
 }
 
-
+cbor_item_t * cbor_new_null()
+{
+	cbor_item_t * item = cbor_new_ctrl();
+	cbor_set_ctrl(item, CBOR_CTRL_NULL);
+	return item;
+}
+cbor_item_t * cbor_new_undef();
+cbor_item_t * cbor_new_bool(bool value);
 
 cbor_item_t * cbor_new_definite_string()
 {
@@ -1404,6 +1411,13 @@ void cbor_set_float8(cbor_item_t * item, double value)
 	assert(cbor_is_float(item));
 	assert(cbor_float_get_width(item) == CBOR_FLOAT_64);
 	*((double *)item->data) = value;
+}
+
+void cbor_set_ctrl(cbor_item_t * item, cbor_ctrl value)
+{
+	assert(cbor_isa_float_ctrl(item));
+	assert(cbor_float_get_width(item) == CBOR_FLOAT_0);
+	item->metadata.float_ctrl_metadata.type = value;
 }
 
 #ifdef DEBUG
