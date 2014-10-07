@@ -101,6 +101,8 @@ cbor_item_t * cbor_load(cbor_data source,
 		.tag = &cbor_builder_tag_callback,
 
 		.null = &cbor_builder_null_callback,
+		.undefined = &cbor_builder_undefined_callback,
+		.boolean = &cbor_builder_boolean_callback,
 		.float2 = &cbor_builder_float2_callback,
 		.float4 = &cbor_builder_float4_callback,
 		.float8 = &cbor_builder_float8_callback,
@@ -984,8 +986,20 @@ cbor_item_t * cbor_new_null()
 	cbor_set_ctrl(item, CBOR_CTRL_NULL);
 	return item;
 }
-cbor_item_t * cbor_new_undef();
-cbor_item_t * cbor_new_bool(bool value);
+
+cbor_item_t * cbor_new_undef()
+{
+	cbor_item_t * item = cbor_new_ctrl();
+	cbor_set_ctrl(item, CBOR_CTRL_UNDEF);
+	return item;
+}
+
+cbor_item_t * cbor_new_bool(bool value)
+{
+	cbor_item_t * item = cbor_new_ctrl();
+	cbor_set_ctrl(item, value ? CBOR_CTRL_TRUE : CBOR_CTRL_FALSE);
+	return item;
+}
 
 cbor_item_t * cbor_new_definite_string()
 {

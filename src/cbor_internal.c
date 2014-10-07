@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <math.h>
+#include <zlib.h>
 
 // TODO asserts
 // TODO check mallocs
@@ -338,8 +339,21 @@ enum cbor_callback_result cbor_builder_null_callback(void * context)
 	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_undefined_callback(void * context);
-enum cbor_callback_result cbor_builder_boolean_callback(void * context, bool value);
+enum cbor_callback_result cbor_builder_undefined_callback(void * context)
+{
+	struct _cbor_decoder_context * ctx = context;
+	cbor_item_t * res = cbor_new_undef();
+	_cbor_builder_append(res, ctx);
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_boolean_callback(void * context, bool value)
+{
+	struct _cbor_decoder_context * ctx = context;
+	cbor_item_t * res = cbor_new_bool(value);
+	_cbor_builder_append(res, ctx);
+	return CBOR_CALLBACK_OK;
+}
 
 enum cbor_callback_result cbor_builder_tag_callback(void * context, uint64_t value)
 {
