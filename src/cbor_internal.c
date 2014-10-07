@@ -303,6 +303,18 @@ enum cbor_callback_result cbor_builder_indef_break_callback(void * context)
 	return CBOR_CALLBACK_OK;
 }
 
+enum cbor_callback_result cbor_builder_float2_callback(void * context, float value)
+{
+	struct _cbor_decoder_context * ctx = context;
+	cbor_item_t * res = cbor_new_float2();
+	cbor_set_float2(res, value);
+	_cbor_builder_append(res, ctx);
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_float4_callback(void * context, float value);
+enum cbor_callback_result cbor_builder_float8_callback(void * context, double value);
+
 enum cbor_callback_result cbor_builder_tag_callback(void * context, uint64_t value)
 {
 	struct _cbor_decoder_context * ctx = context;

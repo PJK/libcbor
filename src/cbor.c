@@ -62,9 +62,7 @@ void cbor_decref(cbor_item_t ** item)
 			}
 		case CBOR_TYPE_FLOAT_CTRL:
 			{
-				// unless it's a control symbol
-				if (cbor_float_get_width(*item) != CBOR_FLOAT_0)
-					free((*item)->data);
+				/* Floats are fused */
 				break;
 			}
 		}
@@ -102,6 +100,7 @@ cbor_item_t * cbor_load(cbor_data source,
 
 		.tag = &cbor_builder_tag_callback,
 
+		.float2 = &cbor_builder_float2_callback,
 		.indef_break = &cbor_builder_indef_break_callback
 	};
 
@@ -928,6 +927,34 @@ cbor_item_t * cbor_new_int64()
 	return item;
 }
 
+cbor_item_t * cbor_new_ctrl()
+{
+	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	*item = (cbor_item_t){
+		.type = CBOR_TYPE_FLOAT_CTRL,
+		.data = NULL,
+		.refcount = 1,
+		.metadata = { .float_ctrl_metadata = { .width = CBOR_FLOAT_0, .type = 0 } }
+	};
+	return item;
+}
+
+cbor_item_t * cbor_new_float2()
+{
+	cbor_item_t * item = malloc(sizeof(cbor_item_t) + 4);
+	*item = (cbor_item_t){
+		.type = CBOR_TYPE_FLOAT_CTRL,
+		.data = (unsigned char *)item + sizeof(cbor_item_t),
+		.refcount = 1,
+		.metadata = { .float_ctrl_metadata = { .width = CBOR_FLOAT_16 } }
+	};
+	return item;
+}
+
+cbor_item_t * cbor_new_float4();
+cbor_item_t * cbor_new_float8();
+
+
 
 cbor_item_t * cbor_new_definite_string()
 {
@@ -1322,6 +1349,16 @@ float cbor_float_get_float2(const cbor_item_t * item)
 
 float cbor_float_get_float4(const cbor_item_t * item);
 double cbor_float_get_float8(const cbor_item_t * item);
+
+
+void cbor_set_float2(cbor_item_t * item, float value)
+{
+	assert(cbor_is_float(item));
+	assert(cbor_float_get_width(item) == CBOR_FLOAT_16);
+	*((float *)item->data) = value;
+}
+void cbor_set_float4(cbor_item_t * item, float value);
+void cbor_set_float8(cbor_item_t * item, double value);
 
 #ifdef DEBUG
 void cbor_describe(cbor_item_t * item) {
