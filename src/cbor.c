@@ -101,6 +101,8 @@ cbor_item_t * cbor_load(cbor_data source,
 		.tag = &cbor_builder_tag_callback,
 
 		.float2 = &cbor_builder_float2_callback,
+		.float4 = &cbor_builder_float4_callback,
+		.float8 = &cbor_builder_float8_callback,
 		.indef_break = &cbor_builder_indef_break_callback
 	};
 
@@ -951,8 +953,29 @@ cbor_item_t * cbor_new_float2()
 	return item;
 }
 
-cbor_item_t * cbor_new_float4();
-cbor_item_t * cbor_new_float8();
+cbor_item_t * cbor_new_float4()
+{
+	cbor_item_t * item = malloc(sizeof(cbor_item_t) + 4);
+	*item = (cbor_item_t){
+		.type = CBOR_TYPE_FLOAT_CTRL,
+		.data = (unsigned char *)item + sizeof(cbor_item_t),
+		.refcount = 1,
+		.metadata = { .float_ctrl_metadata = { .width = CBOR_FLOAT_32 } }
+	};
+	return item;
+}
+
+cbor_item_t * cbor_new_float8()
+{
+	cbor_item_t * item = malloc(sizeof(cbor_item_t) + 8);
+	*item = (cbor_item_t){
+		.type = CBOR_TYPE_FLOAT_CTRL,
+		.data = (unsigned char *)item + sizeof(cbor_item_t),
+		.refcount = 1,
+		.metadata = { .float_ctrl_metadata = { .width = CBOR_FLOAT_64 } }
+	};
+	return item;
+}
 
 
 
@@ -1344,11 +1367,23 @@ bool cbor_float_ctrl_is_ctrl(const cbor_item_t * item)
 float cbor_float_get_float2(const cbor_item_t * item)
 {
 	assert(cbor_is_float(item));
+	assert(cbor_float_get_width(item) == CBOR_FLOAT_16);
 	return *(float *)item->data;
 }
 
-float cbor_float_get_float4(const cbor_item_t * item);
-double cbor_float_get_float8(const cbor_item_t * item);
+float cbor_float_get_float4(const cbor_item_t * item)
+{
+	assert(cbor_is_float(item));
+	assert(cbor_float_get_width(item) == CBOR_FLOAT_32);
+	return *(float *)item->data;
+}
+
+double cbor_float_get_float8(const cbor_item_t * item)
+{
+	assert(cbor_is_float(item));
+	assert(cbor_float_get_width(item) == CBOR_FLOAT_64);
+	return *(double *)item->data;
+}
 
 
 void cbor_set_float2(cbor_item_t * item, float value)
@@ -1357,8 +1392,19 @@ void cbor_set_float2(cbor_item_t * item, float value)
 	assert(cbor_float_get_width(item) == CBOR_FLOAT_16);
 	*((float *)item->data) = value;
 }
-void cbor_set_float4(cbor_item_t * item, float value);
-void cbor_set_float8(cbor_item_t * item, double value);
+void cbor_set_float4(cbor_item_t * item, float value)
+{
+	assert(cbor_is_float(item));
+	assert(cbor_float_get_width(item) == CBOR_FLOAT_32);
+	*((float *)item->data) = value;
+}
+
+void cbor_set_float8(cbor_item_t * item, double value)
+{
+	assert(cbor_is_float(item));
+	assert(cbor_float_get_width(item) == CBOR_FLOAT_64);
+	*((double *)item->data) = value;
+}
 
 #ifdef DEBUG
 void cbor_describe(cbor_item_t * item) {
