@@ -53,12 +53,40 @@ static void test_null(void **state) {
 	assert_null(float_ctrl);
 }
 
+unsigned char undef_data[] = { 0xF7 };
+static void test_undef(void **state) {
+	float_ctrl = cbor_load(undef_data, 1, CBOR_FLAGS_NONE, &res);
+	assert_true(cbor_isa_float_ctrl(float_ctrl));
+	assert_true(cbor_is_undef(float_ctrl));
+	cbor_decref(&float_ctrl);
+	assert_null(float_ctrl);
+}
+
+unsigned char bool_data[] = { 0xF4, 0xF5 };
+static void test_bool(void **state) {
+	float_ctrl = cbor_load(bool_data, 1, CBOR_FLAGS_NONE, &res);
+	assert_true(cbor_isa_float_ctrl(float_ctrl));
+	assert_true(cbor_is_bool(float_ctrl));
+	assert_false(cbor_ctrl_bool(float_ctrl));
+	cbor_decref(&float_ctrl);
+	assert_null(float_ctrl);
+
+	float_ctrl = cbor_load(bool_data + 1, 1, CBOR_FLAGS_NONE, &res);
+	assert_true(cbor_isa_float_ctrl(float_ctrl));
+	assert_true(cbor_is_bool(float_ctrl));
+	assert_true(cbor_ctrl_bool(float_ctrl));
+	cbor_decref(&float_ctrl);
+	assert_null(float_ctrl);
+}
+
 int main(void) {
 	const UnitTest tests[] = {
 		unit_test(test_float2),
 		unit_test(test_float4),
 		unit_test(test_float8),
-		unit_test(test_null)
+		unit_test(test_null),
+		unit_test(test_undef),
+		unit_test(test_bool)
 	};
 	return run_tests(tests);
 }

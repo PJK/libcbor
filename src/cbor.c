@@ -1435,6 +1435,12 @@ void cbor_set_ctrl(cbor_item_t * item, cbor_ctrl value)
 	item->metadata.float_ctrl_metadata.type = value;
 }
 
+bool cbor_ctrl_bool(const cbor_item_t * item)
+{
+	assert(cbor_is_bool(item));
+	return item->metadata.float_ctrl_metadata.type == CBOR_CTRL_TRUE;
+}
+
 #ifdef DEBUG
 void cbor_describe(cbor_item_t * item) {
 	printf("Address: %p\t\t Type: ", (void *)item);
