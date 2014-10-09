@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <math.h>
+#include <ldap.h>
 
 // TODO asserts
 // TODO check mallocs
@@ -110,11 +111,11 @@ void _cbor_builder_append(cbor_item_t * item, struct _cbor_decoder_context * ctx
 				if (cbor_map_is_definite(ctx->stack->top->item)) {
 					assert(ctx->stack->top->subitems > 0);
 					if (ctx->stack->top->subitems % 2) {
-						/* Even record, this is a key */
-						cbor_map_add(ctx->stack->top->item, (struct cbor_pair){ .key = item, .value = NULL });
-					} else {
 						// TODO this is fugly
 						cbor_map_handle(ctx->stack->top->item)[cbor_map_size(ctx->stack->top->item) - 1].value = item;
+					} else {
+						/* Even record, this is a key */
+						cbor_map_add(ctx->stack->top->item, (struct cbor_pair) {.key = item, .value = NULL});
 					}
 					ctx->stack->top->subitems--;
 					if (ctx->stack->top->subitems == 0) {
@@ -122,7 +123,10 @@ void _cbor_builder_append(cbor_item_t * item, struct _cbor_decoder_context * ctx
 						_cbor_stack_pop(ctx->stack);
 						_cbor_builder_append(item, ctx);
 					}
+				} else {
+					// TODO uh oh
 				}
+				break;
 			}
 		case CBOR_TYPE_TAG:
 			{
