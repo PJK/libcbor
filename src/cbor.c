@@ -99,6 +99,7 @@ cbor_item_t * cbor_load(cbor_data source,
 		.indef_array_start = &cbor_builder_indef_array_start_callback,
 
 		.map_start = &cbor_builder_map_start_callback,
+		.indef_map_start = &cbor_builder_indef_map_start_callback,
 
 		.tag = &cbor_builder_tag_callback,
 

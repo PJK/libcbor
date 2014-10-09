@@ -108,15 +108,14 @@ void _cbor_builder_append(cbor_item_t * item, struct _cbor_decoder_context * ctx
 			}
 		case CBOR_TYPE_MAP:
 			{
+				/* We use 0 and 1 subitems to distinguish between keys and values in indefinite items */
+				if (ctx->stack->top->subitems % 2) {
+					cbor_map_handle(ctx->stack->top->item)[cbor_map_size(ctx->stack->top->item) - 1].value = item;
+				} else {
+					/* Even record, this is a key */
+					cbor_map_add(ctx->stack->top->item, (struct cbor_pair) {.key = item, .value = NULL});
+				}
 				if (cbor_map_is_definite(ctx->stack->top->item)) {
-					assert(ctx->stack->top->subitems > 0);
-					if (ctx->stack->top->subitems % 2) {
-						// TODO this is fugly
-						cbor_map_handle(ctx->stack->top->item)[cbor_map_size(ctx->stack->top->item) - 1].value = item;
-					} else {
-						/* Even record, this is a key */
-						cbor_map_add(ctx->stack->top->item, (struct cbor_pair) {.key = item, .value = NULL});
-					}
 					ctx->stack->top->subitems--;
 					if (ctx->stack->top->subitems == 0) {
 						cbor_item_t *item = ctx->stack->top->item;
@@ -124,7 +123,7 @@ void _cbor_builder_append(cbor_item_t * item, struct _cbor_decoder_context * ctx
 						_cbor_builder_append(item, ctx);
 					}
 				} else {
-					// TODO uh oh
+					ctx->stack->top->subitems ^= 1; /* Flip the indicator for indefinite items */
 				}
 				break;
 			}
