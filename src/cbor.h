@@ -110,6 +110,7 @@ struct _cbor_array_metadata {
 
 struct _cbor_map_metadata {
 	size_t size;
+	_cbor_dst_metadata type;
 };
 
 /* cbor_item_metadata is 2 * sizeof(size_t) + sizeof(_cbor_string_type_metadata), lets use the space */

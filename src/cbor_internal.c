@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <string.h>
 #include <math.h>
-#include <zlib.h>
 
 // TODO asserts
 // TODO check mallocs
@@ -105,6 +104,25 @@ void _cbor_builder_append(cbor_item_t * item, struct _cbor_decoder_context * ctx
 					cbor_array_push(ctx->stack->top->item, item);
 				}
 				break;
+			}
+		case CBOR_TYPE_MAP:
+			{
+				if (cbor_map_is_definite(ctx->stack->top->item)) {
+					assert(ctx->stack->top->subitems > 0);
+					if (ctx->stack->top->subitems % 2) {
+						/* Even record, this is a key */
+						cbor_map_add(ctx->stack->top->item, (struct cbor_pair){ .key = item, .value = NULL });
+					} else {
+						// TODO this is fugly
+						cbor_map_handle(ctx->stack->top->item)[cbor_map_size(ctx->stack->top->item) - 1].value = item;
+					}
+					ctx->stack->top->subitems--;
+					if (ctx->stack->top->subitems == 0) {
+						cbor_item_t *item = ctx->stack->top->item;
+						_cbor_stack_pop(ctx->stack);
+						_cbor_builder_append(item, ctx);
+					}
+				}
 			}
 		case CBOR_TYPE_TAG:
 			{
@@ -288,6 +306,24 @@ enum cbor_callback_result cbor_builder_indef_array_start_callback(void * context
 {
 	struct _cbor_decoder_context * ctx = context;
 	_cbor_stack_push(ctx->stack, cbor_new_indefinite_array(), 0);
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_indef_map_start_callback(void * context)
+{
+	struct _cbor_decoder_context * ctx = context;
+	_cbor_stack_push(ctx->stack, cbor_new_indefinite_map(), 0);
+	return CBOR_CALLBACK_OK;
+}
+
+enum cbor_callback_result cbor_builder_map_start_callback(void * context, size_t size)
+{
+	struct _cbor_decoder_context * ctx = context;
+	if (size > 0) {
+		_cbor_stack_push(ctx->stack, cbor_new_definite_map(size), size * 2);
+	} else {
+		_cbor_builder_append(cbor_new_definite_map(size), ctx);
+	}
 	return CBOR_CALLBACK_OK;
 }
 

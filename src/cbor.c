@@ -98,6 +98,8 @@ cbor_item_t * cbor_load(cbor_data source,
 		.array_start = &cbor_builder_array_start_callback,
 		.indef_array_start = &cbor_builder_indef_array_start_callback,
 
+		.map_start = &cbor_builder_map_start_callback,
+
 		.tag = &cbor_builder_tag_callback,
 
 		.null = &cbor_builder_null_callback,
@@ -1221,17 +1223,58 @@ cbor_item_t * cbor_new_definite_map(size_t size)
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_MAP,
-		.metadata = { .map_metadata = { .size = 0} },
-		.data = malloc(sizeof(cbor_item_t *) * size)
+		.metadata = { .map_metadata = { .size = 0, .type = _CBOR_METADATA_DEFINITE } },
+		.data = malloc(sizeof(struct cbor_pair) * size)
 	};
 	return item;
 }
 
-cbor_item_t * cbor_new_indefinite_map();
-cbor_item_t * cbor_map_add(cbor_item_t * item, struct cbor_pair pair);
-bool cbor_map_is_definite(cbor_item_t * item);
-bool cbor_map_is_indefinite(cbor_item_t * item);
-struct cbor_pair * cbor_map_handle(cbor_item_t * item);
+cbor_item_t * cbor_new_indefinite_map()
+{
+	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	*item = (cbor_item_t){
+		.refcount = 1,
+		.type = CBOR_TYPE_MAP,
+		.metadata = { .map_metadata = { .size = 0, .type = _CBOR_METADATA_INDEFINITE } },
+		.data = NULL
+	};
+	return item;
+}
+
+cbor_item_t * cbor_map_add(cbor_item_t * item, struct cbor_pair pair)
+{
+	assert(cbor_isa_map(item));
+	struct _cbor_map_metadata * metadata = (struct _cbor_map_metadata *)&item->metadata;
+	struct cbor_pair * data = cbor_map_handle(item);
+	if (cbor_map_is_definite(item)) {
+		// TODO check size - throw
+		data[metadata->size++] = pair;
+	} else {
+		// TODO exponential reallocs?
+		// TOOD check realloc
+		data = realloc(data, (metadata->size + 1) * sizeof(struct cbor_pair));
+		data[metadata->size++] = pair;
+		item->data = (unsigned char *)data;
+	}
+	return item;
+}
+
+bool cbor_map_is_definite(cbor_item_t * item)
+{
+	assert(cbor_isa_map(item));
+	return item->metadata.map_metadata.type == _CBOR_METADATA_DEFINITE;
+}
+
+bool cbor_map_is_indefinite(cbor_item_t * item)
+{
+	return !cbor_map_is_definite(item);
+}
+
+struct cbor_pair * cbor_map_handle(cbor_item_t * item)
+{
+	assert(cbor_isa_map(item));
+	return (struct cbor_pair *)item->data;
+}
 
 
 cbor_item_t * cbor_new_tag(uint64_t value)
