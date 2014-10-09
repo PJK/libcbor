@@ -1005,7 +1005,7 @@ cbor_item_t * cbor_new_definite_string()
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_STRING,
-		.metadata = { .string_metadata = { _CBOR_STRING_METADATA_DEFINITE, 0 } }
+		.metadata = { .string_metadata = { _CBOR_METADATA_DEFINITE, 0 } }
 	};
 	return item;
 }
@@ -1016,7 +1016,7 @@ cbor_item_t * cbor_new_indefinite_string()
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_STRING,
-		.metadata = { .string_metadata = { .type = _CBOR_STRING_METADATA_INDEFINITE, .length = 0 } },
+		.metadata = { .string_metadata = { .type = _CBOR_METADATA_INDEFINITE, .length = 0 } },
 		.data = malloc(sizeof(struct cbor_indefinite_string_data))
 	};
 	*((struct cbor_indefinite_string_data *)item->data) = (struct cbor_indefinite_string_data){
@@ -1088,7 +1088,7 @@ size_t cbor_string_codepoint_count(const cbor_item_t * item)
 bool cbor_string_is_definite(const cbor_item_t * item)
 {
 	assert(cbor_isa_string(item));
-	return item->metadata.string_metadata.type == _CBOR_STRING_METADATA_DEFINITE;
+	return item->metadata.string_metadata.type == _CBOR_METADATA_DEFINITE;
 }
 
 bool cbor_string_is_indefinite(const cbor_item_t * item)
@@ -1103,7 +1103,7 @@ cbor_item_t * cbor_new_definite_bytestring()
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_BYTESTRING,
-		.metadata = { .bytestring_metadata = { _CBOR_STRING_METADATA_DEFINITE, 0 } }
+		.metadata = { .bytestring_metadata = { _CBOR_METADATA_DEFINITE, 0 } }
 	};
 	return item;
 }
@@ -1114,7 +1114,7 @@ cbor_item_t * cbor_new_indefinite_bytestring()
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_BYTESTRING,
-		.metadata = { .bytestring_metadata = { .type = _CBOR_STRING_METADATA_INDEFINITE, .length = 0 } },
+		.metadata = { .bytestring_metadata = { .type = _CBOR_METADATA_INDEFINITE, .length = 0 } },
 		.data = malloc(sizeof(struct cbor_indefinite_string_data))
 	};
 	*((struct cbor_indefinite_string_data *)item->data) = (struct cbor_indefinite_string_data){
@@ -1356,7 +1356,7 @@ unsigned char * cbor_bytestring_handle(const cbor_item_t * item) {
 bool cbor_bytestring_is_definite(const cbor_item_t * item)
 {
 	assert(cbor_isa_bytestring(item));
-	return item->metadata.bytestring_metadata.type == _CBOR_STRING_METADATA_DEFINITE;
+	return item->metadata.bytestring_metadata.type == _CBOR_METADATA_DEFINITE;
 }
 
 bool cbor_bytestring_is_indefinite(const cbor_item_t * item)

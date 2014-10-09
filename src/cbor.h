@@ -82,33 +82,29 @@ typedef enum {
 	_CBOR_METADATA_RESUMABLE = 0x02,	/* Parsing may be resumed */
 } _cbor_metadata;
 
-struct _cbor_int_metadata {
-	cbor_int_width width;
-};
-
-typedef enum {
-	_CBOR_STRING_METADATA_DEFINITE,
-	_CBOR_STRING_METADATA_INDEFINITE
-} _cbor_string_type_metadata;
-
-struct _cbor_bytestring_metadata {
-	size_t length;
-	_cbor_string_type_metadata type;
-};
-
-struct _cbor_string_metadata {
-	size_t                     length;
-	size_t                     codepoint_count; /* Sum of chunks' codepoint_counts for indefinite strings */
-	_cbor_string_type_metadata type;
-};
-
 typedef enum {
 	_CBOR_METADATA_DEFINITE,
 	_CBOR_METADATA_INDEFINITE
 } _cbor_dst_metadata;
 
+
+struct _cbor_int_metadata {
+	cbor_int_width width;
+};
+
+struct _cbor_bytestring_metadata {
+	size_t length;
+	_cbor_dst_metadata type;
+};
+
+struct _cbor_string_metadata {
+	size_t             length;
+	size_t             codepoint_count; /* Sum of chunks' codepoint_counts for indefinite strings */
+	_cbor_dst_metadata type;
+};
+
 struct _cbor_array_metadata {
-	size_t                  size;
+	size_t             size;
 	_cbor_dst_metadata type;
 };
 
