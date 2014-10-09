@@ -103,13 +103,13 @@ struct _cbor_string_metadata {
 };
 
 typedef enum {
-	_CBOR_ARRAY_METADATA_DEFINITE,
-	_CBOR_ARRAY_METADATA_INDEFINITE
-} _cbor_array_type_metadata;
+	_CBOR_METADATA_DEFINITE,
+	_CBOR_METADATA_INDEFINITE
+} _cbor_dst_metadata;
 
 struct _cbor_array_metadata {
-	size_t                    size;
-	_cbor_array_type_metadata type;
+	size_t                  size;
+	_cbor_dst_metadata type;
 };
 
 struct _cbor_map_metadata {
@@ -156,13 +156,8 @@ struct cbor_error {
 };
 
 struct cbor_pair {
-	cbor_item_t * key, value;
+	cbor_item_t * key, * value;
 };
-
-typedef struct cbor_map_iterator {
-	struct cbor_pair data;
-	// METADATA FOR A LINKED LIST OR TREE OR WHATEVER
-} cbor_map_iterator;
 
 struct cbor_load_result {
 	struct cbor_error error;
@@ -371,14 +366,12 @@ cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee);
 */
 
 size_t cbor_map_size(cbor_item_t * item);
-cbor_item_t * cbor_new_map();
-struct cbor_map_iterator cbor_map_add(cbor_item_t * item, struct cbor_pair pair);
+cbor_item_t * cbor_new_definite_map(size_t size);
+cbor_item_t * cbor_new_indefinite_map();
+cbor_item_t * cbor_map_add(cbor_item_t * item, struct cbor_pair pair);
 bool cbor_map_is_definite(cbor_item_t * item);
 bool cbor_map_is_indefinite(cbor_item_t * item);
-struct cbor_map_iterator cbor_map_begin(cbor_item_t * item);
-bool cbor_map_iterator_end(struct cbor_map_iterator * iter);
-void cbor_map_iterator_next(struct cbor_map_iterator * iter);
-void cbor_map_delete(struct cbor_map_iterator * iter);
+struct cbor_pair * cbor_map_handle(cbor_item_t * item);
 
 /*
 * ============================================================================

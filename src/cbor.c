@@ -120,8 +120,6 @@ cbor_item_t * cbor_load(cbor_data source,
 	struct cbor_decoder_result decode_result;
 	*result = (struct cbor_load_result){ .read = 0, .error = { .code = CBOR_ERR_NONE } };
 
-	// TODO unify errors
-	// TODO unify returns
 	do {
 		if (source_size > result->read) { /* Check for overflows */
 			decode_result = cbor_stream_decode(source + result->read, source_size - result->read, &callbacks, context);
@@ -1175,7 +1173,7 @@ cbor_item_t * cbor_new_definite_array(size_t size)
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_ARRAY,
-		.metadata = { .array_metadata = { .type = _CBOR_ARRAY_METADATA_DEFINITE, .size = 0 } },
+		.metadata = { .array_metadata = { .type = _CBOR_METADATA_DEFINITE, .size = 0 } },
 		.data = malloc(sizeof(cbor_item_t *) * size)
 	};
 	return item;
@@ -1187,7 +1185,7 @@ cbor_item_t * cbor_new_indefinite_array()
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_ARRAY,
-		.metadata = { .array_metadata = { .type = _CBOR_ARRAY_METADATA_INDEFINITE, .size = 0 } },
+		.metadata = { .array_metadata = { .type = _CBOR_METADATA_INDEFINITE, .size = 0 } },
 		.data = NULL /* Can be safely realloc-ed */
 	};
 	return item;
@@ -1210,6 +1208,31 @@ cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee)
 	}
 	return array;
 }
+
+size_t cbor_map_size(cbor_item_t * item)
+{
+	assert(cbor_isa_map(item));
+	return item->metadata.map_metadata.size;
+}
+
+cbor_item_t * cbor_new_definite_map(size_t size)
+{
+	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	*item = (cbor_item_t){
+		.refcount = 1,
+		.type = CBOR_TYPE_MAP,
+		.metadata = { .map_metadata = { .size = 0} },
+		.data = malloc(sizeof(cbor_item_t *) * size)
+	};
+	return item;
+}
+
+cbor_item_t * cbor_new_indefinite_map();
+cbor_item_t * cbor_map_add(cbor_item_t * item, struct cbor_pair pair);
+bool cbor_map_is_definite(cbor_item_t * item);
+bool cbor_map_is_indefinite(cbor_item_t * item);
+struct cbor_pair * cbor_map_handle(cbor_item_t * item);
+
 
 cbor_item_t * cbor_new_tag(uint64_t value)
 {
@@ -1320,8 +1343,6 @@ bool cbor_is_float(const cbor_item_t * item)
 	return cbor_isa_float_ctrl(item) && !cbor_float_ctrl_is_ctrl(item);
 }
 
-
-
 size_t cbor_bytestring_length(const cbor_item_t * item) {
 	assert(cbor_isa_bytestring(item));
 	return item->metadata.bytestring_metadata.length;
@@ -1352,13 +1373,13 @@ size_t cbor_array_size(cbor_item_t * item)
 bool cbor_array_is_definite(cbor_item_t * item)
 {
 	assert(cbor_isa_array(item));
-	return item->metadata.array_metadata.type == _CBOR_ARRAY_METADATA_DEFINITE;
+	return item->metadata.array_metadata.type == _CBOR_METADATA_DEFINITE;
 }
 
 bool cbor_array_is_indefinite(cbor_item_t * item)
 {
 	assert(cbor_isa_array(item));
-	return item->metadata.array_metadata.type == _CBOR_ARRAY_METADATA_INDEFINITE;
+	return item->metadata.array_metadata.type == _CBOR_METADATA_INDEFINITE;
 }
 
 cbor_item_t ** cbor_array_handle(cbor_item_t * item)
