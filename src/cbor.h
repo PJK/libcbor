@@ -35,7 +35,7 @@ typedef union {
 
 #define CBOR_FLAGS_NONE ((cbor_flags_t) { { 0 } })
 
-typedef enum {
+typedef enum {             /* Corresponding Major Type */
 	CBOR_TYPE_UINT,        /* 0 */
 	CBOR_TYPE_NEGINT,      /* 1 */
 	CBOR_TYPE_BYTESTRING,  /* 2 */
@@ -257,6 +257,14 @@ size_t cbor_encode_indef_bytestring_start(unsigned char *, size_t);
 
 size_t cbor_encode_string_start(size_t, unsigned char *, size_t);
 size_t cbor_encode_indef_string_start(unsigned char *, size_t);
+
+size_t cbor_encode_array_start(size_t, unsigned char *, size_t);
+size_t cbor_encode_indef_array_start(unsigned char *, size_t);
+
+size_t cbor_encode_map_start(size_t, unsigned char *, size_t);
+size_t cbor_encode_indef_map_start(unsigned char *, size_t);
+
+size_t cbor_encode_tag(uint64_t, unsigned char *, size_t);
 
 void cbor_incref(cbor_item_t * item);
 void cbor_decref(cbor_item_t ** item);

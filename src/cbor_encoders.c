@@ -148,13 +148,18 @@ size_t cbor_encode_bytestring_start(size_t length, unsigned char * buffer, size_
 	return _cbor_encode_uint((size_t)length, buffer, buffer_size, 0x40);
 }
 
-size_t cbor_encode_indef_bytestring_start(unsigned char * buffer, size_t buffer_size)
+size_t _cbor_encode_byte(uint8_t value, unsigned char * buffer, size_t buffer_size)
 {
 	if (buffer_size >= 1) {
-		buffer[0] = 0x5F;
+		buffer[0] = value;
 		return 1;
 	} else
 		return 0;
+}
+
+size_t cbor_encode_indef_bytestring_start(unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_byte(0x5F, buffer, buffer_size);
 }
 
 size_t cbor_encode_string_start(size_t length, unsigned char * buffer, size_t buffer_size)
@@ -164,9 +169,30 @@ size_t cbor_encode_string_start(size_t length, unsigned char * buffer, size_t bu
 
 size_t cbor_encode_indef_string_start(unsigned char * buffer, size_t buffer_size)
 {
-	if (buffer_size >= 1) {
-		buffer[0] = 0x7F;
-		return 1;
-	} else
-		return 0;
+	return _cbor_encode_byte(0x7F, buffer, buffer_size);
+}
+
+size_t cbor_encode_array_start(size_t length, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint((size_t)length, buffer, buffer_size, 0x80);
+}
+
+size_t cbor_encode_indef_array_start(unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_byte(0x9F, buffer, buffer_size);
+}
+
+size_t cbor_encode_map_start(size_t length, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint((size_t)length, buffer, buffer_size, 0xA0);
+}
+
+size_t cbor_encode_indef_map_start(unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_byte(0xBF, buffer, buffer_size);
+}
+
+size_t cbor_encode_tag(uint64_t value, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint(value, buffer, buffer_size, 0xC0);
 }
