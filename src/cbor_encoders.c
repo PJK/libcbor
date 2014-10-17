@@ -6,7 +6,7 @@ size_t _cbor_encode_uint8(uint8_t value, unsigned char * buffer, size_t buffer_s
 {
 	if (value <= 23) {
 		if (buffer_size >= 1) {
-			buffer[0] = value;
+			buffer[0] = value + offset;
 			return 1;
 		}
 	} else {
