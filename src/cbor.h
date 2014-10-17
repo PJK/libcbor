@@ -252,6 +252,12 @@ size_t cbor_encode_negint32(uint32_t, unsigned char *, size_t);
 size_t cbor_encode_negint64(uint64_t, unsigned char *, size_t);
 size_t cbor_encode_negint(uint64_t, unsigned char *, size_t);
 
+size_t cbor_encode_bytestring_start(size_t, unsigned char *, size_t);
+size_t cbor_encode_indef_bytestring_start(unsigned char *, size_t);
+
+size_t cbor_encode_string_start(size_t, unsigned char *, size_t);
+size_t cbor_encode_indef_string_start(unsigned char *, size_t);
+
 void cbor_incref(cbor_item_t * item);
 void cbor_decref(cbor_item_t ** item);
 

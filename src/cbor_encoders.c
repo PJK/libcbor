@@ -78,7 +78,7 @@ size_t _cbor_encode_uint64(uint64_t value, unsigned char * buffer, size_t buffer
 		return 0;
 }
 
-size_t _cbor_encode_uint(uint64_t value, unsigned char * buffer, size_t buffer_size, size_t offset)
+size_t _cbor_encode_uint(uint64_t value, unsigned char * buffer, size_t buffer_size, uint8_t offset)
 {
 	if (value <= UINT16_MAX)
 		if (value <= UINT8_MAX)
@@ -141,4 +141,32 @@ size_t cbor_encode_negint64(uint64_t value, unsigned char * buffer, size_t buffe
 size_t cbor_encode_negint(uint64_t value, unsigned char * buffer, size_t buffer_size)
 {
 	return _cbor_encode_uint(value, buffer, buffer_size, 0x20);
+}
+
+size_t cbor_encode_bytestring_start(size_t length, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint((size_t)length, buffer, buffer_size, 0x40);
+}
+
+size_t cbor_encode_indef_bytestring_start(unsigned char * buffer, size_t buffer_size)
+{
+	if (buffer_size >= 1) {
+		buffer[0] = 0x5F;
+		return 1;
+	} else
+		return 0;
+}
+
+size_t cbor_encode_string_start(size_t length, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint((size_t)length, buffer, buffer_size, 0x60);
+}
+
+size_t cbor_encode_indef_string_start(unsigned char * buffer, size_t buffer_size)
+{
+	if (buffer_size >= 1) {
+		buffer[0] = 0x7F;
+		return 1;
+	} else
+		return 0;
 }
