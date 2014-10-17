@@ -50,17 +50,44 @@ size_t cbor_encode_uint32(uint32_t value, unsigned char * buffer, size_t buffer_
 		buffer[4] = value;
 	#endif
 
-		return 3;
+		return 5;
 	} else
 		return 0;
 }
 
 size_t cbor_encode_uint64(uint64_t value, unsigned char * buffer, size_t buffer_size)
 {
+	if (buffer_size >= 9) {
+		buffer[0] = 0x1B;
 
+	#if defined(__clang__) || defined(__GNUC__)
+		*(uint64_t *)&buffer[1] = __builtin_bswap64(value);
+	#else
+		buffer[1] = value >> 56;
+		buffer[2] = value >> 48;
+		buffer[3] = value >> 40;
+		buffer[4] = value >> 32;
+		buffer[5] = value >> 24;
+		buffer[6] = value >> 16;
+		buffer[7] = value >> 8;
+		buffer[8] = value;
+	#endif
+
+		return 9;
+	} else
+		return 0;
 }
 
 size_t cbor_encode_uint(uint64_t value, unsigned char * buffer, size_t buffer_size)
 {
-
+	if (value <= UINT16_MAX)
+		if (value <= UINT8_MAX)
+			return cbor_encode_uint8((uint8_t)value, buffer, buffer_size);
+		else
+			return cbor_encode_uint16((uint16_t)value, buffer, buffer_size);
+	else
+		if (value <= UINT32_MAX)
+			return cbor_encode_uint32((uint32_t)value, buffer, buffer_size);
+		else
+			return cbor_encode_uint64((uint64_t)value, buffer, buffer_size);
 }
