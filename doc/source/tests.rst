@@ -19,8 +19,14 @@ Every release is tested for memory correctness. You can run these tests by passi
 Code coverage
 -------------------
 
-Every release is inspected using `GCOV/LCOV <http://ltp.sourceforge.net/coverage/lcov.php>`_. Platform-independent code should be fully covered by the test suite.
+Every release is inspected using `GCOV/LCOV <http://ltp.sourceforge.net/coverage/lcov.php>`_. Platform-independent code should be fully covered by the test suite. Simply run
 
+.. code-block:: bash
+
+  make coverage
+
+
+or alternatively run ``lcov`` by hand using
 
 .. code-block:: bash
 
