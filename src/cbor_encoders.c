@@ -2,7 +2,7 @@
 #include "cbor_internal.h"
 #include "magic.h"
 
-size_t cbor_encode_uint8(uint8_t value, unsigned char * buffer, size_t buffer_size)
+size_t _cbor_encode_uint8(uint8_t value, unsigned char * buffer, size_t buffer_size, uint8_t offset)
 {
 	if (value <= 23) {
 		if (buffer_size >= 1) {
@@ -11,7 +11,7 @@ size_t cbor_encode_uint8(uint8_t value, unsigned char * buffer, size_t buffer_si
 		}
 	} else {
 		if (buffer_size >= 2) {
-			buffer[0] = 0x18;
+			buffer[0] = 0x18 + offset;
 			buffer[1] = value;
 			return 2;
 		}
@@ -19,10 +19,10 @@ size_t cbor_encode_uint8(uint8_t value, unsigned char * buffer, size_t buffer_si
 	return 0;
 }
 
-size_t cbor_encode_uint16(uint16_t value, unsigned char * buffer, size_t buffer_size)
+size_t _cbor_encode_uint16(uint16_t value, unsigned char * buffer, size_t buffer_size, uint8_t offset)
 {
 	if (buffer_size >= 3) {
-		buffer[0] = 0x19;
+		buffer[0] = 0x19 + offset;
 
 		#if defined(__clang__) || defined(__GNUC__)
 			*(uint16_t *)&buffer[1] = __builtin_bswap16(value);
@@ -36,10 +36,10 @@ size_t cbor_encode_uint16(uint16_t value, unsigned char * buffer, size_t buffer_
 		return 0;
 }
 
-size_t cbor_encode_uint32(uint32_t value, unsigned char * buffer, size_t buffer_size)
+size_t _cbor_encode_uint32(uint32_t value, unsigned char * buffer, size_t buffer_size, uint8_t offset)
 {
 	if (buffer_size >= 5) {
-		buffer[0] = 0x1A;
+		buffer[0] = 0x1A + offset;
 
 	#if defined(__clang__) || defined(__GNUC__)
 		*(uint32_t *)&buffer[1] = __builtin_bswap32(value);
@@ -55,10 +55,10 @@ size_t cbor_encode_uint32(uint32_t value, unsigned char * buffer, size_t buffer_
 		return 0;
 }
 
-size_t cbor_encode_uint64(uint64_t value, unsigned char * buffer, size_t buffer_size)
+size_t _cbor_encode_uint64(uint64_t value, unsigned char * buffer, size_t buffer_size, uint8_t offset)
 {
 	if (buffer_size >= 9) {
-		buffer[0] = 0x1B;
+		buffer[0] = 0x1B + offset;
 
 	#if defined(__clang__) || defined(__GNUC__)
 		*(uint64_t *)&buffer[1] = __builtin_bswap64(value);
@@ -78,16 +78,42 @@ size_t cbor_encode_uint64(uint64_t value, unsigned char * buffer, size_t buffer_
 		return 0;
 }
 
-size_t cbor_encode_uint(uint64_t value, unsigned char * buffer, size_t buffer_size)
+size_t _cbor_encode_uint(uint64_t value, unsigned char * buffer, size_t buffer_size, size_t offset)
 {
 	if (value <= UINT16_MAX)
 		if (value <= UINT8_MAX)
-			return cbor_encode_uint8((uint8_t)value, buffer, buffer_size);
+			return _cbor_encode_uint8((uint8_t)value, buffer, buffer_size, offset);
 		else
-			return cbor_encode_uint16((uint16_t)value, buffer, buffer_size);
+			return _cbor_encode_uint16((uint16_t)value, buffer, buffer_size, offset);
 	else
 		if (value <= UINT32_MAX)
-			return cbor_encode_uint32((uint32_t)value, buffer, buffer_size);
+			return _cbor_encode_uint32((uint32_t)value, buffer, buffer_size, offset);
 		else
-			return cbor_encode_uint64((uint64_t)value, buffer, buffer_size);
+			return _cbor_encode_uint64((uint64_t)value, buffer, buffer_size, offset);
+}
+
+size_t cbor_encode_uint8(uint8_t value, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint8(value, buffer, buffer_size, 0x00);
+}
+
+size_t cbor_encode_uint16(uint16_t value, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint16(value, buffer, buffer_size, 0x00);
+}
+
+size_t cbor_encode_uint32(uint32_t value, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint32(value, buffer, buffer_size, 0x00);
+}
+
+size_t cbor_encode_uint64(uint64_t value, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint64(value, buffer, buffer_size, 0x00);
+}
+
+
+size_t cbor_encode_uint(uint64_t value, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint(value, buffer, buffer_size, 0x00);
 }
