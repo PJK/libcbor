@@ -266,6 +266,14 @@ size_t cbor_encode_indef_map_start(unsigned char *, size_t);
 
 size_t cbor_encode_tag(uint64_t, unsigned char *, size_t);
 
+size_t cbor_encode_bool(bool, unsigned char *, size_t);
+size_t cbor_encode_null(unsigned char *, size_t);
+size_t cbor_encode_undef(unsigned char *, size_t);
+size_t cbor_encode_half(float, unsigned char *, size_t);
+size_t cbor_encode_float(float, unsigned char *, size_t);
+size_t cbor_encode_double(double, unsigned char *, size_t);
+size_t cbor_encode_break(unsigned char *, size_t);
+
 void cbor_incref(cbor_item_t * item);
 void cbor_decref(cbor_item_t ** item);
 
