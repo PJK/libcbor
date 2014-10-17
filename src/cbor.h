@@ -237,16 +237,20 @@ struct cbor_decoder_result {
 };
 
 struct cbor_decoder_result cbor_stream_decode(cbor_data, size_t, const struct cbor_callbacks *, void *);
+cbor_item_t * cbor_load(cbor_data source, size_t source_size, cbor_flags_t flags, struct cbor_load_result * result);
+
 
 size_t cbor_encode_uint8(uint8_t, unsigned char *, size_t);
 size_t cbor_encode_uint16(uint16_t, unsigned char *, size_t);
 size_t cbor_encode_uint32(uint32_t, unsigned char *, size_t);
 size_t cbor_encode_uint64(uint64_t, unsigned char *, size_t);
-
 size_t cbor_encode_uint(uint64_t, unsigned char *, size_t);
 
-
-cbor_item_t * cbor_load(cbor_data source, size_t source_size, cbor_flags_t flags, struct cbor_load_result * result);
+size_t cbor_encode_negint8(uint8_t, unsigned char *, size_t);
+size_t cbor_encode_negint16(uint16_t, unsigned char *, size_t);
+size_t cbor_encode_negint32(uint32_t, unsigned char *, size_t);
+size_t cbor_encode_negint64(uint64_t, unsigned char *, size_t);
+size_t cbor_encode_negint(uint64_t, unsigned char *, size_t);
 
 void cbor_incref(cbor_item_t * item);
 void cbor_decref(cbor_item_t ** item);

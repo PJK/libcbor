@@ -112,8 +112,33 @@ size_t cbor_encode_uint64(uint64_t value, unsigned char * buffer, size_t buffer_
 	return _cbor_encode_uint64(value, buffer, buffer_size, 0x00);
 }
 
-
 size_t cbor_encode_uint(uint64_t value, unsigned char * buffer, size_t buffer_size)
 {
 	return _cbor_encode_uint(value, buffer, buffer_size, 0x00);
+}
+
+
+size_t cbor_encode_negint8(uint8_t value, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint8(value, buffer, buffer_size, 0x20);
+}
+
+size_t cbor_encode_negint16(uint16_t value, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint16(value, buffer, buffer_size, 0x20);
+}
+
+size_t cbor_encode_negint32(uint32_t value, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint32(value, buffer, buffer_size, 0x20);
+}
+
+size_t cbor_encode_negint64(uint64_t value, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint64(value, buffer, buffer_size, 0x20);
+}
+
+size_t cbor_encode_negint(uint64_t value, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint(value, buffer, buffer_size, 0x20);
 }
