@@ -197,10 +197,26 @@ size_t cbor_encode_tag(uint64_t value, unsigned char * buffer, size_t buffer_siz
 	return _cbor_encode_uint(value, buffer, buffer_size, 0xC0);
 }
 
-size_t cbor_encode_bool(bool, unsigned char *, size_t);
-size_t cbor_encode_null(unsigned char *, size_t);
-size_t cbor_encode_undef(unsigned char *, size_t);
-size_t cbor_encode_half(float, unsigned char *, size_t);
-size_t cbor_encode_float(float, unsigned char *, size_t);
-size_t cbor_encode_double(double, unsigned char *, size_t);
-size_t cbor_encode_break(unsigned char *, size_t);
+size_t cbor_encode_bool(bool value, unsigned char * buffer, size_t buffer_size)
+{
+	return value ? _cbor_encode_byte(0xF5, buffer, buffer_size) : _cbor_encode_byte(0xF4, buffer, buffer_size);
+}
+
+size_t cbor_encode_null(unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_byte(0xF6, buffer, buffer_size);
+}
+
+size_t cbor_encode_undef(unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_byte(0xF7, buffer, buffer_size);
+}
+
+size_t cbor_encode_half(float value, unsigned char * buffer, size_t buffer_size)
+{
+
+}
+
+size_t cbor_encode_float(float value, unsigned char * buffer, size_t buffer_size);
+size_t cbor_encode_double(double value, unsigned char * buffer, size_t buffer_size);
+size_t cbor_encode_break(unsigned char * buffer, size_t buffer_size);
