@@ -196,3 +196,11 @@ size_t cbor_encode_tag(uint64_t value, unsigned char * buffer, size_t buffer_siz
 {
 	return _cbor_encode_uint(value, buffer, buffer_size, 0xC0);
 }
+
+size_t cbor_encode_bool(bool, unsigned char *, size_t);
+size_t cbor_encode_null(unsigned char *, size_t);
+size_t cbor_encode_undef(unsigned char *, size_t);
+size_t cbor_encode_half(float, unsigned char *, size_t);
+size_t cbor_encode_float(float, unsigned char *, size_t);
+size_t cbor_encode_double(double, unsigned char *, size_t);
+size_t cbor_encode_break(unsigned char *, size_t);
