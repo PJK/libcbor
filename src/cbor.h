@@ -285,15 +285,15 @@ size_t cbor_encode_float(float, unsigned char *, size_t);
 size_t cbor_encode_double(double, unsigned char *, size_t);
 size_t cbor_encode_break(unsigned char *, size_t);
 
-size_t cbor_serialize(cbor_item_t *, unsigned char *, size_t);
-size_t cbor_serialize_uint(cbor_item_t *, unsigned char *, size_t);
-size_t cbor_serialize_negint(cbor_item_t *, unsigned char *, size_t);
-size_t cbor_serialize_bytestring(cbor_item_t *, unsigned char *, size_t);
-size_t cbor_serialize_string(cbor_item_t *, unsigned char *, size_t);
-size_t cbor_serialize_array(cbor_item_t *, unsigned char *, size_t);
-size_t cbor_serialize_map(cbor_item_t *, unsigned char *, size_t);
-size_t cbor_serialize_tag(cbor_item_t *, unsigned char *, size_t);
-size_t cbor_serialize_float_ctrl(cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_uint(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_negint(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_bytestring(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_string(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_array(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_map(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_tag(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_float_ctrl(const cbor_item_t *, unsigned char *, size_t);
 
 void cbor_incref(cbor_item_t * item);
 void cbor_decref(cbor_item_t ** item);

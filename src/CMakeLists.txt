@@ -1,4 +1,4 @@
-set(SOURCES cbor.c cbor_internal.c cbor_stack.c cbor_unicode.c cbor_encoders.c)
+set(SOURCES cbor.c cbor_internal.c cbor_stack.c cbor_unicode.c cbor_encoders.c cbor_serializers.c)
 
 add_library(cbor ${SOURCES})
 add_library(cbor_shared SHARED ${SOURCES})
