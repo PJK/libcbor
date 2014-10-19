@@ -214,9 +214,36 @@ size_t cbor_encode_undef(unsigned char * buffer, size_t buffer_size)
 
 size_t cbor_encode_half(float value, unsigned char * buffer, size_t buffer_size)
 {
-
+	/* Assuming value is normalized */
+	uint32_t val = * (uint32_t *) &value;
+	uint16_t res;
+	uint8_t exp = (val & 0x7F800000) >> 23; /* 0b0111_1111_1000_0000_0000_0000_0000_0000 */
+	uint32_t mant = val & 0x7FFFFF; /* 0b0000_0000_0111_1111_1111_1111_1111_1111 */
+	if (exp == 0xFF) { /* Infinity or NaNs */
+		res = (val & 0x80000000) >> 16 | 0x7C00 | (mant ? 1 : 0);
+	} else if (exp == 0x00) { /* Zeroes or subnorms */
+		res = (val & 0x80000000) >> 16 | (uint16_t)(mant >> 13);
+	} else { /* Normal numbers */
+		exp -= 127;
+		if (exp > 15)
+			return 0; /* No way we can represent magnitude in normalized way */
+		else
+			res = (val & 0x80000000) >> 16 | ((exp + 15) << 10) | (uint16_t)(mant >> 13);
+	}
+	return _cbor_encode_uint16(res, buffer, buffer_size, 0xE0);
 }
 
-size_t cbor_encode_float(float value, unsigned char * buffer, size_t buffer_size);
-size_t cbor_encode_double(double value, unsigned char * buffer, size_t buffer_size);
-size_t cbor_encode_break(unsigned char * buffer, size_t buffer_size);
+size_t cbor_encode_float(float value, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint32(((union _cbor_float_helper) { .as_float = value }).as_uint, buffer, buffer_size, 0xE0);
+}
+
+size_t cbor_encode_double(double value, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint64(((union _cbor_double_helper) { .as_double = value }).as_uint, buffer, buffer_size, 0xE0);
+}
+
+size_t cbor_encode_break(unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_byte(0xFF, buffer, buffer_size);
+}

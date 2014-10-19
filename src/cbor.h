@@ -124,6 +124,17 @@ struct _cbor_float_ctrl_metadata {
 	cbor_ctrl        type;
 };
 
+/* Raw memory casts */
+union _cbor_float_helper {
+	float    as_float;
+	uint32_t as_uint;
+};
+
+union _cbor_double_helper {
+	double   as_double;
+	uint64_t as_uint;
+};
+
 union cbor_item_metadata {
 	struct _cbor_int_metadata		 int_metadata;
 	struct _cbor_bytestring_metadata bytestring_metadata;

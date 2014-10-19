@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <string.h>
 #include <math.h>
-#include <ldap.h>
 
 // TODO asserts
 // TODO check mallocs
@@ -57,17 +56,6 @@ double _cbor_load_half(cbor_data source)
 	/* Discard const */
 	return _cbor_decode_half((unsigned char *)source);
 }
-
-/* Raw memory casts */
-union _cbor_float_helper {
-	float    as_float;
-	uint32_t as_uint;
-};
-
-union _cbor_double_helper {
-	double   as_double;
-	uint64_t as_uint;
-};
 
 float _cbor_load_float(cbor_data source)
 {
