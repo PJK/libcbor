@@ -25,11 +25,17 @@ static void test_indef_array_start(void **state) {
 	assert_memory_equal(buffer, ((unsigned char[]){ 0x9F }), 1);
 }
 
+static void test_indef_array_encoding(void **state) {
+	cbor_item_t * array = cbor_new_indefinite_array();
+	cbor_item_t * one = cbor_build_uint8(32);
+}
+
 int main(void) {
 	const UnitTest tests[] = {
 		unit_test(test_embedded_array_start),
 		unit_test(test_array_start),
-		unit_test(test_indef_array_start)
+		unit_test(test_indef_array_start),
+		unit_test(test_indef_array_encoding)
 	};
 	return run_tests(tests);
 }

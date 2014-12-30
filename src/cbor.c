@@ -933,6 +933,38 @@ cbor_item_t * cbor_new_int64()
 	return item;
 }
 
+cbor_item_t * cbor_build_uint8(uint8_t value)
+{
+	cbor_item_t * item = cbor_new_int8();
+	cbor_set_uint8(item, value);
+	cbor_mark_uint(item);
+	return item;
+}
+
+cbor_item_t * cbor_build_uint16(uint16_t value)
+{
+	cbor_item_t * item = cbor_new_int16();
+	cbor_set_uint16(item, value);
+	cbor_mark_uint(item);
+	return item;
+}
+
+cbor_item_t * cbor_build_uint32(uint32_t value)
+{
+	cbor_item_t * item = cbor_new_int32();
+	cbor_set_uint32(item, value);
+	cbor_mark_uint(item);
+	return item;
+}
+
+cbor_item_t * cbor_build_uint64(uint64_t value)
+{
+	cbor_item_t * item = cbor_new_int64();
+	cbor_set_uint64(item, value);
+	cbor_mark_uint(item);
+	return item;
+}
+
 cbor_item_t * cbor_new_ctrl()
 {
 	cbor_item_t * item = malloc(sizeof(cbor_item_t));

@@ -344,6 +344,12 @@ cbor_item_t * cbor_new_int16();
 cbor_item_t * cbor_new_int32();
 cbor_item_t * cbor_new_int64();
 
+// Build initialized integers - new + set_uint + mark_uint
+cbor_item_t * cbor_build_uint8(uint8_t value);
+cbor_item_t * cbor_build_uint16(uint16_t value);
+cbor_item_t * cbor_build_uint32(uint32_t value);
+cbor_item_t * cbor_build_uint64(uint64_t value);
+
 /*
 * ============================================================================
 * String manipulation

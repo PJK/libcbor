@@ -87,13 +87,23 @@ size_t cbor_serialize_string(const cbor_item_t * item, unsigned char * buffer, s
 
 size_t cbor_serialize_array(const cbor_item_t * item, unsigned char * buffer, size_t buffer_size)
 {
-	size_t size, written;
 	assert(cbor_isa_array(item));
+	size_t size = cbor_array_size(item),
+		   written = 0;
+	cbor_item_t ** handle;
 	if (cbor_array_is_definite(item)) {
-		size = cbor_array_size(item);
+		// TODO check failure
 		written = cbor_encode_array_start(size, buffer, buffer_size);
+		handle = cbor_array_handle(item);
 	} else {
+		assert(cbor_array_is_indefinite(item));
+		// TODO check failure
+		written = cbor_encode_indef_array_start(buffer, buffer_size);
+	}
 
+	for (size_t i = 0; i < size; i++) {
+		// TODO check for failure
+		written += cbor_serialize(*(handle++), buffer, buffer_size - written);
 	}
 	return written;
 }
