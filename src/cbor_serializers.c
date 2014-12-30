@@ -87,11 +87,15 @@ size_t cbor_serialize_string(const cbor_item_t * item, unsigned char * buffer, s
 
 size_t cbor_serialize_array(const cbor_item_t * item, unsigned char * buffer, size_t buffer_size)
 {
+	size_t size, written;
 	assert(cbor_isa_array(item));
 	if (cbor_array_is_definite(item)) {
-		size_t size = cbor_array_size(item);
-		size_t written = cbor_encode_array_start(size, buffer, buffer_size);
+		size = cbor_array_size(item);
+		written = cbor_encode_array_start(size, buffer, buffer_size);
+	} else {
+
 	}
+	return written;
 }
 
 size_t cbor_serialize_map(const cbor_item_t * item, unsigned char * buffer, size_t buffer_size)

@@ -400,13 +400,13 @@ cbor_item_t * cbor_new_indefinite_bytestring();
 * ============================================================================
 */
 
-size_t cbor_array_size(cbor_item_t * item);
-bool cbor_array_is_definite(cbor_item_t * item);
-bool cbor_array_is_indefinite(cbor_item_t * item);
+size_t cbor_array_size(const cbor_item_t * item);
+bool cbor_array_is_definite(const cbor_item_t * item);
+bool cbor_array_is_indefinite(const cbor_item_t * item);
 /* Native handle to the underlying chunk */
-cbor_item_t ** cbor_array_handle(cbor_item_t * item);
+cbor_item_t ** cbor_array_handle(const cbor_item_t * item);
 
-cbor_item_t * cbor_new_definite_array(size_t);
+cbor_item_t * cbor_new_definite_array(const size_t);
 cbor_item_t * cbor_new_indefinite_array();
 
 cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee);
@@ -417,13 +417,13 @@ cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee);
 * ============================================================================
 */
 
-size_t cbor_map_size(cbor_item_t * item);
-cbor_item_t * cbor_new_definite_map(size_t size);
+size_t cbor_map_size(const cbor_item_t * item);
+cbor_item_t * cbor_new_definite_map(const size_t size);
 cbor_item_t * cbor_new_indefinite_map();
 cbor_item_t * cbor_map_add(cbor_item_t * item, struct cbor_pair pair);
-bool cbor_map_is_definite(cbor_item_t * item);
-bool cbor_map_is_indefinite(cbor_item_t * item);
-struct cbor_pair * cbor_map_handle(cbor_item_t * item);
+bool cbor_map_is_definite(const cbor_item_t * item);
+bool cbor_map_is_indefinite(const cbor_item_t * item);
+struct cbor_pair * cbor_map_handle(const cbor_item_t * item);
 
 /*
 * ============================================================================

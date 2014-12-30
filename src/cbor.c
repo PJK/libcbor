@@ -1212,7 +1212,7 @@ cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee)
 	return array;
 }
 
-size_t cbor_map_size(cbor_item_t * item)
+size_t cbor_map_size(const cbor_item_t * item)
 {
 	assert(cbor_isa_map(item));
 	return item->metadata.map_metadata.size;
@@ -1260,18 +1260,18 @@ cbor_item_t * cbor_map_add(cbor_item_t * item, struct cbor_pair pair)
 	return item;
 }
 
-bool cbor_map_is_definite(cbor_item_t * item)
+bool cbor_map_is_definite(const cbor_item_t * item)
 {
 	assert(cbor_isa_map(item));
 	return item->metadata.map_metadata.type == _CBOR_METADATA_DEFINITE;
 }
 
-bool cbor_map_is_indefinite(cbor_item_t * item)
+bool cbor_map_is_indefinite(const cbor_item_t * item)
 {
 	return !cbor_map_is_definite(item);
 }
 
-struct cbor_pair * cbor_map_handle(cbor_item_t * item)
+struct cbor_pair * cbor_map_handle(const cbor_item_t * item)
 {
 	assert(cbor_isa_map(item));
 	return (struct cbor_pair *)item->data;
@@ -1408,25 +1408,25 @@ bool cbor_bytestring_is_indefinite(const cbor_item_t * item)
 	return !cbor_bytestring_is_definite(item);
 }
 
-size_t cbor_array_size(cbor_item_t * item)
+size_t cbor_array_size(const cbor_item_t * item)
 {
 	assert(cbor_isa_array(item));
 	return item->metadata.array_metadata.size;
 }
 
-bool cbor_array_is_definite(cbor_item_t * item)
+bool cbor_array_is_definite(const cbor_item_t * item)
 {
 	assert(cbor_isa_array(item));
 	return item->metadata.array_metadata.type == _CBOR_METADATA_DEFINITE;
 }
 
-bool cbor_array_is_indefinite(cbor_item_t * item)
+bool cbor_array_is_indefinite(const cbor_item_t * item)
 {
 	assert(cbor_isa_array(item));
 	return item->metadata.array_metadata.type == _CBOR_METADATA_INDEFINITE;
 }
 
-cbor_item_t ** cbor_array_handle(cbor_item_t * item)
+cbor_item_t ** cbor_array_handle(const cbor_item_t * item)
 {
 	assert(cbor_isa_array(item));
 	return (cbor_item_t **)item->data;
