@@ -3,7 +3,6 @@
 #include "magic.h"
 #include <assert.h>
 #include <string.h>
-#include <cudaGL.h>
 
 size_t cbor_serialize(const cbor_item_t * item, unsigned char * buffer, size_t buffer_size)
 {
@@ -69,7 +68,15 @@ size_t cbor_serialize_bytestring(const cbor_item_t * item, unsigned char * buffe
 		} else
 			return 0;
 	} else {
-
+		size_t chunk_count = cbor_bytestring_chunk_count(item);
+		size_t written = cbor_encode_indef_bytestring_start(buffer, buffer_size);
+		// TODO stop this earlier if a chunk failed
+		cbor_item_t ** chunks = cbor_bytestring_chunks_handle(item);
+		for (size_t i = 0; i < chunk_count; i++) {
+			written += cbor_serialize_bytestring(chunks[i], buffer, buffer_size - written);
+		}
+		written += cbor_encode_break(buffer, buffer_size - written);
+		return written;
 	}
 }
 
@@ -81,6 +88,10 @@ size_t cbor_serialize_string(const cbor_item_t * item, unsigned char * buffer, s
 size_t cbor_serialize_array(const cbor_item_t * item, unsigned char * buffer, size_t buffer_size)
 {
 	assert(cbor_isa_array(item));
+	if (cbor_array_is_definite(item)) {
+		size_t size = cbor_array_size(item);
+		size_t written = cbor_encode_array_start(size, buffer, buffer_size);
+	}
 }
 
 size_t cbor_serialize_map(const cbor_item_t * item, unsigned char * buffer, size_t buffer_size)

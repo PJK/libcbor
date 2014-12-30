@@ -25,8 +25,6 @@ static void test_indef_string_start(void **state) {
 	assert_memory_equal(buffer, ((unsigned char[]){ 0x7F }), 1);
 }
 
-
-
 int main(void) {
 	const UnitTest tests[] = {
 		unit_test(test_embedded_string_start),
