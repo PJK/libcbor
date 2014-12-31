@@ -895,7 +895,8 @@ cbor_item_t * cbor_new_int8()
 	*item = (cbor_item_t){
 		.data = (unsigned char *)item + sizeof(cbor_item_t),
 		.refcount = 1,
-		.metadata = { .int_metadata = { .width = CBOR_INT_8 } }
+		.metadata = { .int_metadata = { .width = CBOR_INT_8 } },
+		.type = CBOR_TYPE_UINT
 	};
 	return item;
 }
@@ -906,7 +907,8 @@ cbor_item_t * cbor_new_int16()
 	*item = (cbor_item_t){
 		.data = (unsigned char *)item + sizeof(cbor_item_t),
 		.refcount = 1,
-		.metadata = { .int_metadata = { .width = CBOR_INT_16 } }
+		.metadata = { .int_metadata = { .width = CBOR_INT_16 } },
+		.type = CBOR_TYPE_UINT
 	};
 	return item;
 }
@@ -917,7 +919,8 @@ cbor_item_t * cbor_new_int32()
 	*item = (cbor_item_t){
 		.data = (unsigned char *)item + sizeof(cbor_item_t),
 		.refcount = 1,
-		.metadata = { .int_metadata = { .width = CBOR_INT_32 } }
+		.metadata = { .int_metadata = { .width = CBOR_INT_32 } },
+		.type = CBOR_TYPE_UINT
 	};
 	return item;
 }
@@ -928,7 +931,8 @@ cbor_item_t * cbor_new_int64()
 	*item = (cbor_item_t){
 		.data = (unsigned char *)item + sizeof(cbor_item_t),
 		.refcount = 1,
-		.metadata = { .int_metadata = { .width = CBOR_INT_64 } }
+		.metadata = { .int_metadata = { .width = CBOR_INT_64 } },
+		.type = CBOR_TYPE_UINT
 	};
 	return item;
 }

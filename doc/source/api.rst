@@ -22,6 +22,29 @@ The *libcbor* API closely follows the semantics outlined by `CBOR standard <http
    api/type_6
    api/type_7
 
+Every :type:`cbor_item_t` has a :type:`cbor_type` associated with it - these constants correspond to the types specified by the `CBOR standard <http://tools.ietf.org/html/rfc7049>`_:
+
+.. type:: enum cbor_type
+
+   which consists of
+
+   +---------------------------+
+   | ``CBOR_TYPE_UINT``        |
+   +---------------------------+
+   | ``CBOR_TYPE_NEGINT``      |
+   +---------------------------+
+   | ``CBOR_TYPE_BYTESTRING``  |
+   +---------------------------+
+   | ``CBOR_TYPE_STRING``      |
+   +---------------------------+
+   | ``CBOR_TYPE_ARRAY``       |
+   +---------------------------+
+   | ``CBOR_TYPE_MAP``         |
+   +---------------------------+
+   | ``CBOR_TYPE_TAG``         |
+   +---------------------------+
+   | ``CBOR_TYPE_FLOAT_CTRL``  |
+   +---------------------------+
 
 A quick CBOR primer
 --------------------------

@@ -27,7 +27,12 @@ static void test_indef_array_start(void **state) {
 
 static void test_indef_array_encoding(void **state) {
 	cbor_item_t * array = cbor_new_indefinite_array();
-	cbor_item_t * one = cbor_build_uint8(32);
+	cbor_item_t * one = cbor_build_uint8(1);
+	cbor_item_t * two = cbor_build_uint8(2);
+	cbor_array_push(array, one);
+	cbor_array_push(array, two);
+	assert_int_equal(1, cbor_serialize_array(array, buffer, 512));
+
 }
 
 int main(void) {
