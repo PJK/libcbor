@@ -31,8 +31,8 @@ static void test_indef_array_encoding(void **state) {
 	cbor_item_t * two = cbor_build_uint8(2);
 	cbor_array_push(array, one);
 	cbor_array_push(array, two);
-	assert_int_equal(1, cbor_serialize_array(array, buffer, 512));
-
+	assert_int_equal(3, cbor_serialize_array(array, buffer, 512));
+	assert_memory_equal(buffer, ((unsigned char[]){ 0x9F, 0x01, 0x02 }), 3);
 }
 
 int main(void) {
