@@ -2,9 +2,17 @@ language: c
 before_install:
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get update -qq
-  - sudo apt-get -qq install gcc-4.9 libcmocka-dev
+  - sudo apt-get -qq install gcc-4.9
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 90
 compiler:
   - gcc
   - clang
-script: export SOURCE=$(pwd) && mkdir /tmp/build && (cd /tmp/build && cmake -DCMAKE_BUILD_TYPE=Debug $SOURCE && make && ctest -V)
+script:
+  - git submodule update test/cmocka
+  - cd test
+  - mkdir cmocka_build && cd cmocka_build
+  - cmake ../cmocka
+  - make -j 4
+  - make install
+  - cd ../..
+  - export SOURCE=$(pwd) && mkdir /tmp/build && (cd /tmp/build && cmake -DCMAKE_BUILD_TYPE=Debug $SOURCE && make && ctest -V)
