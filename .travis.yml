@@ -2,4 +2,4 @@ language: c
 compiler:
   - gcc
   - clang
-script: mkdir /tmp/build && (cd /tmp/build && cmake -DCMAKE_BUILD_TYPE=Debug ~/libcbor && make && ctest -V)
+script: export SOURCE=$(pwd) && mkdir /tmp/build && (cd /tmp/build && cmake -DCMAKE_BUILD_TYPE=Debug $SOURCE && make && ctest -V)
