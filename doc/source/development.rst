@@ -34,7 +34,7 @@ Installing *sphinx*
   pip install https://github.com/lepture/python-livereload/archive/master.zip
   pip install sphinx-autobuild
 
-Further instructions on configuring advanced features can be found on `<http://read-the-docs.readthedocs.org/en/latest/install.html>`_.
+Further instructions on configuring advanced features can be found at `<http://read-the-docs.readthedocs.org/en/latest/install.html>`_.
 
 Live preview of docs
 ~~~~~~~~~~~~~~~~~~~~~~

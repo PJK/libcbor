@@ -13,14 +13,20 @@ Testing for memory leaks
 
 Every release is tested for memory correctness. You can run these tests by passing the ``-D ExperimentalMemCheck`` flag to ``ctest``. [#]_
 
-.. [#] Project should be configured with ``-DCMAKE_BUILD_TYPE=Debug`` to obtain meaningful description of location of the leak.
+.. [#] Project should be configured with ``-DCMAKE_BUILD_TYPE=Debug`` to obtain meaningful description of location of the leak. You might also need ``--dsymutil=yes`` on OS X.
 
 
 Code coverage
 -------------------
 
-Every release is inspected using `GCOV/LCOV <http://ltp.sourceforge.net/coverage/lcov.php>`_. Platform-independent code should be fully covered by the test suite.
+Every release is inspected using `GCOV/LCOV <http://ltp.sourceforge.net/coverage/lcov.php>`_. Platform-independent code should be fully covered by the test suite. Simply run
 
+.. code-block:: bash
+
+  make coverage
+
+
+or alternatively run ``lcov`` by hand using
 
 .. code-block:: bash
 

@@ -35,11 +35,11 @@ typedef union {
 
 #define CBOR_FLAGS_NONE ((cbor_flags_t) { { 0 } })
 
-typedef enum {
+typedef enum {             /* Corresponding Major Type */
 	CBOR_TYPE_UINT,        /* 0 */
 	CBOR_TYPE_NEGINT,      /* 1 */
 	CBOR_TYPE_BYTESTRING,  /* 2 */
-	CBOT_TYPE_STRING,      /* 3 */
+	CBOR_TYPE_STRING,      /* 3 */
 	CBOR_TYPE_ARRAY,       /* 4 */
 	CBOR_TYPE_MAP,         /* 5 */
 	CBOR_TYPE_TAG,         /* 6 - additional semantics*/
@@ -69,8 +69,6 @@ typedef enum {
 } cbor_float_width;
 
 typedef enum {
-	CBOR_CTRL_NONE,
-	CBOR_CTRL_BREAK,
 	CBOR_CTRL_FALSE,
 	CBOR_CTRL_TRUE,
 	CBOR_CTRL_NULL,
@@ -84,42 +82,57 @@ typedef enum {
 	_CBOR_METADATA_RESUMABLE = 0x02,	/* Parsing may be resumed */
 } _cbor_metadata;
 
+typedef enum {
+	_CBOR_METADATA_DEFINITE,
+	_CBOR_METADATA_INDEFINITE
+} _cbor_dst_metadata;
+
+
 struct _cbor_int_metadata {
 	cbor_int_width width;
 };
 
-typedef enum {
-	_CBOR_STRING_METADATA_DEFINITE,
-	_CBOR_STRING_METADATA_INDEFINITE
-} _cbor_string_type_metadata;
-
 struct _cbor_bytestring_metadata {
 	size_t length;
-	_cbor_string_type_metadata type;
+	_cbor_dst_metadata type;
 };
 
 struct _cbor_string_metadata {
-	size_t length;
-	_cbor_string_type_metadata type;
+	size_t             length;
+	size_t             codepoint_count; /* Sum of chunks' codepoint_counts for indefinite strings */
+	_cbor_dst_metadata type;
 };
 
-typedef enum {
-	_CBOR_ARRAY_METADATA_DEFINITE,
-	_CBOR_ARRAY_METADATA_INDEFINITE
-} _cbor_array_type_metadata;
-
 struct _cbor_array_metadata {
-	size_t size;
-	_cbor_array_type_metadata type;
+	size_t             size;
+	_cbor_dst_metadata type;
 };
 
 struct _cbor_map_metadata {
 	size_t size;
+	_cbor_dst_metadata type;
+};
+
+/* cbor_item_metadata is 2 * sizeof(size_t) + sizeof(_cbor_string_type_metadata), lets use the space */
+struct _cbor_tag_metadata {
+	struct cbor_item_t * tagged_item;
+	uint64_t             value;
 };
 
 struct _cbor_float_ctrl_metadata {
 	cbor_float_width width;
-	cbor_ctrl type;
+	cbor_ctrl        type;
+};
+
+/* Raw memory casts */
+union _cbor_float_helper {
+	float    as_float;
+	uint32_t as_uint;
+};
+
+union _cbor_double_helper {
+	double   as_double;
+	uint64_t as_uint;
 };
 
 union cbor_item_metadata {
@@ -128,6 +141,7 @@ union cbor_item_metadata {
 	struct _cbor_string_metadata	 string_metadata;
 	struct _cbor_array_metadata		 array_metadata;
 	struct _cbor_map_metadata		 map_metadata;
+	struct _cbor_tag_metadata		 tag_metadata;
 	struct _cbor_float_ctrl_metadata float_ctrl_metadata;
 };
 
@@ -138,8 +152,9 @@ typedef struct cbor_item_t {
 	unsigned char * 		 data;
 } cbor_item_t;
 
-struct cbor_indefinite_bytestring_data {
+struct cbor_indefinite_string_data {
 	size_t          chunk_count;
+	size_t          chunk_capacity;
 	cbor_item_t * * chunks;
 };
 
@@ -149,17 +164,12 @@ struct cbor_error {
 };
 
 struct cbor_pair {
-	cbor_item_t * key, value;
+	cbor_item_t * key, * value;
 };
-
-typedef struct cbor_map_iterator {
-	struct cbor_pair data;
-	// METADATA FOR A LINKED LIST OR TREE OR WHATEVER
-} cbor_map_iterator;
 
 struct cbor_load_result {
 	struct cbor_error error;
-	size_t			  read;
+	size_t            read;
 };
 
 enum cbor_callback_result {
@@ -210,10 +220,11 @@ struct cbor_callbacks {
 	cbor_simple_callback indef_map_start;
 
 	/* Type 6 - Tags */
+	cbor_int64_callback tag;
 
 	/* Type 7 - Floats & misc */
 	/* Type names cannot be member names */
-	cbor_double_callback float2; /* 2B float is not supported in standard C */
+	cbor_float_callback float2; /* 2B float is not supported in standard C */
 	cbor_float_callback float4;
 	cbor_double_callback float8;
 	cbor_simple_callback undefined;
@@ -237,8 +248,52 @@ struct cbor_decoder_result {
 };
 
 struct cbor_decoder_result cbor_stream_decode(cbor_data, size_t, const struct cbor_callbacks *, void *);
-
 cbor_item_t * cbor_load(cbor_data source, size_t source_size, cbor_flags_t flags, struct cbor_load_result * result);
+
+
+size_t cbor_encode_uint8(uint8_t, unsigned char *, size_t);
+size_t cbor_encode_uint16(uint16_t, unsigned char *, size_t);
+size_t cbor_encode_uint32(uint32_t, unsigned char *, size_t);
+size_t cbor_encode_uint64(uint64_t, unsigned char *, size_t);
+size_t cbor_encode_uint(uint64_t, unsigned char *, size_t);
+
+size_t cbor_encode_negint8(uint8_t, unsigned char *, size_t);
+size_t cbor_encode_negint16(uint16_t, unsigned char *, size_t);
+size_t cbor_encode_negint32(uint32_t, unsigned char *, size_t);
+size_t cbor_encode_negint64(uint64_t, unsigned char *, size_t);
+size_t cbor_encode_negint(uint64_t, unsigned char *, size_t);
+
+size_t cbor_encode_bytestring_start(size_t, unsigned char *, size_t);
+size_t cbor_encode_indef_bytestring_start(unsigned char *, size_t);
+
+size_t cbor_encode_string_start(size_t, unsigned char *, size_t);
+size_t cbor_encode_indef_string_start(unsigned char *, size_t);
+
+size_t cbor_encode_array_start(size_t, unsigned char *, size_t);
+size_t cbor_encode_indef_array_start(unsigned char *, size_t);
+
+size_t cbor_encode_map_start(size_t, unsigned char *, size_t);
+size_t cbor_encode_indef_map_start(unsigned char *, size_t);
+
+size_t cbor_encode_tag(uint64_t, unsigned char *, size_t);
+
+size_t cbor_encode_bool(bool, unsigned char *, size_t);
+size_t cbor_encode_null(unsigned char *, size_t);
+size_t cbor_encode_undef(unsigned char *, size_t);
+size_t cbor_encode_half(float, unsigned char *, size_t);
+size_t cbor_encode_float(float, unsigned char *, size_t);
+size_t cbor_encode_double(double, unsigned char *, size_t);
+size_t cbor_encode_break(unsigned char *, size_t);
+
+size_t cbor_serialize(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_uint(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_negint(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_bytestring(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_string(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_array(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_map(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_tag(const cbor_item_t *, unsigned char *, size_t);
+size_t cbor_serialize_float_ctrl(const cbor_item_t *, unsigned char *, size_t);
 
 void cbor_incref(cbor_item_t * item);
 void cbor_decref(cbor_item_t ** item);
@@ -263,7 +318,12 @@ bool cbor_is_bool(const cbor_item_t * item);
 bool cbor_is_null(const cbor_item_t * item);
 bool cbor_is_undef(const cbor_item_t * item);
 
-/* int manipulation - both uint and negint*/
+/*
+* ============================================================================
+* Integer (uints and negints) manipulation
+* ============================================================================
+*/
+
 uint8_t cbor_get_uint8(const cbor_item_t * item);
 uint16_t cbor_get_uint16(const cbor_item_t * item);
 uint32_t cbor_get_uint32(const cbor_item_t * item);
@@ -284,50 +344,133 @@ cbor_item_t * cbor_new_int16();
 cbor_item_t * cbor_new_int32();
 cbor_item_t * cbor_new_int64();
 
-/* Bytestrings manipulation*/
-size_t cbor_bytestring_length(const cbor_item_t * item);
+// Build initialized integers - new + set_uint + mark_uint
+cbor_item_t * cbor_build_uint8(uint8_t value);
+cbor_item_t * cbor_build_uint16(uint16_t value);
+cbor_item_t * cbor_build_uint32(uint32_t value);
+cbor_item_t * cbor_build_uint64(uint64_t value);
 
+/*
+* ============================================================================
+* String manipulation
+* ============================================================================
+*/
+
+size_t cbor_string_length(const cbor_item_t * item);
+bool cbor_string_is_definite(const cbor_item_t * item);
+bool cbor_string_is_indefinite(const cbor_item_t * item);
+unsigned char * cbor_string_handle(const cbor_item_t * item);
+size_t cbor_string_codepoint_count(const cbor_item_t * item);
+
+void cbor_string_set_handle(cbor_item_t * item, unsigned char * data, size_t length);
+
+/* Indefinite strings only */
+cbor_item_t * * cbor_string_chunks_handle(const cbor_item_t * item);
+size_t cbor_string_chunk_count(const cbor_item_t * item);
+
+/* Returns NULL on realloc failure */
+cbor_item_t * cbor_string_add_chunk(cbor_item_t * item, cbor_item_t * chunk);
+cbor_item_t * cbor_string_concatenate(cbor_item_t * item);
+
+cbor_item_t * cbor_new_definite_string();
+cbor_item_t * cbor_new_indefinite_string();
+
+
+/*
+* ============================================================================
+* Byte string manipulation
+* ============================================================================
+*/
+
+size_t cbor_bytestring_length(const cbor_item_t * item);
 bool cbor_bytestring_is_definite(const cbor_item_t * item);
 bool cbor_bytestring_is_indefinite(const cbor_item_t * item);
-
 unsigned char * cbor_bytestring_handle(const cbor_item_t * item);
+
+void cbor_bytestring_set_handle(cbor_item_t * item, unsigned char * data, size_t length);
 
 /* Indefinite bytestrings only */
 cbor_item_t * * cbor_bytestring_chunks_handle(const cbor_item_t * item);
 size_t cbor_bytestring_chunk_count(const cbor_item_t * item);
+
 /* Returns NULL on realloc failure */
 cbor_item_t * cbor_bytestring_add_chunk(cbor_item_t * item, cbor_item_t * chunk);
+cbor_item_t * cbor_bytestring_concatenate(cbor_item_t * item);
 
 cbor_item_t * cbor_new_definite_bytestring();
 cbor_item_t * cbor_new_indefinite_bytestring();
 
-void cbor_bytestring_set_handle(cbor_item_t * item,  unsigned char * data, size_t length);
+/*
+* ============================================================================
+* Array manipulation
+* ============================================================================
+*/
 
-// TODO rename this / figure out gets/sets verbs
-size_t cbor_array_get_size(cbor_item_t * item);
-bool cbor_array_is_definite(cbor_item_t * item);
-bool cbor_array_is_indefinite(cbor_item_t * item);
+size_t cbor_array_size(const cbor_item_t * item);
+bool cbor_array_is_definite(const cbor_item_t * item);
+bool cbor_array_is_indefinite(const cbor_item_t * item);
 /* Native handle to the underlying chunk */
-cbor_item_t ** cbor_array_handle(cbor_item_t * item);
+cbor_item_t ** cbor_array_handle(const cbor_item_t * item);
 
-cbor_item_t * cbor_new_definite_array(size_t);
+cbor_item_t * cbor_new_definite_array(const size_t);
 cbor_item_t * cbor_new_indefinite_array();
 
 cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee);
 
-size_t cbor_map_size(cbor_item_t * item);
-cbor_item_t * cbor_new_map();
-struct cbor_map_iterator cbor_map_add(cbor_item_t * item, struct cbor_pair pair);
-void cbor_map_is_definite(cbor_item_t * item);
-void cbor_map_is_indefinite(cbor_item_t * item);
-struct cbor_map_iterator cbor_map_begin(cbor_item_t * item);
-bool cbor_map_iterator_end(struct cbor_map_iterator * iter);
-void cbor_map_iterator_next(struct cbor_map_iterator * iter);
-void cbor_map_delete(struct cbor_map_iterator * iter);
+/*
+* ============================================================================
+* Map manipulation
+* ============================================================================
+*/
 
+size_t cbor_map_size(const cbor_item_t * item);
+cbor_item_t * cbor_new_definite_map(const size_t size);
+cbor_item_t * cbor_new_indefinite_map();
+cbor_item_t * cbor_map_add(cbor_item_t * item, struct cbor_pair pair);
+bool cbor_map_is_definite(const cbor_item_t * item);
+bool cbor_map_is_indefinite(const cbor_item_t * item);
+struct cbor_pair * cbor_map_handle(const cbor_item_t * item);
 
-cbor_float_width cbor_float_ctrl_get_width(const cbor_item_t * item);
-cbor_ctrl cbor_float_ctrl_get_ctrl(const cbor_item_t * item);
+/*
+* ============================================================================
+* Tag manipulation
+* ============================================================================
+*/
+
+cbor_item_t * cbor_new_tag(uint64_t value);
+cbor_item_t * cbor_tag_item(const cbor_item_t * item);
+uint64_t cbor_tag_value(const cbor_item_t * item);
+void cbor_tag_set_item(cbor_item_t * item, cbor_item_t * tagged_item);
+
+/*
+* ============================================================================
+* Float manipulation
+* ============================================================================
+*/
+
+bool cbor_float_ctrl_is_ctrl(const cbor_item_t * item);
+cbor_float_width cbor_float_get_width(const cbor_item_t * item);
+
+float cbor_float_get_float2(const cbor_item_t * item);
+float cbor_float_get_float4(const cbor_item_t * item);
+double cbor_float_get_float8(const cbor_item_t * item);
+
+cbor_item_t * cbor_new_ctrl(); /* float0 */
+cbor_item_t * cbor_new_float2();
+cbor_item_t * cbor_new_float4();
+cbor_item_t * cbor_new_float8();
+
+cbor_item_t * cbor_new_null();
+cbor_item_t * cbor_new_undef();
+cbor_item_t * cbor_new_bool(bool value);
+
+void cbor_set_ctrl(cbor_item_t * item, cbor_ctrl value);
+void cbor_set_float2(cbor_item_t * item, float value);
+void cbor_set_float4(cbor_item_t * item, float value);
+void cbor_set_float8(cbor_item_t * item, double value);
+
+cbor_ctrl cbor_ctrl_code(const cbor_item_t * item);
+bool cbor_ctrl_bool(const cbor_item_t * item);
 
 #ifdef DEBUG
 #include <stdio.h>

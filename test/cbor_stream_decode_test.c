@@ -348,27 +348,37 @@ static void test_array_of_arrays_decoding(void **state)
 	);
 }
 
-unsigned char indef_array_data_1[] = { 0x9F, 0x00, 0x18, 0xFF, 0xFF };
+unsigned char indef_array_data_1[] = { 0x9F, 0x00, 0x18, 0xFF, 0x9F, 0xFF, 0xFF };
 static void test_indef_array_decoding_1(void **state)
 {
 	assert_indef_array_start();
 	assert_decoder_result(1, CBOR_DECODER_FINISHED,
-		decode(indef_array_data_1, 5)
+		decode(indef_array_data_1, 7)
 	);
 
 	assert_uint8_eq(0);
 	assert_decoder_result(1, CBOR_DECODER_FINISHED,
-		decode(indef_array_data_1 + 1, 4)
+		decode(indef_array_data_1 + 1, 6)
 	);
 
 	assert_uint8_eq(255);
 	assert_decoder_result(2, CBOR_DECODER_FINISHED,
-		decode(indef_array_data_1 + 2, 3)
+		decode(indef_array_data_1 + 2, 4)
+	);
+
+	assert_indef_array_start();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(indef_array_data_1 + 4, 3)
 	);
 
 	assert_indef_break();
 	assert_decoder_result(1, CBOR_DECODER_FINISHED,
-		decode(indef_array_data_1 + 4, 1)
+		decode(indef_array_data_1 + 5, 2)
+	);
+
+	assert_indef_break();
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(indef_array_data_1 + 6, 1)
 	);
 }
 
@@ -491,6 +501,59 @@ static void test_indef_map_decoding_1(void **state)
 	);
 }
 
+unsigned char embedded_tag_data[] = { 0xC1 };
+static void test_embedded_tag_decoding(void **state)
+{
+	assert_tag_eq(1);
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(embedded_tag_data, 1)
+	);
+}
+
+unsigned char int8_tag_data[] = { 0xD8, 0xFE };
+static void test_int8_tag_decoding(void **state)
+{
+	assert_tag_eq(254);
+	assert_decoder_result(2, CBOR_DECODER_FINISHED,
+		decode(int8_tag_data, 2)
+	);
+}
+
+unsigned char int16_tag_data[] = { 0xD9, 0xFE, 0xFD };
+static void test_int16_tag_decoding(void **state)
+{
+	assert_tag_eq(65277);
+	assert_decoder_result(3, CBOR_DECODER_FINISHED,
+		decode(int16_tag_data, 3)
+	);
+}
+
+unsigned char int32_tag_data[] = { 0xDA, 0xFE, 0xFD, 0xFC, 0xFB };
+static void test_int32_tag_decoding(void **state)
+{
+	assert_tag_eq(4278058235ULL);
+	assert_decoder_result(5, CBOR_DECODER_FINISHED,
+		decode(int32_tag_data, 5)
+	);
+}
+
+unsigned char int64_tag_data[] = { 0xDB, 0xFE, 0xFD, 0xFC, 0xFB, 0xFA, 0xF9, 0xF8, 0xF7 };
+static void test_int64_tag_decoding(void **state)
+{
+	assert_tag_eq(18374120213919168759ULL);
+	assert_decoder_result(9, CBOR_DECODER_FINISHED,
+		decode(int64_tag_data, 9)
+	);
+}
+
+unsigned char bad_tag_data[] = { 0xC6 };
+static void test_bad_tag_decoding(void **state)
+{
+	assert_decoder_result(0, CBOR_DECODER_ERROR,
+		decode(bad_tag_data, 1)
+	);
+}
+
 unsigned char float2_data[] = { 0xF9, 0x7B, 0xFF };
 static void test_float2_decoding(void **state)
 {
@@ -595,6 +658,13 @@ int main(void)
 		unit_test(test_map_int32_decoding),
 		unit_test(test_map_int64_decoding),
 		unit_test(test_indef_map_decoding_1),
+
+		unit_test(test_embedded_tag_decoding),
+		unit_test(test_int8_tag_decoding),
+		unit_test(test_int16_tag_decoding),
+		unit_test(test_int32_tag_decoding),
+		unit_test(test_int64_tag_decoding),
+		unit_test(test_bad_tag_decoding),
 
 		unit_test(test_float2_decoding),
 		unit_test(test_float4_decoding),
