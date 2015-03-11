@@ -59,6 +59,14 @@ Creating new items
 .. function:: cbor_item_t * cbor_new_definite_bytestring()
 .. function:: cbor_item_t * cbor_new_indefinite_bytestring()
 
+Manipulating existing items
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. function:: cbor_bytestring_set_handle(cbor_item_t * item, unsigned char * data, size_t length)
+
+    Attaches the ``item`` to the ``data`` of length ``length``. Ownership of the memory is transferred to *libcbor*. It will be deallocated when the item is deallocated. It is the user's responsibility to ensure that the area has been correctly allocated and may be safely deallocated using the specified deallocator (TODO link to custom malloc).
+
+
 Building items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
