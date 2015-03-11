@@ -59,7 +59,7 @@ size_t cbor_serialize_negint(const cbor_item_t * item, unsigned char * buffer, s
 size_t cbor_serialize_bytestring(const cbor_item_t * item, unsigned char * buffer, size_t buffer_size)
 {
 	assert(cbor_isa_bytestring(item));
-	if (cbor_string_is_definite(item)) {
+	if (cbor_bytestring_is_definite(item)) {
 		size_t length = cbor_bytestring_length(item);
 		size_t written = cbor_encode_bytestring_start(length, buffer, buffer_size);
 		if (written && (buffer_size - written >= length)) {
