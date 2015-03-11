@@ -45,6 +45,19 @@ Actual Type of the integer can be checked using :ref:`item types API <item-types
 
 An integer item is created with one of the four widths. Because integers' `storage is bundled together with the handle </internal#c.cbor_item_t.data>`_, the width cannot be changed over its lifetime.
 
+Warning
+---------
+Due to the fact that CBOR negative integers represent integers in the range :math:`[-1, -2^N]`, ``cbor_set_uint`` API is somewhat counter-intuitive as the resulting logical value is 1 less. This behavior is necessary in order to permit uniform manipulation with the full range of permitted values. For example, the following snippet
+
+.. code-block:: c
+
+    cbor_item_t * item = cbor_new_int8();
+    cbor_mark_negint(item);
+    cbor_set_uint8(0);
+
+will produce an item with the logical value of :math:`-1`. There is, however, an upside to this as well: There is only one representation of zero.
+
+
 Retrieving values
 ------------------------
 .. function:: uint8_t cbor_get_uint8(const cbor_item_t * item)
