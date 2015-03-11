@@ -19,7 +19,6 @@ struct test_assertion current()
 }
 
 /* Assertions builders and matcher callbacks */
-// TODO parametrize this with width instead?
 <% %w(u neg).each do |type| %>
 	<% [8, 16, 32, 64].each do |width| %>
 		void assert_<%= type %>int<%= width %>_eq(uint<%= width %>_t actual)
