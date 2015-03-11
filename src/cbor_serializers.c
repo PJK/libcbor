@@ -120,5 +120,6 @@ size_t cbor_serialize_tag(const cbor_item_t * item, unsigned char * buffer, size
 size_t cbor_serialize_float_ctrl(const cbor_item_t * item, unsigned char * buffer, size_t buffer_size)
 {
 	assert(cbor_isa_float_ctrl(item));
+
 }
 
