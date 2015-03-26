@@ -10,3 +10,8 @@ add_library(cbor ${SOURCES})
 add_library(cbor_shared SHARED ${SOURCES})
 
 set_target_properties(cbor_shared PROPERTIES OUTPUT_NAME cbor)
+
+install(TARGETS cbor cbor_shared
+	ARCHIVE DESTINATION lib
+	LIBRARY DESTINATION lib
+	RUNTIME DESTINATION bin)
