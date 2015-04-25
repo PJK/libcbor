@@ -21,28 +21,28 @@ void cbor_decref(cbor_item_t ** item)
 		case CBOR_TYPE_BYTESTRING:
 			{
 				if (cbor_bytestring_is_definite(*item)) {
-					free((*item)->data);
+					_CBOR_FREE((*item)->data);
 				} else {
 					/* We need to decref all chunks */
 					cbor_item_t ** handle = cbor_bytestring_chunks_handle(*item);
 					for (size_t i = 0; i < cbor_bytestring_chunk_count(*item); i++)
 						cbor_decref(&handle[i]);
-					free(((struct cbor_indefinite_string_data *)(*item)->data)->chunks);
-					free((*item)->data);
+					_CBOR_FREE(((struct cbor_indefinite_string_data *)(*item)->data)->chunks);
+					_CBOR_FREE((*item)->data);
 				}
 				break;
 			}
 		case CBOR_TYPE_STRING:
 			{
 				if (cbor_string_is_definite(*item)) {
-					free((*item)->data);
+					_CBOR_FREE((*item)->data);
 				} else {
 					/* We need to decref all chunks */
 					cbor_item_t ** handle = cbor_string_chunks_handle(*item);
 					for (size_t i = 0; i < cbor_string_chunk_count(*item); i++)
 						cbor_decref(&handle[i]);
-					free(((struct cbor_indefinite_string_data *)(*item)->data)->chunks);
-					free((*item)->data);
+					_CBOR_FREE(((struct cbor_indefinite_string_data *)(*item)->data)->chunks);
+					_CBOR_FREE((*item)->data);
 				}
 				break;
 			}
@@ -57,7 +57,7 @@ void cbor_decref(cbor_item_t ** item)
 		case CBOR_TYPE_MAP:
 		case CBOR_TYPE_TAG:
 			{
-				free((*item)->data);
+				_CBOR_FREE((*item)->data);
 				break;
 			}
 		case CBOR_TYPE_FLOAT_CTRL:
@@ -66,7 +66,7 @@ void cbor_decref(cbor_item_t ** item)
 				break;
 			}
 		}
-		free(*item);
+		_CBOR_FREE(*item);
 		//TODO
 		*item = NULL;
 	}
@@ -138,7 +138,7 @@ cbor_item_t * cbor_load(cbor_data source,
 
 	/* Move the result before free */
 	cbor_item_t * result_item = context->root;
-	free(context);
+	_CBOR_FREE(context);
 	return result_item;
 
 error:
@@ -147,7 +147,7 @@ error:
 		cbor_decref(&stack.top->item);
 		_cbor_stack_pop(&stack);
 	}
-	free(context);
+	_CBOR_FREE(context);
 	result->error.code = CBOR_ERR_NOTENOUGHDATA;
 	return NULL;
 }
@@ -1100,7 +1100,7 @@ cbor_item_t * cbor_string_add_chunk(cbor_item_t * item, cbor_item_t * chunk)
 		/* We need more space */
 		data->chunk_capacity = data->chunk_capacity == 0 ? 1 : data->chunk_capacity * 2;
 		cbor_item_t ** new_chunks_data =
-			realloc(data->chunks, data->chunk_capacity * sizeof(cbor_item_t *));
+			_CBOR_REALLOC(data->chunks, data->chunk_capacity * sizeof(cbor_item_t *));
 		// TODO handle failures
 		data->chunks = new_chunks_data;
 	}
@@ -1197,7 +1197,7 @@ cbor_item_t * cbor_bytestring_add_chunk(cbor_item_t * item, cbor_item_t * chunk)
 		/* We need more space */
 		data->chunk_capacity = data->chunk_capacity == 0 ? 1 : data->chunk_capacity * 2;
 		cbor_item_t ** new_chunks_data =
-			realloc(data->chunks, data->chunk_capacity * sizeof(cbor_item_t *));
+			_CBOR_REALLOC(data->chunks, data->chunk_capacity * sizeof(cbor_item_t *));
 		// TODO handle failures
 		data->chunks = new_chunks_data;
 	}
@@ -1241,7 +1241,7 @@ cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee)
 		data[metadata->size++] = pushee;
 	} else {
 		// TODO exponential reallocs?
-		data = realloc(data, (metadata->size + 1) * sizeof(cbor_item_t *));
+		data = _CBOR_REALLOC(data, (metadata->size + 1) * sizeof(cbor_item_t *));
 		data[metadata->size++] = pushee;
 		array->data = (unsigned char *)data;
 	}
@@ -1289,7 +1289,7 @@ cbor_item_t * cbor_map_add(cbor_item_t * item, struct cbor_pair pair)
 	} else {
 		// TODO exponential reallocs?
 		// TOOD check realloc
-		data = realloc(data, (metadata->size + 1) * sizeof(struct cbor_pair));
+		data = _CBOR_REALLOC(data, (metadata->size + 1) * sizeof(struct cbor_pair));
 		data[metadata->size++] = pair;
 		item->data = (unsigned char *)data;
 	}

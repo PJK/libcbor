@@ -9,7 +9,7 @@ void _cbor_stack_pop(struct _cbor_stack * stack)
 {
 	struct _cbor_stack_record * top = stack->top;
 	stack->top = stack->top->lower;
-	free(top);
+	_CBOR_FREE(top);
 	stack->size--;
 }
 
