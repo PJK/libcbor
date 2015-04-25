@@ -13,12 +13,7 @@
 
 #define CBOR_VERSION TO_STR(CBOR_MAJOR_VERSION) "." TO_STR(CBOR_MINOR_VERSION) "." TO_STR(CBOR_PATCH_VERSION)
 
-/*
- * TODO work around this on <=32 bit platforms - now arrays and bytestrings can
- * be up to 2^64-1 items/bytes long -- how do we ensure real size won't overflow
- * size_t???
- */
-_Static_assert(sizeof(size_t) >= 8, "size_t must be at least 64 bits");
+_Static_assert(sizeof(size_t) >= 8, "size_t must be at least 64 bits"); /* Otherwise we cannot support reasonably sized chunks */
 
 /*
  * Packed bitfield
@@ -42,7 +37,7 @@ typedef enum {             /* Corresponding Major Type */
 	CBOR_TYPE_STRING,      /* 3 */
 	CBOR_TYPE_ARRAY,       /* 4 */
 	CBOR_TYPE_MAP,         /* 5 */
-	CBOR_TYPE_TAG,         /* 6 - additional semantics*/
+	CBOR_TYPE_TAG,         /* 6 - additional semantics */
 	CBOR_TYPE_FLOAT_CTRL   /* 7 - also bool, null, undefined, and others */
 } cbor_type;
 
@@ -62,7 +57,7 @@ typedef enum {
 } cbor_int_width;
 
 typedef enum {
-	CBOR_FLOAT_0, /* Registered for internal use - breaks and such*/
+	CBOR_FLOAT_0, /* Registered for internal use - breaks and such */
 	CBOR_FLOAT_16,
 	CBOR_FLOAT_32,
 	CBOR_FLOAT_64

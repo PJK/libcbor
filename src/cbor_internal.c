@@ -98,6 +98,7 @@ void _cbor_builder_append(cbor_item_t * item, struct _cbor_decoder_context * ctx
 			{
 				/* We use 0 and 1 subitems to distinguish between keys and values in indefinite items */
 				if (ctx->stack->top->subitems % 2) {
+					/* Odd record, this is a value */
 					cbor_map_handle(ctx->stack->top->item)[cbor_map_size(ctx->stack->top->item) - 1].value = item;
 				} else {
 					/* Even record, this is a key */
