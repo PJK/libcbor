@@ -15,7 +15,7 @@ void _cbor_stack_pop(struct _cbor_stack * stack)
 
 struct _cbor_stack_record * _cbor_stack_push(struct _cbor_stack * stack, cbor_item_t * item, size_t subitems)
 {
-	struct _cbor_stack_record * new_top = malloc(sizeof(struct _cbor_stack_record));
+	struct _cbor_stack_record * new_top = _CBOR_MALLOC(sizeof(struct _cbor_stack_record));
 	if (new_top == NULL)
 		return NULL;
 

@@ -172,6 +172,25 @@ enum cbor_callback_result {
 	CBOR_CALLBACK_SKIP //TODO
 };
 
+
+#ifdef CUSTOM_ALLOC
+	void * _cbor_malloc = malloc, * _cbor_realloc = realloc, * _cbor_free = free;
+	void cbor_set_allocs(void * custom_malloc, void * custom_realloc, void * custom_free)
+	{
+		_cbor_malloc = custom_malloc;
+		_cbor_realloc = custom_realloc;
+		_cbor_free = custom_free;
+	}
+	#define _CBOR_MALLOC _cbor_malloc
+	#define _CBOR_REALLOC _cbor_realloc
+	#define _CBOR_FREE _cbor_free
+#else
+	#define _CBOR_MALLOC malloc
+	#define _CBOR_REALLOC realloc
+	#define _CBOR_FREE free
+#endif
+
+
 typedef const unsigned char * cbor_data;
 
 typedef enum cbor_callback_result(* cbor_int8_callback)(void *, uint8_t);

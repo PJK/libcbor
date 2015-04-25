@@ -117,7 +117,7 @@ cbor_item_t * cbor_load(cbor_data source,
 		return NULL;
 	}
 	/* Target for callbacks */
-	struct _cbor_decoder_context * context = malloc(sizeof(struct _cbor_decoder_context));
+	struct _cbor_decoder_context * context = _CBOR_MALLOC(sizeof(struct _cbor_decoder_context));
 	struct _cbor_stack stack = _cbor_stack_init();
 	context->stack = &stack;
 	struct cbor_decoder_result decode_result;
@@ -891,7 +891,7 @@ void cbor_mark_negint(cbor_item_t * item)
 
 cbor_item_t * cbor_new_int8()
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t) + 1);
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t) + 1);
 	*item = (cbor_item_t){
 		.data = (unsigned char *)item + sizeof(cbor_item_t),
 		.refcount = 1,
@@ -903,7 +903,7 @@ cbor_item_t * cbor_new_int8()
 
 cbor_item_t * cbor_new_int16()
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t) + 2);
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t) + 2);
 	*item = (cbor_item_t){
 		.data = (unsigned char *)item + sizeof(cbor_item_t),
 		.refcount = 1,
@@ -915,7 +915,7 @@ cbor_item_t * cbor_new_int16()
 
 cbor_item_t * cbor_new_int32()
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t) + 4);
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
 	*item = (cbor_item_t){
 		.data = (unsigned char *)item + sizeof(cbor_item_t),
 		.refcount = 1,
@@ -927,7 +927,7 @@ cbor_item_t * cbor_new_int32()
 
 cbor_item_t * cbor_new_int64()
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t) + 8);
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t) + 8);
 	*item = (cbor_item_t){
 		.data = (unsigned char *)item + sizeof(cbor_item_t),
 		.refcount = 1,
@@ -971,7 +971,7 @@ cbor_item_t * cbor_build_uint64(uint64_t value)
 
 cbor_item_t * cbor_new_ctrl()
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
 	*item = (cbor_item_t){
 		.type = CBOR_TYPE_FLOAT_CTRL,
 		.data = NULL,
@@ -983,7 +983,7 @@ cbor_item_t * cbor_new_ctrl()
 
 cbor_item_t * cbor_new_float2()
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t) + 4);
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
 	*item = (cbor_item_t){
 		.type = CBOR_TYPE_FLOAT_CTRL,
 		.data = (unsigned char *)item + sizeof(cbor_item_t),
@@ -995,7 +995,7 @@ cbor_item_t * cbor_new_float2()
 
 cbor_item_t * cbor_new_float4()
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t) + 4);
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
 	*item = (cbor_item_t){
 		.type = CBOR_TYPE_FLOAT_CTRL,
 		.data = (unsigned char *)item + sizeof(cbor_item_t),
@@ -1007,7 +1007,7 @@ cbor_item_t * cbor_new_float4()
 
 cbor_item_t * cbor_new_float8()
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t) + 8);
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t) + 8);
 	*item = (cbor_item_t){
 		.type = CBOR_TYPE_FLOAT_CTRL,
 		.data = (unsigned char *)item + sizeof(cbor_item_t),
@@ -1040,7 +1040,7 @@ cbor_item_t * cbor_new_bool(bool value)
 
 cbor_item_t * cbor_new_definite_string()
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_STRING,
@@ -1051,12 +1051,12 @@ cbor_item_t * cbor_new_definite_string()
 
 cbor_item_t * cbor_new_indefinite_string()
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_STRING,
 		.metadata = { .string_metadata = { .type = _CBOR_METADATA_INDEFINITE, .length = 0 } },
-		.data = malloc(sizeof(struct cbor_indefinite_string_data))
+		.data = _CBOR_MALLOC(sizeof(struct cbor_indefinite_string_data))
 	};
 	*((struct cbor_indefinite_string_data *)item->data) = (struct cbor_indefinite_string_data){
 		.chunk_count = 0,
@@ -1138,7 +1138,7 @@ bool cbor_string_is_indefinite(const cbor_item_t * item)
 
 cbor_item_t * cbor_new_definite_bytestring()
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_BYTESTRING,
@@ -1149,12 +1149,12 @@ cbor_item_t * cbor_new_definite_bytestring()
 
 cbor_item_t * cbor_new_indefinite_bytestring()
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_BYTESTRING,
 		.metadata = { .bytestring_metadata = { .type = _CBOR_METADATA_INDEFINITE, .length = 0 } },
-		.data = malloc(sizeof(struct cbor_indefinite_string_data))
+		.data = _CBOR_MALLOC(sizeof(struct cbor_indefinite_string_data))
 	};
 	*((struct cbor_indefinite_string_data *)item->data) = (struct cbor_indefinite_string_data){
 		.chunk_count = 0,
@@ -1208,19 +1208,19 @@ cbor_item_t * cbor_bytestring_add_chunk(cbor_item_t * item, cbor_item_t * chunk)
 
 cbor_item_t * cbor_new_definite_array(size_t size)
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_ARRAY,
 		.metadata = { .array_metadata = { .type = _CBOR_METADATA_DEFINITE, .size = 0 } },
-		.data = malloc(sizeof(cbor_item_t *) * size)
+		.data = _CBOR_MALLOC(sizeof(cbor_item_t *) * size)
 	};
 	return item;
 }
 
 cbor_item_t * cbor_new_indefinite_array()
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_ARRAY,
@@ -1256,19 +1256,19 @@ size_t cbor_map_size(const cbor_item_t * item)
 
 cbor_item_t * cbor_new_definite_map(size_t size)
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_MAP,
 		.metadata = { .map_metadata = { .size = 0, .type = _CBOR_METADATA_DEFINITE } },
-		.data = malloc(sizeof(struct cbor_pair) * size)
+		.data = _CBOR_MALLOC(sizeof(struct cbor_pair) * size)
 	};
 	return item;
 }
 
 cbor_item_t * cbor_new_indefinite_map()
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_MAP,
@@ -1316,7 +1316,7 @@ struct cbor_pair * cbor_map_handle(const cbor_item_t * item)
 
 cbor_item_t * cbor_new_tag(uint64_t value)
 {
-	cbor_item_t * item = malloc(sizeof(cbor_item_t));
+	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
 	*item = (cbor_item_t){
 		.refcount = 1,
 		.type = CBOR_TYPE_TAG,

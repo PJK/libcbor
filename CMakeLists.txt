@@ -6,7 +6,6 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -pedantic -g -ggdb -fp
 set(CMAKE_C_FLAGS_RELEASE "-O3 -Wall -pedantic -DNDEBUG")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
 
-
 set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-g -fprofile-arcs -ftest-coverage")
 
 enable_testing()
@@ -23,6 +22,14 @@ add_custom_target(coverage
                   COMMAND echo "Coverage report ready: file://${CMAKE_CURRENT_BINARY_DIR}/coverage_html/index.html")
 
 include_directories(src)
+
+
+option(CUSTOM_ALLOC "Custom, dynamically defined allocator support" OFF)
+if(CUSTOM_ALLOC)
+    add_definitions(-DCUSTOM_ALLOC)
+endif(CUSTOM_ALLOC)
+
+
 subdirs(src)
 subdirs(demo)
 subdirs(test)

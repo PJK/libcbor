@@ -219,7 +219,7 @@ enum cbor_callback_result cbor_builder_negint64_callback(void * context, uint64_
 enum cbor_callback_result cbor_builder_byte_string_callback(void * context, cbor_data data, size_t length)
 {
 	struct _cbor_decoder_context * ctx = context;
-	unsigned char * new_handle = malloc(length);
+	unsigned char * new_handle = _CBOR_MALLOC(length);
 	memcpy(new_handle, data, length);
 	cbor_item_t * res = cbor_new_definite_bytestring();
 	cbor_bytestring_set_handle(res, new_handle, length);
@@ -257,7 +257,7 @@ enum cbor_callback_result cbor_builder_string_callback(void * context, cbor_data
 		return CBOR_CALLBACK_SKIP;
 	}
 
-	unsigned char * new_handle = malloc(length);
+	unsigned char * new_handle = _CBOR_MALLOC(length);
 
 	memcpy(new_handle, data, length);
 	cbor_item_t * res = cbor_new_definite_string();
