@@ -2,6 +2,10 @@ set(SOURCES cbor.c cbor_internal.c cbor_stack.c cbor_unicode.c cbor_encoders.c c
 
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
+if(CUSTOM_ALLOC)
+    LIST(APPEND SOURCES allocators.c)
+endif(CUSTOM_ALLOC)
+
 if (NOT DEFINED CMAKE_MACOSX_RPATH)
 	set(CMAKE_MACOSX_RPATH 0)
 endif()

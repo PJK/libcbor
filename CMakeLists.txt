@@ -26,7 +26,7 @@ include_directories(src)
 
 option(CUSTOM_ALLOC "Custom, dynamically defined allocator support" OFF)
 if(CUSTOM_ALLOC)
-    add_definitions(-DCUSTOM_ALLOC)
+    add_definitions(-DCUSTOM_ALLOC=1)
 endif(CUSTOM_ALLOC)
 
 

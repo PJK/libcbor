@@ -174,13 +174,16 @@ enum cbor_callback_result {
 
 
 #ifdef CUSTOM_ALLOC
-	void * _cbor_malloc = malloc, * _cbor_realloc = realloc, * _cbor_free = free;
-	void cbor_set_allocs(void * custom_malloc, void * custom_realloc, void * custom_free)
-	{
-		_cbor_malloc = custom_malloc;
-		_cbor_realloc = custom_realloc;
-		_cbor_free = custom_free;
-	}
+	typedef void * (* _cbor_malloc_t)(size_t);
+	typedef void * (* _cbor_realloc_t)(void *, size_t);
+	typedef void (* _cbor_free_t)(void *);
+
+	extern _cbor_malloc_t _cbor_malloc;
+	extern _cbor_realloc_t _cbor_realloc;
+	extern _cbor_free_t _cbor_free;
+
+	void cbor_set_allocs(_cbor_malloc_t custom_malloc, _cbor_realloc_t custom_realloc, _cbor_free_t custom_free);
+
 	#define _CBOR_MALLOC _cbor_malloc
 	#define _CBOR_REALLOC _cbor_realloc
 	#define _CBOR_FREE _cbor_free

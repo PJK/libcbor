@@ -22,7 +22,11 @@ Prerequisites:
 
 Both the shared (``libcbor.so``) and the static (``libcbor.a``) libraries should now be in the ``src`` subdirectory.
 
-If you want to pass custom configuration options, please refer to `<http://stellarium.org/wiki/index.php/Configuring_Build_Options>`_.
+**Build configuration**
+
+To specify the compiler, use ``CMAKE_C_COMPILER`` (e.g. ``-DCMAKE_C_COMPILER=clang-3.5``)
+
+If you want to pass other custom configuration options, please refer to `<http://stellarium.org/wiki/index.php/Configuring_Build_Options>`_.
 
 **Optional: running the tests**:
 
