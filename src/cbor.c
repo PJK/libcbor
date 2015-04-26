@@ -1239,7 +1239,7 @@ cbor_item_t *cbor_new_indefinite_array()
 cbor_item_t *cbor_array_push(cbor_item_t *array, cbor_item_t *pushee)
 {
 	assert(cbor_isa_array(array));
-	//TODO cbor_incref(pushee);
+	cbor_incref(pushee);
 	struct _cbor_array_metadata *metadata = (struct _cbor_array_metadata *) &array->metadata;
 	cbor_item_t **data = (cbor_item_t **) array->data;
 	if (cbor_array_is_definite(array)) {

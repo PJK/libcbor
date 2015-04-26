@@ -144,10 +144,25 @@ size_t cbor_serialize_array(const cbor_item_t *item, unsigned char *buffer, size
 	if (written == 0)
 		return 0;
 
+	size_t item_written;
 	for (size_t i = 0; i < size; i++) {
-		written += cbor_serialize(*(handle++), buffer + written, buffer_size - written);
+		item_written = cbor_serialize(*(handle++), buffer + written, buffer_size - written);
+		if (item_written == 0)
+			return 0;
+		else
+			written += item_written;
 	}
-	return written;
+
+	if (cbor_array_is_definite(item)) {
+		return written;
+	} else {
+		assert(cbor_array_is_indefinite(item));
+		item_written = cbor_encode_break(buffer + written, buffer_size - written);
+		if (item_written == 0)
+			return 0;
+		else
+			return written + 1;
+	}
 }
 
 size_t cbor_serialize_map(const cbor_item_t *item, unsigned char *buffer, size_t buffer_size)
