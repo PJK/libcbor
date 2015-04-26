@@ -102,12 +102,19 @@ static void test_serialize_definite_bytestring(void **state)
 
 static void test_serialize_indefinite_bytestring(void **state)
 {
-	cbor_item_t *item = cbor_new_definite_bytestring();
+	cbor_item_t *item = cbor_new_indefinite_bytestring();
+
+	cbor_item_t *chunk = cbor_new_definite_bytestring();
 	unsigned char *data = malloc(256);
-	cbor_bytestring_set_handle(item, data, 256);
-	assert_int_equal(256 + 3, cbor_serialize(item, buffer, 512));
-	assert_memory_equal(buffer, ((unsigned char[]) {0x59, 0x01, 0x00}), 3);
-	assert_memory_equal(buffer + 3, data, 256);
+	cbor_bytestring_set_handle(chunk, data, 256);
+
+	cbor_bytestring_add_chunk(item, chunk);
+	assert_int_equal(cbor_bytestring_chunk_count(item), 1);
+
+	assert_int_equal(1 + 3 + 256 + 1, cbor_serialize(item, buffer, 512));
+	assert_memory_equal(buffer, ((unsigned char[]) {0x5F, 0x59, 0x01, 0x00}), 4);
+	assert_memory_equal(buffer + 4, data, 256);
+	assert_memory_equal(buffer + 4 + 256, ((unsigned char[]) {0xFF}), 1);
 	cbor_decref(&item);
 }
 
@@ -122,7 +129,8 @@ int main(void)
 		unit_test(test_serialize_negint16),
 		unit_test(test_serialize_negint32),
 		unit_test(test_serialize_negint64),
-		unit_test(test_serialize_definite_bytestring)
+		unit_test(test_serialize_definite_bytestring),
+		unit_test(test_serialize_indefinite_bytestring)
 	};
 	return run_tests(tests);
 }
