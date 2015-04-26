@@ -25,3 +25,6 @@ matrix:
 
 script:
   - export SOURCE=$(pwd) && ./buildscript.sh
+
+notifications:
+  email: false
