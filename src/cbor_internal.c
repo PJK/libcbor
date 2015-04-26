@@ -101,7 +101,8 @@ void _cbor_builder_append(cbor_item_t *item, struct _cbor_decoder_context *ctx)
 				cbor_map_handle(ctx->stack->top->item)[cbor_map_size(ctx->stack->top->item) - 1].value = item;
 			} else {
 				/* Even record, this is a key */
-				cbor_map_add(ctx->stack->top->item, (struct cbor_pair) {.key = item, .value = NULL});
+				cbor_map_add_key(ctx->stack->top->item, item);
+				cbor_decref(&item);
 			}
 			if (cbor_map_is_definite(ctx->stack->top->item)) {
 				ctx->stack->top->subitems--;
