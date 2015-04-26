@@ -22,6 +22,8 @@ size_t cbor_serialize(const cbor_item_t *item, unsigned char *buffer, size_t buf
 		return cbor_serialize_tag(item, buffer, buffer_size);
 	case CBOR_TYPE_FLOAT_CTRL:
 		return cbor_serialize_float_ctrl(item, buffer, buffer_size);
+	default:
+		return 0;
 	}
 }
 
@@ -37,6 +39,8 @@ size_t cbor_serialize_uint(const cbor_item_t *item, unsigned char *buffer, size_
 		return cbor_encode_uint32(cbor_get_uint32(item), buffer, buffer_size);
 	case CBOR_INT_64:
 		return cbor_encode_uint64(cbor_get_uint64(item), buffer, buffer_size);
+	default:
+		return 0;
 	}
 }
 
@@ -52,6 +56,8 @@ size_t cbor_serialize_negint(const cbor_item_t *item, unsigned char *buffer, siz
 		return cbor_encode_negint32(cbor_get_uint32(item), buffer, buffer_size);
 	case CBOR_INT_64:
 		return cbor_encode_negint64(cbor_get_uint64(item), buffer, buffer_size);
+	default:
+		return 0;
 	}
 }
 

@@ -151,14 +151,18 @@ static void test_serialize_indefinite_string(void **state)
 
 static void test_serialize_definite_array(void **state)
 {
-	cbor_item_t *item = cbor_new_definite_array(3);
+	cbor_item_t *item = cbor_new_definite_array(2);
+	cbor_item_t *one = cbor_build_uint8(1);
+	cbor_item_t *two = cbor_build_uint8(2);
 
-	unsigned char *data = malloc(256);
-	cbor_bytestring_set_handle(item, data, 256);
-	assert_int_equal(256 + 3, cbor_serialize(item, buffer, 512));
-	assert_memory_equal(buffer, ((unsigned char[]) {0x59, 0x01, 0x00}), 3);
-	assert_memory_equal(buffer + 3, data, 256);
+	cbor_array_handle(item)[0] = one;
+	cbor_array_handle(item)[1] = two;
+
+	assert_int_equal(4, cbor_serialize(item, buffer, 512));
+	assert_memory_equal(buffer, ((unsigned char[]) {0x82, 0x01, 0x02}), 3);
 	cbor_decref(&item);
+	cbor_decref(&one);
+	cbor_decref(&two);
 }
 
 int main(void)
@@ -175,7 +179,8 @@ int main(void)
 		unit_test(test_serialize_definite_bytestring),
 		unit_test(test_serialize_indefinite_bytestring),
 		unit_test(test_serialize_definite_string),
-		unit_test(test_serialize_indefinite_string)
+		unit_test(test_serialize_indefinite_string),
+		unit_test(test_serialize_definite_array)
 	};
 	return run_tests(tests);
 }
