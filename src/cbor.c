@@ -57,6 +57,7 @@ void cbor_decref(cbor_item_t ** item)
 		case CBOR_TYPE_MAP:
 		case CBOR_TYPE_TAG:
 			{
+				cbor_decref(&(*item)->metadata.tag_metadata.tagged_item);
 				_CBOR_FREE((*item)->data);
 				break;
 			}

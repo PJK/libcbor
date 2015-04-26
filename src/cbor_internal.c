@@ -120,6 +120,7 @@ void _cbor_builder_append(cbor_item_t * item, struct _cbor_decoder_context * ctx
 			{
 				assert(ctx->stack->top->subitems == 1);
 				cbor_tag_set_item(ctx->stack->top->item, item);
+				cbor_decref(&item); /* Give up on our reference */
 				cbor_item_t *item = ctx->stack->top->item;
 				_cbor_stack_pop(ctx->stack);
 				_cbor_builder_append(item, ctx);
