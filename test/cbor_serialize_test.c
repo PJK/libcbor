@@ -179,6 +179,21 @@ static void test_serialize_indefinite_array(void **state)
 	cbor_decref(&two);
 }
 
+static void test_serialize_definite_map(void **state)
+{
+	cbor_item_t *item = cbor_new_definite_map(2);
+	cbor_item_t *one = cbor_build_uint8(1);
+	cbor_item_t *two = cbor_build_uint8(2);
+
+	cbor_map_add(item, (struct cbor_pair){ .key = one, .value = two });
+	cbor_map_add(item, (struct cbor_pair){ .key = two, .value = one });
+
+	assert_int_equal(5, cbor_serialize(item, buffer, 512));
+	assert_memory_equal(buffer, ((unsigned char[]) {0xA2, 0x01, 0x02, 0x02, 0x01}), 5);
+	cbor_decref(&item);
+}
+
+
 int main(void)
 {
 	const UnitTest tests[] = {
@@ -195,7 +210,8 @@ int main(void)
 		unit_test(test_serialize_definite_string),
 		unit_test(test_serialize_indefinite_string),
 		unit_test(test_serialize_definite_array),
-		unit_test(test_serialize_indefinite_array)
+		unit_test(test_serialize_indefinite_array),
+		unit_test(test_serialize_definite_map)
 	};
 	return run_tests(tests);
 }

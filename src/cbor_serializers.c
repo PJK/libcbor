@@ -168,6 +168,43 @@ size_t cbor_serialize_array(const cbor_item_t *item, unsigned char *buffer, size
 size_t cbor_serialize_map(const cbor_item_t *item, unsigned char *buffer, size_t buffer_size)
 {
 	assert(cbor_isa_map(item));
+	size_t size = cbor_map_size(item),
+		written = 0;
+	struct cbor_pair * handle = cbor_map_handle(item);
+
+	if (cbor_map_is_definite(item)) {
+		written = cbor_encode_map_start(size, buffer, buffer_size);
+	} else {
+		assert(cbor_map_is_indefinite(item));
+		written = cbor_encode_indef_map_start(buffer, buffer_size);
+	}
+	if (written == 0)
+		return 0;
+
+	size_t item_written;
+	for (size_t i = 0; i < size; i++) {
+		item_written = cbor_serialize(handle->key, buffer + written, buffer_size - written);
+		if (item_written == 0)
+			return 0;
+		else
+			written += item_written;
+		item_written = cbor_serialize((handle++)->value, buffer + written, buffer_size - written);
+		if (item_written == 0)
+			return 0;
+		else
+			written += item_written;
+	}
+
+	if (cbor_map_is_definite(item)) {
+		return written;
+	} else {
+		assert(cbor_map_is_indefinite(item));
+		item_written = cbor_encode_break(buffer + written, buffer_size - written);
+		if (item_written == 0)
+			return 0;
+		else
+			return written + 1;
+	}
 }
 
 size_t cbor_serialize_tag(const cbor_item_t *item, unsigned char *buffer, size_t buffer_size)

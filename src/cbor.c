@@ -1287,6 +1287,8 @@ cbor_item_t *cbor_new_indefinite_map()
 cbor_item_t *cbor_map_add(cbor_item_t *item, struct cbor_pair pair)
 {
 	assert(cbor_isa_map(item));
+	cbor_incref(pair.key);
+	cbor_incref(pair.value);
 	struct _cbor_map_metadata *metadata = (struct _cbor_map_metadata *) &item->metadata;
 	struct cbor_pair *data = cbor_map_handle(item);
 	if (cbor_map_is_definite(item)) {
