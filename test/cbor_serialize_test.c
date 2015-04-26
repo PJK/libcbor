@@ -8,6 +8,7 @@
 #include <inttypes.h>
 #include <strings.h>
 #include <string.h>
+#include <math.h>
 
 
 unsigned char buffer[512];
@@ -223,7 +224,17 @@ static void test_serialize_tags(void **state)
 	cbor_decref(&one);
 }
 
-static void test_serialize_floats(void **state)
+static void test_serialize_half(void **state)
+{
+	cbor_item_t *item = cbor_new_float2();
+	cbor_set_float2(item, NAN);
+
+	assert_int_equal(3, cbor_serialize(item, buffer, 512));
+	assert_memory_equal(buffer, ((unsigned char[]) {0xF9, 0xE7, 0x00}), 3);
+	cbor_decref(&item);
+}
+
+static void test_serialize_single(void **state)
 {
 	cbor_item_t *item = cbor_new_float4();
 	cbor_set_float4(item, 100000.0f);
@@ -232,6 +243,17 @@ static void test_serialize_floats(void **state)
 	assert_memory_equal(buffer, ((unsigned char[]) {0xFA, 0x47, 0xC3, 0x50, 0x00}), 5);
 	cbor_decref(&item);
 }
+
+static void test_serialize_double(void **state)
+{
+	cbor_item_t *item = cbor_new_float8();
+	cbor_set_float8(item, -4.1);
+
+	assert_int_equal(9, cbor_serialize(item, buffer, 512));
+	assert_memory_equal(buffer, ((unsigned char[]) {0xFB, 0xC0, 0x10, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66}), 9);
+	cbor_decref(&item);
+}
+
 
 int main(void)
 {
@@ -253,7 +275,9 @@ int main(void)
 		unit_test(test_serialize_definite_map),
 		unit_test(test_serialize_indefinite_map),
 		unit_test(test_serialize_tags),
-		unit_test(test_serialize_floats)
+		unit_test(test_serialize_half),
+		unit_test(test_serialize_single),
+		unit_test(test_serialize_double)
 	};
 	return run_tests(tests);
 }
