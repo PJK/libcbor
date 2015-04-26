@@ -2,80 +2,74 @@
 #include "cbor_internal.h"
 #include <assert.h>
 
-void cbor_incref(cbor_item_t * item)
+void cbor_incref(cbor_item_t *item)
 {
 	item->refcount++;
 }
 
-void cbor_decref(cbor_item_t ** item)
+void cbor_decref(cbor_item_t **item)
 {
 	if (--(*item)->refcount == 0) {
-		switch((*item)->type) {
+		switch ((*item)->type) {
 		case CBOR_TYPE_UINT:
 			/* Fallthrough */
 		case CBOR_TYPE_NEGINT:
 			/* Combined allocation, freeing the item suffices */
-			{
-				break;
-			}
-		case CBOR_TYPE_BYTESTRING:
-			{
-				if (cbor_bytestring_is_definite(*item)) {
-					_CBOR_FREE((*item)->data);
-				} else {
-					/* We need to decref all chunks */
-					cbor_item_t ** handle = cbor_bytestring_chunks_handle(*item);
-					for (size_t i = 0; i < cbor_bytestring_chunk_count(*item); i++)
-						cbor_decref(&handle[i]);
-					_CBOR_FREE(((struct cbor_indefinite_string_data *)(*item)->data)->chunks);
-					_CBOR_FREE((*item)->data);
-				}
-				break;
-			}
-		case CBOR_TYPE_STRING:
-			{
-				if (cbor_string_is_definite(*item)) {
-					_CBOR_FREE((*item)->data);
-				} else {
-					/* We need to decref all chunks */
-					cbor_item_t ** handle = cbor_string_chunks_handle(*item);
-					for (size_t i = 0; i < cbor_string_chunk_count(*item); i++)
-						cbor_decref(&handle[i]);
-					_CBOR_FREE(((struct cbor_indefinite_string_data *)(*item)->data)->chunks);
-					_CBOR_FREE((*item)->data);
-				}
-				break;
-			}
-		case CBOR_TYPE_ARRAY:
-			{
-				/* Get all items and decref them */
-				cbor_item_t ** handle = cbor_array_handle(*item);
-				for (size_t i = 0; i < cbor_array_size(*item); i++)
+		{
+			break;
+		}
+		case CBOR_TYPE_BYTESTRING: {
+			if (cbor_bytestring_is_definite(*item)) {
+				_CBOR_FREE((*item)->data);
+			} else {
+				/* We need to decref all chunks */
+				cbor_item_t **handle = cbor_bytestring_chunks_handle(*item);
+				for (size_t i = 0; i < cbor_bytestring_chunk_count(*item); i++)
 					cbor_decref(&handle[i]);
+				_CBOR_FREE(((struct cbor_indefinite_string_data *) (*item)->data)->chunks);
 				_CBOR_FREE((*item)->data);
-				break;
 			}
-		case CBOR_TYPE_MAP:
-			{
-				struct cbor_pair * handle = cbor_map_handle(*item);
-				for (size_t i = 0; i < cbor_map_size(*item); i++, handle++) {
-					cbor_decref(&handle->key);
-					cbor_decref(&handle->value);
-				}
+			break;
+		}
+		case CBOR_TYPE_STRING: {
+			if (cbor_string_is_definite(*item)) {
 				_CBOR_FREE((*item)->data);
-				break;
-			};
-		case CBOR_TYPE_TAG:
-			{
-				cbor_decref(&(*item)->metadata.tag_metadata.tagged_item);
+			} else {
+				/* We need to decref all chunks */
+				cbor_item_t **handle = cbor_string_chunks_handle(*item);
+				for (size_t i = 0; i < cbor_string_chunk_count(*item); i++)
+					cbor_decref(&handle[i]);
+				_CBOR_FREE(((struct cbor_indefinite_string_data *) (*item)->data)->chunks);
 				_CBOR_FREE((*item)->data);
-				break;
 			}
-		case CBOR_TYPE_FLOAT_CTRL:
-			{
-				/* Floats are fused */
-				break;
+			break;
+		}
+		case CBOR_TYPE_ARRAY: {
+			/* Get all items and decref them */
+			cbor_item_t **handle = cbor_array_handle(*item);
+			for (size_t i = 0; i < cbor_array_size(*item); i++)
+				cbor_decref(&handle[i]);
+			_CBOR_FREE((*item)->data);
+			break;
+		}
+		case CBOR_TYPE_MAP: {
+			struct cbor_pair *handle = cbor_map_handle(*item);
+			for (size_t i = 0; i < cbor_map_size(*item); i++, handle++) {
+				cbor_decref(&handle->key);
+				cbor_decref(&handle->value);
 			}
+			_CBOR_FREE((*item)->data);
+			break;
+		};
+		case CBOR_TYPE_TAG: {
+			cbor_decref(&(*item)->metadata.tag_metadata.tagged_item);
+			_CBOR_FREE((*item)->data);
+			break;
+		}
+		case CBOR_TYPE_FLOAT_CTRL: {
+			/* Floats are fused */
+			break;
+		}
 		}
 		_CBOR_FREE(*item);
 		//TODO
@@ -83,9 +77,9 @@ void cbor_decref(cbor_item_t ** item)
 	}
 }
 
-cbor_item_t * cbor_load(cbor_data source,
-						size_t source_size,
-						struct cbor_load_result * result)
+cbor_item_t *cbor_load(cbor_data source,
+					   size_t source_size,
+					   struct cbor_load_result *result)
 {
 	/* Context stack */
 	static struct cbor_callbacks callbacks = {
@@ -127,11 +121,11 @@ cbor_item_t * cbor_load(cbor_data source,
 		return NULL;
 	}
 	/* Target for callbacks */
-	struct _cbor_decoder_context * context = _CBOR_MALLOC(sizeof(struct _cbor_decoder_context));
+	struct _cbor_decoder_context *context = _CBOR_MALLOC(sizeof(struct _cbor_decoder_context));
 	struct _cbor_stack stack = _cbor_stack_init();
 	context->stack = &stack;
 	struct cbor_decoder_result decode_result;
-	*result = (struct cbor_load_result){ .read = 0, .error = { .code = CBOR_ERR_NONE } };
+	*result = (struct cbor_load_result) {.read = 0, .error = {.code = CBOR_ERR_NONE}};
 
 	do {
 		if (source_size > result->read) { /* Check for overflows */
@@ -147,11 +141,11 @@ cbor_item_t * cbor_load(cbor_data source,
 	} while (stack.size > 0);
 
 	/* Move the result before free */
-	cbor_item_t * result_item = context->root;
+	cbor_item_t *result_item = context->root;
 	_CBOR_FREE(context);
 	return result_item;
 
-error:
+	error:
 	/* Free the stack */
 	while (stack.size > 0) {
 		cbor_decref(&stack.top->item);
@@ -162,7 +156,7 @@ error:
 	return NULL;
 }
 
-bool _cbor_claim_bytes(size_t required, size_t provided, struct cbor_decoder_result * result)
+bool _cbor_claim_bytes(size_t required, size_t provided, struct cbor_decoder_result *result)
 {
 	if (required > (provided - result->read)) {
 		/* We need to keep all the metadata if parsing is to be resumed */
@@ -175,17 +169,18 @@ bool _cbor_claim_bytes(size_t required, size_t provided, struct cbor_decoder_res
 	}
 }
 
-struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_size, const struct cbor_callbacks * callbacks, void * context)
+struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_size,
+											  const struct cbor_callbacks *callbacks, void *context)
 {
 	/* If we have no data, we cannot read even the MTB */
 	if (source_size < 1) {
-		return (struct cbor_decoder_result){ 0, CBOR_DECODER_EBUFFER };
+		return (struct cbor_decoder_result) {0, CBOR_DECODER_EBUFFER};
 	}
 
 	/* If we have a byte, assume it's the MTB */
-	struct cbor_decoder_result result = { 1, CBOR_DECODER_FINISHED };
+	struct cbor_decoder_result result = {1, CBOR_DECODER_FINISHED};
 
-	switch(*source) {
+	switch (*source) {
 	case 0x00: /* Fallthrough */
 	case 0x01: /* Fallthrough */
 	case 0x02: /* Fallthrough */
@@ -211,50 +206,50 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x16: /* Fallthrough */
 	case 0x17:
 		/* Embedded one byte unsigned integer */
-		{
-			callbacks->uint8(context, _cbor_load_uint8(source));
-			return result;
-		}
+	{
+		callbacks->uint8(context, _cbor_load_uint8(source));
+		return result;
+	}
 	case 0x18:
 		/* One byte unsigned integer */
-		{
-			if (_cbor_claim_bytes(1, source_size, &result)) {
-				callbacks->uint8(context, _cbor_load_uint8(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(1, source_size, &result)) {
+			callbacks->uint8(context, _cbor_load_uint8(source + 1));
 		}
+		return result;
+	}
 	case 0x19:
 		/* Two bytes unsigned integer */
-		{
-			if (_cbor_claim_bytes(2, source_size, &result)) {
-				callbacks->uint16(context, _cbor_load_uint16(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(2, source_size, &result)) {
+			callbacks->uint16(context, _cbor_load_uint16(source + 1));
 		}
+		return result;
+	}
 	case 0x1A:
 		/* Four bytes unsigned integer */
-		{
-			if (_cbor_claim_bytes(4, source_size, &result)) {
-				callbacks->uint32(context, _cbor_load_uint32(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(4, source_size, &result)) {
+			callbacks->uint32(context, _cbor_load_uint32(source + 1));
 		}
+		return result;
+	}
 	case 0x1B:
 		/* Eight bytes unsigned integer */
-		{
-			if (_cbor_claim_bytes(8, source_size, &result)) {
-				callbacks->uint64(context, _cbor_load_uint64(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(8, source_size, &result)) {
+			callbacks->uint64(context, _cbor_load_uint64(source + 1));
 		}
+		return result;
+	}
 	case 0x1C: /* Fallthrough */
 	case 0x1D: /* Fallthrough */
 	case 0x1E: /* Fallthrough */
 	case 0x1F:
 		/* Reserved */
-		{
-			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
-		}
+	{
+		return (struct cbor_decoder_result) {0, CBOR_DECODER_ERROR};
+	}
 	case 0x20: /* Fallthrough */
 	case 0x21: /* Fallthrough */
 	case 0x22: /* Fallthrough */
@@ -280,10 +275,10 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x36: /* Fallthrough */
 	case 0x37:
 		/* Embedded one byte negative integer */
-		{
-			callbacks->negint8(context, _cbor_load_uint8(source) - 0x20); /* 0x20 offset */
-			return result;
-		}
+	{
+		callbacks->negint8(context, _cbor_load_uint8(source) - 0x20); /* 0x20 offset */
+		return result;
+	}
 	case 0x38:
 		/* One byte negative integer */
 	{
@@ -321,9 +316,9 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x3E: /* Fallthrough */
 	case 0x3F:
 		/* Reserved */
-		{
-			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
-		}
+	{
+		return (struct cbor_decoder_result) {0, CBOR_DECODER_ERROR};
+	}
 	case 0x40: /* Fallthrough */
 	case 0x41: /* Fallthrough */
 	case 0x42: /* Fallthrough */
@@ -349,71 +344,71 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x56: /* Fallthrough */
 	case 0x57:
 		/* Embedded length byte string */
-		{
-			size_t length = (size_t)_cbor_load_uint8(source) - 0x40; /* 0x40 offset */
-			if (_cbor_claim_bytes(length, source_size, &result)) {
-				callbacks->byte_string(context, source + 1, length);
-			}
-			return result;
+	{
+		size_t length = (size_t) _cbor_load_uint8(source) - 0x40; /* 0x40 offset */
+		if (_cbor_claim_bytes(length, source_size, &result)) {
+			callbacks->byte_string(context, source + 1, length);
 		}
+		return result;
+	}
 	case 0x58:
 		/* One byte length byte string */
 		// TODO template this?
-		{
-			if (_cbor_claim_bytes(1, source_size, &result)) {
-				size_t length = (size_t) _cbor_load_uint8(source + 1);
-				if (_cbor_claim_bytes(length, source_size, &result)) {
-					callbacks->byte_string(context, source + 1 + 1, length);
-				}
+	{
+		if (_cbor_claim_bytes(1, source_size, &result)) {
+			size_t length = (size_t) _cbor_load_uint8(source + 1);
+			if (_cbor_claim_bytes(length, source_size, &result)) {
+				callbacks->byte_string(context, source + 1 + 1, length);
 			}
-			return result;
 		}
+		return result;
+	}
 	case 0x59:
 		/* Two bytes length byte string */
-		{
-			if (_cbor_claim_bytes(2, source_size, &result)) {
-				size_t length = (size_t) _cbor_load_uint16(source + 1);
-				if (_cbor_claim_bytes(length, source_size, &result)) {
-					callbacks->byte_string(context, source + 1 + 2, length);
-				}
+	{
+		if (_cbor_claim_bytes(2, source_size, &result)) {
+			size_t length = (size_t) _cbor_load_uint16(source + 1);
+			if (_cbor_claim_bytes(length, source_size, &result)) {
+				callbacks->byte_string(context, source + 1 + 2, length);
 			}
-			return result;
 		}
+		return result;
+	}
 	case 0x5A:
 		/* Four bytes length byte string */
-		{
-			if (_cbor_claim_bytes(4, source_size, &result)) {
-				size_t length = (size_t) _cbor_load_uint32(source + 1);
-				if (_cbor_claim_bytes(length, source_size, &result)) {
-					callbacks->byte_string(context, source + 1 + 4, length);
-				}
+	{
+		if (_cbor_claim_bytes(4, source_size, &result)) {
+			size_t length = (size_t) _cbor_load_uint32(source + 1);
+			if (_cbor_claim_bytes(length, source_size, &result)) {
+				callbacks->byte_string(context, source + 1 + 4, length);
 			}
-			return result;
 		}
+		return result;
+	}
 	case 0x5B:
 		/* Eight bytes length byte string */
-		{
-			if (_cbor_claim_bytes(8, source_size, &result)) {
-				size_t length = (size_t) _cbor_load_uint64(source + 1);
-				if (_cbor_claim_bytes(length, source_size, &result)) {
-					callbacks->byte_string(context, source + 1 + 8, length);
-				}
+	{
+		if (_cbor_claim_bytes(8, source_size, &result)) {
+			size_t length = (size_t) _cbor_load_uint64(source + 1);
+			if (_cbor_claim_bytes(length, source_size, &result)) {
+				callbacks->byte_string(context, source + 1 + 8, length);
 			}
-			return result;
 		}
+		return result;
+	}
 	case 0x5C: /* Fallthrough */
 	case 0x5D: /* Fallthrough */
 	case 0x5E:
 		/* Reserved */
-		{
-			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
-		}
+	{
+		return (struct cbor_decoder_result) {0, CBOR_DECODER_ERROR};
+	}
 	case 0x5F:
 		/* Indefinite byte string */
-		{
-			callbacks->byte_string_start(context);
-			return result;
-		}
+	{
+		callbacks->byte_string_start(context);
+		return result;
+	}
 	case 0x60: /* Fallthrough */
 	case 0x61: /* Fallthrough */
 	case 0x62: /* Fallthrough */
@@ -439,71 +434,71 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x76: /* Fallthrough */
 	case 0x77:
 		/* Embedded one byte length string */
-		{
-			size_t length = (size_t)_cbor_load_uint8(source) - 0x60; /* 0x60 offset */
-			if (_cbor_claim_bytes(length, source_size, &result)) {
-				callbacks->string(context, source + 1, length);
-			}
-			return result;
+	{
+		size_t length = (size_t) _cbor_load_uint8(source) - 0x60; /* 0x60 offset */
+		if (_cbor_claim_bytes(length, source_size, &result)) {
+			callbacks->string(context, source + 1, length);
 		}
+		return result;
+	}
 	case 0x78:
 		/* One byte length string */
 		// TODO template this?
-		{
-			if (_cbor_claim_bytes(1, source_size, &result)) {
-				size_t length = (size_t) _cbor_load_uint8(source + 1);
-				if (_cbor_claim_bytes(length, source_size, &result)) {
-					callbacks->string(context, source + 1 + 1, length);
-				}
+	{
+		if (_cbor_claim_bytes(1, source_size, &result)) {
+			size_t length = (size_t) _cbor_load_uint8(source + 1);
+			if (_cbor_claim_bytes(length, source_size, &result)) {
+				callbacks->string(context, source + 1 + 1, length);
 			}
-			return result;
 		}
+		return result;
+	}
 	case 0x79:
 		/* Two bytes length string */
-		{
-			if (_cbor_claim_bytes(2, source_size, &result)) {
-				size_t length = (size_t) _cbor_load_uint16(source + 1);
-				if (_cbor_claim_bytes(length, source_size, &result)) {
-					callbacks->string(context, source + 1 + 2, length);
-				}
+	{
+		if (_cbor_claim_bytes(2, source_size, &result)) {
+			size_t length = (size_t) _cbor_load_uint16(source + 1);
+			if (_cbor_claim_bytes(length, source_size, &result)) {
+				callbacks->string(context, source + 1 + 2, length);
 			}
-			return result;
 		}
+		return result;
+	}
 	case 0x7A:
 		/* Four bytes length string */
-		{
-			if (_cbor_claim_bytes(4, source_size, &result)) {
-				size_t length = (size_t) _cbor_load_uint32(source + 1);
-				if (_cbor_claim_bytes(length, source_size, &result)) {
-					callbacks->string(context, source + 1 + 4, length);
-				}
+	{
+		if (_cbor_claim_bytes(4, source_size, &result)) {
+			size_t length = (size_t) _cbor_load_uint32(source + 1);
+			if (_cbor_claim_bytes(length, source_size, &result)) {
+				callbacks->string(context, source + 1 + 4, length);
 			}
-			return result;
 		}
+		return result;
+	}
 	case 0x7B:
 		/* Eight bytes length string */
-		{
-			if (_cbor_claim_bytes(8, source_size, &result)) {
-				size_t length = (size_t) _cbor_load_uint64(source + 1);
-				if (_cbor_claim_bytes(length, source_size, &result)) {
-					callbacks->string(context, source + 1 + 8, length);
-				}
+	{
+		if (_cbor_claim_bytes(8, source_size, &result)) {
+			size_t length = (size_t) _cbor_load_uint64(source + 1);
+			if (_cbor_claim_bytes(length, source_size, &result)) {
+				callbacks->string(context, source + 1 + 8, length);
 			}
-			return result;
 		}
+		return result;
+	}
 	case 0x7C: /* Fallthrough */
 	case 0x7D: /* Fallthrough */
 	case 0x7E:
 		/* Reserved */
-		{
-			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
-		}
+	{
+		return (struct cbor_decoder_result) {0, CBOR_DECODER_ERROR};
+	}
 	case 0x7F:
 		/* Indefinite length string */
-		{
-			callbacks->string_start(context);
-			return result;
-		}
+	{
+		callbacks->string_start(context);
+		return result;
+	}
 	case 0x80: /* Fallthrough */
 	case 0x81: /* Fallthrough */
 	case 0x82: /* Fallthrough */
@@ -529,55 +524,55 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0x96: /* Fallthrough */
 	case 0x97:
 		/* Embedded one byte length array */
-		{
-			callbacks->array_start(context, (size_t)_cbor_load_uint8(source) - 0x80); /* 0x40 offset */
-			return result;
-		}
+	{
+		callbacks->array_start(context, (size_t) _cbor_load_uint8(source) - 0x80); /* 0x40 offset */
+		return result;
+	}
 	case 0x98:
 		/* One byte length array */
-		{
-			if (_cbor_claim_bytes(1, source_size, &result)) {
-				callbacks->array_start(context, (size_t)_cbor_load_uint8(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(1, source_size, &result)) {
+			callbacks->array_start(context, (size_t) _cbor_load_uint8(source + 1));
 		}
+		return result;
+	}
 	case 0x99:
 		/* Two bytes length string */
-		{
-			if (_cbor_claim_bytes(2, source_size, &result)) {
-				callbacks->array_start(context, (size_t)_cbor_load_uint16(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(2, source_size, &result)) {
+			callbacks->array_start(context, (size_t) _cbor_load_uint16(source + 1));
 		}
+		return result;
+	}
 	case 0x9A:
 		/* Four bytes length string */
-		{
-			if (_cbor_claim_bytes(4, source_size, &result)) {
-				callbacks->array_start(context, (size_t)_cbor_load_uint32(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(4, source_size, &result)) {
+			callbacks->array_start(context, (size_t) _cbor_load_uint32(source + 1));
 		}
+		return result;
+	}
 	case 0x9B:
 		/* Eight bytes length string */
-		{
-			if (_cbor_claim_bytes(8, source_size, &result)) {
-				callbacks->array_start(context, (size_t)_cbor_load_uint64(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(8, source_size, &result)) {
+			callbacks->array_start(context, (size_t) _cbor_load_uint64(source + 1));
 		}
+		return result;
+	}
 	case 0x9C: /* Fallthrough */
 	case 0x9D: /* Fallthrough */
 	case 0x9E:
 		/* Reserved */
-		{
-			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
-		}
+	{
+		return (struct cbor_decoder_result) {0, CBOR_DECODER_ERROR};
+	}
 	case 0x9F:
 		/* Indefinite length array */
-		{
-			callbacks->indef_array_start(context);
-			return result;
-		}
+	{
+		callbacks->indef_array_start(context);
+		return result;
+	}
 	case 0xA0: /* Fallthrough */
 	case 0xA1: /* Fallthrough */
 	case 0xA2: /* Fallthrough */
@@ -603,55 +598,55 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0xB6: /* Fallthrough */
 	case 0xB7:
 		/* Embedded one byte length map */
-		{
-			callbacks->map_start(context, (size_t)_cbor_load_uint8(source) - 0xA0); /* 0xA0 offset */
-			return result;
-		}
+	{
+		callbacks->map_start(context, (size_t) _cbor_load_uint8(source) - 0xA0); /* 0xA0 offset */
+		return result;
+	}
 	case 0xB8:
 		/* One byte length map */
-		{
-			if (_cbor_claim_bytes(1, source_size, &result)) {
-				callbacks->map_start(context, (size_t)_cbor_load_uint8(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(1, source_size, &result)) {
+			callbacks->map_start(context, (size_t) _cbor_load_uint8(source + 1));
 		}
+		return result;
+	}
 	case 0xB9:
 		/* Two bytes length map */
-		{
-			if (_cbor_claim_bytes(2, source_size, &result)) {
-				callbacks->map_start(context, (size_t)_cbor_load_uint16(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(2, source_size, &result)) {
+			callbacks->map_start(context, (size_t) _cbor_load_uint16(source + 1));
 		}
+		return result;
+	}
 	case 0xBA:
 		/* Four bytes length map */
-		{
-			if (_cbor_claim_bytes(4, source_size, &result)) {
-				callbacks->map_start(context, (size_t)_cbor_load_uint32(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(4, source_size, &result)) {
+			callbacks->map_start(context, (size_t) _cbor_load_uint32(source + 1));
 		}
+		return result;
+	}
 	case 0xBB:
 		/* Eight bytes length map */
-		{
-			if (_cbor_claim_bytes(8, source_size, &result)) {
-				callbacks->map_start(context, (size_t)_cbor_load_uint64(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(8, source_size, &result)) {
+			callbacks->map_start(context, (size_t) _cbor_load_uint64(source + 1));
 		}
+		return result;
+	}
 	case 0xBC: /* Fallthrough */
 	case 0xBD: /* Fallthrough */
 	case 0xBE:
 		/* Reserved */
-		{
-			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
-		}
+	{
+		return (struct cbor_decoder_result) {0, CBOR_DECODER_ERROR};
+	}
 	case 0xBF:
 		/* Indefinite length map */
-		{
-			callbacks->indef_map_start(context);
-			return result;
-		}
+	{
+		callbacks->indef_map_start(context);
+		return result;
+	}
 	case 0xC0:
 		/* Text date/time - RFC 3339 tag, fallthrough */
 	case 0xC1:
@@ -664,10 +659,10 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 		/* Fraction, fallthrough */
 	case 0xC5:
 		/* Big float */
-		{
-			callbacks->tag(context, _cbor_load_uint8(source) - 0xC0); /* 0xC0 offset */
-			return result;
-		}
+	{
+		callbacks->tag(context, _cbor_load_uint8(source) - 0xC0); /* 0xC0 offset */
+		return result;
+	}
 	case 0xC6: /* Fallthrough */
 	case 0xC7: /* Fallthrough */
 	case 0xC8: /* Fallthrough */
@@ -683,51 +678,51 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0xD2: /* Fallthrough */
 	case 0xD3: /* Fallthrough */
 	case 0xD4: /* Unassigned tag value */
-		{
-			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
-		}
+	{
+		return (struct cbor_decoder_result) {0, CBOR_DECODER_ERROR};
+	}
 	case 0xD5: /* Expected b64url conversion tag - fallthrough */
 	case 0xD6: /* Expected b64 conversion tag - fallthrough */
 	case 0xD7: /* Expected b16 conversion tag */
-		{
-			callbacks->tag(context, _cbor_load_uint8(source) - 0xC0); /* 0xC0 offset */
-			return result;
-		}
+	{
+		callbacks->tag(context, _cbor_load_uint8(source) - 0xC0); /* 0xC0 offset */
+		return result;
+	}
 	case 0xD8: /* 1B tag */
-		{
-			if (_cbor_claim_bytes(1, source_size, &result)) {
-				callbacks->tag(context, _cbor_load_uint8(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(1, source_size, &result)) {
+			callbacks->tag(context, _cbor_load_uint8(source + 1));
 		}
+		return result;
+	}
 	case 0xD9: /* 2B tag */
-		{
-			if (_cbor_claim_bytes(2, source_size, &result)) {
-				callbacks->tag(context, _cbor_load_uint16(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(2, source_size, &result)) {
+			callbacks->tag(context, _cbor_load_uint16(source + 1));
 		}
+		return result;
+	}
 	case 0xDA: /* 4B tag */
-		{
-			if (_cbor_claim_bytes(4, source_size, &result)) {
-				callbacks->tag(context, _cbor_load_uint32(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(4, source_size, &result)) {
+			callbacks->tag(context, _cbor_load_uint32(source + 1));
 		}
+		return result;
+	}
 	case 0xDB: /* 8B tag */
-		{
-			if (_cbor_claim_bytes(8, source_size, &result)) {
-				callbacks->tag(context, _cbor_load_uint64(source + 1));
-			}
-			return result;
+	{
+		if (_cbor_claim_bytes(8, source_size, &result)) {
+			callbacks->tag(context, _cbor_load_uint64(source + 1));
 		}
+		return result;
+	}
 	case 0xDC: /* Fallthrough */
 	case 0xDD: /* Fallthrough */
 	case 0xDE: /* Fallthrough */
 	case 0xDF: /* Reserved */
-		{
-			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
-		}
+	{
+		return (struct cbor_decoder_result) {0, CBOR_DECODER_ERROR};
+	}
 	case 0xE0: /* Fallthrough */
 	case 0xE1: /* Fallthrough */
 	case 0xE2: /* Fallthrough */
@@ -748,326 +743,326 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0xF1: /* Fallthrough */
 	case 0xF2: /* Fallthrough */
 	case 0xF3: /* Simple value - unassigned */
-		{
-			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
-		}
+	{
+		return (struct cbor_decoder_result) {0, CBOR_DECODER_ERROR};
+	}
 	case 0xF4:
 		/* False */
-		{
-			callbacks->boolean(context, false);
-			return result;
-		}
+	{
+		callbacks->boolean(context, false);
+		return result;
+	}
 	case 0xF5:
 		/* True */
-		{
-			callbacks->boolean(context, true);
-			return result;
-		}
+	{
+		callbacks->boolean(context, true);
+		return result;
+	}
 	case 0xF6:
 		/* Null */
-		{
-			callbacks->null(context);
-			return result;
-		}
+	{
+		callbacks->null(context);
+		return result;
+	}
 	case 0xF7:
 		/* Undefined */
-		{
-			callbacks->undefined(context);
-			return result;
-		}
+	{
+		callbacks->undefined(context);
+		return result;
+	}
 	case 0xF8:
 		/* 1B simple value, unassigned */
-		{
-			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
-		}
+	{
+		return (struct cbor_decoder_result) {0, CBOR_DECODER_ERROR};
+	}
 	case 0xF9:
 		/* 2B float */
-		{
-			if (_cbor_claim_bytes(2, source_size, &result)) {
-				callbacks->float2(context, _cbor_load_half(source + 1));
-			}
-			return  result;
+	{
+		if (_cbor_claim_bytes(2, source_size, &result)) {
+			callbacks->float2(context, _cbor_load_half(source + 1));
 		}
+		return result;
+	}
 	case 0xFA:
 		/* 4B float */
-		{
-			if (_cbor_claim_bytes(4, source_size, &result)) {
-				callbacks->float4(context, _cbor_load_float(source + 1));
-			}
-			return  result;
+	{
+		if (_cbor_claim_bytes(4, source_size, &result)) {
+			callbacks->float4(context, _cbor_load_float(source + 1));
 		}
+		return result;
+	}
 	case 0xFB:
 		/* 8B float */
-		{
-			if (_cbor_claim_bytes(8, source_size, &result)) {
-				callbacks->float8(context, _cbor_load_double(source + 1));
-			}
-			return  result;
+	{
+		if (_cbor_claim_bytes(8, source_size, &result)) {
+			callbacks->float8(context, _cbor_load_double(source + 1));
 		}
+		return result;
+	}
 	case 0xFC: /* Fallthrough */
 	case 0xFD: /* Fallthrough */
 	case 0xFE:
 		/* Reserved */
-		{
-			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
-		}
+	{
+		return (struct cbor_decoder_result) {0, CBOR_DECODER_ERROR};
+	}
 	case 0xFF:
 		/* Break */
-		{
-			callbacks->indef_break(context);
-			return result;
-		}
+	{
+		callbacks->indef_break(context);
+		return result;
+	}
 	default: /* Never happens - this shuts up the compiler */
-		{
-			return result;
-		}
+	{
+		return result;
+	}
 	}
 }
 
 
-inline cbor_type cbor_typeof(const cbor_item_t * item)
+inline cbor_type cbor_typeof(const cbor_item_t *item)
 {
 	return item->type;
 }
 
 
-cbor_int_width cbor_int_get_width(const cbor_item_t * item)
+cbor_int_width cbor_int_get_width(const cbor_item_t *item)
 {
 	assert(cbor_is_int(item));
 	return item->metadata.int_metadata.width;
 }
 
-uint8_t cbor_get_uint8(const cbor_item_t * item)
+uint8_t cbor_get_uint8(const cbor_item_t *item)
 {
-	return *(uint8_t *)item->data;
+	return *(uint8_t *) item->data;
 }
 
-uint16_t cbor_get_uint16(const cbor_item_t * item)
+uint16_t cbor_get_uint16(const cbor_item_t *item)
 {
-	return *(uint16_t *)item->data;
+	return *(uint16_t *) item->data;
 }
 
-uint32_t cbor_get_uint32(const cbor_item_t * item)
+uint32_t cbor_get_uint32(const cbor_item_t *item)
 {
-	return *(uint32_t *)item->data;
+	return *(uint32_t *) item->data;
 }
 
-uint64_t cbor_get_uint64(const cbor_item_t * item)
+uint64_t cbor_get_uint64(const cbor_item_t *item)
 {
-	return *(uint64_t *)item->data;
+	return *(uint64_t *) item->data;
 }
 
-void cbor_set_uint8(cbor_item_t * item, uint8_t value)
+void cbor_set_uint8(cbor_item_t *item, uint8_t value)
 {
 	assert(cbor_is_int(item));
 	assert(cbor_int_get_width(item) == CBOR_INT_8);
-	*(uint8_t *)item->data = value;
+	*(uint8_t *) item->data = value;
 }
 
-void cbor_set_uint16(cbor_item_t * item, uint16_t value)
+void cbor_set_uint16(cbor_item_t *item, uint16_t value)
 {
 	assert(cbor_is_int(item));
 	assert(cbor_int_get_width(item) == CBOR_INT_16);
-	*(uint16_t *)item->data = value;
+	*(uint16_t *) item->data = value;
 }
 
 
-void cbor_set_uint32(cbor_item_t * item, uint32_t value)
+void cbor_set_uint32(cbor_item_t *item, uint32_t value)
 {
 	assert(cbor_is_int(item));
 	assert(cbor_int_get_width(item) == CBOR_INT_32);
-	*(uint32_t *)item->data = value;
+	*(uint32_t *) item->data = value;
 }
 
-void cbor_set_uint64(cbor_item_t * item, uint64_t value)
+void cbor_set_uint64(cbor_item_t *item, uint64_t value)
 {
 	assert(cbor_is_int(item));
 	assert(cbor_int_get_width(item) == CBOR_INT_64);
-	*(uint64_t *)item->data = value;
+	*(uint64_t *) item->data = value;
 }
 
-void cbor_mark_uint(cbor_item_t * item)
+void cbor_mark_uint(cbor_item_t *item)
 {
 	assert(cbor_is_int(item));
 	item->type = CBOR_TYPE_UINT;
 }
 
-void cbor_mark_negint(cbor_item_t * item)
+void cbor_mark_negint(cbor_item_t *item)
 {
 	assert(cbor_is_int(item));
 	item->type = CBOR_TYPE_NEGINT;
 }
 
-cbor_item_t * cbor_new_int8()
+cbor_item_t *cbor_new_int8()
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t) + 1);
-	*item = (cbor_item_t){
-		.data = (unsigned char *)item + sizeof(cbor_item_t),
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 1);
+	*item = (cbor_item_t) {
+		.data = (unsigned char *) item + sizeof(cbor_item_t),
 		.refcount = 1,
-		.metadata = { .int_metadata = { .width = CBOR_INT_8 } },
+		.metadata = {.int_metadata = {.width = CBOR_INT_8}},
 		.type = CBOR_TYPE_UINT
 	};
 	return item;
 }
 
-cbor_item_t * cbor_new_int16()
+cbor_item_t *cbor_new_int16()
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t) + 2);
-	*item = (cbor_item_t){
-		.data = (unsigned char *)item + sizeof(cbor_item_t),
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 2);
+	*item = (cbor_item_t) {
+		.data = (unsigned char *) item + sizeof(cbor_item_t),
 		.refcount = 1,
-		.metadata = { .int_metadata = { .width = CBOR_INT_16 } },
+		.metadata = {.int_metadata = {.width = CBOR_INT_16}},
 		.type = CBOR_TYPE_UINT
 	};
 	return item;
 }
 
-cbor_item_t * cbor_new_int32()
+cbor_item_t *cbor_new_int32()
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
-	*item = (cbor_item_t){
-		.data = (unsigned char *)item + sizeof(cbor_item_t),
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
+	*item = (cbor_item_t) {
+		.data = (unsigned char *) item + sizeof(cbor_item_t),
 		.refcount = 1,
-		.metadata = { .int_metadata = { .width = CBOR_INT_32 } },
+		.metadata = {.int_metadata = {.width = CBOR_INT_32}},
 		.type = CBOR_TYPE_UINT
 	};
 	return item;
 }
 
-cbor_item_t * cbor_new_int64()
+cbor_item_t *cbor_new_int64()
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t) + 8);
-	*item = (cbor_item_t){
-		.data = (unsigned char *)item + sizeof(cbor_item_t),
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 8);
+	*item = (cbor_item_t) {
+		.data = (unsigned char *) item + sizeof(cbor_item_t),
 		.refcount = 1,
-		.metadata = { .int_metadata = { .width = CBOR_INT_64 } },
+		.metadata = {.int_metadata = {.width = CBOR_INT_64}},
 		.type = CBOR_TYPE_UINT
 	};
 	return item;
 }
 
-cbor_item_t * cbor_build_uint8(uint8_t value)
+cbor_item_t *cbor_build_uint8(uint8_t value)
 {
-	cbor_item_t * item = cbor_new_int8();
+	cbor_item_t *item = cbor_new_int8();
 	cbor_set_uint8(item, value);
 	cbor_mark_uint(item);
 	return item;
 }
 
-cbor_item_t * cbor_build_uint16(uint16_t value)
+cbor_item_t *cbor_build_uint16(uint16_t value)
 {
-	cbor_item_t * item = cbor_new_int16();
+	cbor_item_t *item = cbor_new_int16();
 	cbor_set_uint16(item, value);
 	cbor_mark_uint(item);
 	return item;
 }
 
-cbor_item_t * cbor_build_uint32(uint32_t value)
+cbor_item_t *cbor_build_uint32(uint32_t value)
 {
-	cbor_item_t * item = cbor_new_int32();
+	cbor_item_t *item = cbor_new_int32();
 	cbor_set_uint32(item, value);
 	cbor_mark_uint(item);
 	return item;
 }
 
-cbor_item_t * cbor_build_uint64(uint64_t value)
+cbor_item_t *cbor_build_uint64(uint64_t value)
 {
-	cbor_item_t * item = cbor_new_int64();
+	cbor_item_t *item = cbor_new_int64();
 	cbor_set_uint64(item, value);
 	cbor_mark_uint(item);
 	return item;
 }
 
-cbor_item_t * cbor_new_ctrl()
+cbor_item_t *cbor_new_ctrl()
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
-	*item = (cbor_item_t){
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	*item = (cbor_item_t) {
 		.type = CBOR_TYPE_FLOAT_CTRL,
 		.data = NULL,
 		.refcount = 1,
-		.metadata = { .float_ctrl_metadata = { .width = CBOR_FLOAT_0, .type = 0 } }
+		.metadata = {.float_ctrl_metadata = {.width = CBOR_FLOAT_0, .type = 0}}
 	};
 	return item;
 }
 
-cbor_item_t * cbor_new_float2()
+cbor_item_t *cbor_new_float2()
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
-	*item = (cbor_item_t){
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
+	*item = (cbor_item_t) {
 		.type = CBOR_TYPE_FLOAT_CTRL,
-		.data = (unsigned char *)item + sizeof(cbor_item_t),
+		.data = (unsigned char *) item + sizeof(cbor_item_t),
 		.refcount = 1,
-		.metadata = { .float_ctrl_metadata = { .width = CBOR_FLOAT_16 } }
+		.metadata = {.float_ctrl_metadata = {.width = CBOR_FLOAT_16}}
 	};
 	return item;
 }
 
-cbor_item_t * cbor_new_float4()
+cbor_item_t *cbor_new_float4()
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
-	*item = (cbor_item_t){
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
+	*item = (cbor_item_t) {
 		.type = CBOR_TYPE_FLOAT_CTRL,
-		.data = (unsigned char *)item + sizeof(cbor_item_t),
+		.data = (unsigned char *) item + sizeof(cbor_item_t),
 		.refcount = 1,
-		.metadata = { .float_ctrl_metadata = { .width = CBOR_FLOAT_32 } }
+		.metadata = {.float_ctrl_metadata = {.width = CBOR_FLOAT_32}}
 	};
 	return item;
 }
 
-cbor_item_t * cbor_new_float8()
+cbor_item_t *cbor_new_float8()
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t) + 8);
-	*item = (cbor_item_t){
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 8);
+	*item = (cbor_item_t) {
 		.type = CBOR_TYPE_FLOAT_CTRL,
-		.data = (unsigned char *)item + sizeof(cbor_item_t),
+		.data = (unsigned char *) item + sizeof(cbor_item_t),
 		.refcount = 1,
-		.metadata = { .float_ctrl_metadata = { .width = CBOR_FLOAT_64 } }
+		.metadata = {.float_ctrl_metadata = {.width = CBOR_FLOAT_64}}
 	};
 	return item;
 }
 
-cbor_item_t * cbor_new_null()
+cbor_item_t *cbor_new_null()
 {
-	cbor_item_t * item = cbor_new_ctrl();
+	cbor_item_t *item = cbor_new_ctrl();
 	cbor_set_ctrl(item, CBOR_CTRL_NULL);
 	return item;
 }
 
-cbor_item_t * cbor_new_undef()
+cbor_item_t *cbor_new_undef()
 {
-	cbor_item_t * item = cbor_new_ctrl();
+	cbor_item_t *item = cbor_new_ctrl();
 	cbor_set_ctrl(item, CBOR_CTRL_UNDEF);
 	return item;
 }
 
-cbor_item_t * cbor_new_bool(bool value)
+cbor_item_t *cbor_new_bool(bool value)
 {
-	cbor_item_t * item = cbor_new_ctrl();
+	cbor_item_t *item = cbor_new_ctrl();
 	cbor_set_ctrl(item, value ? CBOR_CTRL_TRUE : CBOR_CTRL_FALSE);
 	return item;
 }
 
-cbor_item_t * cbor_new_definite_string()
+cbor_item_t *cbor_new_definite_string()
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
-	*item = (cbor_item_t){
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_STRING,
-		.metadata = { .string_metadata = { _CBOR_METADATA_DEFINITE, 0 } }
+		.metadata = {.string_metadata = {_CBOR_METADATA_DEFINITE, 0}}
 	};
 	return item;
 }
 
-cbor_item_t * cbor_new_indefinite_string()
+cbor_item_t *cbor_new_indefinite_string()
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
-	*item = (cbor_item_t){
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_STRING,
-		.metadata = { .string_metadata = { .type = _CBOR_METADATA_INDEFINITE, .length = 0 } },
+		.metadata = {.string_metadata = {.type = _CBOR_METADATA_INDEFINITE, .length = 0}},
 		.data = _CBOR_MALLOC(sizeof(struct cbor_indefinite_string_data))
 	};
-	*((struct cbor_indefinite_string_data *)item->data) = (struct cbor_indefinite_string_data){
+	*((struct cbor_indefinite_string_data *) item->data) = (struct cbor_indefinite_string_data) {
 		.chunk_count = 0,
 		.chunk_capacity = 0,
 		.chunks = NULL,
@@ -1076,7 +1071,7 @@ cbor_item_t * cbor_new_indefinite_string()
 }
 
 
-void cbor_string_set_handle(cbor_item_t * item, unsigned char * data, size_t length)
+void cbor_string_set_handle(cbor_item_t *item, unsigned char *data, size_t length)
 {
 	assert(cbor_isa_string(item));
 	assert(cbor_string_is_definite(item));
@@ -1084,31 +1079,31 @@ void cbor_string_set_handle(cbor_item_t * item, unsigned char * data, size_t len
 	item->metadata.string_metadata.length = length;
 }
 
-cbor_item_t * * cbor_string_chunks_handle(const cbor_item_t * item)
+cbor_item_t **cbor_string_chunks_handle(const cbor_item_t *item)
 {
 	assert(cbor_isa_string(item));
 	assert(cbor_string_is_indefinite(item));
-	return ((struct cbor_indefinite_string_data *)item->data)->chunks;
+	return ((struct cbor_indefinite_string_data *) item->data)->chunks;
 }
 
-size_t cbor_string_chunk_count(const cbor_item_t * item)
+size_t cbor_string_chunk_count(const cbor_item_t *item)
 {
 	assert(cbor_isa_string(item));
 	assert(cbor_string_is_indefinite(item));
-	return ((struct cbor_indefinite_string_data *)item->data)->chunk_count;
+	return ((struct cbor_indefinite_string_data *) item->data)->chunk_count;
 
 }
 
-cbor_item_t * cbor_string_add_chunk(cbor_item_t * item, cbor_item_t * chunk)
+cbor_item_t *cbor_string_add_chunk(cbor_item_t *item, cbor_item_t *chunk)
 {
 	assert(cbor_isa_string(item));
 	assert(cbor_string_is_indefinite(item));
-	struct cbor_indefinite_string_data * data = (struct cbor_indefinite_string_data *)item->data;
+	struct cbor_indefinite_string_data *data = (struct cbor_indefinite_string_data *) item->data;
 	// TODO optimize this with exponential growth
 	if (data->chunk_count == data->chunk_capacity) {
 		/* We need more space */
 		data->chunk_capacity = data->chunk_capacity == 0 ? 1 : data->chunk_capacity * 2;
-		cbor_item_t ** new_chunks_data =
+		cbor_item_t **new_chunks_data =
 			_CBOR_REALLOC(data->chunks, data->chunk_capacity * sizeof(cbor_item_t *));
 		// TODO handle failures
 		data->chunks = new_chunks_data;
@@ -1117,55 +1112,57 @@ cbor_item_t * cbor_string_add_chunk(cbor_item_t * item, cbor_item_t * chunk)
 	return item;
 }
 
-size_t cbor_string_length(const cbor_item_t * item) {
+size_t cbor_string_length(const cbor_item_t *item)
+{
 	assert(cbor_isa_string(item));
 	return item->metadata.string_metadata.length;
 }
 
-unsigned char * cbor_string_handle(const cbor_item_t * item) {
+unsigned char *cbor_string_handle(const cbor_item_t *item)
+{
 	assert(cbor_isa_string(item));
 	return item->data;
 }
 
-size_t cbor_string_codepoint_count(const cbor_item_t * item)
+size_t cbor_string_codepoint_count(const cbor_item_t *item)
 {
 	assert(cbor_isa_string(item));
 	return item->metadata.string_metadata.codepoint_count;
 }
 
-bool cbor_string_is_definite(const cbor_item_t * item)
+bool cbor_string_is_definite(const cbor_item_t *item)
 {
 	assert(cbor_isa_string(item));
 	return item->metadata.string_metadata.type == _CBOR_METADATA_DEFINITE;
 }
 
-bool cbor_string_is_indefinite(const cbor_item_t * item)
+bool cbor_string_is_indefinite(const cbor_item_t *item)
 {
 	return !cbor_string_is_definite(item);
 }
 
 
-cbor_item_t * cbor_new_definite_bytestring()
+cbor_item_t *cbor_new_definite_bytestring()
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
-	*item = (cbor_item_t){
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_BYTESTRING,
-		.metadata = { .bytestring_metadata = { _CBOR_METADATA_DEFINITE, 0 } }
+		.metadata = {.bytestring_metadata = {_CBOR_METADATA_DEFINITE, 0}}
 	};
 	return item;
 }
 
-cbor_item_t * cbor_new_indefinite_bytestring()
+cbor_item_t *cbor_new_indefinite_bytestring()
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
-	*item = (cbor_item_t){
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_BYTESTRING,
-		.metadata = { .bytestring_metadata = { .type = _CBOR_METADATA_INDEFINITE, .length = 0 } },
+		.metadata = {.bytestring_metadata = {.type = _CBOR_METADATA_INDEFINITE, .length = 0}},
 		.data = _CBOR_MALLOC(sizeof(struct cbor_indefinite_string_data))
 	};
-	*((struct cbor_indefinite_string_data *)item->data) = (struct cbor_indefinite_string_data){
+	*((struct cbor_indefinite_string_data *) item->data) = (struct cbor_indefinite_string_data) {
 		.chunk_count = 0,
 		.chunk_capacity = 0,
 		.chunks = NULL,
@@ -1173,7 +1170,7 @@ cbor_item_t * cbor_new_indefinite_bytestring()
 	return item;
 }
 
-void cbor_bytestring_set_handle(cbor_item_t * item, unsigned char * data, size_t length)
+void cbor_bytestring_set_handle(cbor_item_t *item, unsigned char *data, size_t length)
 {
 	assert(cbor_isa_bytestring(item));
 	assert(cbor_bytestring_is_definite(item));
@@ -1181,31 +1178,31 @@ void cbor_bytestring_set_handle(cbor_item_t * item, unsigned char * data, size_t
 	item->metadata.bytestring_metadata.length = length;
 }
 
-cbor_item_t * * cbor_bytestring_chunks_handle(const cbor_item_t * item)
+cbor_item_t **cbor_bytestring_chunks_handle(const cbor_item_t *item)
 {
 	assert(cbor_isa_bytestring(item));
 	assert(cbor_bytestring_is_indefinite(item));
-	return ((struct cbor_indefinite_string_data *)item->data)->chunks;
+	return ((struct cbor_indefinite_string_data *) item->data)->chunks;
 }
 
-size_t cbor_bytestring_chunk_count(const cbor_item_t * item)
+size_t cbor_bytestring_chunk_count(const cbor_item_t *item)
 {
 	assert(cbor_isa_bytestring(item));
 	assert(cbor_bytestring_is_indefinite(item));
-	return ((struct cbor_indefinite_string_data *)item->data)->chunk_count;
+	return ((struct cbor_indefinite_string_data *) item->data)->chunk_count;
 
 }
 
-cbor_item_t * cbor_bytestring_add_chunk(cbor_item_t * item, cbor_item_t * chunk)
+cbor_item_t *cbor_bytestring_add_chunk(cbor_item_t *item, cbor_item_t *chunk)
 {
 	assert(cbor_isa_bytestring(item));
 	assert(cbor_bytestring_is_indefinite(item));
-	struct cbor_indefinite_string_data * data = (struct cbor_indefinite_string_data *)item->data;
+	struct cbor_indefinite_string_data *data = (struct cbor_indefinite_string_data *) item->data;
 	// TODO optimize this with exponential growth
 	if (data->chunk_count == data->chunk_capacity) {
 		/* We need more space */
 		data->chunk_capacity = data->chunk_capacity == 0 ? 1 : data->chunk_capacity * 2;
-		cbor_item_t ** new_chunks_data =
+		cbor_item_t **new_chunks_data =
 			_CBOR_REALLOC(data->chunks, data->chunk_capacity * sizeof(cbor_item_t *));
 		// TODO handle failures
 		data->chunks = new_chunks_data;
@@ -1215,36 +1212,36 @@ cbor_item_t * cbor_bytestring_add_chunk(cbor_item_t * item, cbor_item_t * chunk)
 }
 
 
-cbor_item_t * cbor_new_definite_array(size_t size)
+cbor_item_t *cbor_new_definite_array(size_t size)
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
-	*item = (cbor_item_t){
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_ARRAY,
-		.metadata = { .array_metadata = { .type = _CBOR_METADATA_DEFINITE, .size = 0 } },
+		.metadata = {.array_metadata = {.type = _CBOR_METADATA_DEFINITE, .size = 0}},
 		.data = _CBOR_MALLOC(sizeof(cbor_item_t *) * size)
 	};
 	return item;
 }
 
-cbor_item_t * cbor_new_indefinite_array()
+cbor_item_t *cbor_new_indefinite_array()
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
-	*item = (cbor_item_t){
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_ARRAY,
-		.metadata = { .array_metadata = { .type = _CBOR_METADATA_INDEFINITE, .size = 0 } },
+		.metadata = {.array_metadata = {.type = _CBOR_METADATA_INDEFINITE, .size = 0}},
 		.data = NULL /* Can be safely realloc-ed */
 	};
 	return item;
 }
 
-cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee)
+cbor_item_t *cbor_array_push(cbor_item_t *array, cbor_item_t *pushee)
 {
 	assert(cbor_isa_array(array));
 	//TODO cbor_incref(pushee);
-	struct _cbor_array_metadata * metadata = (struct _cbor_array_metadata *)&array->metadata;
-	cbor_item_t * * data = (cbor_item_t * *)array->data;
+	struct _cbor_array_metadata *metadata = (struct _cbor_array_metadata *) &array->metadata;
+	cbor_item_t **data = (cbor_item_t **) array->data;
 	if (cbor_array_is_definite(array)) {
 		// TODO check size - throw
 		data[metadata->size++] = pushee;
@@ -1252,46 +1249,46 @@ cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee)
 		// TODO exponential reallocs?
 		data = _CBOR_REALLOC(data, (metadata->size + 1) * sizeof(cbor_item_t *));
 		data[metadata->size++] = pushee;
-		array->data = (unsigned char *)data;
+		array->data = (unsigned char *) data;
 	}
 	return array;
 }
 
-size_t cbor_map_size(const cbor_item_t * item)
+size_t cbor_map_size(const cbor_item_t *item)
 {
 	assert(cbor_isa_map(item));
 	return item->metadata.map_metadata.size;
 }
 
-cbor_item_t * cbor_new_definite_map(size_t size)
+cbor_item_t *cbor_new_definite_map(size_t size)
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
-	*item = (cbor_item_t){
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_MAP,
-		.metadata = { .map_metadata = { .size = 0, .type = _CBOR_METADATA_DEFINITE } },
+		.metadata = {.map_metadata = {.size = 0, .type = _CBOR_METADATA_DEFINITE}},
 		.data = _CBOR_MALLOC(sizeof(struct cbor_pair) * size)
 	};
 	return item;
 }
 
-cbor_item_t * cbor_new_indefinite_map()
+cbor_item_t *cbor_new_indefinite_map()
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
-	*item = (cbor_item_t){
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_MAP,
-		.metadata = { .map_metadata = { .size = 0, .type = _CBOR_METADATA_INDEFINITE } },
+		.metadata = {.map_metadata = {.size = 0, .type = _CBOR_METADATA_INDEFINITE}},
 		.data = NULL
 	};
 	return item;
 }
 
-cbor_item_t * cbor_map_add(cbor_item_t * item, struct cbor_pair pair)
+cbor_item_t *cbor_map_add(cbor_item_t *item, struct cbor_pair pair)
 {
 	assert(cbor_isa_map(item));
-	struct _cbor_map_metadata * metadata = (struct _cbor_map_metadata *)&item->metadata;
-	struct cbor_pair * data = cbor_map_handle(item);
+	struct _cbor_map_metadata *metadata = (struct _cbor_map_metadata *) &item->metadata;
+	struct cbor_pair *data = cbor_map_handle(item);
 	if (cbor_map_is_definite(item)) {
 		// TODO check size - throw
 		data[metadata->size++] = pair;
@@ -1300,54 +1297,54 @@ cbor_item_t * cbor_map_add(cbor_item_t * item, struct cbor_pair pair)
 		// TOOD check realloc
 		data = _CBOR_REALLOC(data, (metadata->size + 1) * sizeof(struct cbor_pair));
 		data[metadata->size++] = pair;
-		item->data = (unsigned char *)data;
+		item->data = (unsigned char *) data;
 	}
 	return item;
 }
 
-bool cbor_map_is_definite(const cbor_item_t * item)
+bool cbor_map_is_definite(const cbor_item_t *item)
 {
 	assert(cbor_isa_map(item));
 	return item->metadata.map_metadata.type == _CBOR_METADATA_DEFINITE;
 }
 
-bool cbor_map_is_indefinite(const cbor_item_t * item)
+bool cbor_map_is_indefinite(const cbor_item_t *item)
 {
 	return !cbor_map_is_definite(item);
 }
 
-struct cbor_pair * cbor_map_handle(const cbor_item_t * item)
+struct cbor_pair *cbor_map_handle(const cbor_item_t *item)
 {
 	assert(cbor_isa_map(item));
-	return (struct cbor_pair *)item->data;
+	return (struct cbor_pair *) item->data;
 }
 
 
-cbor_item_t * cbor_new_tag(uint64_t value)
+cbor_item_t *cbor_new_tag(uint64_t value)
 {
-	cbor_item_t * item = _CBOR_MALLOC(sizeof(cbor_item_t));
-	*item = (cbor_item_t){
+	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_TAG,
-		.metadata = { .tag_metadata = { .value = value, .tagged_item = NULL } },
+		.metadata = {.tag_metadata = {.value = value, .tagged_item = NULL}},
 		.data = NULL /* Never used */
 	};
 	return item;
 }
 
-cbor_item_t * cbor_tag_item(const cbor_item_t * item)
+cbor_item_t *cbor_tag_item(const cbor_item_t *item)
 {
 	assert(cbor_isa_tag(item));
 	return item->metadata.tag_metadata.tagged_item;
 }
 
-uint64_t cbor_tag_value(const cbor_item_t * item)
+uint64_t cbor_tag_value(const cbor_item_t *item)
 {
 	assert(cbor_isa_tag(item));
 	return item->metadata.tag_metadata.value;
 }
 
-void cbor_tag_set_item(cbor_item_t * item, cbor_item_t * tagged_item)
+void cbor_tag_set_item(cbor_item_t *item, cbor_item_t *tagged_item)
 {
 	assert(cbor_isa_tag(item));
 	cbor_incref(tagged_item);
@@ -1356,42 +1353,42 @@ void cbor_tag_set_item(cbor_item_t * item, cbor_item_t * tagged_item)
 
 /** ========================================================== */
 
-inline bool cbor_isa_uint(const cbor_item_t * item)
+inline bool cbor_isa_uint(const cbor_item_t *item)
 {
 	return item->type == CBOR_TYPE_UINT;
 }
 
-inline bool cbor_isa_negint(const cbor_item_t * item)
+inline bool cbor_isa_negint(const cbor_item_t *item)
 {
 	return item->type == CBOR_TYPE_NEGINT;
 }
 
-inline bool cbor_isa_bytestring(const cbor_item_t * item)
+inline bool cbor_isa_bytestring(const cbor_item_t *item)
 {
 	return item->type == CBOR_TYPE_BYTESTRING;
 }
 
-inline bool cbor_isa_string(const cbor_item_t * item)
+inline bool cbor_isa_string(const cbor_item_t *item)
 {
 	return item->type == CBOR_TYPE_STRING;
 }
 
-inline bool cbor_isa_array(const cbor_item_t * item)
+inline bool cbor_isa_array(const cbor_item_t *item)
 {
 	return item->type == CBOR_TYPE_ARRAY;
 }
 
-inline bool cbor_isa_map(const cbor_item_t * item)
+inline bool cbor_isa_map(const cbor_item_t *item)
 {
 	return item->type == CBOR_TYPE_MAP;
 }
 
-inline bool cbor_isa_tag(const cbor_item_t * item)
+inline bool cbor_isa_tag(const cbor_item_t *item)
 {
 	return item->type == CBOR_TYPE_TAG;
 }
 
-inline bool cbor_isa_float_ctrl(const cbor_item_t * item)
+inline bool cbor_isa_float_ctrl(const cbor_item_t *item)
 {
 	return item->type == CBOR_TYPE_FLOAT_CTRL;
 }
@@ -1400,152 +1397,156 @@ inline bool cbor_isa_float_ctrl(const cbor_item_t * item)
 /** ========================================================== */
 
 
-inline bool cbor_is_int(const cbor_item_t * item)
+inline bool cbor_is_int(const cbor_item_t *item)
 {
 	return cbor_isa_uint(item) || cbor_isa_negint(item);
 }
 
-inline bool cbor_is_uint(const cbor_item_t * item)
+inline bool cbor_is_uint(const cbor_item_t *item)
 {
 	/* Negative 'signed' ints are negints */
 	return cbor_isa_uint(item);
 }
 
 
-inline bool cbor_is_bool(const cbor_item_t * item)
+inline bool cbor_is_bool(const cbor_item_t *item)
 {
-	return cbor_isa_float_ctrl(item) && (cbor_ctrl_code(item) == CBOR_CTRL_FALSE || cbor_ctrl_code(item) == CBOR_CTRL_TRUE);
+	return cbor_isa_float_ctrl(item) &&
+		   (cbor_ctrl_code(item) == CBOR_CTRL_FALSE || cbor_ctrl_code(item) == CBOR_CTRL_TRUE);
 }
 
-inline bool cbor_is_null(const cbor_item_t * item)
+inline bool cbor_is_null(const cbor_item_t *item)
 {
 	return cbor_isa_float_ctrl(item) && cbor_ctrl_code(item) == CBOR_CTRL_NULL;
 }
 
-inline bool cbor_is_undef(const cbor_item_t * item)
+inline bool cbor_is_undef(const cbor_item_t *item)
 {
 	return cbor_isa_float_ctrl(item) && cbor_ctrl_code(item) == CBOR_CTRL_UNDEF;
 }
 
-bool cbor_is_float(const cbor_item_t * item)
+bool cbor_is_float(const cbor_item_t *item)
 {
 	return cbor_isa_float_ctrl(item) && !cbor_float_ctrl_is_ctrl(item);
 }
 
-size_t cbor_bytestring_length(const cbor_item_t * item) {
+size_t cbor_bytestring_length(const cbor_item_t *item)
+{
 	assert(cbor_isa_bytestring(item));
 	return item->metadata.bytestring_metadata.length;
 }
 
-unsigned char * cbor_bytestring_handle(const cbor_item_t * item) {
+unsigned char *cbor_bytestring_handle(const cbor_item_t *item)
+{
 	assert(cbor_isa_bytestring(item));
 	return item->data;
 }
 
-bool cbor_bytestring_is_definite(const cbor_item_t * item)
+bool cbor_bytestring_is_definite(const cbor_item_t *item)
 {
 	assert(cbor_isa_bytestring(item));
 	return item->metadata.bytestring_metadata.type == _CBOR_METADATA_DEFINITE;
 }
 
-bool cbor_bytestring_is_indefinite(const cbor_item_t * item)
+bool cbor_bytestring_is_indefinite(const cbor_item_t *item)
 {
 	return !cbor_bytestring_is_definite(item);
 }
 
-size_t cbor_array_size(const cbor_item_t * item)
+size_t cbor_array_size(const cbor_item_t *item)
 {
 	assert(cbor_isa_array(item));
 	return item->metadata.array_metadata.size;
 }
 
-bool cbor_array_is_definite(const cbor_item_t * item)
+bool cbor_array_is_definite(const cbor_item_t *item)
 {
 	assert(cbor_isa_array(item));
 	return item->metadata.array_metadata.type == _CBOR_METADATA_DEFINITE;
 }
 
-bool cbor_array_is_indefinite(const cbor_item_t * item)
+bool cbor_array_is_indefinite(const cbor_item_t *item)
 {
 	assert(cbor_isa_array(item));
 	return item->metadata.array_metadata.type == _CBOR_METADATA_INDEFINITE;
 }
 
-cbor_item_t ** cbor_array_handle(const cbor_item_t * item)
+cbor_item_t **cbor_array_handle(const cbor_item_t *item)
 {
 	assert(cbor_isa_array(item));
-	return (cbor_item_t **)item->data;
+	return (cbor_item_t **) item->data;
 }
 
-cbor_float_width cbor_float_get_width(const cbor_item_t * item)
+cbor_float_width cbor_float_get_width(const cbor_item_t *item)
 {
 	assert(cbor_isa_float_ctrl(item));
 	return item->metadata.float_ctrl_metadata.width;
 }
 
-cbor_ctrl cbor_ctrl_code(const cbor_item_t * item)
+cbor_ctrl cbor_ctrl_code(const cbor_item_t *item)
 {
 	assert(cbor_isa_float_ctrl(item));
 	assert(cbor_float_get_width(item) == CBOR_FLOAT_0);
 	return item->metadata.float_ctrl_metadata.type;
 }
 
-bool cbor_float_ctrl_is_ctrl(const cbor_item_t * item)
+bool cbor_float_ctrl_is_ctrl(const cbor_item_t *item)
 {
 	assert(cbor_isa_float_ctrl(item));
 	return cbor_float_get_width(item) == CBOR_FLOAT_0;
 }
 
-float cbor_float_get_float2(const cbor_item_t * item)
+float cbor_float_get_float2(const cbor_item_t *item)
 {
 	assert(cbor_is_float(item));
 	assert(cbor_float_get_width(item) == CBOR_FLOAT_16);
-	return *(float *)item->data;
+	return *(float *) item->data;
 }
 
-float cbor_float_get_float4(const cbor_item_t * item)
+float cbor_float_get_float4(const cbor_item_t *item)
 {
 	assert(cbor_is_float(item));
 	assert(cbor_float_get_width(item) == CBOR_FLOAT_32);
-	return *(float *)item->data;
+	return *(float *) item->data;
 }
 
-double cbor_float_get_float8(const cbor_item_t * item)
+double cbor_float_get_float8(const cbor_item_t *item)
 {
 	assert(cbor_is_float(item));
 	assert(cbor_float_get_width(item) == CBOR_FLOAT_64);
-	return *(double *)item->data;
+	return *(double *) item->data;
 }
 
 
-void cbor_set_float2(cbor_item_t * item, float value)
+void cbor_set_float2(cbor_item_t *item, float value)
 {
 	assert(cbor_is_float(item));
 	assert(cbor_float_get_width(item) == CBOR_FLOAT_16);
-	*((float *)item->data) = value;
+	*((float *) item->data) = value;
 }
-void cbor_set_float4(cbor_item_t * item, float value)
+
+void cbor_set_float4(cbor_item_t *item, float value)
 {
 	assert(cbor_is_float(item));
 	assert(cbor_float_get_width(item) == CBOR_FLOAT_32);
-	*((float *)item->data) = value;
+	*((float *) item->data) = value;
 }
 
-void cbor_set_float8(cbor_item_t * item, double value)
+void cbor_set_float8(cbor_item_t *item, double value)
 {
 	assert(cbor_is_float(item));
 	assert(cbor_float_get_width(item) == CBOR_FLOAT_64);
-	*((double *)item->data) = value;
+	*((double *) item->data) = value;
 }
 
-void cbor_set_ctrl(cbor_item_t * item, cbor_ctrl value)
+void cbor_set_ctrl(cbor_item_t *item, cbor_ctrl value)
 {
 	assert(cbor_isa_float_ctrl(item));
 	assert(cbor_float_get_width(item) == CBOR_FLOAT_0);
 	item->metadata.float_ctrl_metadata.type = value;
 }
 
-bool cbor_ctrl_bool(const cbor_item_t * item)
+bool cbor_ctrl_bool(const cbor_item_t *item)
 {
 	assert(cbor_is_bool(item));
 	return item->metadata.float_ctrl_metadata.type == CBOR_CTRL_TRUE;

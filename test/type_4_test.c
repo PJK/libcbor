@@ -8,10 +8,10 @@
 #include "assertions.h"
 
 
-cbor_item_t * arr;
+cbor_item_t *arr;
 struct cbor_load_result res;
 
-unsigned char data1[] = { 0x80, 0xFF };
+unsigned char data1[] = {0x80, 0xFF};
 
 static void test_empty_array(void **state)
 {
@@ -25,7 +25,7 @@ static void test_empty_array(void **state)
 	assert_null(arr);
 }
 
-unsigned char data2[] = { 0x81, 0x01, 0xFF };
+unsigned char data2[] = {0x81, 0x01, 0xFF};
 
 static void test_simple_array(void **state)
 {
@@ -41,7 +41,7 @@ static void test_simple_array(void **state)
 	assert_null(arr);
 }
 
-unsigned char data3[] = { 0x82, 0x01, 0x81, 0x01, 0xFF };
+unsigned char data3[] = {0x82, 0x01, 0x81, 0x01, 0xFF};
 
 static void test_nested_arrays(void **state)
 {
@@ -54,7 +54,7 @@ static void test_nested_arrays(void **state)
 	/* Check the values */
 	assert_uint8(cbor_array_handle(arr)[0], 1);
 
-	cbor_item_t * nested = cbor_array_handle(arr)[1];
+	cbor_item_t *nested = cbor_array_handle(arr)[1];
 	assert_true(cbor_isa_array(nested));
 	assert_true(cbor_array_size(nested) == 1);
 	assert_uint8(cbor_array_handle(nested)[0], 1);
@@ -63,7 +63,7 @@ static void test_nested_arrays(void **state)
 	assert_null(arr);
 }
 
-unsigned char test_indef_arrays_data[] = { 0x9f, 0x01, 0x02, 0xFF };
+unsigned char test_indef_arrays_data[] = {0x9f, 0x01, 0x02, 0xFF};
 
 static void test_indef_arrays(void **state)
 {
@@ -81,7 +81,7 @@ static void test_indef_arrays(void **state)
 	assert_null(arr);
 }
 
-unsigned char test_nested_indef_arrays_data[] = { 0x9f, 0x01, 0x9f, 0x02, 0xFF, 0x03, 0xFF };
+unsigned char test_nested_indef_arrays_data[] = {0x9f, 0x01, 0x9f, 0x02, 0xFF, 0x03, 0xFF};
 
 static void test_nested_indef_arrays(void **state)
 {
@@ -94,7 +94,7 @@ static void test_nested_indef_arrays(void **state)
 	/* Check the values */
 	assert_uint8(cbor_array_handle(arr)[0], 1);
 
-	cbor_item_t * nested = cbor_array_handle(arr)[1];
+	cbor_item_t *nested = cbor_array_handle(arr)[1];
 	assert_true(cbor_isa_array(nested));
 	assert_true(cbor_array_size(nested) == 1);
 	assert_uint8(cbor_array_handle(nested)[0], 2);
@@ -103,7 +103,8 @@ static void test_nested_indef_arrays(void **state)
 	assert_null(arr);
 }
 
-int main(void) {
+int main(void)
+{
 	const UnitTest tests[] = {
 		unit_test(test_empty_array),
 		unit_test(test_simple_array),

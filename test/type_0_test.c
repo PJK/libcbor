@@ -7,17 +7,18 @@
 #include <inttypes.h>
 
 
-cbor_item_t * number;
+cbor_item_t *number;
 struct cbor_load_result res;
 
-unsigned char data1[] = { 0x02, 0xFF };
-unsigned char data2[] = { 0x18, 0xFF, 0xFF };
-unsigned char data3[] = { 0x19, 0x01, 0xf4, 0xFF };
-unsigned char data4[] = { 0x1a, 0xa5, 0xf7, 0x02, 0xb3, 0xFF };
-unsigned char data5[] = { 0x1b, 0xa5, 0xf7, 0x02, 0xb3, 0xa5, 0xf7, 0x02, 0xb3, 0xFF };
+unsigned char data1[] = {0x02, 0xFF};
+unsigned char data2[] = {0x18, 0xFF, 0xFF};
+unsigned char data3[] = {0x19, 0x01, 0xf4, 0xFF};
+unsigned char data4[] = {0x1a, 0xa5, 0xf7, 0x02, 0xb3, 0xFF};
+unsigned char data5[] = {0x1b, 0xa5, 0xf7, 0x02, 0xb3, 0xa5, 0xf7, 0x02, 0xb3, 0xFF};
 
 
-static void test_very_short_int(void **state) {
+static void test_very_short_int(void **state)
+{
 	number = cbor_load(data1, 2, &res);
 	assert_true(cbor_typeof(number) == CBOR_TYPE_UINT);
 	assert_true(cbor_int_get_width(number) == CBOR_INT_8);
@@ -31,13 +32,15 @@ static void test_very_short_int(void **state) {
 	assert_null(number);
 }
 
-static void test_incomplete_data(void **state) {
+static void test_incomplete_data(void **state)
+{
 	number = cbor_load(data2, 1, &res);
 	assert_null(number);
 	assert_true(res.error.code == CBOR_ERR_NOTENOUGHDATA);
 }
 
-static void test_short_int(void **state) {
+static void test_short_int(void **state)
+{
 	number = cbor_load(data2, 3, &res);
 	assert_true(cbor_typeof(number) == CBOR_TYPE_UINT);
 	assert_true(cbor_int_get_width(number) == CBOR_INT_8);
@@ -51,7 +54,8 @@ static void test_short_int(void **state) {
 	assert_null(number);
 }
 
-static void test_half_int(void **state) {
+static void test_half_int(void **state)
+{
 	number = cbor_load(data3, 5, &res);
 	assert_true(cbor_typeof(number) == CBOR_TYPE_UINT);
 	assert_true(cbor_int_get_width(number) == CBOR_INT_16);
@@ -65,7 +69,8 @@ static void test_half_int(void **state) {
 	assert_null(number);
 }
 
-static void test_int(void **state) {
+static void test_int(void **state)
+{
 	number = cbor_load(data4, 6, &res);
 	assert_true(cbor_typeof(number) == CBOR_TYPE_UINT);
 	assert_true(cbor_int_get_width(number) == CBOR_INT_32);
@@ -79,7 +84,8 @@ static void test_int(void **state) {
 	assert_null(number);
 }
 
-static void test_long_int(void **state) {
+static void test_long_int(void **state)
+{
 	number = cbor_load(data5, 10, &res);
 	assert_true(cbor_typeof(number) == CBOR_TYPE_UINT);
 	assert_true(cbor_int_get_width(number) == CBOR_INT_64);
@@ -93,7 +99,8 @@ static void test_long_int(void **state) {
 	assert_null(number);
 }
 
-static void test_refcounting(void **state) {
+static void test_refcounting(void **state)
+{
 	number = cbor_load(data5, 10, &res);
 	cbor_incref(number);
 	assert_true(number->refcount == 2);
@@ -103,13 +110,15 @@ static void test_refcounting(void **state) {
 	assert_null(number);
 }
 
-static void test_empty_input(void **state) {
+static void test_empty_input(void **state)
+{
 	number = cbor_load(data5, 0, &res);
 	assert_null(number);
 	assert_true(res.error.code == CBOR_ERR_NODATA);
 }
 
-int main(void) {
+int main(void)
+{
 	const UnitTest tests[] = {
 		unit_test(test_very_short_int),
 		unit_test(test_short_int),

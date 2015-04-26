@@ -20,7 +20,7 @@ static const uint8_t utf8d[] = {
 	1,3,1,1,1,1,1,3,1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1, /* s7..s8 */
 };
 
-/* Copyright (c) 2008-2009 Bjoern Hoehrmann <bjoern@hoehrmann.de> */
+/* Copyright of this function: (c) 2008-2009 Bjoern Hoehrmann <bjoern@hoehrmann.de> */
 /* See http://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details. */
 uint32_t _cbor_unicode_decode(uint32_t* state, uint32_t* codep, uint32_t byte) {
 	uint32_t type = utf8d[byte];
