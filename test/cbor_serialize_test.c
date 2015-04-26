@@ -131,19 +131,18 @@ static void test_serialize_definite_string(void **state)
 
 static void test_serialize_indefinite_string(void **state)
 {
-	cbor_item_t *item = cbor_new_indefinite_bytestring();
+	cbor_item_t *item = cbor_new_indefinite_string();
+	cbor_item_t *chunk = cbor_new_definite_string();
 
-	cbor_item_t *chunk = cbor_new_definite_bytestring();
-	unsigned char *data = malloc(256);
-	cbor_bytestring_set_handle(chunk, data, 256);
+	unsigned char *data = malloc(12);
+	strcpy(data, "Hello world!");
+	cbor_string_set_handle(chunk, data, 12);
 
-	cbor_bytestring_add_chunk(item, chunk);
-	assert_int_equal(cbor_bytestring_chunk_count(item), 1);
+	cbor_string_add_chunk(item, chunk);
+	assert_int_equal(cbor_string_chunk_count(item), 1);
 
-	assert_int_equal(1 + 3 + 256 + 1, cbor_serialize(item, buffer, 512));
-	assert_memory_equal(buffer, ((unsigned char[]) {0x5F, 0x59, 0x01, 0x00}), 4);
-	assert_memory_equal(buffer + 4, data, 256);
-	assert_memory_equal(buffer + 4 + 256, ((unsigned char[]) {0xFF}), 1);
+	assert_int_equal(15, cbor_serialize(item, buffer, 512));
+	assert_memory_equal(buffer, ((unsigned char[]) {0x7F, 0x6C, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21, 0xFF}), 15);
 	cbor_decref(&item);
 }
 
