@@ -211,6 +211,18 @@ static void test_serialize_indefinite_map(void **state)
 	cbor_decref(&two);
 }
 
+static void test_serialize_tags(void **state)
+{
+	cbor_item_t *item = cbor_new_tag(21);
+	cbor_item_t *one = cbor_build_uint8(1);
+	cbor_tag_set_item(item, one);
+
+	assert_int_equal(2, cbor_serialize(item, buffer, 512));
+	assert_memory_equal(buffer, ((unsigned char[]) {0xD5, 0x01}), 2);
+	cbor_decref(&item);
+	cbor_decref(&one);
+}
+
 
 int main(void)
 {
@@ -230,7 +242,8 @@ int main(void)
 		unit_test(test_serialize_definite_array),
 		unit_test(test_serialize_indefinite_array),
 		unit_test(test_serialize_definite_map),
-		unit_test(test_serialize_indefinite_map)
+		unit_test(test_serialize_indefinite_map),
+		unit_test(test_serialize_tags)
 	};
 	return run_tests(tests);
 }

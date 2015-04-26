@@ -210,6 +210,15 @@ size_t cbor_serialize_map(const cbor_item_t *item, unsigned char *buffer, size_t
 size_t cbor_serialize_tag(const cbor_item_t *item, unsigned char *buffer, size_t buffer_size)
 {
 	assert(cbor_isa_tag(item));
+	size_t written = cbor_encode_tag(cbor_tag_value(item), buffer, buffer_size);
+	if (written == 0)
+		return 0;
+
+	size_t item_written = cbor_serialize(cbor_tag_item(item), buffer + written, buffer_size - written);
+	if (item_written == 0)
+		return 0;
+	else
+		return written + item_written;
 }
 
 size_t cbor_serialize_float_ctrl(const cbor_item_t *item, unsigned char *buffer, size_t buffer_size)
