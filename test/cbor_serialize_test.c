@@ -93,6 +93,7 @@ static void test_serialize_definite_bytestring(void **state)
 {
 	cbor_item_t *item = cbor_new_definite_bytestring();
 	unsigned char *data = malloc(256);
+	bzero(data, 256); /* Prevent undefined behavior in comparison */
 	cbor_bytestring_set_handle(item, data, 256);
 	assert_int_equal(256 + 3, cbor_serialize(item, buffer, 512));
 	assert_memory_equal(buffer, ((unsigned char[]) {0x59, 0x01, 0x00}), 3);
@@ -106,6 +107,7 @@ static void test_serialize_indefinite_bytestring(void **state)
 
 	cbor_item_t *chunk = cbor_new_definite_bytestring();
 	unsigned char *data = malloc(256);
+	bzero(data, 256); /* Prevent undefined behavior in comparison */
 	cbor_bytestring_set_handle(chunk, data, 256);
 
 	cbor_bytestring_add_chunk(item, chunk);
@@ -122,7 +124,7 @@ static void test_serialize_definite_string(void **state)
 {
 	cbor_item_t *item = cbor_new_definite_string();
 	unsigned char *data = malloc(12);
-	strcpy((char *) data, "Hello world!");
+	strncpy((char *) data, "Hello world!", 12);
 	cbor_string_set_handle(item, data, 12);
 	assert_int_equal(1 + 12, cbor_serialize(item, buffer, 512));
 	assert_memory_equal(buffer, ((unsigned char[]) {0x6C, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21}), 13);
@@ -135,7 +137,7 @@ static void test_serialize_indefinite_string(void **state)
 	cbor_item_t *chunk = cbor_new_definite_string();
 
 	unsigned char *data = malloc(12);
-	strcpy((char *) data, "Hello world!");
+	strncpy((char *) data, "Hello world!", 12);
 	cbor_string_set_handle(chunk, data, 12);
 
 	cbor_string_add_chunk(item, chunk);
@@ -143,6 +145,19 @@ static void test_serialize_indefinite_string(void **state)
 
 	assert_int_equal(15, cbor_serialize(item, buffer, 512));
 	assert_memory_equal(buffer, ((unsigned char[]) {0x7F, 0x6C, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21, 0xFF}), 15);
+	cbor_decref(&item);
+}
+
+
+static void test_serialize_definite_array(void **state)
+{
+	cbor_item_t *item = cbor_new_definite_array(3);
+
+	unsigned char *data = malloc(256);
+	cbor_bytestring_set_handle(item, data, 256);
+	assert_int_equal(256 + 3, cbor_serialize(item, buffer, 512));
+	assert_memory_equal(buffer, ((unsigned char[]) {0x59, 0x01, 0x00}), 3);
+	assert_memory_equal(buffer + 3, data, 256);
 	cbor_decref(&item);
 }
 
