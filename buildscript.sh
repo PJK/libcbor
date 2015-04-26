@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-#mkdir /tmp/build
+mkdir /tmp/build
 cd /tmp/build
 cmake -DCUSTOM_ALLOC=$CUSTOM_ALLOC -DCMAKE_BUILD_TYPE=Debug $SOURCE
 make
