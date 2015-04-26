@@ -38,6 +38,8 @@ static void test_indef_array_encoding(void **state)
 	assert_int_equal(4, cbor_serialize_array(array, buffer, 512));
 	assert_memory_equal(buffer, ((unsigned char[]) {0x9F, 0x01, 0x02, 0xFF}), 4);
 	cbor_decref(&array);
+	cbor_decref(&one);
+	cbor_decref(&two);
 }
 
 int main(void)
