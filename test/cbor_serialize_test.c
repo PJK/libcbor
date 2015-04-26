@@ -122,7 +122,7 @@ static void test_serialize_definite_string(void **state)
 {
 	cbor_item_t *item = cbor_new_definite_string();
 	unsigned char *data = malloc(12);
-	strcpy(data, "Hello world!");
+	strcpy((char *) data, "Hello world!");
 	cbor_string_set_handle(item, data, 12);
 	assert_int_equal(1 + 12, cbor_serialize(item, buffer, 512));
 	assert_memory_equal(buffer, ((unsigned char[]) {0x6C, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21}), 13);
@@ -135,7 +135,7 @@ static void test_serialize_indefinite_string(void **state)
 	cbor_item_t *chunk = cbor_new_definite_string();
 
 	unsigned char *data = malloc(12);
-	strcpy(data, "Hello world!");
+	strcpy((char *) data, "Hello world!");
 	cbor_string_set_handle(chunk, data, 12);
 
 	cbor_string_add_chunk(item, chunk);
