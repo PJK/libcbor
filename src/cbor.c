@@ -52,9 +52,19 @@ void cbor_decref(cbor_item_t ** item)
 				cbor_item_t ** handle = cbor_array_handle(*item);
 				for (size_t i = 0; i < cbor_array_size(*item); i++)
 					cbor_decref(&handle[i]);
-				/* Fallthrough */
+				_CBOR_FREE((*item)->data);
+				break;
 			}
 		case CBOR_TYPE_MAP:
+			{
+				struct cbor_pair * handle = cbor_map_handle(*item);
+				for (size_t i = 0; i < cbor_map_size(*item); i++, handle++) {
+					cbor_decref(&handle->key);
+					cbor_decref(&handle->value);
+				}
+				_CBOR_FREE((*item)->data);
+				break;
+			};
 		case CBOR_TYPE_TAG:
 			{
 				cbor_decref(&(*item)->metadata.tag_metadata.tagged_item);
