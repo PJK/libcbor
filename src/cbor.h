@@ -15,21 +15,6 @@
 
 _Static_assert(sizeof(size_t) >= 8, "size_t must be at least 64 bits"); /* Otherwise we cannot support reasonably sized chunks */
 
-/*
- * Packed bitfield
- */
-// TODO ensure this works on big endian systems (I doubt it)
-typedef union {
-	struct {
-		bool no_realloc : 1;
-		bool canonical  : 1;
-		int : sizeof(int) * 8 - 2; /* Padding */
-	};
-	int raw;
-} cbor_flags_t;
-
-#define CBOR_FLAGS_NONE ((cbor_flags_t) { { 0 } })
-
 typedef enum {             /* Corresponding Major Type */
 	CBOR_TYPE_UINT,        /* 0 */
 	CBOR_TYPE_NEGINT,      /* 1 */
@@ -69,13 +54,6 @@ typedef enum {
 	CBOR_CTRL_NULL,
 	CBOR_CTRL_UNDEF
 } cbor_ctrl;
-
-// TODO hook these into the parser
-typedef enum {
-	_CBOR_METADATA_EMPTY	 = 0x00,
-	_CBOR_METADATA_COMPLETE  = 0x01,
-	_CBOR_METADATA_RESUMABLE = 0x02,	/* Parsing may be resumed */
-} _cbor_metadata;
 
 typedef enum {
 	_CBOR_METADATA_DEFINITE,
@@ -264,9 +242,22 @@ struct cbor_decoder_result {
 	enum cbor_decoder_status status;
 };
 
-struct cbor_decoder_result cbor_stream_decode(cbor_data, size_t, const struct cbor_callbacks *, void *);
-cbor_item_t * cbor_load(cbor_data source, size_t source_size, cbor_flags_t flags, struct cbor_load_result * result);
 
+/*
+* ============================================================================
+* High level decoding
+* ============================================================================
+*/
+
+struct cbor_decoder_result cbor_stream_decode(cbor_data, size_t, const struct cbor_callbacks *, void *);
+cbor_item_t * cbor_load(cbor_data source, size_t source_size, struct cbor_load_result * result);
+
+
+/*
+* ============================================================================
+* Primitives encoding
+* ============================================================================
+*/
 
 size_t cbor_encode_uint8(uint8_t, unsigned char *, size_t);
 size_t cbor_encode_uint16(uint16_t, unsigned char *, size_t);
@@ -302,6 +293,13 @@ size_t cbor_encode_float(float, unsigned char *, size_t);
 size_t cbor_encode_double(double, unsigned char *, size_t);
 size_t cbor_encode_break(unsigned char *, size_t);
 
+
+/*
+* ============================================================================
+* High level encoding
+* ============================================================================
+*/
+
 size_t cbor_serialize(const cbor_item_t *, unsigned char *, size_t);
 size_t cbor_serialize_uint(const cbor_item_t *, unsigned char *, size_t);
 size_t cbor_serialize_negint(const cbor_item_t *, unsigned char *, size_t);
@@ -312,8 +310,20 @@ size_t cbor_serialize_map(const cbor_item_t *, unsigned char *, size_t);
 size_t cbor_serialize_tag(const cbor_item_t *, unsigned char *, size_t);
 size_t cbor_serialize_float_ctrl(const cbor_item_t *, unsigned char *, size_t);
 
+/*
+* ============================================================================
+* Memory management
+* ============================================================================
+*/
+
 void cbor_incref(cbor_item_t * item);
 void cbor_decref(cbor_item_t ** item);
+
+/*
+* ============================================================================
+* Data manipulation
+* ============================================================================
+*/
 
 cbor_type cbor_typeof(const cbor_item_t * item); /* Will be inlined iff link-time opt is enabled */
 

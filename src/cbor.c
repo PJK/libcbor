@@ -85,7 +85,6 @@ void cbor_decref(cbor_item_t ** item)
 
 cbor_item_t * cbor_load(cbor_data source,
 						size_t source_size,
-						cbor_flags_t flags,
 						struct cbor_load_result * result)
 {
 	/* Context stack */

@@ -14,7 +14,7 @@ struct cbor_load_result res;
 unsigned char empty_map[] = { 0xA0 };
 static void test_empty_map(void **state)
 {
-	map = cbor_load(empty_map, 1, CBOR_FLAGS_NONE, &res);
+	map = cbor_load(empty_map, 1, &res);
 	assert_non_null(map);
 	assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
 	assert_true(cbor_isa_map(map));
@@ -28,7 +28,7 @@ static void test_empty_map(void **state)
 unsigned char simple_map[] = { 0xA2, 0x01, 0x02, 0x03, 0x04 }; /* {1: 2, 3: 4} */
 static void test_simple_map(void **state)
 {
-	map = cbor_load(simple_map, 5, CBOR_FLAGS_NONE, &res);
+	map = cbor_load(simple_map, 5, &res);
 	assert_non_null(map);
 	assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
 	assert_true(cbor_isa_map(map));
@@ -47,7 +47,7 @@ static void test_simple_map(void **state)
 unsigned char simple_indef_map[] = { 0xBF, 0x01, 0x02, 0x03, 0x04, 0xFF }; /* {_ 1: 2, 3: 4} */
 static void test_indef_simple_map(void **state)
 {
-	map = cbor_load(simple_indef_map, 6, CBOR_FLAGS_NONE, &res);
+	map = cbor_load(simple_indef_map, 6, &res);
 	assert_non_null(map);
 	assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
 	assert_true(cbor_isa_map(map));
