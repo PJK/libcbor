@@ -1,6 +1,5 @@
 #include "cbor.h"
 #include "cbor_internal.h"
-#include "magic.h"
 #include <assert.h>
 #include <string.h>
 

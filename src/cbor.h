@@ -4,8 +4,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
-
-#include "magic.h"
+#include <stdio.h>
 
 #define CBOR_MAJOR_VERSION 0
 #define CBOR_MINOR_VERSION 0
@@ -171,6 +170,15 @@ enum cbor_callback_result {
 	#define _CBOR_FREE free
 #endif
 
+
+/* http://stackoverflow.com/questions/1644868/c-define-macro-for-debug-printing */
+#define debug_print(fmt, ...) do { \
+	if (DEBUG) \
+		fprintf(stderr, "%s:%d:%s(): " fmt, __FILE__, __LINE__, __func__, __VA_ARGS__); \
+	} while (0)
+
+#define TO_STR_(x) #x
+#define TO_STR(x) TO_STR_(x) /* enables proper double expansion */
 
 typedef const unsigned char * cbor_data;
 

@@ -1,6 +1,5 @@
 #include "cbor.h"
 #include "cbor_internal.h"
-#include "magic.h"
 
 size_t _cbor_encode_uint8(uint8_t value, unsigned char *buffer, size_t buffer_size, uint8_t offset)
 {
