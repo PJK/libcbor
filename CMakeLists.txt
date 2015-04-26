@@ -14,11 +14,9 @@ set(CTEST_MEMORYCHECK_COMMAND "/usr/bin/valgrind")
 set(MEMORYCHECK_COMMAND_OPTIONS "--tool=memcheck --track-origins=yes --leak-check=full --error-exitcode=1")
 
 add_custom_target(coverage
-                  erb ${CMAKE_CURRENT_SOURCE_DIR}/test/stream_expectations.c.erb > ${CMAKE_CURRENT_SOURCE_DIR}/test/stream_expectations.c
                   COMMAND ctest
                   COMMAND lcov --capture --directory . --output-file coverage.info
                   COMMAND genhtml coverage.info --highlight --legend --output-directory coverage_html
-                  COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_SOURCE_DIR}/test/stream_expectations.c
                   COMMAND echo "Coverage report ready: file://${CMAKE_CURRENT_BINARY_DIR}/coverage_html/index.html")
 include_directories(src)
 
