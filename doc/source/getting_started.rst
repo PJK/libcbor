@@ -24,7 +24,16 @@ Both the shared (``libcbor.so``) and the static (``libcbor.a``) libraries should
 
 **Build configuration**
 
-To specify the compiler, use ``CMAKE_C_COMPILER`` (e.g. ``-DCMAKE_C_COMPILER=clang-3.5``)
+
+======================  ====================================================   ======================  =====================================================================================================================
+Option                  Meaning                                                Default                 Possible values
+----------------------  ----------------------------------------------------   ----------------------  ---------------------------------------------------------------------------------------------------------------------
+CMAKE_C_COMPILER        C compiler to use                                      ``cc``                   ``gcc``, ``clang``, ``clang-3.5``, ...
+CUSTOM_ALLOC            Allow custom ``malloc``?                               ``ON``                   ``ON``, ``OFF``
+======================  ====================================================   ======================  =====================================================================================================================
+
+
+
 
 If you want to pass other custom configuration options, please refer to `<http://stellarium.org/wiki/index.php/Configuring_Build_Options>`_.
 

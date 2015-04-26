@@ -738,7 +738,6 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	case 0xF1: /* Fallthrough */
 	case 0xF2: /* Fallthrough */
 	case 0xF3: /* Simple value - unassigned */
-		// TODO pass these as valid?
 		{
 			return (struct cbor_decoder_result){ 0, CBOR_DECODER_ERROR };
 		}

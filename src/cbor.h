@@ -173,7 +173,7 @@ enum cbor_callback_result {
 };
 
 
-#ifdef CUSTOM_ALLOC
+#ifdef CBOR_CUSTOM_ALLOC
 	typedef void * (* _cbor_malloc_t)(size_t);
 	typedef void * (* _cbor_realloc_t)(void *, size_t);
 	typedef void (* _cbor_free_t)(void *);

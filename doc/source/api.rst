@@ -108,9 +108,31 @@ TODO
 Memory management
 ^^^^^^^^^^^^^^^^^^^
 
-Due to the nature of its domain *libcbor* will need to work with heap memory. The stateless decoder and encoder don't allocate any memory.z
+Due to the nature of its domain *libcbor* will need to work with heap memory. The stateless decoder and encoder don't allocate any memory.
 
-TODO custom malloc
+If you have specific requirements, you should consider rolling your own driver for the stateless API.
+
+Using custom allocator
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+*libcbor* gives you with the ability to provide your own implementations of ``malloc``, ``realloc``, and ``free``. This can be useful if you are using a custom allocator throughout your application, or if you want to implement custom policies (e.g. tighter restrictions on the amount of allocated memory).
+
+In order to use this feature, *libcbor* has to be compiled with the :doc:`appropriate flags <getting_started>`. You can verify the configuration using the ``CBOR_CUSTOM_ALLOC`` macro. A simple usage might be as follows:
+
+.. code-block:: c
+
+    #ifdef CBOR_CUSTOM_ALLOC
+        cbor_set_allocs(malloc, realloc, free);
+    #else
+       #error "libcbor built with support for custom allocation is required"
+    #endif
+
+.. function:: void cbor_set_allocs(_cbor_malloc_t custom_malloc, _cbor_realloc_t custom_realloc, _cbor_free_t custom_free)
+
+    Assigns the memory management functions globally.
+
+    .. warning:: This function modifies the global state and should therefore be used accordingly. Changing the memory handlers while allocated items exist will result in a ``free``/``malloc`` mismatch. This function is not thread safe with respect to both itself nor all the other *libcbor* functions that work with the heap.
+
 
 Reference counting
 ^^^^^^^^^^^^^^^^^^^^^
@@ -169,7 +191,7 @@ Loading items
 	TODO
 
 
-Item types
+Types of items
 ^^^^^^^^^^^^^^^^^^^^^
 
 A :type:`cbor_item_t` can be probed for its type using these functions
