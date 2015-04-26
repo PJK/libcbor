@@ -158,7 +158,7 @@ static void test_serialize_definite_array(void **state)
 	cbor_array_handle(item)[0] = one;
 	cbor_array_handle(item)[1] = two;
 
-	assert_int_equal(4, cbor_serialize(item, buffer, 512));
+	assert_int_equal(3, cbor_serialize(item, buffer, 512));
 	assert_memory_equal(buffer, ((unsigned char[]) {0x82, 0x01, 0x02}), 3);
 	cbor_decref(&item);
 	cbor_decref(&one);

@@ -134,18 +134,17 @@ size_t cbor_serialize_array(const cbor_item_t *item, unsigned char *buffer, size
 	assert(cbor_isa_array(item));
 	size_t size = cbor_array_size(item),
 		written = 0;
-	cbor_item_t **handle = cbor_array_handle(item);;
+	cbor_item_t **handle = cbor_array_handle(item);
 	if (cbor_array_is_definite(item)) {
-		// TODO check failure
 		written = cbor_encode_array_start(size, buffer, buffer_size);
 	} else {
 		assert(cbor_array_is_indefinite(item));
-		// TODO check failure
 		written = cbor_encode_indef_array_start(buffer, buffer_size);
 	}
+	if (written == 0)
+		return 0;
 
 	for (size_t i = 0; i < size; i++) {
-		// TODO check for failure
 		written += cbor_serialize(*(handle++), buffer + written, buffer_size - written);
 	}
 	return written;

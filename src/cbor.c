@@ -1218,7 +1218,7 @@ cbor_item_t *cbor_new_definite_array(size_t size)
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_ARRAY,
-		.metadata = {.array_metadata = {.type = _CBOR_METADATA_DEFINITE, .size = 0}},
+		.metadata = {.array_metadata = {.type = _CBOR_METADATA_DEFINITE, .size = size}},
 		.data = _CBOR_MALLOC(sizeof(cbor_item_t *) * size)
 	};
 	return item;
