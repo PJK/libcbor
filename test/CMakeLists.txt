@@ -15,6 +15,7 @@ foreach(TEST ${TESTS})
   target_link_libraries(${NAME} cmocka)
   target_link_libraries(${NAME} cbor)
   add_test(${NAME} ${NAME})
+  add_dependencies(coverage ${NAME})
 
   add_custom_command(TARGET ${NAME} POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_SOURCE_DIR}/stream_expectations.c

@@ -20,7 +20,6 @@ add_custom_target(coverage
                   COMMAND genhtml coverage.info --highlight --legend --output-directory coverage_html
                   COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_CURRENT_SOURCE_DIR}/test/stream_expectations.c
                   COMMAND echo "Coverage report ready: file://${CMAKE_CURRENT_BINARY_DIR}/coverage_html/index.html")
-
 include_directories(src)
 
 
@@ -32,7 +31,7 @@ endif(CUSTOM_ALLOC)
 option(COVERAGE "Enable code coverage instrumentation" OFF)
 if(COVERAGE)
     message("Configuring code coverage instrumentation")
-    if(NOT CMAKE_C_COMPILER EQUAL "gcc")
+    if(NOT CMAKE_C_COMPILER MATCHES "gcc")
         message(WARNING "Gcov instrumentation only works with GCC")
     endif()
     # https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html
