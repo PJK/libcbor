@@ -220,7 +220,10 @@ size_t cbor_encode_half(float value, unsigned char * buffer, size_t buffer_size)
 	uint8_t exp = (val & 0x7F800000) >> 23; /* 0b0111_1111_1000_0000_0000_0000_0000_0000 */
 	uint32_t mant = val & 0x7FFFFF; /* 0b0000_0000_0111_1111_1111_1111_1111_1111 */
 	if (exp == 0xFF) { /* Infinity or NaNs */
-		res = (val & 0x80000000) >> 16 | 0x7C00 | (mant ? 1 : 0);
+		if (value != value)
+			res = (uint16_t)0x00e700; /* Not IEEE semantics - required by CBOR [s. 3.9] */
+		else
+			res = (val & 0x80000000) >> 16 | 0x7C00 | (mant ? 1 : 0) << 15;
 	} else if (exp == 0x00) { /* Zeroes or subnorms */
 		res = (val & 0x80000000) >> 16 | (uint16_t)(mant >> 13);
 	} else { /* Normal numbers */
