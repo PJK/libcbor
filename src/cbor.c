@@ -47,6 +47,7 @@ void cbor_decref(cbor_item_t **item)
 		case CBOR_TYPE_ARRAY: {
 			/* Get all items and decref them */
 			cbor_item_t **handle = cbor_array_handle(*item);
+			debug_print("Size %d\n", cbor_array_size(*item));
 			for (size_t i = 0; i < cbor_array_size(*item); i++)
 				cbor_decref(&handle[i]);
 			_CBOR_FREE((*item)->data);

@@ -88,9 +88,11 @@ void _cbor_builder_append(cbor_item_t *item, struct _cbor_decoder_context *ctx)
 					_cbor_stack_pop(ctx->stack);
 					_cbor_builder_append(item, ctx);
 				}
+				cbor_decref(&item);
 			} else {
 				/* Indefinite array, don't bother with subitems */
 				cbor_array_push(ctx->stack->top->item, item);
+				cbor_decref(&item);
 			}
 			break;
 		}
