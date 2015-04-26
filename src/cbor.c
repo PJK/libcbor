@@ -1218,7 +1218,7 @@ cbor_item_t *cbor_new_definite_array(size_t size)
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_ARRAY,
-		.metadata = {.array_metadata = {.type = _CBOR_METADATA_DEFINITE, .size = size}},
+		.metadata = {.array_metadata = {.type = _CBOR_METADATA_DEFINITE, .size = size, .ptr = 0}},
 		.data = _CBOR_MALLOC(sizeof(cbor_item_t *) * size)
 	};
 	return item;
@@ -1230,7 +1230,7 @@ cbor_item_t *cbor_new_indefinite_array()
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_ARRAY,
-		.metadata = {.array_metadata = {.type = _CBOR_METADATA_INDEFINITE, .size = 0}},
+		.metadata = {.array_metadata = {.type = _CBOR_METADATA_INDEFINITE, .size = 0, .ptr = 0}},
 		.data = NULL /* Can be safely realloc-ed */
 	};
 	return item;
@@ -1244,7 +1244,7 @@ cbor_item_t *cbor_array_push(cbor_item_t *array, cbor_item_t *pushee)
 	cbor_item_t **data = (cbor_item_t **) array->data;
 	if (cbor_array_is_definite(array)) {
 		// TODO check size - throw
-		data[metadata->size++] = pushee;
+		data[metadata->ptr++] = pushee;
 	} else {
 		// TODO exponential reallocs?
 		data = _CBOR_REALLOC(data, (metadata->size + 1) * sizeof(cbor_item_t *));

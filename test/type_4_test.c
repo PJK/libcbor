@@ -33,7 +33,7 @@ static void test_simple_array(void **state)
 	assert_non_null(arr);
 	assert_true(cbor_typeof(arr) == CBOR_TYPE_ARRAY);
 	assert_true(cbor_isa_array(arr));
-	assert_true(cbor_array_size(arr) == 1);
+	assert_int_equal(cbor_array_size(arr), 1);
 	assert_true(res.read == 2);
 	/* Check the values */
 	assert_uint8(cbor_array_handle(arr)[0], 1);

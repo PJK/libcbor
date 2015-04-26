@@ -77,6 +77,7 @@ struct _cbor_string_metadata {
 
 struct _cbor_array_metadata {
 	size_t             size;
+	size_t             ptr;
 	_cbor_dst_metadata type;
 };
 
