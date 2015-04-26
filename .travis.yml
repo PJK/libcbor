@@ -24,4 +24,4 @@ matrix:
       env: CUSTOM_ALLOC=OFF
 
 script:
-  - export SOURCE=$(pwd) && mkdir /tmp/build && (cd /tmp/build && cmake -DCUSTOM_ALLOC=$CUSTOM_ALLOC -DCMAKE_BUILD_TYPE=Debug $SOURCE && make && ctest -V)
+  - export SOURCE=$(pwd) && ./buildscript.sh

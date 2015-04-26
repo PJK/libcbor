@@ -11,7 +11,7 @@ set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-g")
 enable_testing()
 
 set(CTEST_MEMORYCHECK_COMMAND "/usr/bin/valgrind")
-set(MEMORYCHECK_COMMAND_OPTIONS "")
+set(MEMORYCHECK_COMMAND_OPTIONS "--tool=memcheck --track-origins=yes --leak-check=full --error-exitcode=1")
 
 add_custom_target(coverage
                   erb ${CMAKE_CURRENT_SOURCE_DIR}/test/stream_expectations.c.erb > ${CMAKE_CURRENT_SOURCE_DIR}/test/stream_expectations.c

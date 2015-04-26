@@ -11,7 +11,7 @@ There is a comprehensive test suite employing CMocka_. You can run all of them u
 Testing for memory leaks
 ------------------------
 
-Every release is tested for memory correctness. You can run these tests by passing the ``-D ExperimentalMemCheck`` flag to ``ctest``. [#]_
+Every release is tested for memory correctness. You can run these tests by passing the ``-T memcheck`` flag to ``ctest``. [#]_
 
 .. [#] Project should be configured with ``-DCMAKE_BUILD_TYPE=Debug`` to obtain meaningful description of location of the leak. You might also need ``--dsymutil=yes`` on OS X.
 
