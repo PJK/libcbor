@@ -7,4 +7,5 @@ cmake -DCUSTOM_ALLOC=$CUSTOM_ALLOC -DCMAKE_BUILD_TYPE=Debug $SOURCE
 make
 ctest -V
 ctest -T memcheck | tee memcheck.out
-grep -vE 'Memory Leak - [1-9][0-9]*' memcheck.out
+# Hack - multiline return status doesn't work
+grep -E 'Memory Leak - [1-9][0-9]*' memcheck.out | grep -v 'Memory Leak'
