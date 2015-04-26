@@ -224,6 +224,17 @@ size_t cbor_serialize_tag(const cbor_item_t *item, unsigned char *buffer, size_t
 size_t cbor_serialize_float_ctrl(const cbor_item_t *item, unsigned char *buffer, size_t buffer_size)
 {
 	assert(cbor_isa_float_ctrl(item));
-
+	switch (cbor_float_get_width(item)) {
+	case CBOR_FLOAT_0: {
+		/* CTRL - special treatment */
+		break;
+	}
+	case CBOR_FLOAT_16:
+		return cbor_encode_half(cbor_float_get_float2(item), buffer, buffer_size);
+	case CBOR_FLOAT_32:
+		return cbor_encode_single(cbor_float_get_float4(item), buffer, buffer_size);
+	case CBOR_FLOAT_64:
+		return cbor_encode_double(cbor_float_get_float8(item), buffer, buffer_size);
+	}
 }
 

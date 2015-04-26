@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "cbor.h"
 #include "cbor_internal.h"
 
@@ -233,8 +234,9 @@ size_t cbor_encode_half(float value, unsigned char *buffer, size_t buffer_size)
 	return _cbor_encode_uint16(res, buffer, buffer_size, 0xE0);
 }
 
-size_t cbor_encode_float(float value, unsigned char *buffer, size_t buffer_size)
+size_t cbor_encode_single(float value, unsigned char *buffer, size_t buffer_size)
 {
+
 	return _cbor_encode_uint32(((union _cbor_float_helper) {.as_float = value}).as_uint, buffer, buffer_size, 0xE0);
 }
 

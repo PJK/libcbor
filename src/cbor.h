@@ -298,9 +298,11 @@ size_t cbor_encode_bool(bool, unsigned char *, size_t);
 size_t cbor_encode_null(unsigned char *, size_t);
 size_t cbor_encode_undef(unsigned char *, size_t);
 size_t cbor_encode_half(float, unsigned char *, size_t);
-size_t cbor_encode_float(float, unsigned char *, size_t);
+size_t cbor_encode_single(float, unsigned char *, size_t);
 size_t cbor_encode_double(double, unsigned char *, size_t);
 size_t cbor_encode_break(unsigned char *, size_t);
+size_t cbor_encode_float(unsigned char *, size_t);
+size_t cbor_encode_ctrl(unsigned char *, size_t);
 
 
 /*
