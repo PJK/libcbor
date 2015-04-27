@@ -1,4 +1,4 @@
-set(SOURCES cbor.c cbor_internal.c cbor_stack.c cbor_unicode.c cbor_encoders.c cbor_serializers.c cbor/arrays.c cbor/common.c cbor/floats_ctrls.c)
+set(SOURCES cbor.c cbor_internal.c cbor_stack.c cbor_unicode.c cbor_encoders.c cbor_serializers.c cbor/arrays.c cbor/common.c cbor/floats_ctrls.c cbor/bytestrings.c)
 
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
