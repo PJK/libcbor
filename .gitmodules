@@ -1,3 +1,6 @@
 [submodule "test/cmocka"]
 	path = test/cmocka
 	url = git://git.cryptomilk.org/projects/cmocka.git
+[submodule "doxygen-theme"]
+	path = doxygen-theme
+	url = git@github.com:nnen/doxygen-theme.git

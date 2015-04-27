@@ -267,7 +267,13 @@ cbor_item_t * cbor_load(cbor_data source, size_t source_size, struct cbor_load_r
 * Primitives encoding
 * ============================================================================
 */
-
+/*!
+ * Copies bytes from a source memory area to a destination memory area,
+ * where both areas may not overlap.
+ * @param[out] dest The memory area to copy to.
+ * @param[in]  src  The memory area to copy from.
+ * @param[in]  n    The number of bytes to copy
+ */
 size_t cbor_encode_uint8(uint8_t, unsigned char *, size_t);
 size_t cbor_encode_uint16(uint16_t, unsigned char *, size_t);
 size_t cbor_encode_uint32(uint32_t, unsigned char *, size_t);
