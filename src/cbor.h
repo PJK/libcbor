@@ -270,7 +270,7 @@ cbor_item_t * cbor_load(cbor_data source, size_t source_size, struct cbor_load_r
 /*!
  * Copies bytes from a source memory area to a destination memory area,
  * where both areas may not overlap.
- * @param[out] dest The memory area to copy to.
+ * @param[in] dest The memory area to copy to.
  * @param[in]  src  The memory area to copy from.
  * @param[in]  n    The number of bytes to copy
  */
