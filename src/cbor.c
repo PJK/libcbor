@@ -745,10 +745,6 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 }
 
 
-inline cbor_type cbor_typeof(const cbor_item_t *item)
-{
-	return item->type;
-}
 
 
 

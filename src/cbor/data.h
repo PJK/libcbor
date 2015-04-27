@@ -13,6 +13,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+typedef const unsigned char * cbor_data;
+
 typedef enum {             /* Corresponding Major Type */
 	CBOR_TYPE_UINT,        /* 0 */
 	CBOR_TYPE_NEGINT,      /* 1 */
@@ -41,7 +43,7 @@ typedef enum {
 
 typedef enum {
 	CBOR_FLOAT_0, /* Registered for internal use - breaks and such */
-		CBOR_FLOAT_16,
+	CBOR_FLOAT_16,
 	CBOR_FLOAT_32,
 	CBOR_FLOAT_64
 } cbor_float_width;
@@ -108,20 +110,20 @@ union _cbor_double_helper {
 };
 
 union cbor_item_metadata {
-	struct _cbor_int_metadata		 int_metadata;
+	struct _cbor_int_metadata        int_metadata;
 	struct _cbor_bytestring_metadata bytestring_metadata;
-	struct _cbor_string_metadata	 string_metadata;
-	struct _cbor_array_metadata		 array_metadata;
-	struct _cbor_map_metadata		 map_metadata;
-	struct _cbor_tag_metadata		 tag_metadata;
+	struct _cbor_string_metadata     string_metadata;
+	struct _cbor_array_metadata      array_metadata;
+	struct _cbor_map_metadata        map_metadata;
+	struct _cbor_tag_metadata        tag_metadata;
 	struct _cbor_float_ctrl_metadata float_ctrl_metadata;
 };
 
 typedef struct cbor_item_t {
-	cbor_type				 type;
-	size_t					 refcount;
+	cbor_type                type;
+	size_t                   refcount;
 	union cbor_item_metadata metadata;
-	unsigned char * 		 data;
+	unsigned char *          data;
 } cbor_item_t;
 
 struct cbor_indefinite_string_data {
@@ -131,7 +133,7 @@ struct cbor_indefinite_string_data {
 };
 
 struct cbor_error {
-	size_t			position;
+	size_t          position;
 	cbor_error_code code;
 };
 
@@ -144,9 +146,17 @@ struct cbor_load_result {
 	size_t            read;
 };
 
-enum cbor_callback_result {
-	CBOR_CALLBACK_OK,
-	CBOR_CALLBACK_SKIP //TODO
+
+enum cbor_decoder_status {
+	CBOR_DECODER_FINISHED,
+	CBOR_DECODER_NEDATA,
+	CBOR_DECODER_EBUFFER,
+	CBOR_DECODER_ERROR
+};
+
+struct cbor_decoder_result {
+	size_t                   read;
+	enum cbor_decoder_status status;
 };
 
 #endif //LIBCBOR_DATA_H

@@ -56,6 +56,11 @@ inline bool cbor_isa_float_ctrl(const cbor_item_t *item)
 }
 
 
+inline cbor_type cbor_typeof(const cbor_item_t *item)
+{
+	return item->type;
+}
+
 
 inline bool cbor_is_int(const cbor_item_t *item)
 {

@@ -15,6 +15,14 @@
 #include <assert.h>
 #include "data.h"
 
+#define CBOR_MAJOR_VERSION 0
+#define CBOR_MINOR_VERSION 0
+#define CBOR_PATCH_VERSION 1
+
+#define CBOR_VERSION TO_STR(CBOR_MAJOR_VERSION) "." TO_STR(CBOR_MINOR_VERSION) "." TO_STR(CBOR_PATCH_VERSION)
+
+_Static_assert(sizeof(size_t) >= 8, "size_t must be at least 64 bits"); /* Otherwise we cannot support reasonably sized chunks */
+
 /* http://stackoverflow.com/questions/1644868/c-define-macro-for-debug-printing */
 #define debug_print(fmt, ...) do { \
 	if (DEBUG) \
@@ -62,7 +70,7 @@ bool cbor_isa_map(const cbor_item_t * item);
 bool cbor_isa_tag(const cbor_item_t * item);
 bool cbor_isa_float_ctrl(const cbor_item_t * item);
 
-/* Practical types with respect to their semantics (but no tag values) */
+/* Practical types with respect to their semantics (but not tag values) */
 bool cbor_is_int(const cbor_item_t * item);
 bool cbor_is_uint(const cbor_item_t * item);
 bool cbor_is_float(const cbor_item_t * item);
