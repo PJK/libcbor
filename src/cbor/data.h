@@ -8,6 +8,10 @@
 #ifndef LIBCBOR_DATA_H
 #define LIBCBOR_DATA_H
 
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 typedef enum {             /* Corresponding Major Type */
 	CBOR_TYPE_UINT,        /* 0 */

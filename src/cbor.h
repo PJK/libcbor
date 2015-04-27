@@ -1,14 +1,14 @@
 #ifndef CBOR_H_
 #define CBOR_H_
 
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdbool.h>
+
 #include <stdio.h>
 
 #define CBOR_MAJOR_VERSION 0
 #define CBOR_MINOR_VERSION 0
 #define CBOR_PATCH_VERSION 1
+
+#include "cbor/common.h"
 
 #define CBOR_VERSION TO_STR(CBOR_MAJOR_VERSION) "." TO_STR(CBOR_MINOR_VERSION) "." TO_STR(CBOR_PATCH_VERSION)
 
@@ -16,22 +16,12 @@ _Static_assert(sizeof(size_t) >= 8, "size_t must be at least 64 bits"); /* Other
 
 #include "cbor/arrays.h"
 #include "cbor/bytestrings.h"
-#include "cbor/common.h"
 #include "cbor/data.h"
 #include "cbor/floats_ctrls.h"
 #include "cbor/ints.h"
 #include "cbor/maps.h"
 #include "cbor/strings.h"
 #include "cbor/tags.h"
-
-/* http://stackoverflow.com/questions/1644868/c-define-macro-for-debug-printing */
-#define debug_print(fmt, ...) do { \
-	if (DEBUG) \
-		fprintf(stderr, "%s:%d:%s(): " fmt, __FILE__, __LINE__, __func__, __VA_ARGS__); \
-	} while (0)
-
-#define TO_STR_(x) #x
-#define TO_STR(x) TO_STR_(x) /* enables proper double expansion */
 
 typedef const unsigned char * cbor_data;
 
@@ -178,42 +168,8 @@ size_t cbor_serialize_map(const cbor_item_t *, unsigned char *, size_t);
 size_t cbor_serialize_tag(const cbor_item_t *, unsigned char *, size_t);
 size_t cbor_serialize_float_ctrl(const cbor_item_t *, unsigned char *, size_t);
 
-/*
-* ============================================================================
-* Memory management
-* ============================================================================
-*/
 
-cbor_item_t * cbor_incref(cbor_item_t * item);
-void cbor_decref(cbor_item_t ** item);
-void cbor_intermediate_decref(cbor_item_t * item);
-size_t cbor_refcount(const cbor_item_t * item);
 
-/*
-* ============================================================================
-* Data manipulation
-* ============================================================================
-*/
-
-cbor_type cbor_typeof(const cbor_item_t * item); /* Will be inlined iff link-time opt is enabled */
-
-/* Standard item types as described by the RFC */
-bool cbor_isa_uint(const cbor_item_t * item);
-bool cbor_isa_negint(const cbor_item_t * item);
-bool cbor_isa_bytestring(const cbor_item_t * item);
-bool cbor_isa_string(const cbor_item_t * item);
-bool cbor_isa_array(const cbor_item_t * item);
-bool cbor_isa_map(const cbor_item_t * item);
-bool cbor_isa_tag(const cbor_item_t * item);
-bool cbor_isa_float_ctrl(const cbor_item_t * item);
-
-/* Practical types with respect to their semantics (but no tag values) */
-bool cbor_is_int(const cbor_item_t * item);
-bool cbor_is_uint(const cbor_item_t * item);
-bool cbor_is_float(const cbor_item_t * item);
-bool cbor_is_bool(const cbor_item_t * item);
-bool cbor_is_null(const cbor_item_t * item);
-bool cbor_is_undef(const cbor_item_t * item);
 
 /*
 * ============================================================================
@@ -303,20 +259,7 @@ cbor_item_t * cbor_new_indefinite_bytestring();
 * ============================================================================
 */
 
-size_t cbor_array_size(const cbor_item_t * item);
-cbor_item_t * cbor_array_get(const cbor_item_t * item, size_t index);
-void cbor_array_set(cbor_item_t * item, size_t index, cbor_item_t * value);
-void cbor_array_replace(cbor_item_t * item, size_t index, cbor_item_t * value);
 
-bool cbor_array_is_definite(const cbor_item_t * item);
-bool cbor_array_is_indefinite(const cbor_item_t * item);
-/* Native handle to the underlying chunk */
-cbor_item_t ** cbor_array_handle(const cbor_item_t * item);
-
-cbor_item_t * cbor_new_definite_array(const size_t);
-cbor_item_t * cbor_new_indefinite_array();
-
-cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee);
 
 /*
 * ============================================================================
