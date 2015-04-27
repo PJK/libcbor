@@ -39,7 +39,7 @@ read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 
 if read_the_docs_build:
     print os.getcwd()
-    subprocess.call('cd ../..; doxygen Doxyfile', shell=True)
+    subprocess.call('cd ../..; mkdir -p doc/build/doxygen; doxygen Doxyfile', shell=True)
 
 breathe_projects = {
     'libcbor': '../build/doxygen/xml'
