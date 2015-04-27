@@ -48,17 +48,17 @@ typedef enum {
 } cbor_float_width;
 
 typedef enum {
-	CBOR_CTRL_FALSE,
-	CBOR_CTRL_TRUE,
-	CBOR_CTRL_NULL,
-	CBOR_CTRL_UNDEF
-} cbor_ctrl;
-
-typedef enum {
 	_CBOR_METADATA_DEFINITE,
 	_CBOR_METADATA_INDEFINITE
 } _cbor_dst_metadata;
 
+typedef enum {
+	CBOR_CTRL_NONE = 0,
+	CBOR_CTRL_FALSE = 20,
+	CBOR_CTRL_TRUE = 21,
+	CBOR_CTRL_NULL = 22,
+	CBOR_CTRL_UNDEF = 23
+} _cbor_ctrl;
 
 struct _cbor_int_metadata {
 	cbor_int_width width;
@@ -94,7 +94,7 @@ struct _cbor_tag_metadata {
 
 struct _cbor_float_ctrl_metadata {
 	cbor_float_width width;
-	cbor_ctrl        type;
+	uint8_t          ctrl;
 };
 
 /* Raw memory casts */
@@ -504,12 +504,12 @@ cbor_item_t * cbor_new_null();
 cbor_item_t * cbor_new_undef();
 cbor_item_t * cbor_new_bool(bool value);
 
-void cbor_set_ctrl(cbor_item_t * item, cbor_ctrl value);
+void cbor_set_ctrl(cbor_item_t * item, uint8_t value);
 void cbor_set_float2(cbor_item_t * item, float value);
 void cbor_set_float4(cbor_item_t * item, float value);
 void cbor_set_float8(cbor_item_t * item, double value);
 
-cbor_ctrl cbor_ctrl_code(const cbor_item_t * item);
+uint8_t cbor_ctrl_value(const cbor_item_t * item);
 bool cbor_ctrl_bool(const cbor_item_t * item);
 
 #ifdef DEBUG

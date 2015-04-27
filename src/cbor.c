@@ -980,7 +980,7 @@ cbor_item_t *cbor_new_ctrl()
 		.type = CBOR_TYPE_FLOAT_CTRL,
 		.data = NULL,
 		.refcount = 1,
-		.metadata = {.float_ctrl_metadata = {.width = CBOR_FLOAT_0, .type = 0}}
+		.metadata = {.float_ctrl_metadata = {.width = CBOR_FLOAT_0, .ctrl = CBOR_CTRL_NONE}}
 	};
 	return item;
 }
@@ -1423,17 +1423,17 @@ inline bool cbor_is_uint(const cbor_item_t *item)
 inline bool cbor_is_bool(const cbor_item_t *item)
 {
 	return cbor_isa_float_ctrl(item) &&
-		   (cbor_ctrl_code(item) == CBOR_CTRL_FALSE || cbor_ctrl_code(item) == CBOR_CTRL_TRUE);
+		   (cbor_ctrl_value(item) == CBOR_CTRL_FALSE || cbor_ctrl_value(item) == CBOR_CTRL_TRUE);
 }
 
 inline bool cbor_is_null(const cbor_item_t *item)
 {
-	return cbor_isa_float_ctrl(item) && cbor_ctrl_code(item) == CBOR_CTRL_NULL;
+	return cbor_isa_float_ctrl(item) && cbor_ctrl_value(item) == CBOR_CTRL_NULL;
 }
 
 inline bool cbor_is_undef(const cbor_item_t *item)
 {
-	return cbor_isa_float_ctrl(item) && cbor_ctrl_code(item) == CBOR_CTRL_UNDEF;
+	return cbor_isa_float_ctrl(item) && cbor_ctrl_value(item) == CBOR_CTRL_UNDEF;
 }
 
 bool cbor_is_float(const cbor_item_t *item)
@@ -1494,11 +1494,11 @@ cbor_float_width cbor_float_get_width(const cbor_item_t *item)
 	return item->metadata.float_ctrl_metadata.width;
 }
 
-cbor_ctrl cbor_ctrl_code(const cbor_item_t *item)
+uint8_t cbor_ctrl_value(const cbor_item_t *item)
 {
 	assert(cbor_isa_float_ctrl(item));
 	assert(cbor_float_get_width(item) == CBOR_FLOAT_0);
-	return item->metadata.float_ctrl_metadata.type;
+	return item->metadata.float_ctrl_metadata.ctrl;
 }
 
 bool cbor_float_ctrl_is_ctrl(const cbor_item_t *item)
@@ -1550,15 +1550,15 @@ void cbor_set_float8(cbor_item_t *item, double value)
 	*((double *) item->data) = value;
 }
 
-void cbor_set_ctrl(cbor_item_t *item, cbor_ctrl value)
+void cbor_set_ctrl(cbor_item_t *item, uint8_t value)
 {
 	assert(cbor_isa_float_ctrl(item));
 	assert(cbor_float_get_width(item) == CBOR_FLOAT_0);
-	item->metadata.float_ctrl_metadata.type = value;
+	item->metadata.float_ctrl_metadata.ctrl = value;
 }
 
 bool cbor_ctrl_bool(const cbor_item_t *item)
 {
 	assert(cbor_is_bool(item));
-	return item->metadata.float_ctrl_metadata.type == CBOR_CTRL_TRUE;
+	return item->metadata.float_ctrl_metadata.ctrl == CBOR_CTRL_TRUE;
 }
