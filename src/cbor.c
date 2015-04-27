@@ -443,7 +443,6 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_si
 	}
 	case 0x78:
 		/* One byte length string */
-		// TODO template this?
 	{
 		if (_cbor_claim_bytes(1, source_size, &result)) {
 			size_t length = (size_t) _cbor_load_uint8(source + 1);
@@ -834,7 +833,7 @@ cbor_int_width cbor_int_get_width(const cbor_item_t *item)
 
 uint8_t cbor_get_uint8(const cbor_item_t *item)
 {
-	return *(uint8_t *) item->data;
+	return *item->data;
 }
 
 uint16_t cbor_get_uint16(const cbor_item_t *item)
@@ -856,7 +855,7 @@ void cbor_set_uint8(cbor_item_t *item, uint8_t value)
 {
 	assert(cbor_is_int(item));
 	assert(cbor_int_get_width(item) == CBOR_INT_8);
-	*(uint8_t *) item->data = value;
+	*item->data = value;
 }
 
 void cbor_set_uint16(cbor_item_t *item, uint16_t value)

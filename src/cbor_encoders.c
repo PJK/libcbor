@@ -249,3 +249,8 @@ size_t cbor_encode_break(unsigned char *buffer, size_t buffer_size)
 {
 	return _cbor_encode_byte(0xFF, buffer, buffer_size);
 }
+
+size_t cbor_encode_ctrl(uint8_t value, unsigned char * buffer, size_t buffer_size)
+{
+	return _cbor_encode_uint8(value, buffer, buffer_size, 0xE0);
+}

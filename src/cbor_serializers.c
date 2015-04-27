@@ -225,10 +225,9 @@ size_t cbor_serialize_float_ctrl(const cbor_item_t *item, unsigned char *buffer,
 {
 	assert(cbor_isa_float_ctrl(item));
 	switch (cbor_float_get_width(item)) {
-	case CBOR_FLOAT_0: {
+	case CBOR_FLOAT_0:
 		/* CTRL - special treatment */
-		break;
-	}
+		return cbor_encode_ctrl(cbor_ctrl_value(item), buffer, buffer_size);
 	case CBOR_FLOAT_16:
 		return cbor_encode_half(cbor_float_get_float2(item), buffer, buffer_size);
 	case CBOR_FLOAT_32:

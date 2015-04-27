@@ -257,11 +257,20 @@ static void test_serialize_double(void **state)
 
 static void test_serialize_ctrl(void **state)
 {
-	cbor_item_t *item = cbor_new_float8();
-	cbor_set_float8(item, -4.1);
+	cbor_item_t *item = cbor_new_undef();
 
-	assert_int_equal(9, cbor_serialize(item, buffer, 512));
-	assert_memory_equal(buffer, ((unsigned char[]) {0xFB, 0xC0, 0x10, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66}), 9);
+	assert_int_equal(1, cbor_serialize(item, buffer, 512));
+	assert_memory_equal(buffer, ((unsigned char[]) {0xF7}), 1);
+	cbor_decref(&item);
+}
+
+static void test_serialize_long_ctrl(void **state)
+{
+	cbor_item_t *item = cbor_new_ctrl();
+	cbor_set_ctrl(item, 254);
+
+	assert_int_equal(2, cbor_serialize(item, buffer, 512));
+	assert_memory_equal(buffer, ((unsigned char[]) {0xF8, 0xFE}), 2);
 	cbor_decref(&item);
 }
 
@@ -288,7 +297,9 @@ int main(void)
 		unit_test(test_serialize_tags),
 		unit_test(test_serialize_half),
 		unit_test(test_serialize_single),
-		unit_test(test_serialize_double)
+		unit_test(test_serialize_double),
+		unit_test(test_serialize_ctrl),
+		unit_test(test_serialize_long_ctrl)
 	};
 	return run_tests(tests);
 }
