@@ -1,8 +1,13 @@
-#ifndef CBOR_H_
-#define CBOR_H_
+/*
+ * Copyright (c) 2014-2015 Pavel Kalvoda <me@pavelkalvoda.com>
+ *
+ * libcbor is free software; you can redistribute it and/or modify
+ * it under the terms of the MIT license. See LICENSE for details.
+ */
 
 
-#include <stdio.h>
+#ifndef LIBCBOR_H_
+#define LIBCBOR_H_
 
 #include "cbor/data.h"
 #include "cbor/common.h"
@@ -30,26 +35,10 @@ struct cbor_decoder_result cbor_stream_decode(cbor_data, size_t, const struct cb
 cbor_item_t * cbor_load(cbor_data source, size_t source_size, struct cbor_load_result * result);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #ifdef DEBUG
 #include <stdio.h>
 /* Pretty-print item description to STDOUT */
 void cbor_describe(cbor_item_t * item);
 #endif
 
-#endif
+#endif //LIBCBOR_H_
