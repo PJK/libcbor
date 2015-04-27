@@ -133,7 +133,7 @@ In order to use this feature, *libcbor* has to be compiled with the :doc:`approp
 
     Assigns the memory management functions globally.
 
-    .. warning:: This function modifies the global state and should therefore be used accordingly. Changing the memory handlers while allocated items exist will result in a ``free``/``malloc`` mismatch. This function is not thread safe with respect to both itself nor all the other *libcbor* functions that work with the heap.
+    .. warning:: This function modifies the global state and should therefore be used accordingly. Changing the memory handlers while allocated items exist will result in a ``free``/``malloc`` mismatch. This function is not thread safe with respect to both itself and all the other *libcbor* functions that work with the heap.
 
 
 Reference counting
