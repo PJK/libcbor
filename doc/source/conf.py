@@ -30,7 +30,14 @@ import os
 # ones.
 extensions = [
     'sphinx.ext.mathjax',
+    'breathe'
 ]
+
+breathe_projects = {
+    'libcbor': '../build/doxygen/xml'
+}
+
+breathe_default_project = "libcbor"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -269,3 +276,4 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # otherwise, readthedocs.org uses their theme by default, so no need to specify it
+

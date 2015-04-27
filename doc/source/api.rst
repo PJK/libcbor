@@ -1,6 +1,8 @@
 API
 =======
 
+.. doxygenfunction:: cbor_encode_uint8
+
 The data API is centered around :type:`cbor_item_t`, a generic handle for any CBOR item. There are functions to
 
  - create items,
