@@ -1,4 +1,4 @@
-#include "cbor.h"
+#include "cbor/common.h"
 
 _cbor_malloc_t _cbor_malloc = malloc;
 _cbor_realloc_t _cbor_realloc = realloc;
