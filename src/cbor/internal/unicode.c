@@ -1,4 +1,11 @@
-#include "cbor_unicode.h"
+/*
+ * Copyright (c) 2014-2015 Pavel Kalvoda <me@pavelkalvoda.com>
+ *
+ * libcbor is free software; you can redistribute it and/or modify
+ * it under the terms of the MIT license. See LICENSE for details.
+ */
+
+#include "unicode.h"
 
 #define UTF8_ACCEPT 0
 #define UTF8_REJECT 1
@@ -26,8 +33,8 @@ uint32_t _cbor_unicode_decode(uint32_t* state, uint32_t* codep, uint32_t byte) {
 	uint32_t type = utf8d[byte];
 
 	*codep = (*state != UTF8_ACCEPT) ?
-		(byte & 0x3fu) | (*codep << 6) :
-		(0xff >> type) & (byte);
+			 (byte & 0x3fu) | (*codep << 6) :
+			 (0xff >> type) & (byte);
 
 	*state = utf8d[256 + *state * 16 + type];
 	return *state;
@@ -56,7 +63,7 @@ size_t _cbor_unicode_codepoint_count(cbor_data source, size_t source_length, str
 
 	return count;
 
-error:
+	error:
 	*status = (struct _cbor_unicode_status) { .location = pos, .status = _CBOR_UNICODE_BADCP };
 	return -1;
 }

@@ -1,5 +1,5 @@
 #include "cbor_internal.h"
-#include "cbor_unicode.h"
+#include "cbor/internal/unicode.h"
 #include <assert.h>
 #include <string.h>
 #include <math.h>
