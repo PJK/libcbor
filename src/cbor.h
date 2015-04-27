@@ -208,18 +208,6 @@ cbor_item_t * cbor_build_uint64(uint64_t value);
 
 
 
-/*
-* ============================================================================
-* Tag manipulation
-* ============================================================================
-*/
-
-cbor_item_t * cbor_new_tag(uint64_t value);
-cbor_item_t * cbor_tag_item(const cbor_item_t * item);
-uint64_t cbor_tag_value(const cbor_item_t * item);
-void cbor_tag_set_item(cbor_item_t * item, cbor_item_t * tagged_item);
-
-
 
 #ifdef DEBUG
 #include <stdio.h>
