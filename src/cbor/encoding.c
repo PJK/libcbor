@@ -1,6 +1,12 @@
-#include <assert.h>
-#include "cbor.h"
-#include "cbor_internal.h"
+/*
+ * Copyright (c) 2014-2015 Pavel Kalvoda <me@pavelkalvoda.com>
+ *
+ * libcbor is free software; you can redistribute it and/or modify
+ * it under the terms of the MIT license. See LICENSE for details.
+ */
+
+#include "encoding.h"
+
 
 size_t _cbor_encode_uint8(uint8_t value, unsigned char *buffer, size_t buffer_size, uint8_t offset)
 {
@@ -27,9 +33,9 @@ size_t _cbor_encode_uint16(uint16_t value, unsigned char *buffer, size_t buffer_
 #if defined(__clang__) || defined(__GNUC__)
 		*(uint16_t *) &buffer[1] = __builtin_bswap16(value);
 #else
-			buffer[1] = value >> 8;
-			buffer[2] = value;
-		#endif
+		buffer[1] = value >> 8;
+		buffer[2] = value;
+#endif
 
 		return 3;
 	} else
@@ -48,7 +54,7 @@ size_t _cbor_encode_uint32(uint32_t value, unsigned char *buffer, size_t buffer_
 		buffer[2] = value >> 16;
 		buffer[3] = value >> 8;
 		buffer[4] = value;
-	#endif
+#endif
 
 		return 5;
 	} else
@@ -71,7 +77,7 @@ size_t _cbor_encode_uint64(uint64_t value, unsigned char *buffer, size_t buffer_
 		buffer[6] = value >> 16;
 		buffer[7] = value >> 8;
 		buffer[8] = value;
-	#endif
+#endif
 
 		return 9;
 	} else

@@ -1,6 +1,19 @@
-#include "cbor.h"
-#include "cbor_internal.h"
-#include <assert.h>
+/*
+ * Copyright (c) 2014-2015 Pavel Kalvoda <me@pavelkalvoda.com>
+ *
+ * libcbor is free software; you can redistribute it and/or modify
+ * it under the terms of the MIT license. See LICENSE for details.
+ */
+
+#include "serialization.h"
+#include "encoding.h"
+#include "cbor/arrays.h"
+#include "cbor/bytestrings.h"
+#include "cbor/floats_ctrls.h"
+#include "cbor/ints.h"
+#include "cbor/maps.h"
+#include "cbor/strings.h"
+#include "cbor/tags.h"
 #include <string.h>
 
 size_t cbor_serialize(const cbor_item_t *item, unsigned char *buffer, size_t buffer_size)
@@ -236,4 +249,3 @@ size_t cbor_serialize_float_ctrl(const cbor_item_t *item, unsigned char *buffer,
 		return cbor_encode_double(cbor_float_get_float8(item), buffer, buffer_size);
 	}
 }
-
