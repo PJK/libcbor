@@ -3,8 +3,7 @@
 #include <setjmp.h>
 #include <cmocka.h>
 #include <stdio.h>
-#include "cbor.h"
-#include "../src/cbor_unicode.h"
+#include "../src/cbor/internal/unicode.h"
 #include <inttypes.h>
 
 struct _cbor_unicode_status status;

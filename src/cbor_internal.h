@@ -2,7 +2,7 @@
 #define CBOR_INTERNAL_
 
 #include "cbor.h"
-#include "cbor_stack.h"
+#include "cbor/internal/stack.h"
 
 bool _cbor_assert_avail_bytes(size_t num,
 							  size_t source_size,
