@@ -6,7 +6,8 @@
  */
 
 #include "cbor.h"
-#include "cbor_internal.h"
+#include "cbor/internal/builder_callbacks.h"
+#include "cbor/internal/loaders.h"
 
 cbor_item_t *cbor_load(cbor_data source,
 					   size_t source_size,
