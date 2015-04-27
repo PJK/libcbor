@@ -12,6 +12,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <assert.h>
 #include "data.h"
 
 /* http://stackoverflow.com/questions/1644868/c-define-macro-for-debug-printing */

@@ -6,7 +6,6 @@
  */
 
 #include "arrays.h"
-#include <assert.h>
 
 size_t cbor_array_size(const cbor_item_t *item)
 {

@@ -6,7 +6,6 @@
  */
 
 #include "bytestrings.h"
-#include <assert.h>
 
 size_t cbor_bytestring_length(const cbor_item_t *item)
 {
