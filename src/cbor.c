@@ -10,8 +10,8 @@
 #include "cbor/internal/loaders.h"
 
 cbor_item_t *cbor_load(cbor_data source,
-					   size_t source_size,
-					   struct cbor_load_result *result)
+                       size_t source_size,
+                       struct cbor_load_result *result)
 {
 	/* Context stack */
 	static struct cbor_callbacks callbacks = {
@@ -88,7 +88,8 @@ cbor_item_t *cbor_load(cbor_data source,
 	return NULL;
 }
 
-bool _cbor_claim_bytes(size_t required, size_t provided, struct cbor_decoder_result *result)
+bool _cbor_claim_bytes(size_t required,
+                       size_t provided, struct cbor_decoder_result *result)
 {
 	if (required > (provided - result->read)) {
 		/* We need to keep all the metadata if parsing is to be resumed */
@@ -102,7 +103,8 @@ bool _cbor_claim_bytes(size_t required, size_t provided, struct cbor_decoder_res
 }
 
 struct cbor_decoder_result cbor_stream_decode(cbor_data source, size_t source_size,
-											  const struct cbor_callbacks *callbacks, void *context)
+                                              const struct cbor_callbacks *callbacks,
+                                              void *context)
 {
 	/* If we have no data, we cannot read even the MTB */
 	if (source_size < 1) {
