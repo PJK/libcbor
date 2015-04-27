@@ -2,6 +2,7 @@ set(SOURCES cbor.c cbor_internal.c cbor_stack.c cbor_unicode.c cbor_encoders.c c
 
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
+
 if(CUSTOM_ALLOC)
     LIST(APPEND SOURCES allocators.c)
 endif(CUSTOM_ALLOC)
@@ -22,5 +23,7 @@ install(TARGETS cbor cbor_shared
 	LIBRARY DESTINATION lib
 	RUNTIME DESTINATION bin)
 
-install(FILES cbor.h
-	DESTINATION include)
+install(DIRECTORY cbor DESTINATION include
+                FILES_MATCHING PATTERN "*.h")
+
+install(FILES cbor.h DESTINATION include)

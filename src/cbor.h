@@ -14,6 +14,17 @@
 
 _Static_assert(sizeof(size_t) >= 8, "size_t must be at least 64 bits"); /* Otherwise we cannot support reasonably sized chunks */
 
+#include "cbor/arrays.h"
+#include "cbor/bytestrings.h"
+#include "cbor/common.h"
+#include "cbor/data.h"
+#include "cbor/floats_ctrls.h"
+#include "cbor/ints.h"
+#include "cbor/maps.h"
+#include "cbor/strings.h"
+#include "cbor/tags.h"
+
+
 typedef enum {             /* Corresponding Major Type */
 	CBOR_TYPE_UINT,        /* 0 */
 	CBOR_TYPE_NEGINT,      /* 1 */
