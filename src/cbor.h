@@ -326,8 +326,10 @@ size_t cbor_serialize_float_ctrl(const cbor_item_t *, unsigned char *, size_t);
 * ============================================================================
 */
 
-void cbor_incref(cbor_item_t * item);
+cbor_item_t * cbor_incref(cbor_item_t * item);
 void cbor_decref(cbor_item_t ** item);
+void cbor_intermediate_decref(cbor_item_t * item);
+size_t cbor_refcount(const cbor_item_t * item);
 
 /*
 * ============================================================================
@@ -381,7 +383,7 @@ cbor_item_t * cbor_new_int16();
 cbor_item_t * cbor_new_int32();
 cbor_item_t * cbor_new_int64();
 
-// Build initialized integers - new + set_uint + mark_uint
+/* Build initialized integers - new + set_uint + mark_uint */
 cbor_item_t * cbor_build_uint8(uint8_t value);
 cbor_item_t * cbor_build_uint16(uint16_t value);
 cbor_item_t * cbor_build_uint32(uint32_t value);
@@ -444,6 +446,10 @@ cbor_item_t * cbor_new_indefinite_bytestring();
 */
 
 size_t cbor_array_size(const cbor_item_t * item);
+cbor_item_t * cbor_array_get(const cbor_item_t * item, size_t index);
+void cbor_array_set(cbor_item_t * item, size_t index, cbor_item_t * value);
+void cbor_array_replace(cbor_item_t * item, size_t index, cbor_item_t * value);
+
 bool cbor_array_is_definite(const cbor_item_t * item);
 bool cbor_array_is_indefinite(const cbor_item_t * item);
 /* Native handle to the underlying chunk */

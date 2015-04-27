@@ -156,12 +156,15 @@ static void test_serialize_definite_array(void **state)
 	cbor_item_t *one = cbor_build_uint8(1);
 	cbor_item_t *two = cbor_build_uint8(2);
 
-	cbor_array_handle(item)[0] = one;
-	cbor_array_handle(item)[1] = two;
+	cbor_array_push(item, one);
+	cbor_array_set(item, 1, two);
+	cbor_array_replace(item, 0, one);
 
 	assert_int_equal(3, cbor_serialize(item, buffer, 512));
 	assert_memory_equal(buffer, ((unsigned char[]) {0x82, 0x01, 0x02}), 3);
 	cbor_decref(&item);
+	cbor_decref(&one);
+	cbor_decref(&two);
 }
 
 static void test_serialize_indefinite_array(void **state)

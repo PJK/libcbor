@@ -2,9 +2,10 @@
 #include "cbor_internal.h"
 #include <assert.h>
 
-void cbor_incref(cbor_item_t *item)
+cbor_item_t * cbor_incref(cbor_item_t *item)
 {
 	item->refcount++;
+	return item;
 }
 
 void cbor_decref(cbor_item_t **item)
@@ -75,6 +76,16 @@ void cbor_decref(cbor_item_t **item)
 		//TODO
 		*item = NULL;
 	}
+}
+
+void cbor_intermediate_decref(cbor_item_t * item)
+{
+	cbor_decref(&item);
+}
+
+size_t cbor_refcount(const cbor_item_t * item)
+{
+	return item->refcount;
 }
 
 cbor_item_t *cbor_load(cbor_data source,
@@ -1467,6 +1478,24 @@ size_t cbor_array_size(const cbor_item_t *item)
 {
 	assert(cbor_isa_array(item));
 	return item->metadata.array_metadata.size;
+}
+
+cbor_item_t * cbor_array_get(const cbor_item_t * item, size_t index)
+{
+	cbor_incref(((cbor_item_t **) item->data)[index]);
+}
+
+void cbor_array_set(cbor_item_t * item, size_t index, cbor_item_t * value)
+{
+	((cbor_item_t **) item->data)[index] = cbor_incref(value);
+
+}
+
+void cbor_array_replace(cbor_item_t * item, size_t index, cbor_item_t * value)
+{
+	/* We cannot use cbor_array_get as that would increas the refcount */
+	cbor_intermediate_decref(((cbor_item_t **) item->data)[index]);
+	cbor_array_set(item, index, value);
 }
 
 bool cbor_array_is_definite(const cbor_item_t *item)
