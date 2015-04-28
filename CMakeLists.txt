@@ -33,8 +33,8 @@ if(COVERAGE)
         message(WARNING "Gcov instrumentation only works with GCC")
     endif()
     # https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g --coverage")
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -g --coverage")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fprofile-arcs -ftest-coverage --coverage")
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -g -fprofile-arcs -ftest-coverage --coverage")
 endif(COVERAGE)
 
 subdirs(src)
