@@ -12,7 +12,7 @@
 
 enum cbor_callback_result {
 	CBOR_CALLBACK_OK,
-	CBOR_CALLBACK_SKIP //TODO
+	CBOR_CALLBACK_HALT
 };
 
 typedef enum cbor_callback_result(* cbor_int8_callback)(void *, uint8_t);

@@ -66,11 +66,9 @@ cbor_item_t *cbor_load(cbor_data source,
 			goto error;
 
 		if (decode_result.status == CBOR_DECODER_FINISHED) {
-			debug_print("read %d bytes\n", decode_result.read);
 			result->read += decode_result.read;
 		} else
 			goto error;
-		debug_print("stacksize: %d \n", stack.size);
 	} while (stack.size > 0);
 
 	/* Move the result before free */

@@ -98,7 +98,11 @@ static void test_def_nested_map(void **state)
 	struct cbor_pair *inner_handle = cbor_map_handle(handle[0].value);
 	assert_true(cbor_typeof(inner_handle[0].key) == CBOR_TYPE_STRING);
 	assert_true(cbor_typeof(inner_handle[0].value) == CBOR_TYPE_STRING);
-	assert_string_equal(cbor_string_handle(inner_handle[0].value), "example glossary");
+	assert_memory_equal(
+		cbor_string_handle(inner_handle[0].value),
+		"example glossary",
+		strlen("example glossary")
+	);
 	cbor_decref(&map);
 	assert_null(map);
 }
@@ -145,11 +149,12 @@ static void test_streamed_kv_map(void **state)
 	assert_true(cbor_typeof(handle[0].value) == CBOR_TYPE_STRING);
 	assert_true(cbor_string_is_indefinite(handle[0].value));
 	assert_int_equal(cbor_string_chunk_count(handle[0].value), 2);
-	assert_string_equal(
+	assert_memory_equal(
 		cbor_string_handle(
 			cbor_string_chunks_handle(handle[0].value)[1]
 		),
-		"d"
+		"d",
+		1
 	);
 	cbor_decref(&map);
 	assert_null(map);
@@ -174,11 +179,12 @@ static void test_streamed_streamed_kv_map(void **state)
 	assert_true(cbor_typeof(handle[0].value) == CBOR_TYPE_STRING);
 	assert_true(cbor_string_is_indefinite(handle[0].value));
 	assert_int_equal(cbor_string_chunk_count(handle[0].value), 2);
-	assert_string_equal(
+	assert_memory_equal(
 		cbor_string_handle(
 			cbor_string_chunks_handle(handle[0].value)[1]
 		),
-		"d"
+		"d",
+		1
 	);
 	cbor_decref(&map);
 	assert_null(map);
