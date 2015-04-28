@@ -23,6 +23,7 @@
 #include "cbor/encoding.h"
 #include "cbor/serialization.h"
 #include "cbor/callbacks.h"
+#include "cbor/streaming.h"
 
 
 /*
@@ -31,7 +32,6 @@
 * ============================================================================
 */
 
-struct cbor_decoder_result cbor_stream_decode(cbor_data, size_t, const struct cbor_callbacks *, void *);
 cbor_item_t * cbor_load(cbor_data source, size_t source_size, struct cbor_load_result * result);
 
 

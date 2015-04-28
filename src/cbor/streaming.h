@@ -8,4 +8,13 @@
 #ifndef LIBCBOR_STREAMING_H
 #define LIBCBOR_STREAMING_H
 
+#include "common.h"
+#include "callbacks.h"
+
+struct cbor_decoder_result cbor_stream_decode(cbor_data,
+											  size_t,
+											  const struct cbor_callbacks *,
+											  void *);
+
+
 #endif //LIBCBOR_STREAMING_H
