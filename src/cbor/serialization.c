@@ -248,4 +248,7 @@ size_t cbor_serialize_float_ctrl(const cbor_item_t *item, unsigned char *buffer,
 	case CBOR_FLOAT_64:
 		return cbor_encode_double(cbor_float_get_float8(item), buffer, buffer_size);
 	}
+
+	/* Should never happen - make the compiler happy */
+	return 0;
 }

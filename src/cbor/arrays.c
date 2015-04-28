@@ -15,7 +15,7 @@ size_t cbor_array_size(const cbor_item_t *item)
 
 cbor_item_t * cbor_array_get(const cbor_item_t * item, size_t index)
 {
-	cbor_incref(((cbor_item_t **) item->data)[index]);
+	return cbor_incref(((cbor_item_t **) item->data)[index]);
 }
 
 void cbor_array_set(cbor_item_t * item, size_t index, cbor_item_t * value)

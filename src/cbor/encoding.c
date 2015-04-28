@@ -131,7 +131,7 @@ size_t cbor_encode_undef(unsigned char *buffer, size_t buffer_size)
 size_t cbor_encode_half(float value, unsigned char *buffer, size_t buffer_size)
 {
 	/* Assuming value is normalized */
-	uint32_t val = *(uint32_t *) &value;
+	uint32_t val = ((union _cbor_float_helper) {.as_float = value}).as_uint;
 	uint16_t res;
 	uint8_t exp = (val & 0x7F800000) >> 23; /* 0b0111_1111_1000_0000_0000_0000_0000_0000 */
 	uint32_t mant = val & 0x7FFFFF; /* 0b0000_0000_0111_1111_1111_1111_1111_1111 */
