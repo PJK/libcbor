@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/PJK/libcbor.svg?branch=master)](https://travis-ci.org/PJK/libcbor)
 [![Documentation Status](https://readthedocs.org/projects/libcbor/badge/?version=latest)](https://readthedocs.org/projects/libcbor/?badge=latest)
+[![Coverage Status](https://coveralls.io/repos/PJK/libcbor/badge.svg?branch=master)](https://coveralls.io/r/PJK/libcbor?branch=master)
 
 **libcbor** is a C library for parsing and generating [CBOR](http://tools.ietf.org/html/rfc7049), the general-purpose schema-less binary data format.
 
