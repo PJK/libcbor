@@ -7,7 +7,7 @@ else
     cmake -DCUSTOM_ALLOC=$CUSTOM_ALLOC -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=ON $SOURCE
 fi
 
-make
+make VERBOSE=1
 ctest -V
 
 if [ "$CC" == "gcc" ]; then
