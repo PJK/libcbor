@@ -177,7 +177,7 @@ enum cbor_callback_result cbor_builder_byte_string_callback(void *context, cbor_
 			// TODO check success
 			cbor_bytestring_add_chunk(ctx->stack->top->item, res);
 		} else {
-			// TODO complain loudly
+			_cbor_builder_append(res, ctx);
 		}
 	} else {
 		ctx->root = res;

@@ -27,10 +27,6 @@ matrix:
 
 script:
   - export SOURCE=$(pwd) && ./buildscript.sh
-  
-after_success:
-  - lcov --compat-libtool --directory . --capture --output-file coverage.info
-  - coveralls-lcov coverage.info
 
 notifications:
   email: false
