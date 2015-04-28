@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "cbor.h"
 #include <inttypes.h>
+#include <string.h>
 #include "assertions.h"
 
 
@@ -75,12 +76,125 @@ static void test_indef_simple_map(void **state)
 	assert_null(map);
 }
 
+//{
+//	"glossary": {
+//		"title": "example glossary"
+//	}
+//}
+unsigned char def_nested_map[] = {0xA1, 0x68, 0x67, 0x6C, 0x6F, 0x73, 0x73, 0x61, 0x72, 0x79, 0xA1, 0x65, 0x74, 0x69, 0x74, 0x6C, 0x65, 0x70, 0x65, 0x78, 0x61, 0x6D, 0x70, 0x6C, 0x65, 0x20, 0x67, 0x6C, 0x6F, 0x73, 0x73, 0x61, 0x72, 0x79};
+
+static void test_def_nested_map(void **state)
+{
+	map = cbor_load(def_nested_map, 34, &res);
+	assert_non_null(map);
+	assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
+	assert_true(cbor_isa_map(map));
+	assert_true(cbor_map_is_definite(map));
+	assert_true(cbor_map_size(map) == 1);
+	assert_true(res.read == 34);
+	struct cbor_pair *handle = cbor_map_handle(map);
+	assert_true(cbor_typeof(handle[0].key) == CBOR_TYPE_STRING);
+	assert_true(cbor_typeof(handle[0].value) == CBOR_TYPE_MAP);
+	struct cbor_pair *inner_handle = cbor_map_handle(handle[0].value);
+	assert_true(cbor_typeof(inner_handle[0].key) == CBOR_TYPE_STRING);
+	assert_true(cbor_typeof(inner_handle[0].value) == CBOR_TYPE_STRING);
+	assert_string_equal(cbor_string_handle(inner_handle[0].value), "example glossary");
+	cbor_decref(&map);
+	assert_null(map);
+}
+
+unsigned char streamed_key_map[] = {0xA1, 0x7F, 0x61, 0x61, 0x61, 0x62, 0xFF, 0xA0};
+
+/* '{ (_"a" "b"): {}}' */
+static void test_streamed_key_map(void **state)
+{
+	map = cbor_load(streamed_key_map, 8, &res);
+	assert_non_null(map);
+	assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
+	assert_true(cbor_isa_map(map));
+	assert_true(cbor_map_is_definite(map));
+	assert_true(cbor_map_size(map) == 1);
+	assert_true(res.read == 8);
+	struct cbor_pair *handle = cbor_map_handle(map);
+	assert_true(cbor_typeof(handle[0].key) == CBOR_TYPE_STRING);
+	assert_true(cbor_string_is_indefinite(handle[0].key));
+	assert_int_equal(cbor_string_chunk_count(handle[0].key), 2);
+	assert_true(cbor_isa_map(handle[0].value));
+	assert_int_equal(cbor_map_size(handle[0].value), 0);
+	cbor_decref(&map);
+	assert_null(map);
+}
+
+
+unsigned char streamed_kv_map[] = {0xA1, 0x7F, 0x61, 0x61, 0x61, 0x62, 0xFF, 0x7F, 0x61, 0x63, 0x61, 0x64, 0xFF};
+
+/* '{ (_"a" "b"): (_"c", "d")}' */
+static void test_streamed_kv_map(void **state)
+{
+	map = cbor_load(streamed_kv_map, 13, &res);
+	assert_non_null(map);
+	assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
+	assert_true(cbor_isa_map(map));
+	assert_true(cbor_map_is_definite(map));
+	assert_int_equal(cbor_map_size(map), 1);
+	assert_int_equal(res.read, 13);
+	struct cbor_pair *handle = cbor_map_handle(map);
+	assert_true(cbor_typeof(handle[0].key) == CBOR_TYPE_STRING);
+	assert_true(cbor_string_is_indefinite(handle[0].key));
+	assert_int_equal(cbor_string_chunk_count(handle[0].key), 2);
+	assert_true(cbor_typeof(handle[0].value) == CBOR_TYPE_STRING);
+	assert_true(cbor_string_is_indefinite(handle[0].value));
+	assert_int_equal(cbor_string_chunk_count(handle[0].value), 2);
+	assert_string_equal(
+		cbor_string_handle(
+			cbor_string_chunks_handle(handle[0].value)[1]
+		),
+		"d"
+	);
+	cbor_decref(&map);
+	assert_null(map);
+}
+
+unsigned char streamed_streamed_kv_map[] = {0xBF, 0x7F, 0x61, 0x61, 0x61, 0x62, 0xFF, 0x7F, 0x61, 0x63, 0x61, 0x64, 0xFF, 0xFF};
+
+/* '{_ (_"a" "b"): (_"c", "d")}' */
+static void test_streamed_streamed_kv_map(void **state)
+{
+	map = cbor_load(streamed_streamed_kv_map, 14, &res);
+	assert_non_null(map);
+	assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
+	assert_true(cbor_isa_map(map));
+	assert_true(cbor_map_is_indefinite(map));
+	assert_int_equal(cbor_map_size(map), 1);
+	assert_int_equal(res.read, 14);
+	struct cbor_pair *handle = cbor_map_handle(map);
+	assert_true(cbor_typeof(handle[0].key) == CBOR_TYPE_STRING);
+	assert_true(cbor_string_is_indefinite(handle[0].key));
+	assert_int_equal(cbor_string_chunk_count(handle[0].key), 2);
+	assert_true(cbor_typeof(handle[0].value) == CBOR_TYPE_STRING);
+	assert_true(cbor_string_is_indefinite(handle[0].value));
+	assert_int_equal(cbor_string_chunk_count(handle[0].value), 2);
+	assert_string_equal(
+		cbor_string_handle(
+			cbor_string_chunks_handle(handle[0].value)[1]
+		),
+		"d"
+	);
+	cbor_decref(&map);
+	assert_null(map);
+}
+
+
 int main(void)
 {
 	const UnitTest tests[] = {
 		unit_test(test_empty_map),
 		unit_test(test_simple_map),
-		unit_test(test_indef_simple_map)
+		unit_test(test_indef_simple_map),
+		unit_test(test_def_nested_map),
+		unit_test(test_streamed_key_map),
+		unit_test(test_streamed_kv_map),
+		unit_test(test_streamed_streamed_kv_map)
 	};
 	return run_tests(tests);
 }

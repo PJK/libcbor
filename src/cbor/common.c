@@ -151,7 +151,8 @@ void cbor_decref(cbor_item_t **item)
 			struct cbor_pair *handle = cbor_map_handle(*item);
 			for (size_t i = 0; i < cbor_map_size(*item); i++, handle++) {
 				cbor_decref(&handle->key);
-				cbor_decref(&handle->value);
+				if (handle->value != NULL)
+					cbor_decref(&handle->value);
 			}
 			_CBOR_FREE((*item)->data);
 			break;

@@ -18,6 +18,7 @@
 
 void _cbor_builder_append(cbor_item_t *item, struct _cbor_decoder_context *ctx)
 {
+	debug_print("Appending %d\n", cbor_typeof(item));
 	if (ctx->stack->size == 0) {
 		/* Top level item */
 		ctx->root = item;
@@ -45,15 +46,18 @@ void _cbor_builder_append(cbor_item_t *item, struct _cbor_decoder_context *ctx)
 		case CBOR_TYPE_MAP: {
 			/* We use 0 and 1 subitems to distinguish between keys and values in indefinite items */
 			if (ctx->stack->top->subitems % 2) {
+				debug_print("appending map value: %d\n", ctx->stack->top->subitems);
 				/* Odd record, this is a value */
 				cbor_map_handle(ctx->stack->top->item)[cbor_map_size(ctx->stack->top->item) - 1].value = item;
 			} else {
+				debug_print("appending map key: %d\n", ctx->stack->top->subitems);
 				/* Even record, this is a key */
 				cbor_map_add_key(ctx->stack->top->item, item);
 				cbor_decref(&item);
 			}
 			if (cbor_map_is_definite(ctx->stack->top->item)) {
 				ctx->stack->top->subitems--;
+				debug_print("subitems: %d\n", ctx->stack->top->subitems);
 				if (ctx->stack->top->subitems == 0) {
 					cbor_item_t *item = ctx->stack->top->item;
 					_cbor_stack_pop(ctx->stack);
@@ -208,12 +212,15 @@ enum cbor_callback_result cbor_builder_string_callback(void *context, cbor_data 
 	cbor_item_t *res = cbor_new_definite_string();
 	cbor_string_set_handle(res, new_handle, length);
 	res->metadata.string_metadata.codepoint_count = codepoint_count;
+	//_cbor_builder_append(res, ctx);
 	if (ctx->stack->size > 0) {
-		if (ctx->stack->top->item->type == CBOR_TYPE_STRING) {
+		if (ctx->stack->top->item->type == CBOR_TYPE_STRING &&
+				cbor_string_is_indefinite((ctx->stack->top->item)))
+		{
 			// TODO check success
 			cbor_string_add_chunk(ctx->stack->top->item, res);
 		} else {
-			// TODO complain loudly
+			_cbor_builder_append(res, ctx);
 		}
 	} else {
 		ctx->root = res;
@@ -257,6 +264,7 @@ enum cbor_callback_result cbor_builder_map_start_callback(void *context, size_t 
 {
 	struct _cbor_decoder_context *ctx = context;
 	if (size > 0) {
+		debug_print("pushing map to the stack %d, size: %d\n", ctx->stack->size, size);
 		_cbor_stack_push(ctx->stack, cbor_new_definite_map(size), size * 2);
 	} else {
 		_cbor_builder_append(cbor_new_definite_map(size), ctx);

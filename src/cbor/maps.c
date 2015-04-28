@@ -55,11 +55,13 @@ cbor_item_t * cbor_map_add_key(cbor_item_t * item, cbor_item_t * key)
 	struct cbor_pair *data = cbor_map_handle(item);
 	if (cbor_map_is_definite(item)) {
 		// TODO check size - throw
+		data[metadata->size].value = NULL;
 		data[metadata->size++].key = key;
 	} else {
 		// TODO exponential reallocs?
 		// TOOD check realloc
 		data = _CBOR_REALLOC(data, (metadata->size + 1) * sizeof(struct cbor_pair));
+		data[metadata->size].value = NULL;
 		data[metadata->size++].key = key;
 		item->data = (unsigned char *) data;
 	}
