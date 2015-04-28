@@ -10,21 +10,21 @@
 
 #include "common.h"
 
-enum cbor_callback_result {
+typedef enum cbor_callback_result {
 	CBOR_CALLBACK_OK,
 	CBOR_CALLBACK_HALT
-};
+} cbor_callback_res;
 
-typedef enum cbor_callback_result(* cbor_int8_callback)(void *, uint8_t);
-typedef enum cbor_callback_result(* cbor_int16_callback)(void *, uint16_t);
-typedef enum cbor_callback_result(* cbor_int32_callback)(void *, uint32_t);
-typedef enum cbor_callback_result(* cbor_int64_callback)(void *, uint64_t);
-typedef enum cbor_callback_result(* cbor_simple_callback)(void *);
-typedef enum cbor_callback_result(* cbor_string_callback)(void *, cbor_data, size_t);
-typedef enum cbor_callback_result(* cbor_collection_callback)(void *, size_t);
-typedef enum cbor_callback_result(* cbor_float_callback)(void *, float);
-typedef enum cbor_callback_result(* cbor_double_callback)(void *, double);
-typedef enum cbor_callback_result(* cbor_bool_callback)(void *, bool);
+typedef cbor_callback_res(* cbor_int8_callback)(void *, uint8_t);
+typedef cbor_callback_res(* cbor_int16_callback)(void *, uint16_t);
+typedef cbor_callback_res(* cbor_int32_callback)(void *, uint32_t);
+typedef cbor_callback_res(* cbor_int64_callback)(void *, uint64_t);
+typedef cbor_callback_res(* cbor_simple_callback)(void *);
+typedef cbor_callback_res(* cbor_string_callback)(void *, cbor_data, size_t);
+typedef cbor_callback_res(* cbor_collection_callback)(void *, size_t);
+typedef cbor_callback_res(* cbor_float_callback)(void *, float);
+typedef cbor_callback_res(* cbor_double_callback)(void *, double);
+typedef cbor_callback_res(* cbor_bool_callback)(void *, bool);
 
 struct cbor_callbacks {
 	/* Type 0 - Unsigned integers */
