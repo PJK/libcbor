@@ -11,7 +11,7 @@ if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Me
     exit 1
 fi
 
-if [ $CC -eq "gcc" ]; then
+if [ "$CC" == "gcc" ]; then
     lcov --compat-libtool --directory . --capture --output-file coverage.info
     coveralls-lcov coverage.info
 fi
