@@ -8,7 +8,12 @@ make
 ctest -V
 
 if [ "$CC" == "gcc" ]; then
-    make coverage
+    # For some reason, this needs clean build
+    rm -rf *
+    cmake $SOURCE -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc -DCOVERAGE=ON -DCUSTOM_ALLOC=$CUSTOM_ALLOC
+    make
+    ctest
+    lcov --capture --directory . --output-file coverage.info
     coveralls-lcov coverage.info
 fi
 
