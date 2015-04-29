@@ -2,6 +2,13 @@ cmake_minimum_required(VERSION 2.8)
 project(libcbor)
 include(CTest)
 
+SET(CPACK_GENERATOR "DEB" "TGZ" "RPM")
+set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Pavel Kalvoda")
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6")
+
+include(CPack)
+
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -pedantic -g -ggdb -DDEBUG=true")
 set(CMAKE_C_FLAGS_RELEASE "-O3 -Wall -pedantic -DNDEBUG")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
