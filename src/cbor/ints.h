@@ -21,6 +21,8 @@ uint16_t cbor_get_uint16(const cbor_item_t * item);
 uint32_t cbor_get_uint32(const cbor_item_t * item);
 uint64_t cbor_get_uint64(const cbor_item_t * item);
 
+uint64_t cbor_get_int(const cbor_item_t * item);
+
 void cbor_set_uint8(cbor_item_t * item, uint8_t value);
 void cbor_set_uint16(cbor_item_t * item, uint16_t value);
 void cbor_set_uint32(cbor_item_t * item, uint32_t value);

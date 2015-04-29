@@ -44,6 +44,13 @@ if(COVERAGE)
     set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -g -fprofile-arcs -ftest-coverage --coverage")
 endif(COVERAGE)
 
+option(PRETTY_PRINTER "Includ a debug pretty-printing routine" ON)
+if(PRETTY_PRINTER)
+    add_definitions(-DPRETTY_PRINTER=1)
+endif(PRETTY_PRINTER)
+
+
 subdirs(src)
 subdirs(demo)
 subdirs(test)
+subdirs(examples)

@@ -48,6 +48,15 @@ double cbor_float_get_float8(const cbor_item_t *item)
 	return *(double *) item->data;
 }
 
+double cbor_float_get_float(const cbor_item_t * item)
+{
+	assert(cbor_is_float(item));
+	switch(cbor_float_get_width(item)) {
+	case CBOR_FLOAT_16: return cbor_float_get_float2(item);
+	case CBOR_FLOAT_32: return cbor_float_get_float4(item);
+	case CBOR_FLOAT_64: return cbor_float_get_float8(item);
+	}
+}
 
 void cbor_set_float2(cbor_item_t *item, float value)
 {

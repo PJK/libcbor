@@ -15,22 +15,41 @@ cbor_int_width cbor_int_get_width(const cbor_item_t *item)
 
 uint8_t cbor_get_uint8(const cbor_item_t *item)
 {
+	assert(cbor_is_int(item));
+	assert(cbor_int_get_width(item) == CBOR_INT_8);
 	return *item->data;
 }
 
 uint16_t cbor_get_uint16(const cbor_item_t *item)
 {
+	assert(cbor_is_int(item));
+	assert(cbor_int_get_width(item) == CBOR_INT_16);
 	return *(uint16_t *) item->data;
 }
 
 uint32_t cbor_get_uint32(const cbor_item_t *item)
 {
+	assert(cbor_is_int(item));
+	assert(cbor_int_get_width(item) == CBOR_INT_32);
 	return *(uint32_t *) item->data;
 }
 
 uint64_t cbor_get_uint64(const cbor_item_t *item)
 {
+	assert(cbor_is_int(item));
+	assert(cbor_int_get_width(item) == CBOR_INT_64);
 	return *(uint64_t *) item->data;
+}
+
+uint64_t cbor_get_int(const cbor_item_t * item)
+{
+	assert(cbor_is_int(item));
+	switch(cbor_int_get_width(item)) {
+		case CBOR_INT_8: return cbor_get_uint8(item);
+		case CBOR_INT_16: return cbor_get_uint16(item);
+		case CBOR_INT_32: return cbor_get_uint32(item);
+		case CBOR_INT_64: return cbor_get_uint64(item);
+	}
 }
 
 void cbor_set_uint8(cbor_item_t *item, uint8_t value)

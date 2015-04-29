@@ -61,7 +61,11 @@ cbor_item_t *cbor_load(cbor_data source,
 
 	do {
 		if (source_size > result->read) { /* Check for overflows */
-			decode_result = cbor_stream_decode(source + result->read, source_size - result->read, &callbacks, context);
+			decode_result = cbor_stream_decode(
+				source + result->read,
+				source_size - result->read,
+				&callbacks,
+				context);
 		} else
 			goto error;
 
@@ -86,3 +90,156 @@ cbor_item_t *cbor_load(cbor_data source,
 	result->error.code = CBOR_ERR_NOTENOUGHDATA;
 	return NULL;
 }
+
+#ifdef PRETTY_PRINTER
+
+#include <inttypes.h>
+#include <wchar.h>
+#include <locale.h>
+
+#define __STDC_FORMAT_MACROS
+
+static int _pow(int b, int ex)
+{
+	if (ex == 0) return 1;
+	int res = b;
+	while (--ex > 0) res *= b;
+	return res;
+}
+
+static void _cbor_nested_describe(cbor_item_t * item, FILE * out, int indent)
+{
+	setlocale(LC_ALL, "");
+	switch (cbor_typeof(item)) {
+	case CBOR_TYPE_UINT: {
+		fprintf(out, "%*s[CBOR_TYPE_UINT] ", indent, " ");
+		fprintf(out, "Width: %dB, ", _pow(2, cbor_int_get_width(item)));
+		fprintf(out, "Value: %"PRIu64"\n", cbor_get_int(item));
+		break;
+	};
+	case CBOR_TYPE_NEGINT: {
+		fprintf(out, "%*s[CBOR_TYPE_NEGINT] ", indent, " ");
+		fprintf(out, "Width: %dB, ", _pow(2, cbor_int_get_width(item)));
+		fprintf(out, "Value: -%"PRIu64" -1\n", cbor_get_int(item));
+		break;
+	};
+	case CBOR_TYPE_BYTESTRING: {
+		fprintf(out, "%*s[CBOR_TYPE_BYTESTRING] ", indent, " ");
+		if (cbor_bytestring_is_indefinite(item)) {
+			fprintf(out,
+					"Indefinite, with %"PRIuPTR" chunks:\n",
+					cbor_bytestring_chunk_count(item));
+			for (size_t i = 0; i < cbor_bytestring_chunk_count(item); i++)
+				_cbor_nested_describe(
+					cbor_bytestring_chunks_handle(item)[i],
+					out,
+					indent + 4);
+		} else {
+			fprintf(out,
+					"Definite, length %"PRIuPTR"B\n",
+					cbor_bytestring_length(item));
+		}
+		break;
+	};
+	case CBOR_TYPE_STRING: {
+		fprintf(out, "%*s[CBOR_TYPE_STRING] ", indent, " ");
+		if (cbor_string_is_indefinite(item)) {
+			fprintf(out,
+					"Indefinite, with %"PRIuPTR" chunks:\n",
+					cbor_string_chunk_count(item));
+			for (size_t i = 0; i < cbor_string_chunk_count(item); i++)
+				_cbor_nested_describe(
+					cbor_string_chunks_handle(item)[i],
+					out,
+					indent + 4);
+		} else {
+			fprintf(out,
+					"Definite, length %"PRIuPTR"B, %"PRIuPTR" codepoints\n",
+					cbor_string_length(item),
+					cbor_string_codepoint_count(item));
+			/* Careful - this doesnt support multibyte characters! */
+			/* Printing those is out of the scope of this demo :) */
+			/* libICU is your friend */
+			fprintf(out,
+					"%*s%*s\n", indent + 4, " ",
+					(int) cbor_string_length(item),
+					cbor_string_handle(item)
+			);
+		}
+		break;
+	};
+	case CBOR_TYPE_ARRAY: {
+		fprintf(out, "%*s[CBOR_TYPE_ARRAY] ", indent, " ");
+		if (cbor_array_is_definite(item)) {
+			fprintf(out,
+					"Definite, size: %"PRIuPTR"\n",
+					cbor_array_size(item));
+		} else {
+			fprintf(out,
+					"Indefinite, size:  %"PRIuPTR"\n",
+					cbor_array_size(item));
+		}
+
+		for (size_t i = 0; i < cbor_array_size(item); i++)
+			_cbor_nested_describe(
+				cbor_array_handle(item)[i],
+				out,
+				indent + 4);
+		break;
+	};
+	case CBOR_TYPE_MAP: {
+		fprintf(out, "%*s[CBOR_TYPE_MAP] ", indent, " ");
+		if (cbor_map_is_definite(item)) {
+			fprintf(out,
+					"Definite, size: %"PRIuPTR"\n",
+					cbor_map_size(item));
+		} else {
+			fprintf(out,
+					"Indefinite, size:  %"PRIuPTR"\n",
+					cbor_map_size(item));
+		}
+
+		for (size_t i = 0; i < cbor_map_size(item); i++) {
+			_cbor_nested_describe(
+				cbor_map_handle(item)[i].key,
+				out,
+				indent + 4);
+			_cbor_nested_describe(
+				cbor_map_handle(item)[i].value,
+				out,
+				indent + 4);
+		}
+		break;
+	};
+	case CBOR_TYPE_TAG: {
+		fprintf(out, "%*s[CBOR_TYPE_TAG] ", indent, " ");
+		fprintf(out, "Value: %"PRIuPTR"\n", cbor_tag_value(item));
+		_cbor_nested_describe(cbor_tag_item(item), out, indent + 4);
+		break;
+	};
+	case CBOR_TYPE_FLOAT_CTRL: {
+		fprintf(out, "%*s[CBOR_TYPE_FLOAT_CTRL] ", indent, " ");
+		if (cbor_float_ctrl_is_ctrl(item)) {
+			if (cbor_is_bool(item))
+				fprintf(out, "Bool: %s\n", cbor_ctrl_bool(item) ? "true" : "false");
+			else if (cbor_is_undef(item))
+				fprintf(out, "Undefined\n");
+			else if (cbor_is_null(item))
+				fprintf(out, "Null\n");
+			else
+				fprintf(out, "Simple value %d\n", cbor_ctrl_value(item));
+		} else {
+			fprintf(out, "Width: %dB, ", _pow(2, cbor_float_get_width(item)));
+			fprintf(out, "value: %lf\n", cbor_float_get_float(item));
+		}
+		break;
+	};
+	}
+}
+
+void cbor_describe(cbor_item_t * item, FILE * out)
+{
+	_cbor_nested_describe(item, out, 0);
+}
+
+#endif

@@ -36,11 +36,11 @@ cbor_item_t * cbor_load(cbor_data source,
 						size_t source_size,
 						struct cbor_load_result * result);
 
-
-#ifdef DEBUG
+#ifdef PRETTY_PRINTER
 #include <stdio.h>
-/* Pretty-print item description to STDOUT */
-void cbor_describe(cbor_item_t * item);
+
+void cbor_describe(cbor_item_t * item, FILE * out);
+
 #endif
 
 #endif //LIBCBOR_H_

@@ -23,6 +23,8 @@ float cbor_float_get_float2(const cbor_item_t * item);
 float cbor_float_get_float4(const cbor_item_t * item);
 double cbor_float_get_float8(const cbor_item_t * item);
 
+double cbor_float_get_float(const cbor_item_t * item);
+
 cbor_item_t * cbor_new_ctrl(); /* float0 */
 cbor_item_t * cbor_new_float2();
 cbor_item_t * cbor_new_float4();
