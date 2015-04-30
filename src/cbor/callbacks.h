@@ -15,16 +15,25 @@ typedef enum cbor_callback_result {
 	CBOR_CALLBACK_HALT
 } cbor_callback_res;
 
-typedef cbor_callback_res(* cbor_int8_callback)(void *, uint8_t);
-typedef cbor_callback_res(* cbor_int16_callback)(void *, uint16_t);
-typedef cbor_callback_res(* cbor_int32_callback)(void *, uint32_t);
-typedef cbor_callback_res(* cbor_int64_callback)(void *, uint64_t);
-typedef cbor_callback_res(* cbor_simple_callback)(void *);
-typedef cbor_callback_res(* cbor_string_callback)(void *, cbor_data, size_t);
-typedef cbor_callback_res(* cbor_collection_callback)(void *, size_t);
-typedef cbor_callback_res(* cbor_float_callback)(void *, float);
-typedef cbor_callback_res(* cbor_double_callback)(void *, double);
-typedef cbor_callback_res(* cbor_bool_callback)(void *, bool);
+typedef cbor_callback_res(*cbor_int8_callback)(void *, uint8_t);
+
+typedef cbor_callback_res(*cbor_int16_callback)(void *, uint16_t);
+
+typedef cbor_callback_res(*cbor_int32_callback)(void *, uint32_t);
+
+typedef cbor_callback_res(*cbor_int64_callback)(void *, uint64_t);
+
+typedef cbor_callback_res(*cbor_simple_callback)(void *);
+
+typedef cbor_callback_res(*cbor_string_callback)(void *, cbor_data, size_t);
+
+typedef cbor_callback_res(*cbor_collection_callback)(void *, size_t);
+
+typedef cbor_callback_res(*cbor_float_callback)(void *, float);
+
+typedef cbor_callback_res(*cbor_double_callback)(void *, double);
+
+typedef cbor_callback_res(*cbor_bool_callback)(void *, bool);
 
 struct cbor_callbacks {
 	/* Type 0 - Unsigned integers */
@@ -60,7 +69,8 @@ struct cbor_callbacks {
 
 	/* Type 7 - Floats & misc */
 	/* Type names cannot be member names */
-	cbor_float_callback float2; /* 2B float is not supported in standard C */
+	cbor_float_callback float2;
+	/* 2B float is not supported in standard C */
 	cbor_float_callback float4;
 	cbor_double_callback float8;
 	cbor_simple_callback undefined;
@@ -69,6 +79,102 @@ struct cbor_callbacks {
 
 	/* Shared indefinites */
 	cbor_simple_callback indef_break;
+};
+
+
+enum cbor_callback_result cbor_null_uint8_callback(void *, uint8_t);
+
+enum cbor_callback_result cbor_null_uint16_callback(void *, uint16_t);
+
+enum cbor_callback_result cbor_null_uint32_callback(void *, uint32_t);
+
+enum cbor_callback_result cbor_null_uint64_callback(void *, uint64_t);
+
+enum cbor_callback_result cbor_null_negint8_callback(void *, uint8_t);
+
+enum cbor_callback_result cbor_null_negint16_callback(void *, uint16_t);
+
+enum cbor_callback_result cbor_null_negint32_callback(void *, uint32_t);
+
+enum cbor_callback_result cbor_null_negint64_callback(void *, uint64_t);
+
+enum cbor_callback_result cbor_null_string_callback(void *, cbor_data, size_t);
+
+enum cbor_callback_result cbor_null_string_start_callback(void *);
+
+enum cbor_callback_result cbor_null_byte_string_callback(void *, cbor_data, size_t);
+
+enum cbor_callback_result cbor_null_byte_string_start_callback(void *);
+
+enum cbor_callback_result cbor_null_array_start_callback(void *, size_t);
+
+enum cbor_callback_result cbor_null_indef_array_start_callback(void *);
+
+enum cbor_callback_result cbor_null_map_start_callback(void *, size_t);
+
+enum cbor_callback_result cbor_null_indef_map_start_callback(void *);
+
+enum cbor_callback_result cbor_null_tag_callback(void *, uint64_t);
+
+enum cbor_callback_result cbor_null_float2_callback(void *, float);
+
+enum cbor_callback_result cbor_null_float4_callback(void *, float);
+
+enum cbor_callback_result cbor_null_float8_callback(void *, double);
+
+enum cbor_callback_result cbor_null_null_callback(void *);
+
+enum cbor_callback_result cbor_null_undefined_callback(void *);
+
+enum cbor_callback_result cbor_null_boolean_callback(void *, bool);
+
+enum cbor_callback_result cbor_null_indef_break_callback(void *);
+
+
+static const struct cbor_callbacks cbor_empty_callbacks = {
+	/* Type 0 - Unsigned integers */
+	.uint8 = cbor_null_uint8_callback,
+	.uint16 = cbor_null_uint16_callback,
+	.uint32 = cbor_null_uint32_callback,
+	.uint64 = cbor_null_uint64_callback,
+
+	/* Type 1 - Negative integers */
+	.negint8 = cbor_null_negint8_callback,
+	.negint16 = cbor_null_negint16_callback,
+	.negint32 = cbor_null_negint32_callback,
+	.negint64 = cbor_null_negint64_callback,
+
+	/* Type 2 - Byte strings */
+	.byte_string = cbor_null_byte_string_callback,
+	.byte_string_start = cbor_null_byte_string_start_callback,
+
+	/* Type 3 - Strings */
+	.string = cbor_null_string_callback,
+	.string_start = cbor_null_string_start_callback,
+
+	/* Type 4 - Arrays */
+	.array_start = cbor_null_array_start_callback,
+	.indef_array_start = cbor_null_indef_array_start_callback,
+
+	/* Type 5 - Maps */
+	.map_start = cbor_null_map_start_callback,
+	.indef_map_start = cbor_null_indef_map_start_callback,
+
+	/* Type 6 - Tags */
+	.tag = cbor_null_tag_callback,
+
+	/* Type 7 - Floats & misc */
+	/* Type names cannot be member names */
+	.float2 = cbor_null_float2_callback,
+	/* 2B float is not supported in standard C */
+	.float4 = cbor_null_float4_callback,
+	.float8 = cbor_null_float8_callback,
+	.undefined = cbor_null_undefined_callback,
+	.null = cbor_null_null_callback,
+	.boolean = cbor_null_boolean_callback,
+
+	/* Shared indefinites */
+	.indef_break = cbor_null_indef_break_callback,
 };
 
 #endif //LIBCBOR_CALLBACKS_H

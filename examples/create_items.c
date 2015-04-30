@@ -19,7 +19,7 @@ int main(int argc, char * argv[])
 		.value = cbor_move(cbor_build_string("Is the answer"))
 	});
 
-	char * buffer = malloc(1024);
+	unsigned char * buffer = malloc(1024);
 	size_t length = cbor_serialize(root, buffer, 1024);
 	fwrite(buffer, 1, length, stdout);
 	fflush(stdout);
