@@ -328,7 +328,7 @@ enum cbor_callback_result cbor_builder_undefined_callback(void *context)
 enum cbor_callback_result cbor_builder_boolean_callback(void *context, bool value)
 {
 	struct _cbor_decoder_context *ctx = context;
-	cbor_item_t *res = cbor_new_bool(value);
+	cbor_item_t *res = cbor_build_bool(value);
 	_cbor_builder_append(res, ctx);
 	return CBOR_CALLBACK_OK;
 }

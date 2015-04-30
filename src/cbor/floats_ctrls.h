@@ -32,7 +32,7 @@ cbor_item_t * cbor_new_float8();
 
 cbor_item_t * cbor_new_null();
 cbor_item_t * cbor_new_undef();
-cbor_item_t * cbor_new_bool(bool value);
+cbor_item_t * cbor_build_bool(bool value);
 
 void cbor_set_ctrl(cbor_item_t * item, uint8_t value);
 void cbor_set_float2(cbor_item_t * item, float value);

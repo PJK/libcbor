@@ -93,6 +93,7 @@ cbor_item_t * cbor_incref(cbor_item_t * item);
 void cbor_decref(cbor_item_t ** item);
 void cbor_intermediate_decref(cbor_item_t * item);
 size_t cbor_refcount(const cbor_item_t * item);
+cbor_item_t * cbor_move(cbor_item_t * item);
 
 
 #endif //LIBCBOR_COMMON_H

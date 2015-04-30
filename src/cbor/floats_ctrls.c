@@ -154,7 +154,7 @@ cbor_item_t *cbor_new_undef()
 	return item;
 }
 
-cbor_item_t *cbor_new_bool(bool value)
+cbor_item_t *cbor_build_bool(bool value)
 {
 	cbor_item_t *item = cbor_new_ctrl();
 	cbor_set_ctrl(item, value ? CBOR_CTRL_TRUE : CBOR_CTRL_FALSE);
