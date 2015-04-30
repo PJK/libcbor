@@ -5,6 +5,7 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
+#include <string.h>
 #include "bytestrings.h"
 
 size_t cbor_bytestring_length(const cbor_item_t *item)
@@ -56,6 +57,15 @@ cbor_item_t *cbor_new_indefinite_bytestring()
 		.chunks = NULL,
 	};
 	return item;
+}
+
+cbor_item_t *cbor_build_bytestringstring(cbor_data handle, size_t length)
+{
+	cbor_item_t *res = cbor_new_definite_bytestring();
+	void * content = _CBOR_MALLOC(length);
+	memcpy(content, handle, length);
+	cbor_bytestring_set_handle(res, content, length);
+	return res;
 }
 
 void cbor_bytestring_set_handle(cbor_item_t *item, unsigned char *data, size_t length)

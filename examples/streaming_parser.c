@@ -36,7 +36,7 @@ int main(int argc, char * argv[])
 	size_t bytes_read = 0;
 	callbacks.string = find_string;
 	while (bytes_read < info.st_size) {
-		cbor_stream_decode(buffer, info.st_size - bytes_read, &callbacks, NULL);
+		decode_result = cbor_stream_decode(buffer, info.st_size - bytes_read, &callbacks, NULL);
 		bytes_read += decode_result.read;
 	}
 }

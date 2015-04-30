@@ -10,10 +10,11 @@ SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6")
 include(CPack)
 
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -pedantic -g -ggdb -DDEBUG=true")
-set(CMAKE_C_FLAGS_RELEASE "-O3 -Wall -pedantic -DNDEBUG")
+set(CMAKE_C_FLAGS_RELEASE "-O3 -flto -Wall -pedantic -DNDEBUG")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
 
 set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-g")
+set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-flto")
 
 enable_testing()
 
