@@ -120,9 +120,9 @@ union cbor_item_metadata {
 };
 
 typedef struct cbor_item_t {
-	cbor_type                type;
-	size_t                   refcount;
 	union cbor_item_metadata metadata;
+	size_t                   refcount;
+	cbor_type                type;
 	unsigned char *          data;
 } cbor_item_t;
 
