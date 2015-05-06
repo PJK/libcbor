@@ -52,10 +52,13 @@ cbor_item_t *cbor_load(cbor_data source,
 		result->error.code = CBOR_ERR_NODATA;
 		return NULL;
 	}
-	/* Target for callbacks */
-	struct _cbor_decoder_context *context = _CBOR_MALLOC(sizeof(struct _cbor_decoder_context));
 	struct _cbor_stack stack = _cbor_stack_init();
-	context->stack = &stack;
+
+	/* Target for callbacks */
+	struct _cbor_decoder_context context = (struct _cbor_decoder_context){
+		.stack = &stack,
+		.creation_failed = false
+	};
 	struct cbor_decoder_result decode_result;
 	*result = (struct cbor_load_result) {.read = 0, .error = {.code = CBOR_ERR_NONE}};
 
@@ -65,7 +68,7 @@ cbor_item_t *cbor_load(cbor_data source,
 				source + result->read,
 				source_size - result->read,
 				&callbacks,
-				context);
+				&context);
 		} else {
 			result->error = (struct cbor_error) {
 				.code = CBOR_ERR_NOTENOUGHDATA,
@@ -84,7 +87,6 @@ cbor_item_t *cbor_load(cbor_data source,
 			/* Data length doesn't match MTB expectation */
 		{
 			result->error.code = CBOR_ERR_NOTENOUGHDATA;
-			result->error.position = result->read;
 			goto error;
 		}
 		case CBOR_DECODER_EBUFFER:
@@ -93,18 +95,23 @@ cbor_item_t *cbor_load(cbor_data source,
 			/* Reserved/malformated item */
 		{
 			result->error.code = CBOR_ERR_MALFORMATED;
-			result->error.position = result->read;
 			goto error;
 		}
+		}
+
+		if (context.creation_failed) {
+			/* Most likely unsuccessful allocation - our callback has failed */
+			result->error.code = CBOR_DECODER_MEMERROR;
+			goto error;
 		}
 	} while (stack.size > 0);
 
 	/* Move the result before free */
-	cbor_item_t *result_item = context->root;
-	_CBOR_FREE(context);
+	cbor_item_t *result_item = context.root;
 	return result_item;
 
 	error:
+	result->error.position = result->read;
 	debug_print("Failed with decoder error %d at %d\n", result->error.code, result->error.position);
 	//cbor_describe(stack.top->item, stdout);
 	/* Free the stack */
@@ -112,7 +119,6 @@ cbor_item_t *cbor_load(cbor_data source,
 		cbor_decref(&stack.top->item);
 		_cbor_stack_pop(&stack);
 	}
-	_CBOR_FREE(context);
 	return NULL;
 }
 

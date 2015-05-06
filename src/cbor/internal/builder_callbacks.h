@@ -13,6 +13,7 @@
 #include "stack.h"
 
 struct _cbor_decoder_context {
+	bool creation_failed;		/* Callback creating the last item has failed */
 	cbor_item_t *root;
 	struct _cbor_stack *stack;
 };

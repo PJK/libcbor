@@ -51,8 +51,8 @@ static void test_4(void **state)
 {
 	item = cbor_load(data4, 7, &res);
 	assert_null(item);
-	assert_true(res.error.code == CBOR_ERR_NOTENOUGHDATA);
-	assert_int_equal(res.error.position, 1);
+	assert_true(res.error.code == CBOR_DECODER_MEMERROR);
+	assert_int_equal(res.error.position, 5);
 }
 
 

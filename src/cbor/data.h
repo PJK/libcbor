@@ -153,6 +153,7 @@ enum cbor_decoder_status {
 	CBOR_DECODER_NEDATA,		/* Not enough data - mismatch with MTB */
 	CBOR_DECODER_EBUFFER,		/* Buffer manipulation problem */
 	CBOR_DECODER_ERROR,			/* Malformed or reserved MTB/value */
+	CBOR_DECODER_MEMERROR		/* Memory error - item allocation failed. Is it too big for your allocator?? */
 };
 
 struct cbor_decoder_result {

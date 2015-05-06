@@ -81,7 +81,7 @@ void _cbor_builder_append(cbor_item_t *item, struct _cbor_decoder_context *ctx)
 }
 
 
-#define CHECK_RES do { if (res == NULL) printf("TODO TODO alloc problem"); } while (0)
+#define CHECK_RES do { if (res == NULL) { ctx->creation_failed = true; return; } } while (0)
 
 void cbor_builder_uint8_callback(void *context, uint8_t value)
 {
