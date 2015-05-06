@@ -148,10 +148,10 @@ struct cbor_load_result {
 
 
 enum cbor_decoder_status {
-	CBOR_DECODER_FINISHED,
-	CBOR_DECODER_NEDATA,
-	CBOR_DECODER_EBUFFER,
-	CBOR_DECODER_ERROR
+	CBOR_DECODER_FINISHED,		/* OK, finished */
+	CBOR_DECODER_NEDATA,		/* Not enough data - mismatch with MTB */
+	CBOR_DECODER_EBUFFER,		/* Buffer manipulation problem */
+	CBOR_DECODER_ERROR			/* Malformed or reserved MTB/value */
 };
 
 struct cbor_decoder_result {

@@ -10,8 +10,8 @@
 #include "cbor/internal/loaders.h"
 
 cbor_item_t *cbor_load(cbor_data source,
-                       size_t source_size,
-                       struct cbor_load_result *result)
+					   size_t source_size,
+					   struct cbor_load_result *result)
 {
 	/* Context stack */
 	static struct cbor_callbacks callbacks = {
@@ -67,16 +67,35 @@ cbor_item_t *cbor_load(cbor_data source,
 				&callbacks,
 				context);
 		} else {
-			result->error = (struct cbor_error){
+			result->error = (struct cbor_error) {
 				.code = CBOR_ERR_NOTENOUGHDATA,
 				.position = result->read};
 			goto error;
 		}
 
-		if (decode_result.status == CBOR_DECODER_FINISHED) {
+		switch (decode_result.status) {
+		case CBOR_DECODER_FINISHED:
+			/* Everything OK */
+		{
 			result->read += decode_result.read;
-		} else {
+			break;
+		}
+		case CBOR_DECODER_NEDATA:
+			/* Data length doesn't match MTB expectation */
+		{
+			result->error.code = CBOR_ERR_NOTENOUGHDATA;
+			result->error.position = result->read;
 			goto error;
+		}
+		case CBOR_DECODER_EBUFFER:
+			/* Fallthrough */
+		case CBOR_DECODER_ERROR:
+			/* Reserved/malformated item */
+		{
+			result->error.code = CBOR_ERR_MALFORMATED;
+			result->error.position = result->read;
+			goto error;
+		}
 		}
 	} while (stack.size > 0);
 
@@ -113,7 +132,7 @@ static int _pow(int b, int ex)
 	return res;
 }
 
-static void _cbor_nested_describe(cbor_item_t * item, FILE * out, int indent)
+static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent)
 {
 	setlocale(LC_ALL, "");
 	switch (cbor_typeof(item)) {
@@ -243,7 +262,7 @@ static void _cbor_nested_describe(cbor_item_t * item, FILE * out, int indent)
 	}
 }
 
-void cbor_describe(cbor_item_t * item, FILE * out)
+void cbor_describe(cbor_item_t *item, FILE *out)
 {
 	_cbor_nested_describe(item, out, 0);
 }

@@ -9,7 +9,7 @@
 #include "internal/loaders.h"
 
 bool static _cbor_claim_bytes(size_t required,
-					   size_t provided, struct cbor_decoder_result *result)
+							  size_t provided, struct cbor_decoder_result *result)
 {
 	if (required > (provided - result->read)) {
 		/* We need to keep all the metadata if parsing is to be resumed */

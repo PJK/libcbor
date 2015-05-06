@@ -28,10 +28,21 @@ static void test_1(void **state)
 	assert_int_equal(res.error.position, 2);
 }
 
+unsigned char data2[] = {0x9D};
+static void test_2(void **state)
+{
+	item = cbor_load(data2, 1, &res);
+	assert_null(item);
+	assert_true(res.error.code == CBOR_ERR_MALFORMATED);
+	assert_int_equal(res.error.position, 0);
+}
+
+
 int main(void)
 {
 	const UnitTest tests[] = {
-		unit_test(test_1)
+		unit_test(test_1),
+		unit_test(test_2)
 	};
 	return run_tests(tests);
 }
