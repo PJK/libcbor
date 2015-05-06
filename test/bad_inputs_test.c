@@ -37,12 +37,22 @@ static void test_2(void **state)
 	assert_int_equal(res.error.position, 0);
 }
 
+unsigned char data3[] = {0xD6};
+static void test_3(void **state)
+{
+	item = cbor_load(data3, 1, &res);
+	assert_null(item);
+	assert_true(res.error.code == CBOR_ERR_NOTENOUGHDATA);
+	assert_int_equal(res.error.position, 1);
+}
+
 
 int main(void)
 {
 	const UnitTest tests[] = {
 		unit_test(test_1),
-		unit_test(test_2)
+		unit_test(test_2),
+		unit_test(test_3)
 	};
 	return run_tests(tests);
 }

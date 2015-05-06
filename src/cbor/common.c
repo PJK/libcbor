@@ -159,7 +159,8 @@ void cbor_decref(cbor_item_t **item_ref)
 			break;
 		};
 		case CBOR_TYPE_TAG: {
-			cbor_decref(&item->metadata.tag_metadata.tagged_item);
+			if (item->metadata.tag_metadata.tagged_item != NULL)
+				cbor_decref(&item->metadata.tag_metadata.tagged_item);
 			_CBOR_FREE(item->data);
 			break;
 		}
