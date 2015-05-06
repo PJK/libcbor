@@ -102,10 +102,11 @@ cbor_item_t * cbor_incref(cbor_item_t *item)
 	return item;
 }
 
-void cbor_decref(cbor_item_t **item)
+void cbor_decref(cbor_item_t **item_ref)
 {
-	if (--(*item)->refcount == 0) {
-		switch ((*item)->type) {
+	cbor_item_t * item = *item_ref;
+	if (--item->refcount == 0) {
+		switch (item->type) {
 		case CBOR_TYPE_UINT:
 			/* Fallthrough */
 		case CBOR_TYPE_NEGINT:
@@ -114,52 +115,52 @@ void cbor_decref(cbor_item_t **item)
 			break;
 		}
 		case CBOR_TYPE_BYTESTRING: {
-			if (cbor_bytestring_is_definite(*item)) {
-				_CBOR_FREE((*item)->data);
+			if (cbor_bytestring_is_definite(item)) {
+				_CBOR_FREE(item->data);
 			} else {
 				/* We need to decref all chunks */
-				cbor_item_t **handle = cbor_bytestring_chunks_handle(*item);
-				for (size_t i = 0; i < cbor_bytestring_chunk_count(*item); i++)
+				cbor_item_t **handle = cbor_bytestring_chunks_handle(item);
+				for (size_t i = 0; i < cbor_bytestring_chunk_count(item); i++)
 					cbor_decref(&handle[i]);
-				_CBOR_FREE(((struct cbor_indefinite_string_data *) (*item)->data)->chunks);
-				_CBOR_FREE((*item)->data);
+				_CBOR_FREE(((struct cbor_indefinite_string_data *) item->data)->chunks);
+				_CBOR_FREE(item->data);
 			}
 			break;
 		}
 		case CBOR_TYPE_STRING: {
-			if (cbor_string_is_definite(*item)) {
-				_CBOR_FREE((*item)->data);
+			if (cbor_string_is_definite(item)) {
+				_CBOR_FREE(item->data);
 			} else {
 				/* We need to decref all chunks */
-				cbor_item_t **handle = cbor_string_chunks_handle(*item);
-				for (size_t i = 0; i < cbor_string_chunk_count(*item); i++)
+				cbor_item_t **handle = cbor_string_chunks_handle(item);
+				for (size_t i = 0; i < cbor_string_chunk_count(item); i++)
 					cbor_decref(&handle[i]);
-				_CBOR_FREE(((struct cbor_indefinite_string_data *) (*item)->data)->chunks);
-				_CBOR_FREE((*item)->data);
+				_CBOR_FREE(((struct cbor_indefinite_string_data *) item->data)->chunks);
+				_CBOR_FREE(item->data);
 			}
 			break;
 		}
 		case CBOR_TYPE_ARRAY: {
 			/* Get all items and decref them */
-			cbor_item_t **handle = cbor_array_handle(*item);
-			for (size_t i = 0; i < cbor_array_size(*item); i++)
+			cbor_item_t **handle = cbor_array_handle(item);
+			for (size_t i = 0; i < item->metadata.array_metadata.ptr; i++)
 				cbor_decref(&handle[i]);
-			_CBOR_FREE((*item)->data);
+			_CBOR_FREE(item->data);
 			break;
 		}
 		case CBOR_TYPE_MAP: {
-			struct cbor_pair *handle = cbor_map_handle(*item);
-			for (size_t i = 0; i < cbor_map_size(*item); i++, handle++) {
+			struct cbor_pair *handle = cbor_map_handle(item);
+			for (size_t i = 0; i < cbor_map_size(item); i++, handle++) {
 				cbor_decref(&handle->key);
 				if (handle->value != NULL)
 					cbor_decref(&handle->value);
 			}
-			_CBOR_FREE((*item)->data);
+			_CBOR_FREE(item->data);
 			break;
 		};
 		case CBOR_TYPE_TAG: {
-			cbor_decref(&(*item)->metadata.tag_metadata.tagged_item);
-			_CBOR_FREE((*item)->data);
+			cbor_decref(&item->metadata.tag_metadata.tagged_item);
+			_CBOR_FREE(item->data);
 			break;
 		}
 		case CBOR_TYPE_FLOAT_CTRL: {
@@ -167,9 +168,9 @@ void cbor_decref(cbor_item_t **item)
 			break;
 		}
 		}
-		_CBOR_FREE(*item);
+		_CBOR_FREE(item);
 		//TODO
-		*item = NULL;
+		*item_ref = NULL;
 	}
 }
 

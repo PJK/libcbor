@@ -66,13 +66,18 @@ cbor_item_t *cbor_load(cbor_data source,
 				source_size - result->read,
 				&callbacks,
 				context);
-		} else
+		} else {
+			result->error = (struct cbor_error){
+				.code = CBOR_ERR_NOTENOUGHDATA,
+				.position = result->read};
 			goto error;
+		}
 
 		if (decode_result.status == CBOR_DECODER_FINISHED) {
 			result->read += decode_result.read;
-		} else
+		} else {
 			goto error;
+		}
 	} while (stack.size > 0);
 
 	/* Move the result before free */
@@ -81,13 +86,14 @@ cbor_item_t *cbor_load(cbor_data source,
 	return result_item;
 
 	error:
+	debug_print("Failed with decoder error %d at %d\n", result->error.code, result->error.position);
+	//cbor_describe(stack.top->item, stdout);
 	/* Free the stack */
 	while (stack.size > 0) {
 		cbor_decref(&stack.top->item);
 		_cbor_stack_pop(&stack);
 	}
 	_CBOR_FREE(context);
-	result->error.code = CBOR_ERR_NOTENOUGHDATA;
 	return NULL;
 }
 
