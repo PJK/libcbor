@@ -14,15 +14,24 @@
 #include <inttypes.h>
 #include <stdlib.h>
 
-#define ROUNDS 16000
-#define MAXLEN 6
+#ifdef CBOR_HUGE_FUZZ
 
-static void printmem(const unsigned char * ptr, size_t length)
-{
-	for (size_t i = 0; i < length; i++)
-		printf("%02X", ptr[i]);
-	printf("\n");
-}
+#define ROUNDS 65536ULL
+#define MAXLEN 131072ULL
+
+#else
+
+#define ROUNDS 256ULL
+#define MAXLEN 65536ULL
+
+#endif
+
+//static void printmem(const unsigned char * ptr, size_t length)
+//{
+//	for (size_t i = 0; i < length; i++)
+//		printf("%02X", ptr[i]);
+//	printf("\n");
+//}
 
 static void run_round()
 {
@@ -34,7 +43,7 @@ static void run_round()
 	for (size_t i = 0; i < length; i++)
 		data[i] = rand() % 0xFF;
 
-	printmem(data, length);
+	//printmem(data, length);
 
 	item = cbor_load(data, length, &res);
 
@@ -49,7 +58,7 @@ static void fuzz(void **state)
 {
 	int seed = rand();
 	printf(
-		"Fuzzing %d rounds of up to %d bytes with seed %d\n",
+		"Fuzzing %llu rounds of up to %llu bytes with seed %d\n",
 		ROUNDS,
 		MAXLEN,
 		seed);
@@ -57,6 +66,8 @@ static void fuzz(void **state)
 
 	for (size_t i = 0; i < ROUNDS; i++)
 		run_round();
+
+	printf("Successfully fuzzed through %llu MB of data\n", (ROUNDS * MAXLEN) / (1024 * 1024));
 }
 
 int main(void)

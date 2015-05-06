@@ -34,6 +34,11 @@ if(CUSTOM_ALLOC)
     add_definitions(-DCBOR_CUSTOM_ALLOC=1)
 endif(CUSTOM_ALLOC)
 
+option(HUGE_FUZZ "Fuzz through 8GB of data in the test" OFF)
+if(HUGE_FUZZ)
+    add_definitions(-DCBOR_HUGE_FUZZ=1)
+endif(HUGE_FUZZ)
+
 option(COVERAGE "Enable code coverage instrumentation" OFF)
 if(COVERAGE)
     message("Configuring code coverage instrumentation")

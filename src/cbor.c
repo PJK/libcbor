@@ -112,7 +112,7 @@ cbor_item_t *cbor_load(cbor_data source,
 
 	error:
 	result->error.position = result->read;
-	debug_print("Failed with decoder error %d at %d\n", result->error.code, result->error.position);
+	//debug_print("Failed with decoder error %d at %d\n", result->error.code, result->error.position);
 	//cbor_describe(stack.top->item, stdout);
 	/* Free the stack */
 	while (stack.size > 0) {
