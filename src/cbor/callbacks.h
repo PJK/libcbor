@@ -11,8 +11,8 @@
 #include "common.h"
 
 typedef enum cbor_callback_result {
-	CBOR_CALLBACK_OK,
-	CBOR_CALLBACK_HALT
+	CBOR_CALLBACK_OK,       /* Everything is OK */
+	CBOR_CALLBACK_HALT      /* The response couldn't be handled -- signal it in the result */
 } cbor_callback_res;
 
 typedef cbor_callback_res(*cbor_int8_callback)(void *, uint8_t);

@@ -16,6 +16,8 @@ size_t cbor_map_size(const cbor_item_t *item)
 cbor_item_t *cbor_new_definite_map(size_t size)
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	if (item == NULL)
+		return NULL;
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_MAP,
@@ -26,12 +28,18 @@ cbor_item_t *cbor_new_definite_map(size_t size)
 		}},
 		.data = _CBOR_MALLOC(sizeof(struct cbor_pair) * size)
 	};
+	if (item->data == NULL) {
+		_CBOR_FREE(item);
+		return NULL;
+	}
 	return item;
 }
 
 cbor_item_t *cbor_new_indefinite_map()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	if (item == NULL)
+		return NULL;
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_MAP,
@@ -42,6 +50,10 @@ cbor_item_t *cbor_new_indefinite_map()
 		}},
 		.data = NULL
 	};
+	if (item->data == NULL) {
+		_CBOR_FREE(item);
+		return NULL;
+	}
 	return item;
 }
 

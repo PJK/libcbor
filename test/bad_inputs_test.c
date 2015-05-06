@@ -61,7 +61,8 @@ int main(void)
 	const UnitTest tests[] = {
 		unit_test(test_1),
 		unit_test(test_2),
-		unit_test(test_3)
+		unit_test(test_3),
+		unit_test(test_4)
 	};
 	return run_tests(tests);
 }
