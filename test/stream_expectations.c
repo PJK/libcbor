@@ -1,10 +1,3 @@
-/*
- * Copyright (c) 2014-2015 Pavel Kalvoda <me@pavelkalvoda.com>
- *
- * libcbor is free software; you can redistribute it and/or modify
- * it under the terms of the MIT license. See LICENSE for details.
- */
-
 #include "stream_expectations.h"
 
 /* Ordered from 0 to queue_size - 1 */
@@ -33,12 +26,11 @@ struct test_assertion current()
 			assertions_queue[queue_size++] = (struct test_assertion) { UINT8_EQ, (union test_expectation_data) { .int8 = actual } };
 		}
 
-		enum cbor_callback_result uint8_callback(void * context, uint8_t actual)
+		void uint8_callback(void * context, uint8_t actual)
 		{
 			assert_true(current().expectation == UINT8_EQ);
 			assert_true(current().data.int8 == actual);
 			current_expectation++;
-			return CBOR_CALLBACK_OK;
 		}
 	
 		void assert_uint16_eq(uint16_t actual)
@@ -46,12 +38,11 @@ struct test_assertion current()
 			assertions_queue[queue_size++] = (struct test_assertion) { UINT16_EQ, (union test_expectation_data) { .int16 = actual } };
 		}
 
-		enum cbor_callback_result uint16_callback(void * context, uint16_t actual)
+		void uint16_callback(void * context, uint16_t actual)
 		{
 			assert_true(current().expectation == UINT16_EQ);
 			assert_true(current().data.int16 == actual);
 			current_expectation++;
-			return CBOR_CALLBACK_OK;
 		}
 	
 		void assert_uint32_eq(uint32_t actual)
@@ -59,12 +50,11 @@ struct test_assertion current()
 			assertions_queue[queue_size++] = (struct test_assertion) { UINT32_EQ, (union test_expectation_data) { .int32 = actual } };
 		}
 
-		enum cbor_callback_result uint32_callback(void * context, uint32_t actual)
+		void uint32_callback(void * context, uint32_t actual)
 		{
 			assert_true(current().expectation == UINT32_EQ);
 			assert_true(current().data.int32 == actual);
 			current_expectation++;
-			return CBOR_CALLBACK_OK;
 		}
 	
 		void assert_uint64_eq(uint64_t actual)
@@ -72,12 +62,11 @@ struct test_assertion current()
 			assertions_queue[queue_size++] = (struct test_assertion) { UINT64_EQ, (union test_expectation_data) { .int64 = actual } };
 		}
 
-		enum cbor_callback_result uint64_callback(void * context, uint64_t actual)
+		void uint64_callback(void * context, uint64_t actual)
 		{
 			assert_true(current().expectation == UINT64_EQ);
 			assert_true(current().data.int64 == actual);
 			current_expectation++;
-			return CBOR_CALLBACK_OK;
 		}
 	
 
@@ -87,12 +76,11 @@ struct test_assertion current()
 			assertions_queue[queue_size++] = (struct test_assertion) { NEGINT8_EQ, (union test_expectation_data) { .int8 = actual } };
 		}
 
-		enum cbor_callback_result negint8_callback(void * context, uint8_t actual)
+		void negint8_callback(void * context, uint8_t actual)
 		{
 			assert_true(current().expectation == NEGINT8_EQ);
 			assert_true(current().data.int8 == actual);
 			current_expectation++;
-			return CBOR_CALLBACK_OK;
 		}
 	
 		void assert_negint16_eq(uint16_t actual)
@@ -100,12 +88,11 @@ struct test_assertion current()
 			assertions_queue[queue_size++] = (struct test_assertion) { NEGINT16_EQ, (union test_expectation_data) { .int16 = actual } };
 		}
 
-		enum cbor_callback_result negint16_callback(void * context, uint16_t actual)
+		void negint16_callback(void * context, uint16_t actual)
 		{
 			assert_true(current().expectation == NEGINT16_EQ);
 			assert_true(current().data.int16 == actual);
 			current_expectation++;
-			return CBOR_CALLBACK_OK;
 		}
 	
 		void assert_negint32_eq(uint32_t actual)
@@ -113,12 +100,11 @@ struct test_assertion current()
 			assertions_queue[queue_size++] = (struct test_assertion) { NEGINT32_EQ, (union test_expectation_data) { .int32 = actual } };
 		}
 
-		enum cbor_callback_result negint32_callback(void * context, uint32_t actual)
+		void negint32_callback(void * context, uint32_t actual)
 		{
 			assert_true(current().expectation == NEGINT32_EQ);
 			assert_true(current().data.int32 == actual);
 			current_expectation++;
-			return CBOR_CALLBACK_OK;
 		}
 	
 		void assert_negint64_eq(uint64_t actual)
@@ -126,12 +112,11 @@ struct test_assertion current()
 			assertions_queue[queue_size++] = (struct test_assertion) { NEGINT64_EQ, (union test_expectation_data) { .int64 = actual } };
 		}
 
-		enum cbor_callback_result negint64_callback(void * context, uint64_t actual)
+		void negint64_callback(void * context, uint64_t actual)
 		{
 			assert_true(current().expectation == NEGINT64_EQ);
 			assert_true(current().data.int64 == actual);
 			current_expectation++;
-			return CBOR_CALLBACK_OK;
 		}
 	
 
@@ -141,13 +126,12 @@ void assert_bstring_mem_eq(cbor_data address, size_t length)
 	assertions_queue[queue_size++] = (struct test_assertion) { BSTRING_MEM_EQ, (union test_expectation_data) { .string = { address, length } } };
 }
 
-enum cbor_callback_result byte_string_callback(void * context, cbor_data address, size_t length)
+void byte_string_callback(void * context, cbor_data address, size_t length)
 {
 	assert_true(current().expectation == BSTRING_MEM_EQ);
 	assert_true(current().data.string.address == address);
 	assert_true(current().data.string.length == length);
 	current_expectation++;
-	return CBOR_CALLBACK_OK;
 }
 
 void assert_bstring_indef_start()
@@ -155,11 +139,10 @@ void assert_bstring_indef_start()
 	assertions_queue[queue_size++] = (struct test_assertion) { .expectation = BSTRING_INDEF_START };
 }
 
-enum cbor_callback_result byte_string_start_callback(void * context)
+void byte_string_start_callback(void * context)
 {
 	assert_true(current().expectation == BSTRING_INDEF_START);
 	current_expectation++;
-	return CBOR_CALLBACK_OK;
 }
 
 void assert_indef_break()
@@ -167,11 +150,10 @@ void assert_indef_break()
 	assertions_queue[queue_size++] = (struct test_assertion) { .expectation = INDEF_BREAK };
 }
 
-enum cbor_callback_result indef_break_callback(void * context)
+void indef_break_callback(void * context)
 {
 	assert_true(current().expectation == INDEF_BREAK);
 	current_expectation++;
-	return CBOR_CALLBACK_OK;
 }
 
 
@@ -181,12 +163,11 @@ enum cbor_callback_result indef_break_callback(void * context)
 	}
 
 
-	enum cbor_callback_result array_start_callback(void * context, size_t length)
+	void array_start_callback(void * context, size_t length)
 	{
 		assert_true(current().expectation == ARRAY_START);
 		assert_true(current().data.length == length);
 		current_expectation++;
-		return CBOR_CALLBACK_OK;
 	}
 
 	void assert_indef_array_start()
@@ -194,11 +175,10 @@ enum cbor_callback_result indef_break_callback(void * context)
 		assertions_queue[queue_size++] = (struct test_assertion) { .expectation = ARRAY_INDEF_START };
 	}
 
-	enum cbor_callback_result indef_array_start_callback(void * context)
+	void indef_array_start_callback(void * context)
 	{
 		assert_true(current().expectation == ARRAY_INDEF_START);
 		current_expectation++;
-		return CBOR_CALLBACK_OK;
 	}
 
 	void assert_map_start(size_t length)
@@ -207,12 +187,11 @@ enum cbor_callback_result indef_break_callback(void * context)
 	}
 
 
-	enum cbor_callback_result map_start_callback(void * context, size_t length)
+	void map_start_callback(void * context, size_t length)
 	{
 		assert_true(current().expectation == MAP_START);
 		assert_true(current().data.length == length);
 		current_expectation++;
-		return CBOR_CALLBACK_OK;
 	}
 
 	void assert_indef_map_start()
@@ -220,11 +199,10 @@ enum cbor_callback_result indef_break_callback(void * context)
 		assertions_queue[queue_size++] = (struct test_assertion) { .expectation = MAP_INDEF_START };
 	}
 
-	enum cbor_callback_result indef_map_start_callback(void * context)
+	void indef_map_start_callback(void * context)
 	{
 		assert_true(current().expectation == MAP_INDEF_START);
 		current_expectation++;
-		return CBOR_CALLBACK_OK;
 	}
 
 
@@ -233,12 +211,11 @@ void assert_tag_eq(uint64_t value)
 	assertions_queue[queue_size++] = (struct test_assertion) { TAG_EQ , { .int64 = value } };
 }
 
-enum cbor_callback_result tag_callback(void * context, uint64_t value)
+void tag_callback(void * context, uint64_t value)
 {
 	assert_true(current().expectation == TAG_EQ);
 	assert_true(current().data.int64 == value);
 	current_expectation++;
-	return CBOR_CALLBACK_OK;
 }
 
 
@@ -248,12 +225,11 @@ enum cbor_callback_result tag_callback(void * context, uint64_t value)
 		assertions_queue[queue_size++] = (struct test_assertion) { HALF_EQ, { .float2 = value } };
 	}
 
-	enum cbor_callback_result half_callback(void * context, float actual)
+	void half_callback(void * context, float actual)
 	{
 		assert_true(current().expectation == HALF_EQ);
 		assert_true(current().data.float2 == actual);
 		current_expectation++;
-		return CBOR_CALLBACK_OK;
 	}
 
 	void assert_float(float value)
@@ -261,12 +237,11 @@ enum cbor_callback_result tag_callback(void * context, uint64_t value)
 		assertions_queue[queue_size++] = (struct test_assertion) { FLOAT_EQ, { .float4 = value } };
 	}
 
-	enum cbor_callback_result float_callback(void * context, float actual)
+	void float_callback(void * context, float actual)
 	{
 		assert_true(current().expectation == FLOAT_EQ);
 		assert_true(current().data.float4 == actual);
 		current_expectation++;
-		return CBOR_CALLBACK_OK;
 	}
 
 	void assert_double(double value)
@@ -274,12 +249,11 @@ enum cbor_callback_result tag_callback(void * context, uint64_t value)
 		assertions_queue[queue_size++] = (struct test_assertion) { DOUBLE_EQ, { .float8 = value } };
 	}
 
-	enum cbor_callback_result double_callback(void * context, double actual)
+	void double_callback(void * context, double actual)
 	{
 		assert_true(current().expectation == DOUBLE_EQ);
 		assert_true(current().data.float8 == actual);
 		current_expectation++;
-		return CBOR_CALLBACK_OK;
 	}
 
 
@@ -299,26 +273,23 @@ void assert_undef()
 }
 
 
-enum cbor_callback_result bool_callback(void * context, bool actual)
+void bool_callback(void * context, bool actual)
 {
 	assert_true(current().expectation == BOOL_EQ);
 	assert_true(current().data.boolean == actual);
 	current_expectation++;
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result null_callback(void * context)
+void null_callback(void * context)
 {
 	assert_true(current().expectation == NIL);
 	current_expectation++;
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result undef_callback(void * context)
+void undef_callback(void * context)
 {
 	assert_true(current().expectation == UNDEF);
 	current_expectation++;
-	return CBOR_CALLBACK_OK;
 }
 
 const struct cbor_callbacks asserting_callbacks = {

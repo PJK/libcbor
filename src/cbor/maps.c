@@ -50,10 +50,7 @@ cbor_item_t *cbor_new_indefinite_map()
 		}},
 		.data = NULL
 	};
-	if (item->data == NULL) {
-		_CBOR_FREE(item);
-		return NULL;
-	}
+
 	return item;
 }
 

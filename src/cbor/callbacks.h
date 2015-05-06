@@ -10,30 +10,25 @@
 
 #include "common.h"
 
-typedef enum cbor_callback_result {
-	CBOR_CALLBACK_OK,       /* Everything is OK */
-	CBOR_CALLBACK_HALT      /* The response couldn't be handled -- signal it in the result */
-} cbor_callback_res;
+typedef void(*cbor_int8_callback)(void *, uint8_t);
 
-typedef cbor_callback_res(*cbor_int8_callback)(void *, uint8_t);
+typedef void(*cbor_int16_callback)(void *, uint16_t);
 
-typedef cbor_callback_res(*cbor_int16_callback)(void *, uint16_t);
+typedef void(*cbor_int32_callback)(void *, uint32_t);
 
-typedef cbor_callback_res(*cbor_int32_callback)(void *, uint32_t);
+typedef void(*cbor_int64_callback)(void *, uint64_t);
 
-typedef cbor_callback_res(*cbor_int64_callback)(void *, uint64_t);
+typedef void(*cbor_simple_callback)(void *);
 
-typedef cbor_callback_res(*cbor_simple_callback)(void *);
+typedef void(*cbor_string_callback)(void *, cbor_data, size_t);
 
-typedef cbor_callback_res(*cbor_string_callback)(void *, cbor_data, size_t);
+typedef void(*cbor_collection_callback)(void *, size_t);
 
-typedef cbor_callback_res(*cbor_collection_callback)(void *, size_t);
+typedef void(*cbor_float_callback)(void *, float);
 
-typedef cbor_callback_res(*cbor_float_callback)(void *, float);
+typedef void(*cbor_double_callback)(void *, double);
 
-typedef cbor_callback_res(*cbor_double_callback)(void *, double);
-
-typedef cbor_callback_res(*cbor_bool_callback)(void *, bool);
+typedef void(*cbor_bool_callback)(void *, bool);
 
 struct cbor_callbacks {
 	/* Type 0 - Unsigned integers */
@@ -82,53 +77,53 @@ struct cbor_callbacks {
 };
 
 
-enum cbor_callback_result cbor_null_uint8_callback(void *, uint8_t);
+void cbor_null_uint8_callback(void *, uint8_t);
 
-enum cbor_callback_result cbor_null_uint16_callback(void *, uint16_t);
+void cbor_null_uint16_callback(void *, uint16_t);
 
-enum cbor_callback_result cbor_null_uint32_callback(void *, uint32_t);
+void cbor_null_uint32_callback(void *, uint32_t);
 
-enum cbor_callback_result cbor_null_uint64_callback(void *, uint64_t);
+void cbor_null_uint64_callback(void *, uint64_t);
 
-enum cbor_callback_result cbor_null_negint8_callback(void *, uint8_t);
+void cbor_null_negint8_callback(void *, uint8_t);
 
-enum cbor_callback_result cbor_null_negint16_callback(void *, uint16_t);
+void cbor_null_negint16_callback(void *, uint16_t);
 
-enum cbor_callback_result cbor_null_negint32_callback(void *, uint32_t);
+void cbor_null_negint32_callback(void *, uint32_t);
 
-enum cbor_callback_result cbor_null_negint64_callback(void *, uint64_t);
+void cbor_null_negint64_callback(void *, uint64_t);
 
-enum cbor_callback_result cbor_null_string_callback(void *, cbor_data, size_t);
+void cbor_null_string_callback(void *, cbor_data, size_t);
 
-enum cbor_callback_result cbor_null_string_start_callback(void *);
+void cbor_null_string_start_callback(void *);
 
-enum cbor_callback_result cbor_null_byte_string_callback(void *, cbor_data, size_t);
+void cbor_null_byte_string_callback(void *, cbor_data, size_t);
 
-enum cbor_callback_result cbor_null_byte_string_start_callback(void *);
+void cbor_null_byte_string_start_callback(void *);
 
-enum cbor_callback_result cbor_null_array_start_callback(void *, size_t);
+void cbor_null_array_start_callback(void *, size_t);
 
-enum cbor_callback_result cbor_null_indef_array_start_callback(void *);
+void cbor_null_indef_array_start_callback(void *);
 
-enum cbor_callback_result cbor_null_map_start_callback(void *, size_t);
+void cbor_null_map_start_callback(void *, size_t);
 
-enum cbor_callback_result cbor_null_indef_map_start_callback(void *);
+void cbor_null_indef_map_start_callback(void *);
 
-enum cbor_callback_result cbor_null_tag_callback(void *, uint64_t);
+void cbor_null_tag_callback(void *, uint64_t);
 
-enum cbor_callback_result cbor_null_float2_callback(void *, float);
+void cbor_null_float2_callback(void *, float);
 
-enum cbor_callback_result cbor_null_float4_callback(void *, float);
+void cbor_null_float4_callback(void *, float);
 
-enum cbor_callback_result cbor_null_float8_callback(void *, double);
+void cbor_null_float8_callback(void *, double);
 
-enum cbor_callback_result cbor_null_null_callback(void *);
+void cbor_null_null_callback(void *);
 
-enum cbor_callback_result cbor_null_undefined_callback(void *);
+void cbor_null_undefined_callback(void *);
 
-enum cbor_callback_result cbor_null_boolean_callback(void *, bool);
+void cbor_null_boolean_callback(void *, bool);
 
-enum cbor_callback_result cbor_null_indef_break_callback(void *);
+void cbor_null_indef_break_callback(void *);
 
 
 static const struct cbor_callbacks cbor_empty_callbacks = {

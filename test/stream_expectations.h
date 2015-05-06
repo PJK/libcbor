@@ -112,34 +112,34 @@ void assert_undef();
 void assert_indef_break();
 
 /* Assertions verifying callbacks */
-enum cbor_callback_result uint8_callback(void *, uint8_t);
-enum cbor_callback_result uint16_callback(void *, uint16_t);
-enum cbor_callback_result uint32_callback(void *, uint32_t);
-enum cbor_callback_result uint64_callback(void *, uint64_t);
+void uint8_callback(void *, uint8_t);
+void uint16_callback(void *, uint16_t);
+void uint32_callback(void *, uint32_t);
+void uint64_callback(void *, uint64_t);
 
-enum cbor_callback_result negint8_callback(void *, uint8_t);
-enum cbor_callback_result negint16_callback(void *, uint16_t);
-enum cbor_callback_result negint32_callback(void *, uint32_t);
-enum cbor_callback_result negint64_callback(void *, uint64_t);
+void negint8_callback(void *, uint8_t);
+void negint16_callback(void *, uint16_t);
+void negint32_callback(void *, uint32_t);
+void negint64_callback(void *, uint64_t);
 
-enum cbor_callback_result byte_string_callback(void *, cbor_data, size_t);
-enum cbor_callback_result byte_string_start_callback(void *);
+void byte_string_callback(void *, cbor_data, size_t);
+void byte_string_start_callback(void *);
 
-enum cbor_callback_result array_start_callback(void *, size_t);
-enum cbor_callback_result indef_array_start_callback(void *);
+void array_start_callback(void *, size_t);
+void indef_array_start_callback(void *);
 
-enum cbor_callback_result map_start_callback(void *, size_t);
-enum cbor_callback_result indef_map_start_callback(void *);
+void map_start_callback(void *, size_t);
+void indef_map_start_callback(void *);
 
-enum cbor_callback_result tag_callback(void *, uint64_t);
+void tag_callback(void *, uint64_t);
 
-enum cbor_callback_result half_callback(void *, float);
-enum cbor_callback_result float_callback(void *, float);
-enum cbor_callback_result double_callback(void *, double);
-enum cbor_callback_result indef_break_callback(void *);
+void half_callback(void *, float);
+void float_callback(void *, float);
+void double_callback(void *, double);
+void indef_break_callback(void *);
 
-enum cbor_callback_result bool_callback(void *, bool);
-enum cbor_callback_result null_callback(void *);
-enum cbor_callback_result undef_callback(void *);
+void bool_callback(void *, bool);
+void null_callback(void *);
+void undef_callback(void *);
 
 #endif

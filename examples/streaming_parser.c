@@ -15,13 +15,12 @@
 const char * key = "a secret key";
 bool key_found = false;
 
-enum cbor_callback_result find_string(void * _ctx, cbor_data buffer, size_t len)
+void find_string(void * _ctx, cbor_data buffer, size_t len)
 {
 	if (key_found)
 		printf("Found the value: %*s\n", (int) len, buffer);
 	else if (len == strlen(key))
 		key_found = memcmp(key, buffer, len);
-	return CBOR_CALLBACK_OK;
 }
 
 int main(int argc, char * argv[])

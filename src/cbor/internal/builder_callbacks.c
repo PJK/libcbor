@@ -81,9 +81,9 @@ void _cbor_builder_append(cbor_item_t *item, struct _cbor_decoder_context *ctx)
 }
 
 
-#define CHECK_RES do { if (res == NULL) return CBOR_CALLBACK_HALT; } while (0)
+#define CHECK_RES do { if (res == NULL) printf("TODO TODO alloc problem"); } while (0)
 
-enum cbor_callback_result cbor_builder_uint8_callback(void *context, uint8_t value)
+void cbor_builder_uint8_callback(void *context, uint8_t value)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_int8();
@@ -91,10 +91,9 @@ enum cbor_callback_result cbor_builder_uint8_callback(void *context, uint8_t val
 	cbor_mark_uint(res);
 	cbor_set_uint8(res, value);
 	_cbor_builder_append(res, ctx);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_uint16_callback(void *context, uint16_t value)
+void cbor_builder_uint16_callback(void *context, uint16_t value)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_int16();
@@ -102,10 +101,9 @@ enum cbor_callback_result cbor_builder_uint16_callback(void *context, uint16_t v
 	cbor_mark_uint(res);
 	cbor_set_uint16(res, value);
 	_cbor_builder_append(res, ctx);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_uint32_callback(void *context, uint32_t value)
+void cbor_builder_uint32_callback(void *context, uint32_t value)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_int32();
@@ -113,10 +111,9 @@ enum cbor_callback_result cbor_builder_uint32_callback(void *context, uint32_t v
 	cbor_mark_uint(res);
 	cbor_set_uint32(res, value);
 	_cbor_builder_append(res, ctx);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_uint64_callback(void *context, uint64_t value)
+void cbor_builder_uint64_callback(void *context, uint64_t value)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_int64();
@@ -124,10 +121,9 @@ enum cbor_callback_result cbor_builder_uint64_callback(void *context, uint64_t v
 	cbor_mark_uint(res);
 	cbor_set_uint64(res, value);
 	_cbor_builder_append(res, ctx);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_negint8_callback(void *context, uint8_t value)
+void cbor_builder_negint8_callback(void *context, uint8_t value)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_int8();
@@ -135,20 +131,18 @@ enum cbor_callback_result cbor_builder_negint8_callback(void *context, uint8_t v
 	cbor_mark_negint(res);
 	cbor_set_uint8(res, value);
 	_cbor_builder_append(res, ctx);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_negint16_callback(void *context, uint16_t value)
+void cbor_builder_negint16_callback(void *context, uint16_t value)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_int16();
 	cbor_mark_negint(res);
 	cbor_set_uint16(res, value);
 	_cbor_builder_append(res, ctx);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_negint32_callback(void *context, uint32_t value)
+void cbor_builder_negint32_callback(void *context, uint32_t value)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_int32();
@@ -156,10 +150,9 @@ enum cbor_callback_result cbor_builder_negint32_callback(void *context, uint32_t
 	cbor_mark_negint(res);
 	cbor_set_uint32(res, value);
 	_cbor_builder_append(res, ctx);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_negint64_callback(void *context, uint64_t value)
+void cbor_builder_negint64_callback(void *context, uint64_t value)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_int64();
@@ -167,10 +160,9 @@ enum cbor_callback_result cbor_builder_negint64_callback(void *context, uint64_t
 	cbor_mark_negint(res);
 	cbor_set_uint64(res, value);
 	_cbor_builder_append(res, ctx);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_byte_string_callback(void *context, cbor_data data, size_t length)
+void cbor_builder_byte_string_callback(void *context, cbor_data data, size_t length)
 {
 	struct _cbor_decoder_context *ctx = context;
 	unsigned char *new_handle = _CBOR_MALLOC(length);
@@ -182,27 +174,23 @@ enum cbor_callback_result cbor_builder_byte_string_callback(void *context, cbor_
 		if (cbor_bytestring_is_indefinite(ctx->stack->top->item)) {
 			cbor_bytestring_add_chunk(ctx->stack->top->item, res);
 		} else {
-			return CBOR_CALLBACK_HALT;
 			// TODO complain
 		}
 	} else {
 		_cbor_builder_append(res, ctx);
 	}
-
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_byte_string_start_callback(void *context)
+void cbor_builder_byte_string_start_callback(void *context)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_indefinite_bytestring();
 	CHECK_RES;
 	_cbor_stack_push(ctx->stack, res, 0);
-	return CBOR_CALLBACK_OK;
 }
 
 
-enum cbor_callback_result cbor_builder_string_callback(void *context, cbor_data data, size_t length)
+void cbor_builder_string_callback(void *context, cbor_data data, size_t length)
 {
 	struct _cbor_decoder_context *ctx = context;
 	struct _cbor_unicode_status unicode_status;
@@ -212,7 +200,6 @@ enum cbor_callback_result cbor_builder_string_callback(void *context, cbor_data 
 	if (unicode_status.status == _CBOR_UNICODE_BADCP) {
 		/* Invalid Unicode string - abort decoding */
 		//TODO complain
-		return CBOR_CALLBACK_HALT;
 	}
 
 	unsigned char *new_handle = _CBOR_MALLOC(length);
@@ -227,26 +214,22 @@ enum cbor_callback_result cbor_builder_string_callback(void *context, cbor_data 
 		if (cbor_string_is_indefinite(ctx->stack->top->item)) {
 			cbor_string_add_chunk(ctx->stack->top->item, res);
 		} else {
-			return CBOR_CALLBACK_HALT;
 			// TODO complain
 		}
 	} else {
 		_cbor_builder_append(res, ctx);
 	}
-
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_string_start_callback(void *context)
+void cbor_builder_string_start_callback(void *context)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_indefinite_string();
 	CHECK_RES;
 	_cbor_stack_push(ctx->stack, res, 0);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_array_start_callback(void *context, size_t size)
+void cbor_builder_array_start_callback(void *context, size_t size)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_definite_array(size);
@@ -256,28 +239,25 @@ enum cbor_callback_result cbor_builder_array_start_callback(void *context, size_
 	} else {
 		_cbor_builder_append(res, ctx);
 	}
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_indef_array_start_callback(void *context)
+void cbor_builder_indef_array_start_callback(void *context)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_indefinite_array();
 	CHECK_RES;
 	_cbor_stack_push(ctx->stack, res, 0);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_indef_map_start_callback(void *context)
+void cbor_builder_indef_map_start_callback(void *context)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_indefinite_map();
 	CHECK_RES;
 	_cbor_stack_push(ctx->stack, res, 0);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_map_start_callback(void *context, size_t size)
+void cbor_builder_map_start_callback(void *context, size_t size)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_definite_map(size);
@@ -287,10 +267,9 @@ enum cbor_callback_result cbor_builder_map_start_callback(void *context, size_t 
 	} else {
 		_cbor_builder_append(res, ctx);
 	}
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_indef_break_callback(void *context)
+void cbor_builder_indef_break_callback(void *context)
 {
 	struct _cbor_decoder_context *ctx = context;
 	if (ctx->stack->size == 0) {
@@ -300,70 +279,62 @@ enum cbor_callback_result cbor_builder_indef_break_callback(void *context)
 		_cbor_stack_pop(ctx->stack);
 		_cbor_builder_append(item, ctx);
 	}
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_float2_callback(void *context, float value)
+void cbor_builder_float2_callback(void *context, float value)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_float2();
 	cbor_set_float2(res, value);
 	_cbor_builder_append(res, ctx);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_float4_callback(void *context, float value)
+void cbor_builder_float4_callback(void *context, float value)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_float4();
 	CHECK_RES;
 	cbor_set_float4(res, value);
 	_cbor_builder_append(res, ctx);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_float8_callback(void *context, double value)
+void cbor_builder_float8_callback(void *context, double value)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_float8();
 	CHECK_RES;
 	cbor_set_float8(res, value);
 	_cbor_builder_append(res, ctx);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_null_callback(void *context)
+void cbor_builder_null_callback(void *context)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_null();
 	CHECK_RES;
 	_cbor_builder_append(res, ctx);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_undefined_callback(void *context)
+void cbor_builder_undefined_callback(void *context)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_undef();
 	CHECK_RES;
 	_cbor_builder_append(res, ctx);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_boolean_callback(void *context, bool value)
+void cbor_builder_boolean_callback(void *context, bool value)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_build_bool(value);
 	CHECK_RES;
 	_cbor_builder_append(res, ctx);
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result cbor_builder_tag_callback(void *context, uint64_t value)
+void cbor_builder_tag_callback(void *context, uint64_t value)
 {
 	struct _cbor_decoder_context *ctx = context;
 	cbor_item_t *res = cbor_new_tag(value);
 	CHECK_RES;
 	_cbor_stack_push(ctx->stack, res, 1);
-	return CBOR_CALLBACK_OK;
 }

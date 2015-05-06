@@ -26,12 +26,11 @@ struct test_assertion current()
 			assertions_queue[queue_size++] = (struct test_assertion) { <%= type.upcase %>INT<%= width %>_EQ, (union test_expectation_data) { .int<%= width %> = actual } };
 		}
 
-		enum cbor_callback_result <%= type %>int<%= width %>_callback(void * context, uint<%= width %>_t actual)
+		void <%= type %>int<%= width %>_callback(void * context, uint<%= width %>_t actual)
 		{
 			assert_true(current().expectation == <%= type.upcase %>INT<%= width %>_EQ);
 			assert_true(current().data.int<%= width %> == actual);
 			current_expectation++;
-			return CBOR_CALLBACK_OK;
 		}
 	<% end %>
 <% end %>
@@ -41,13 +40,12 @@ void assert_bstring_mem_eq(cbor_data address, size_t length)
 	assertions_queue[queue_size++] = (struct test_assertion) { BSTRING_MEM_EQ, (union test_expectation_data) { .string = { address, length } } };
 }
 
-enum cbor_callback_result byte_string_callback(void * context, cbor_data address, size_t length)
+void byte_string_callback(void * context, cbor_data address, size_t length)
 {
 	assert_true(current().expectation == BSTRING_MEM_EQ);
 	assert_true(current().data.string.address == address);
 	assert_true(current().data.string.length == length);
 	current_expectation++;
-	return CBOR_CALLBACK_OK;
 }
 
 void assert_bstring_indef_start()
@@ -55,11 +53,10 @@ void assert_bstring_indef_start()
 	assertions_queue[queue_size++] = (struct test_assertion) { .expectation = BSTRING_INDEF_START };
 }
 
-enum cbor_callback_result byte_string_start_callback(void * context)
+void byte_string_start_callback(void * context)
 {
 	assert_true(current().expectation == BSTRING_INDEF_START);
 	current_expectation++;
-	return CBOR_CALLBACK_OK;
 }
 
 void assert_indef_break()
@@ -67,11 +64,10 @@ void assert_indef_break()
 	assertions_queue[queue_size++] = (struct test_assertion) { .expectation = INDEF_BREAK };
 }
 
-enum cbor_callback_result indef_break_callback(void * context)
+void indef_break_callback(void * context)
 {
 	assert_true(current().expectation == INDEF_BREAK);
 	current_expectation++;
-	return CBOR_CALLBACK_OK;
 }
 
 <% %w(array map).each do |type| %>
@@ -81,12 +77,11 @@ enum cbor_callback_result indef_break_callback(void * context)
 	}
 
 
-	enum cbor_callback_result <%= type %>_start_callback(void * context, size_t length)
+	void <%= type %>_start_callback(void * context, size_t length)
 	{
 		assert_true(current().expectation == <%= type.upcase %>_START);
 		assert_true(current().data.length == length);
 		current_expectation++;
-		return CBOR_CALLBACK_OK;
 	}
 
 	void assert_indef_<%= type %>_start()
@@ -94,11 +89,10 @@ enum cbor_callback_result indef_break_callback(void * context)
 		assertions_queue[queue_size++] = (struct test_assertion) { .expectation = <%= type.upcase %>_INDEF_START };
 	}
 
-	enum cbor_callback_result indef_<%= type %>_start_callback(void * context)
+	void indef_<%= type %>_start_callback(void * context)
 	{
 		assert_true(current().expectation == <%= type.upcase %>_INDEF_START);
 		current_expectation++;
-		return CBOR_CALLBACK_OK;
 	}
 <% end %>
 
@@ -107,12 +101,11 @@ void assert_tag_eq(uint64_t value)
 	assertions_queue[queue_size++] = (struct test_assertion) { TAG_EQ , { .int64 = value } };
 }
 
-enum cbor_callback_result tag_callback(void * context, uint64_t value)
+void tag_callback(void * context, uint64_t value)
 {
 	assert_true(current().expectation == TAG_EQ);
 	assert_true(current().data.int64 == value);
 	current_expectation++;
-	return CBOR_CALLBACK_OK;
 }
 
 
@@ -122,12 +115,11 @@ enum cbor_callback_result tag_callback(void * context, uint64_t value)
 		assertions_queue[queue_size++] = (struct test_assertion) { <%= decimal[0].upcase %>_EQ, { .float<%= decimal[1] %> = value } };
 	}
 
-	enum cbor_callback_result <%= decimal[0] %>_callback(void * context, <%= decimal[2] || decimal[0] %> actual)
+	void <%= decimal[0] %>_callback(void * context, <%= decimal[2] || decimal[0] %> actual)
 	{
 		assert_true(current().expectation == <%= decimal[0].upcase %>_EQ);
 		assert_true(current().data.float<%= decimal[1] %> == actual);
 		current_expectation++;
-		return CBOR_CALLBACK_OK;
 	}
 <% end %>
 
@@ -147,26 +139,23 @@ void assert_undef()
 }
 
 
-enum cbor_callback_result bool_callback(void * context, bool actual)
+void bool_callback(void * context, bool actual)
 {
 	assert_true(current().expectation == BOOL_EQ);
 	assert_true(current().data.boolean == actual);
 	current_expectation++;
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result null_callback(void * context)
+void null_callback(void * context)
 {
 	assert_true(current().expectation == NIL);
 	current_expectation++;
-	return CBOR_CALLBACK_OK;
 }
 
-enum cbor_callback_result undef_callback(void * context)
+void undef_callback(void * context)
 {
 	assert_true(current().expectation == UNDEF);
 	current_expectation++;
-	return CBOR_CALLBACK_OK;
 }
 
 const struct cbor_callbacks asserting_callbacks = {
