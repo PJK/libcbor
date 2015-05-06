@@ -36,11 +36,11 @@ cbor_item_t *cbor_new_indefinite_string()
 	return item;
 }
 
-cbor_item_t *cbor_build_string(const char * val)
+cbor_item_t *cbor_build_string(const char *val)
 {
 	cbor_item_t *item = cbor_new_definite_string();
 	size_t len = strlen(val);
-	char * handle = _CBOR_MALLOC(len);
+	unsigned char * handle = _CBOR_MALLOC(len);
 	memcpy(handle, val, len);
 	cbor_string_set_handle(item, handle, len);
 	return item;

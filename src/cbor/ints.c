@@ -50,6 +50,7 @@ uint64_t cbor_get_int(const cbor_item_t * item)
 		case CBOR_INT_32: return cbor_get_uint32(item);
 		case CBOR_INT_64: return cbor_get_uint64(item);
 	}
+	return 0xDEADBEEF; /* Compiler complaints */
 }
 
 void cbor_set_uint8(cbor_item_t *item, uint8_t value)

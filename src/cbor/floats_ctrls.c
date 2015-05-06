@@ -7,6 +7,7 @@
 
 #include "floats_ctrls.h"
 #include "assert.h"
+#include <math.h>
 
 cbor_float_width cbor_float_get_width(const cbor_item_t *item)
 {
@@ -52,10 +53,12 @@ double cbor_float_get_float(const cbor_item_t * item)
 {
 	assert(cbor_is_float(item));
 	switch(cbor_float_get_width(item)) {
+	case CBOR_FLOAT_0: return NAN;
 	case CBOR_FLOAT_16: return cbor_float_get_float2(item);
 	case CBOR_FLOAT_32: return cbor_float_get_float4(item);
 	case CBOR_FLOAT_64: return cbor_float_get_float8(item);
 	}
+	return NAN; /* Compiler complaints */
 }
 
 void cbor_set_float2(cbor_item_t *item, float value)
