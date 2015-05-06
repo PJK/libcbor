@@ -46,6 +46,15 @@ static void test_3(void **state)
 	assert_int_equal(res.error.position, 1);
 }
 
+unsigned char data4[] = {0xBA, 0xC1, 0xE8, 0x3E, 0xE7, 0x20, 0xA8};
+static void test_4(void **state)
+{
+	item = cbor_load(data4, 7, &res);
+	assert_null(item);
+	assert_true(res.error.code == CBOR_ERR_NOTENOUGHDATA);
+	assert_int_equal(res.error.position, 1);
+}
+
 
 int main(void)
 {

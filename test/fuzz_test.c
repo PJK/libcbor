@@ -14,8 +14,8 @@
 #include <inttypes.h>
 #include <stdlib.h>
 
-#define ROUNDS 256
-#define MAXLEN 2
+#define ROUNDS 2048
+#define MAXLEN 8
 
 static void printmem(const unsigned char * ptr, size_t length)
 {

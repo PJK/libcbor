@@ -83,7 +83,8 @@ struct _cbor_array_metadata {
 };
 
 struct _cbor_map_metadata {
-	size_t size;
+	size_t             size;
+	size_t             ptr;
 	_cbor_dst_metadata type;
 };
 
