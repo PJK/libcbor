@@ -71,18 +71,26 @@ cbor_item_t **cbor_array_handle(const cbor_item_t *item)
 cbor_item_t *cbor_new_definite_array(size_t size)
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	if (item == NULL)
+		return NULL;
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_ARRAY,
 		.metadata = {.array_metadata = {.type = _CBOR_METADATA_DEFINITE, .size = size, .ptr = 0}},
 		.data = _CBOR_MALLOC(sizeof(cbor_item_t *) * size)
 	};
+	if (item->data == NULL) {
+		_CBOR_FREE(item);
+		return NULL;
+	}
 	return item;
 }
 
 cbor_item_t *cbor_new_indefinite_array()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	if (item == NULL)
+		return NULL;
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_ARRAY,

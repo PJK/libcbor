@@ -55,6 +55,16 @@ static void test_4(void **state)
 	assert_int_equal(res.error.position, 5);
 }
 
+unsigned char data5[] = {0x9A, 0xDA, 0x3A, 0xB2, 0x7F, 0x29};
+static void test_5(void **state)
+{
+	item = cbor_load(data5, 6, &res);
+	assert_null(item);
+	assert_true(res.error.code == CBOR_DECODER_MEMERROR);
+	assert_int_equal(res.error.position, 5);
+}
+
+
 
 int main(void)
 {
@@ -62,7 +72,8 @@ int main(void)
 		unit_test(test_1),
 		unit_test(test_2),
 		unit_test(test_3),
-		unit_test(test_4)
+		unit_test(test_4),
+		unit_test(test_5)
 	};
 	return run_tests(tests);
 }
