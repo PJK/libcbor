@@ -13,6 +13,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef const unsigned char * cbor_data;
 
 typedef enum {             /* Corresponding Major Type */
@@ -161,5 +165,9 @@ struct cbor_decoder_result {
 	size_t                   read;
 	enum cbor_decoder_status status;
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //LIBCBOR_DATA_H

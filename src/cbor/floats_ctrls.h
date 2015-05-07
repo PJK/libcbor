@@ -10,6 +10,10 @@
 
 #include "common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
 * ============================================================================
 * Float manipulation
@@ -41,5 +45,9 @@ void cbor_set_float8(cbor_item_t * item, double value);
 
 uint8_t cbor_ctrl_value(const cbor_item_t * item);
 bool cbor_ctrl_bool(const cbor_item_t * item);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //LIBCBOR_FLOATS_CTRLS_H

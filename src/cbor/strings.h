@@ -10,6 +10,10 @@
 
 #include "common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
 * ============================================================================
 * String manipulation
@@ -41,5 +45,9 @@ cbor_item_t *cbor_new_definite_string();
 cbor_item_t *cbor_new_indefinite_string();
 
 cbor_item_t *cbor_build_string(const char *val);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //LIBCBOR_STRINGS_H

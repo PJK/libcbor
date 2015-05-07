@@ -25,6 +25,9 @@
 #include "cbor/callbacks.h"
 #include "cbor/streaming.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
 * ============================================================================
@@ -41,6 +44,10 @@ cbor_item_t * cbor_load(cbor_data source,
 
 void cbor_describe(cbor_item_t * item, FILE * out);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif //LIBCBOR_H_

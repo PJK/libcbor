@@ -12,6 +12,11 @@
 #include "../callbacks.h"
 #include "stack.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 struct _cbor_decoder_context {
 	bool creation_failed;		/* Callback creating the last item has failed */
 	bool syntax_error;			/* Stack expectation mismatch */
@@ -66,5 +71,9 @@ void cbor_builder_undefined_callback(void *);
 void cbor_builder_boolean_callback(void *, bool);
 
 void cbor_builder_indef_break_callback(void *);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //LIBCBOR_BUILDER_CALLBACKS_H

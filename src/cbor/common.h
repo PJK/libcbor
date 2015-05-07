@@ -15,6 +15,10 @@
 #include <assert.h>
 #include "data.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define CBOR_MAJOR_VERSION 0
 #define CBOR_MINOR_VERSION 0
 #define CBOR_PATCH_VERSION 1
@@ -95,5 +99,8 @@ void cbor_intermediate_decref(cbor_item_t * item);
 size_t cbor_refcount(const cbor_item_t * item);
 cbor_item_t * cbor_move(cbor_item_t * item);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif //LIBCBOR_COMMON_H

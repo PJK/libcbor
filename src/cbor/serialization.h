@@ -10,6 +10,11 @@
 
 #include "common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 /*
 * ============================================================================
 * High level encoding
@@ -17,13 +22,26 @@
 */
 
 size_t cbor_serialize(const cbor_item_t *, unsigned char *, size_t);
+
 size_t cbor_serialize_uint(const cbor_item_t *, unsigned char *, size_t);
+
 size_t cbor_serialize_negint(const cbor_item_t *, unsigned char *, size_t);
+
 size_t cbor_serialize_bytestring(const cbor_item_t *, unsigned char *, size_t);
+
 size_t cbor_serialize_string(const cbor_item_t *, unsigned char *, size_t);
+
 size_t cbor_serialize_array(const cbor_item_t *, unsigned char *, size_t);
+
 size_t cbor_serialize_map(const cbor_item_t *, unsigned char *, size_t);
+
 size_t cbor_serialize_tag(const cbor_item_t *, unsigned char *, size_t);
+
 size_t cbor_serialize_float_ctrl(const cbor_item_t *, unsigned char *, size_t);
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif //LIBCBOR_SERIALIZATION_H

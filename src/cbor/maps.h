@@ -10,6 +10,10 @@
 
 #include "common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
 * ============================================================================
 * Map manipulation
@@ -34,5 +38,8 @@ bool cbor_map_is_indefinite(const cbor_item_t *item);
 
 struct cbor_pair *cbor_map_handle(const cbor_item_t *item);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif //LIBCBOR_MAPS_H

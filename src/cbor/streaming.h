@@ -11,10 +11,19 @@
 #include "common.h"
 #include "callbacks.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 struct cbor_decoder_result cbor_stream_decode(cbor_data,
 											  size_t,
 											  const struct cbor_callbacks *,
 											  void *);
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //LIBCBOR_STREAMING_H

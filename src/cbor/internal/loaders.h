@@ -10,6 +10,10 @@
 
 #include "../common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Read the given uint from the given location, no questions asked */
 uint8_t _cbor_load_uint8(const unsigned char *source);
 
@@ -24,5 +28,9 @@ double _cbor_load_half(cbor_data source);
 float _cbor_load_float(cbor_data source);
 
 double _cbor_load_double(cbor_data source);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //LIBCBOR_LOADERS_H

@@ -10,6 +10,10 @@
 
 #include "common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 size_t cbor_array_size(const cbor_item_t * item);
 cbor_item_t * cbor_array_get(const cbor_item_t * item, size_t index);
 void cbor_array_set(cbor_item_t * item, size_t index, cbor_item_t * value);
@@ -24,5 +28,9 @@ cbor_item_t * cbor_new_definite_array(const size_t);
 cbor_item_t * cbor_new_indefinite_array();
 
 cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //LIBCBOR_ARRAYS_H

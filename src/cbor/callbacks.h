@@ -10,6 +10,11 @@
 
 #include "common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 typedef void(*cbor_int8_callback)(void *, uint8_t);
 
 typedef void(*cbor_int16_callback)(void *, uint16_t);
@@ -171,5 +176,10 @@ static const struct cbor_callbacks cbor_empty_callbacks = {
 	/* Shared indefinites */
 	.indef_break = cbor_null_indef_break_callback,
 };
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif //LIBCBOR_CALLBACKS_H

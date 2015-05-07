@@ -10,6 +10,10 @@
 
 #include "common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
 * ============================================================================
 * Byte string manipulation
@@ -41,6 +45,10 @@ cbor_item_t *cbor_new_definite_bytestring();
 cbor_item_t *cbor_new_indefinite_bytestring();
 
 cbor_item_t *cbor_build_bytestringstring(cbor_data handle, size_t length);
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif //LIBCBOR_BYTESTRINGS_H
