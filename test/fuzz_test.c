@@ -21,8 +21,8 @@
 
 #else
 
-#define ROUNDS 33ULL
-#define MAXLEN 10ULL
+#define ROUNDS 256ULL
+#define MAXLEN 2048ULL
 
 #endif
 
@@ -44,7 +44,9 @@ static void run_round()
 		data[i] = rand() % 0xFF;
 	}
 
+	#ifdef CBOR_PRINT_FUZZ
 	printmem(data, length);
+	#endif
 
 	item = cbor_load(data, length, &res);
 
