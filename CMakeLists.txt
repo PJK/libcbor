@@ -39,6 +39,11 @@ if(HUGE_FUZZ)
     add_definitions(-DCBOR_HUGE_FUZZ=1)
 endif(HUGE_FUZZ)
 
+option(SANE_MALLOC "Assume that malloc will not allocate multi-GB blocks. Tests only, platform specific" OFF)
+if(SANE_MALLOC)
+    add_definitions(-DCBOR_ASSUME_SANE_MALLOC=1)
+endif(SANE_MALLOC)
+
 option(COVERAGE "Enable code coverage instrumentation" OFF)
 if(COVERAGE)
     message("Configuring code coverage instrumentation")

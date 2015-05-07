@@ -52,8 +52,10 @@ static void test_4(void **state)
 {
 	item = cbor_load(data4, 7, &res);
 	assert_null(item);
+#ifdef CBOR_ASSUME_SANE_MALLOC
 	assert_true(res.error.code == CBOR_ERR_MEMERROR);
 	assert_int_equal(res.error.position, 5);
+#endif
 }
 
 unsigned char data5[] = {0x9A, 0xDA, 0x3A, 0xB2, 0x7F, 0x29};
@@ -61,8 +63,10 @@ static void test_5(void **state)
 {
 	item = cbor_load(data5, 6, &res);
 	assert_null(item);
+#ifdef CBOR_ASSUME_SANE_MALLOC
 	assert_true(res.error.code == CBOR_ERR_MEMERROR);
 	assert_int_equal(res.error.position, 5);
+#endif
 }
 
 /* Indef string expectation mismatch */
