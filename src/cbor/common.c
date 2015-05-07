@@ -143,8 +143,10 @@ void cbor_decref(cbor_item_t **item_ref)
 		case CBOR_TYPE_ARRAY: {
 			/* Get all items and decref them */
 			cbor_item_t **handle = cbor_array_handle(item);
-			for (size_t i = 0; i < item->metadata.array_metadata.ptr; i++)
-				cbor_decref(&handle[i]);
+			size_t size = cbor_array_size(item);
+			for (size_t i = 0; i < size; i++)
+				if (handle[i] != NULL)
+					cbor_decref(&handle[i]);
 			_CBOR_FREE(item->data);
 			break;
 		}

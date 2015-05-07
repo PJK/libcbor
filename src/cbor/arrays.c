@@ -5,6 +5,7 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
+#include <string.h>
 #include "arrays.h"
 
 size_t cbor_array_size(const cbor_item_t *item)
@@ -38,12 +39,15 @@ cbor_item_t *cbor_array_push(cbor_item_t *array, cbor_item_t *pushee)
 	struct _cbor_array_metadata *metadata = (struct _cbor_array_metadata *) &array->metadata;
 	cbor_item_t **data = (cbor_item_t **) array->data;
 	if (cbor_array_is_definite(array)) {
-		// TODO check size - throw
+		if (metadata->ptr > metadata->size)
+			printf("Error - NE space def\n");
 		data[metadata->ptr++] = pushee;
 	} else {
 		// TODO exponential reallocs?
-		data = _CBOR_REALLOC(data, (metadata->size + 1) * sizeof(cbor_item_t *));
-		data[metadata->size++] = pushee;
+		if (metadata->ptr > metadata->size)
+			printf("Error - NE space indef\n");
+		data = _CBOR_REALLOC(data, (++metadata->size) * sizeof(cbor_item_t *));
+		data[metadata->ptr++] = pushee;
 		array->data = (unsigned char *) data;
 	}
 	return array;
@@ -73,16 +77,23 @@ cbor_item_t *cbor_new_definite_array(size_t size)
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
 	if (item == NULL)
 		return NULL;
+
+	cbor_item_t ** data = _CBOR_MALLOC(sizeof(cbor_item_t *) * size);
+	if (data == NULL) {
+		_CBOR_FREE(item);
+		return NULL;
+	}
+
+	for (size_t i = 0; i < size; i++)
+		data[i] = NULL;
+
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_ARRAY,
 		.metadata = {.array_metadata = {.type = _CBOR_METADATA_DEFINITE, .size = size, .ptr = 0}},
-		.data = _CBOR_MALLOC(sizeof(cbor_item_t *) * size)
+		.data = (unsigned char *)data
 	};
-	if (item->data == NULL) {
-		_CBOR_FREE(item);
-		return NULL;
-	}
+
 	return item;
 }
 
@@ -91,6 +102,7 @@ cbor_item_t *cbor_new_indefinite_array()
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
 	if (item == NULL)
 		return NULL;
+
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_ARRAY,

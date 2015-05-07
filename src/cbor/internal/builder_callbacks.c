@@ -73,8 +73,8 @@ void _cbor_builder_append(cbor_item_t *item, struct _cbor_decoder_context *ctx)
 			break;
 		}
 		default: {
-			//TODO complain loudly, inidicate failure!!!
-			//fprintf(stderr, "Unexpected item!\n");
+			cbor_decref(&item);
+			ctx->syntax_error = true;
 		}
 		}
 	}
@@ -214,6 +214,7 @@ void cbor_builder_string_callback(void *context, cbor_data data, size_t length)
 		if (cbor_string_is_indefinite(ctx->stack->top->item)) {
 			cbor_string_add_chunk(ctx->stack->top->item, res);
 		} else {
+			printf("shouldnt happen type mismatch \n");
 			// TODO complain
 		}
 	} else {

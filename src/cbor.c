@@ -57,7 +57,8 @@ cbor_item_t *cbor_load(cbor_data source,
 	/* Target for callbacks */
 	struct _cbor_decoder_context context = (struct _cbor_decoder_context){
 		.stack = &stack,
-		.creation_failed = false
+		.creation_failed = false,
+		.syntax_error = false
 	};
 	struct cbor_decoder_result decode_result;
 	*result = (struct cbor_load_result) {.read = 0, .error = {.code = CBOR_ERR_NONE}};
@@ -101,7 +102,10 @@ cbor_item_t *cbor_load(cbor_data source,
 
 		if (context.creation_failed) {
 			/* Most likely unsuccessful allocation - our callback has failed */
-			result->error.code = CBOR_DECODER_MEMERROR;
+			result->error.code = CBOR_ERR_MEMERROR;
+			goto error;
+		} else if (context.syntax_error) {
+			result->error.code = CBOR_ERR_SYNTAXERROR;
 			goto error;
 		}
 	} while (stack.size > 0);

@@ -14,11 +14,12 @@
 #include "cbor.h"
 #include <inttypes.h>
 
-/* These test verify behavior on interesting randomly generated inputs from the fuzzer */
+/* These tests verify behavior on interesting randomly generated inputs from the fuzzer */
 
 cbor_item_t *item;
 struct cbor_load_result res;
 
+/* Map start + array with embedded length */
 unsigned char data1[] = {0xA9, 0x85};
 static void test_1(void **state)
 {
@@ -51,7 +52,7 @@ static void test_4(void **state)
 {
 	item = cbor_load(data4, 7, &res);
 	assert_null(item);
-	assert_true(res.error.code == CBOR_DECODER_MEMERROR);
+	assert_true(res.error.code == CBOR_ERR_MEMERROR);
 	assert_int_equal(res.error.position, 5);
 }
 
@@ -60,8 +61,18 @@ static void test_5(void **state)
 {
 	item = cbor_load(data5, 6, &res);
 	assert_null(item);
-	assert_true(res.error.code == CBOR_DECODER_MEMERROR);
+	assert_true(res.error.code == CBOR_ERR_MEMERROR);
 	assert_int_equal(res.error.position, 5);
+}
+
+/* Indef string expectation mismatch */
+unsigned char data6[] = {0x7F, 0x21, 0x4C, 0x02, 0x40};
+static void test_6(void **state)
+{
+	item = cbor_load(data6, 5, &res);
+	assert_null(item);
+	assert_true(res.error.code == CBOR_ERR_SYNTAXERROR);
+	assert_int_equal(res.error.position, 2);
 }
 
 
@@ -73,7 +84,8 @@ int main(void)
 		unit_test(test_2),
 		unit_test(test_3),
 		unit_test(test_4),
-		unit_test(test_5)
+		unit_test(test_5),
+		unit_test(test_6)
 	};
 	return run_tests(tests);
 }

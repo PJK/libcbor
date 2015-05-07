@@ -14,24 +14,24 @@
 #include <inttypes.h>
 #include <stdlib.h>
 
-#ifdef CBOR_HUGE_FUZZ
+#ifdef HUGE_FUZZ
 
 #define ROUNDS 65536ULL
 #define MAXLEN 131072ULL
 
 #else
 
-#define ROUNDS 256ULL
-#define MAXLEN 65536ULL
+#define ROUNDS 33ULL
+#define MAXLEN 10ULL
 
 #endif
 
-//static void printmem(const unsigned char * ptr, size_t length)
-//{
-//	for (size_t i = 0; i < length; i++)
-//		printf("%02X", ptr[i]);
-//	printf("\n");
-//}
+static void printmem(const unsigned char * ptr, size_t length)
+{
+	for (size_t i = 0; i < length; i++)
+		printf("%02X", ptr[i]);
+	printf("\n");
+}
 
 static void run_round()
 {
@@ -40,10 +40,11 @@ static void run_round()
 
 	size_t length = rand() % MAXLEN + 1;
 	unsigned char * data = malloc(length);
-	for (size_t i = 0; i < length; i++)
+	for (size_t i = 0; i < length; i++) {
 		data[i] = rand() % 0xFF;
+	}
 
-	//printmem(data, length);
+	printmem(data, length);
 
 	item = cbor_load(data, length, &res);
 

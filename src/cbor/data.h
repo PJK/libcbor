@@ -30,7 +30,9 @@ typedef enum {
 	CBOR_ERR_NONE,
 	CBOR_ERR_NOTENOUGHDATA,
 	CBOR_ERR_NODATA,
-	CBOR_ERR_MALFORMATED
+	CBOR_ERR_MALFORMATED,
+	CBOR_ERR_MEMERROR,		/* Memory error - item allocation failed. Is it too big for your allocator?? */
+	CBOR_ERR_SYNTAXERROR	/* Stack parsing algorithm failed */
 } cbor_error_code;
 
 /* Possible widths of CBOR_TYPE_UINT */
@@ -153,7 +155,6 @@ enum cbor_decoder_status {
 	CBOR_DECODER_NEDATA,		/* Not enough data - mismatch with MTB */
 	CBOR_DECODER_EBUFFER,		/* Buffer manipulation problem */
 	CBOR_DECODER_ERROR,			/* Malformed or reserved MTB/value */
-	CBOR_DECODER_MEMERROR		/* Memory error - item allocation failed. Is it too big for your allocator?? */
 };
 
 struct cbor_decoder_result {
