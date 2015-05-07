@@ -47,29 +47,28 @@ static void test_3(void **state)
 	assert_int_equal(res.error.position, 1);
 }
 
+#ifdef CBOR_ASSUME_SANE_MALLOC
 unsigned char data4[] = {0xBA, 0xC1, 0xE8, 0x3E, 0xE7, 0x20, 0xA8};
 static void test_4(void **state)
 {
 	item = cbor_load(data4, 7, &res);
 	assert_null(item);
-#ifdef CBOR_ASSUME_SANE_MALLOC
 	assert_true(res.error.code == CBOR_ERR_MEMERROR);
 	assert_int_equal(res.error.position, 5);
-#endif
 }
+
 
 unsigned char data5[] = {0x9A, 0xDA, 0x3A, 0xB2, 0x7F, 0x29};
 static void test_5(void **state)
 {
+	assert_true(res.error.code == CBOR_ERR_MEMERROR);
 	item = cbor_load(data5, 6, &res);
 	assert_null(item);
-#ifdef CBOR_ASSUME_SANE_MALLOC
-	assert_true(res.error.code == CBOR_ERR_MEMERROR);
 	assert_int_equal(res.error.position, 5);
-#endif
-}
-
 /* Indef string expectation mismatch */
+}
+#endif
+
 unsigned char data6[] = {0x7F, 0x21, 0x4C, 0x02, 0x40};
 static void test_6(void **state)
 {
@@ -87,8 +86,10 @@ int main(void)
 		unit_test(test_1),
 		unit_test(test_2),
 		unit_test(test_3),
+#ifdef CBOR_ASSUME_SANE_MALLOC
 		unit_test(test_4),
 		unit_test(test_5),
+#endif
 		unit_test(test_6)
 	};
 	return run_tests(tests);
