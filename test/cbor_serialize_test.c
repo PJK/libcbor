@@ -285,6 +285,23 @@ static void test_serialize_long_ctrl(void **state)
 }
 
 
+static void test_auto_serialize(void **state)
+{
+	cbor_item_t *item = cbor_new_definite_array(4);
+	for (size_t i = 0; i < 4; i++)
+		cbor_array_push(item,
+						cbor_move(cbor_build_uint64(0)));
+
+	unsigned char * buffer;
+	size_t buffer_size;
+	assert_int_equal(37, cbor_serialize_alloc(item, &buffer, &buffer_size));
+	assert_int_equal(64, buffer_size);
+	assert_memory_equal(buffer, ((unsigned char[]) {0x84, 0x1B}), 2);
+	cbor_decref(&item);
+	_CBOR_FREE(buffer);
+}
+
+
 int main(void)
 {
 	const UnitTest tests[] = {
@@ -309,7 +326,8 @@ int main(void)
 		unit_test(test_serialize_single),
 		unit_test(test_serialize_double),
 		unit_test(test_serialize_ctrl),
-		unit_test(test_serialize_long_ctrl)
+		unit_test(test_serialize_long_ctrl),
+		unit_test(test_auto_serialize)
 	};
 	return run_tests(tests);
 }

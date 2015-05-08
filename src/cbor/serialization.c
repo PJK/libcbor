@@ -40,6 +40,30 @@ size_t cbor_serialize(const cbor_item_t *item, unsigned char *buffer, size_t buf
 	}
 }
 
+size_t cbor_serialize_alloc(const cbor_item_t * item,
+							unsigned char ** buffer,
+							size_t * buffer_size)
+{
+	size_t bfr_size = 32;
+	unsigned char * bfr = _CBOR_MALLOC(bfr_size), * tmp_bfr;
+	if (bfr == NULL)
+		return 0;
+	size_t written;
+
+	/* This is waaay too optimistic - figure out something smarter (eventually) */
+	while ((written = cbor_serialize(item, bfr, bfr_size)) == 0) {
+		tmp_bfr = _CBOR_REALLOC(bfr, bfr_size *= 2);
+		if (tmp_bfr == NULL) {
+			_CBOR_FREE(bfr);
+			return 0;
+		}
+		bfr = tmp_bfr;
+	}
+	*buffer = bfr;
+	*buffer_size = bfr_size;
+	return written;
+}
+
 size_t cbor_serialize_uint(const cbor_item_t *item, unsigned char *buffer, size_t buffer_size)
 {
 	assert(cbor_isa_uint(item));

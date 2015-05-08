@@ -23,6 +23,8 @@ extern "C" {
 
 size_t cbor_serialize(const cbor_item_t *, unsigned char *, size_t);
 
+size_t cbor_serialize_alloc(const cbor_item_t * item, unsigned char ** buffer, size_t * buffer_size);
+
 size_t cbor_serialize_uint(const cbor_item_t *, unsigned char *, size_t);
 
 size_t cbor_serialize_negint(const cbor_item_t *, unsigned char *, size_t);
