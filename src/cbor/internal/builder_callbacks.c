@@ -46,10 +46,10 @@ void _cbor_builder_append(cbor_item_t *item, struct _cbor_decoder_context *ctx)
 			/* We use 0 and 1 subitems to distinguish between keys and values in indefinite items */
 			if (ctx->stack->top->subitems % 2) {
 				/* Odd record, this is a value */
-				cbor_map_add_value(ctx->stack->top->item, cbor_move(item));
+				_cbor_map_add_value(ctx->stack->top->item, cbor_move(item));
 			} else {
 				/* Even record, this is a key */
-				cbor_map_add_key(ctx->stack->top->item, cbor_move(item));
+				_cbor_map_add_key(ctx->stack->top->item, cbor_move(item));
 			}
 			if (cbor_map_is_definite(ctx->stack->top->item)) {
 				ctx->stack->top->subitems--;

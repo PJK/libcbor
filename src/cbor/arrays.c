@@ -44,7 +44,6 @@ bool cbor_array_replace(cbor_item_t * item, size_t index, cbor_item_t * value)
 bool cbor_array_push(cbor_item_t *array, cbor_item_t *pushee)
 {
 	assert(cbor_isa_array(array));
-	cbor_incref(pushee);
 	struct _cbor_array_metadata *metadata = (struct _cbor_array_metadata *) &array->metadata;
 	cbor_item_t **data = (cbor_item_t **) array->data;
 	if (cbor_array_is_definite(array)) {
@@ -66,6 +65,7 @@ bool cbor_array_push(cbor_item_t *array, cbor_item_t *pushee)
 		}
 		((cbor_item_t **)array->data)[metadata->end_ptr++] = pushee;
 	}
+	cbor_incref(pushee);
 	return true;
 }
 

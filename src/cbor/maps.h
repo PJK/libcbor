@@ -26,11 +26,11 @@ cbor_item_t *cbor_new_definite_map(const size_t size);
 
 cbor_item_t *cbor_new_indefinite_map();
 
-cbor_item_t *cbor_map_add(cbor_item_t *item, struct cbor_pair pair);
+bool cbor_map_add(cbor_item_t *item, struct cbor_pair pair);
 
-cbor_item_t *cbor_map_add_key(cbor_item_t *item, cbor_item_t *key);
+bool _cbor_map_add_key(cbor_item_t *item, cbor_item_t *key);
 
-cbor_item_t *cbor_map_add_value(cbor_item_t *item, cbor_item_t *value);
+bool _cbor_map_add_value(cbor_item_t *item, cbor_item_t *value);
 
 bool cbor_map_is_definite(const cbor_item_t *item);
 
