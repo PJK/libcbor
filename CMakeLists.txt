@@ -60,7 +60,8 @@ if(PRETTY_PRINTER)
     add_definitions(-DPRETTY_PRINTER=1)
 endif(PRETTY_PRINTER)
 
-set(CBOR_BUFFER_GROWTH "2" CACHE STRING "Factor for buffer growth & shrinking")
+set(BUFFER_GROWTH "2" CACHE STRING "Factor for buffer growth & shrinking")
+add_definitions(-DCBOR_BUFFER_GROWTH=${BUFFER_GROWTH})
 
 subdirs(src)
 subdirs(demo)
