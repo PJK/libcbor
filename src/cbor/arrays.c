@@ -11,7 +11,7 @@
 size_t cbor_array_size(const cbor_item_t *item)
 {
 	assert(cbor_isa_array(item));
-	return item->metadata.array_metadata.size;
+	return item->metadata.array_metadata.end_ptr;
 }
 
 cbor_item_t * cbor_array_get(const cbor_item_t * item, size_t index)
@@ -39,15 +39,15 @@ cbor_item_t *cbor_array_push(cbor_item_t *array, cbor_item_t *pushee)
 	struct _cbor_array_metadata *metadata = (struct _cbor_array_metadata *) &array->metadata;
 	cbor_item_t **data = (cbor_item_t **) array->data;
 	if (cbor_array_is_definite(array)) {
-		if (metadata->ptr > metadata->size)
+		if (metadata->end_ptr > metadata->allocated)
 			printf("Error - NE space def\n");
-		data[metadata->ptr++] = pushee;
+		data[metadata->end_ptr++] = pushee;
 	} else {
 		// TODO exponential reallocs?
-		if (metadata->ptr > metadata->size)
+		if (metadata->end_ptr > metadata->allocated)
 			printf("Error - NE space indef\n");
-		data = _CBOR_REALLOC(data, (++metadata->size) * sizeof(cbor_item_t *));
-		data[metadata->ptr++] = pushee;
+		data = _CBOR_REALLOC(data, (++metadata->allocated) * sizeof(cbor_item_t *));
+		data[metadata->end_ptr++] = pushee;
 		array->data = (unsigned char *) data;
 	}
 	return array;
@@ -90,7 +90,12 @@ cbor_item_t *cbor_new_definite_array(size_t size)
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_ARRAY,
-		.metadata = {.array_metadata = {.type = _CBOR_METADATA_DEFINITE, .size = size, .ptr = 0}},
+		.metadata = {
+			.array_metadata = {
+				.type = _CBOR_METADATA_DEFINITE,
+				.allocated = size, .end_ptr = 0
+			}
+		},
 		.data = (unsigned char *)data
 	};
 
@@ -106,7 +111,13 @@ cbor_item_t *cbor_new_indefinite_array()
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_ARRAY,
-		.metadata = {.array_metadata = {.type = _CBOR_METADATA_INDEFINITE, .size = 0, .ptr = 0}},
+		.metadata = {
+			.array_metadata = {
+				.type = _CBOR_METADATA_INDEFINITE,
+				.allocated = 0,
+				.end_ptr = 0
+			}
+		},
 		.data = NULL /* Can be safely realloc-ed */
 	};
 	return item;

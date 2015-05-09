@@ -10,7 +10,7 @@
 size_t cbor_map_size(const cbor_item_t *item)
 {
 	assert(cbor_isa_map(item));
-	return item->metadata.map_metadata.size;
+	return item->metadata.map_metadata.end_ptr;
 }
 
 cbor_item_t *cbor_new_definite_map(size_t size)
@@ -22,9 +22,9 @@ cbor_item_t *cbor_new_definite_map(size_t size)
 		.refcount = 1,
 		.type = CBOR_TYPE_MAP,
 		.metadata = {.map_metadata = {
-			.size = size,
+			.allocated = size,
 			.type = _CBOR_METADATA_DEFINITE,
-			.ptr = 0
+			.end_ptr = 0
 		}},
 		.data = _CBOR_MALLOC(sizeof(struct cbor_pair) * size)
 	};
@@ -44,9 +44,9 @@ cbor_item_t *cbor_new_indefinite_map()
 		.refcount = 1,
 		.type = CBOR_TYPE_MAP,
 		.metadata = {.map_metadata = {
-			.size = 0,
+			.allocated = 0,
 			.type = _CBOR_METADATA_INDEFINITE,
-			.ptr = 0
+			.end_ptr = 0
 		}},
 		.data = NULL
 	};
@@ -61,7 +61,7 @@ cbor_item_t *cbor_map_add(cbor_item_t *item, struct cbor_pair pair)
 	cbor_map_add_key(item, pair.key);
 	// TODO propagate realloc fail
 	cbor_map_handle(item)[
-		item->metadata.map_metadata.ptr - 1
+		item->metadata.map_metadata.end_ptr - 1
 	].value = pair.value;
 	return item;
 }
@@ -72,7 +72,7 @@ cbor_item_t *cbor_map_add_value(cbor_item_t *item, cbor_item_t *value)
 	cbor_incref(value);
 	// TODO propagate realloc fail
 	cbor_map_handle(item)[
-		item->metadata.map_metadata.ptr - 1
+		item->metadata.map_metadata.end_ptr - 1
 	].value = value;
 	return item;
 }
@@ -84,17 +84,17 @@ cbor_item_t *cbor_map_add_key(cbor_item_t *item, cbor_item_t *key)
 	struct _cbor_map_metadata *metadata = (struct _cbor_map_metadata *) &item->metadata;
 	struct cbor_pair *data = cbor_map_handle(item);
 	if (cbor_map_is_definite(item)) {
-		if (metadata->ptr > metadata->size)
+		if (metadata->end_ptr > metadata->allocated)
 			printf("Error - NE space def\n");
-		data[metadata->ptr].key = key;
-		data[metadata->ptr++].value = NULL;
+		data[metadata->end_ptr].key = key;
+		data[metadata->end_ptr++].value = NULL;
 	} else {
 		// TODO exponential reallocs?
-		if (metadata->ptr > metadata->size)
+		if (metadata->end_ptr > metadata->allocated)
 			printf("Error - NE space indef\n");
-		data = _CBOR_REALLOC(data, (++metadata->size) * sizeof(struct cbor_pair));
-		data[metadata->ptr].key = key;
-		data[metadata->ptr++].value = NULL;
+		data = _CBOR_REALLOC(data, (++metadata->allocated) * sizeof(struct cbor_pair));
+		data[metadata->end_ptr].key = key;
+		data[metadata->end_ptr++].value = NULL;
 		item->data = (unsigned char *) data;
 	}
 	return item;

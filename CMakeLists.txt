@@ -34,7 +34,7 @@ if(CUSTOM_ALLOC)
     add_definitions(-DCBOR_CUSTOM_ALLOC=1)
 endif(CUSTOM_ALLOC)
 
-option(HUGE_FUZZ "Fuzz through 8GB of data in the test" OFF)
+option(HUGE_FUZZ "Fuzz through 8GB of data in the test. Do not use with memory instrumentation!" OFF)
 if(HUGE_FUZZ)
     add_definitions(-DCBOR_HUGE_FUZZ=1)
 endif(HUGE_FUZZ)

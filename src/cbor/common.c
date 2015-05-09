@@ -152,7 +152,7 @@ void cbor_decref(cbor_item_t **item_ref)
 		}
 		case CBOR_TYPE_MAP: {
 			struct cbor_pair *handle = cbor_map_handle(item);
-			for (size_t i = 0; i < item->metadata.map_metadata.ptr; i++, handle++) {
+			for (size_t i = 0; i < item->metadata.map_metadata.end_ptr; i++, handle++) {
 				cbor_decref(&handle->key);
 				if (handle->value != NULL)
 					cbor_decref(&handle->value);
