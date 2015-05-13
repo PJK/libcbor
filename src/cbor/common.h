@@ -23,9 +23,9 @@ extern "C" {
 #define CBOR_MINOR_VERSION 0
 #define CBOR_PATCH_VERSION 1
 
-const uint8_t cbor_major_version = CBOR_MAJOR_VERSION;
-const uint8_t cbor_minor_version = CBOR_MINOR_VERSION;
-const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
+static const uint8_t cbor_major_version = CBOR_MAJOR_VERSION;
+static const uint8_t cbor_minor_version = CBOR_MINOR_VERSION;
+static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
 
 #define CBOR_VERSION TO_STR(CBOR_MAJOR_VERSION) "." TO_STR(CBOR_MINOR_VERSION) "." TO_STR(CBOR_PATCH_VERSION)
 
