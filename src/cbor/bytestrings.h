@@ -20,23 +20,72 @@ extern "C" {
 * ============================================================================
 */
 
-/** Returns the
+/** Returns the length of the binary data
+ *
+ * For definite byte strings only
+ *
+ * @param item[borrow] a definite bytestring
+ * @return length of the binary data. Zero if no chunk has been attached yet
+ */
 size_t cbor_bytestring_length(const cbor_item_t *item);
 
+/** Is the byte string definite?
+ *
+ * @param item[borrow] a byte string 
+ * @return Is the byte string definite?
+ */
 bool cbor_bytestring_is_definite(const cbor_item_t *item);
 
+/** Is the byte string indefinite?
+ *
+ * @param item[borrow] a byte string 
+ * @return Is the byte string indefinite?
+ */
 bool cbor_bytestring_is_indefinite(const cbor_item_t *item);
 
+/** Get the handle to the binary data
+ *
+ * Definite items only
+ *
+ * @param item[borrow] A definite byte string
+ * @return The address of the binary data. `NULL` if no data have been assigned yet.
+ */ 
 unsigned char *cbor_bytestring_handle(const cbor_item_t *item);
 
+/** Set the handle to the binary data
+ *
+ * @param[borrow] item A definite byte string
+ * @param data The memory block. The caller gives up the ownership of the block. libcbor will deallocate it when appropriate using its free function
+ * @param length Length of the data block
+ */
 void cbor_bytestring_set_handle(cbor_item_t *item, unsigned char *data, size_t length);
 
-/* Indefinite bytestrings only */
+/** Get the handle to the array of chunks
+ * 
+ * Manipulations with the memory block (e.g. sorting it) are allowed, but the validity and the number of chunks must be retained.
+ *
+ * @param item[borrow] A indefinite byte string
+ * @return array of #cbor_bytestring_chunk_count definite bytestrings
+ */
 cbor_item_t **cbor_bytestring_chunks_handle(const cbor_item_t *item);
 
+/** Get the number of chunks this string consist of
+ *
+ * @param item[borrow] A indefinite bytestring
+ * @return The chunk count. 0 for freshly created items.
+ */
 size_t cbor_bytestring_chunk_count(const cbor_item_t *item);
 
-/* Returns NULL on realloc failure */
+/** Appends a chunk to the bytestring
+ *
+ * Indefinite byte strings only.
+ *
+ * May realloc the chunk storage.
+ *
+ * @param item[borrow] An indefinite byte string
+ * @param item[incref] A definite byte string
+ * @return the `item`. `NULL` on realloc failure. In that case, the refcount of `chunk` is not increased and the `item` is left intact.
+ */
 cbor_item_t *cbor_bytestring_add_chunk(cbor_item_t *item, cbor_item_t *chunk);
 
 cbor_item_t *cbor_bytestring_concatenate(cbor_item_t *item);
