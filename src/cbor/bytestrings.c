@@ -59,7 +59,7 @@ cbor_item_t *cbor_new_indefinite_bytestring()
 	return item;
 }
 
-cbor_item_t *cbor_build_bytestringstring(cbor_data handle, size_t length)
+cbor_item_t *cbor_build_bytestring(cbor_data handle, size_t length)
 {
 	cbor_item_t *res = cbor_new_definite_bytestring();
 	void * content = _CBOR_MALLOC(length);

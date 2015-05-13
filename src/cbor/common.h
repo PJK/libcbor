@@ -89,9 +89,7 @@ void cbor_set_allocs(_cbor_malloc_t custom_malloc, _cbor_realloc_t custom_reallo
 */
 
 /** Get the type of the item
- * \rst
- * .. note:: Will be inlined iff link-time optimization is enabled
- * \endrst
+ *
  * @param item[borrow]
  * @return The type
  */

@@ -45,20 +45,21 @@ bool cbor_bytestring_is_indefinite(const cbor_item_t *item);
 
 /** Get the handle to the binary data
  *
- * Definite items only
+ * Definite items only. Modifying the data is allowed. In that case, the caller takes
+ * responsibility for the effect on items this item might be a part of
  *
  * @param item[borrow] A definite byte string
  * @return The address of the binary data. `NULL` if no data have been assigned yet.
- */ 
-unsigned char *cbor_bytestring_handle(const cbor_item_t *item);
+ */
+cbor_mutable_data cbor_bytestring_handle(const cbor_item_t *item);
 
 /** Set the handle to the binary data
  *
- * @param[borrow] item A definite byte string
+ * @param item[borrow] A definite byte string
  * @param data The memory block. The caller gives up the ownership of the block. libcbor will deallocate it when appropriate using its free function
  * @param length Length of the data block
  */
-void cbor_bytestring_set_handle(cbor_item_t *item, unsigned char *data, size_t length);
+void cbor_bytestring_set_handle(cbor_item_t *item, cbor_mutable_data data, size_t length);
 
 /** Get the handle to the array of chunks
  * 
@@ -88,13 +89,31 @@ size_t cbor_bytestring_chunk_count(const cbor_item_t *item);
  */
 cbor_item_t *cbor_bytestring_add_chunk(cbor_item_t *item, cbor_item_t *chunk);
 
-cbor_item_t *cbor_bytestring_concatenate(cbor_item_t *item);
-
+/** Creates a new definite byte string
+ *
+ * The handle is initialized to `NULL` and length to 0
+ *
+ * @return **new** definite bytestring. `NULL` on malloc failure.
+ */
 cbor_item_t *cbor_new_definite_bytestring();
 
+/** Creates a new indefinite byte string
+ *
+ * The chunks array is initialized to `NULL` and chunkcount to 0
+ *
+ * @return **new** indefinite bytestring. `NULL` on malloc failure.
+ */
 cbor_item_t *cbor_new_indefinite_bytestring();
 
-cbor_item_t *cbor_build_bytestringstring(cbor_data handle, size_t length);
+/** Creates a new byte string and initializes it
+ *
+ * The `handle` will be copied to a newly allocated block
+ *
+ * @param handle Block of binary data
+ * @param length Length of `data`
+ * @return A **new** byte string with content `handle`. `NULL` on malloc failure.
+ */
+cbor_item_t *cbor_build_bytestring(cbor_data handle, size_t length);
 
 #ifdef __cplusplus
 }

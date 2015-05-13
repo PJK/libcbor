@@ -18,6 +18,7 @@ extern "C" {
 #endif
 
 typedef const unsigned char * cbor_data;
+typedef unsigned char * cbor_mutable_data;
 
 /** Specifies the Major type of ::cbor_item_t */
 typedef enum cbor_type {
