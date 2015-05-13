@@ -67,12 +67,6 @@ inline bool cbor_is_int(const cbor_item_t *item)
 	return cbor_isa_uint(item) || cbor_isa_negint(item);
 }
 
-inline bool cbor_is_uint(const cbor_item_t *item)
-{
-	/* Negative 'signed' ints are negints */
-	return cbor_isa_uint(item);
-}
-
 
 inline bool cbor_is_bool(const cbor_item_t *item)
 {

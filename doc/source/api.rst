@@ -1,7 +1,17 @@
 API
 =======
 
-.. doxygenfunction:: cbor_encode_uint8
+.. toctree::
+
+   api/item_types
+   api/item_reference_counting
+   api/type_0_1
+   api/type_2
+   api/type_3
+   api/type_4
+   api/type_5
+   api/type_6
+   api/type_7
 
 The data API is centered around :type:`cbor_item_t`, a generic handle for any CBOR item. There are functions to
 
@@ -14,39 +24,7 @@ The single most important thing to keep in mind is: :type:`cbor_item_t` **is an 
 
 The *libcbor* API closely follows the semantics outlined by `CBOR standard <http://tools.ietf.org/html/rfc7049>`_. This part of the documentation provides a short overview of the CBOR constructs, as well as a general introduction to the *libcbor* API. Remaining reference can be found in the following files structured by data types
 
-.. toctree::
 
-   api/type_0_1
-   api/type_2
-   api/type_3
-   api/type_4
-   api/type_5
-   api/type_6
-   api/type_7
-
-Every :type:`cbor_item_t` has a :type:`cbor_type` associated with it - these constants correspond to the types specified by the `CBOR standard <http://tools.ietf.org/html/rfc7049>`_:
-
-.. type:: enum cbor_type
-
-   which consists of
-
-   +---------------------------+
-   | ``CBOR_TYPE_UINT``        |
-   +---------------------------+
-   | ``CBOR_TYPE_NEGINT``      |
-   +---------------------------+
-   | ``CBOR_TYPE_BYTESTRING``  |
-   +---------------------------+
-   | ``CBOR_TYPE_STRING``      |
-   +---------------------------+
-   | ``CBOR_TYPE_ARRAY``       |
-   +---------------------------+
-   | ``CBOR_TYPE_MAP``         |
-   +---------------------------+
-   | ``CBOR_TYPE_TAG``         |
-   +---------------------------+
-   | ``CBOR_TYPE_FLOAT_CTRL``  |
-   +---------------------------+
 
 A quick CBOR primer
 --------------------------
@@ -107,54 +85,14 @@ Encoding
 ~~~~~~~~~~
 TODO
 
+
+
+
 Memory management
 ^^^^^^^^^^^^^^^^^^^
 
-Due to the nature of its domain *libcbor* will need to work with heap memory. The stateless decoder and encoder don't allocate any memory.
-
-If you have specific requirements, you should consider rolling your own driver for the stateless API.
-
-Using custom allocator
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-*libcbor* gives you with the ability to provide your own implementations of ``malloc``, ``realloc``, and ``free``. This can be useful if you are using a custom allocator throughout your application, or if you want to implement custom policies (e.g. tighter restrictions on the amount of allocated memory).
-
-In order to use this feature, *libcbor* has to be compiled with the :doc:`appropriate flags <getting_started>`. You can verify the configuration using the ``CBOR_CUSTOM_ALLOC`` macro. A simple usage might be as follows:
-
-.. code-block:: c
-
-    #ifdef CBOR_CUSTOM_ALLOC
-        cbor_set_allocs(malloc, realloc, free);
-    #else
-       #error "libcbor built with support for custom allocation is required"
-    #endif
-
-.. function:: void cbor_set_allocs(_cbor_malloc_t custom_malloc, _cbor_realloc_t custom_realloc, _cbor_free_t custom_free)
-
-    Assigns the memory management functions globally.
-
-    .. warning:: This function modifies the global state and should therefore be used accordingly. Changing the memory handlers while allocated items exist will result in a ``free``/``malloc`` mismatch. This function is not thread safe with respect to both itself and all the other *libcbor* functions that work with the heap.
 
 
-Reference counting
-^^^^^^^^^^^^^^^^^^^^^
-
-As CBOR items may require complex cleanups at the end of their lifetime, there is a reference counting mechanism in place. This also enables very simple GC when integrating *libcbor* into managed environment. Every item starts its life (by either explicit creation, or as a result of parsing) with reference count set to 1. When the refcount reaches zero, it will be destroyed.
-
-Items containing nested items will be destroyed recursively - refcount of every nested item will be decreased by one.
-
-The destruction is synchronous and might possibly render any pointers to items with refcount zero invalid immediately after calling the ``decref``.
-
-
-.. function:: void cbor_incref(cbor_item_t * item)
-
-	Increment the reference counter.
-
-.. function:: void cbor_decref(cbor_item_t ** item)
-
-	Decrement the reference counter. Deallocate the item if it reaches zero and recursively decref all dependent items.
-
-.. _item-types:
 
 Loading items
 ^^^^^^^^^^^^^^^^^^^^^
@@ -191,18 +129,3 @@ Loading items
 .. type:: enum cbor_error_code
 
 	TODO
-
-
-Types of items
-^^^^^^^^^^^^^^^^^^^^^
-
-A :type:`cbor_item_t` can be probed for its type using these functions
-
-.. function:: bool cbor_isa_uint(const cbor_item_t * item)
-.. function:: bool cbor_isa_negint(const cbor_item_t * item)
-.. function:: bool cbor_isa_bytestring(const cbor_item_t * item)
-.. function:: bool cbor_isa_string(const cbor_item_t * item)
-.. function:: bool cbor_isa_array(const cbor_item_t * item)
-.. function:: bool cbor_isa_map(const cbor_item_t * item)
-.. function:: bool cbor_isa_tag(const cbor_item_t * item)
-.. function:: bool cbor_isa_float_ctrl(const cbor_item_t * item)

@@ -19,15 +19,16 @@ extern "C" {
 
 typedef const unsigned char * cbor_data;
 
-typedef enum {             /* Corresponding Major Type */
-	CBOR_TYPE_UINT,        /* 0 */
-	CBOR_TYPE_NEGINT,      /* 1 */
-	CBOR_TYPE_BYTESTRING,  /* 2 */
-	CBOR_TYPE_STRING,      /* 3 */
-	CBOR_TYPE_ARRAY,       /* 4 */
-	CBOR_TYPE_MAP,         /* 5 */
-	CBOR_TYPE_TAG,         /* 6 - additional semantics */
-	CBOR_TYPE_FLOAT_CTRL   /* 7 - also bool, null, undefined, and others */
+/** Specifies the Major type of ::cbor_item_t */
+typedef enum cbor_type {
+	CBOR_TYPE_UINT         /** 0 - positive integers */
+	,CBOR_TYPE_NEGINT      /** 1 - negative integers*/
+	,CBOR_TYPE_BYTESTRING  /** 2 - byte strings */
+	,CBOR_TYPE_STRING      /** 3 - strings */
+	,CBOR_TYPE_ARRAY       /** 4 - arrays */
+	,CBOR_TYPE_MAP         /** 5 - maps */
+	,CBOR_TYPE_TAG         /** 6 - tags  */
+	,CBOR_TYPE_FLOAT_CTRL  /** 7 - decimals and special values (true, false, nil, ...) */
 } cbor_type;
 
 typedef enum {
