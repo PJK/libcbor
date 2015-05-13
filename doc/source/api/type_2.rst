@@ -21,10 +21,6 @@ Streaming indefinite byte strings
 
 Please refer to :doc:`/streaming`.
 
-UTF-8 encoding validation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-TODO
-
 
 Getting metadata
 ~~~~~~~~~~~~~~~~~

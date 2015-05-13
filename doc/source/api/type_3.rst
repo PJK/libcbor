@@ -8,6 +8,10 @@ Streaming indefinite strings
 
 Please refer to :doc:`/streaming`.
 
+UTF-8 encoding validation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*libcbor* considers UTF-8 encoding validity to be a part of the well-formedness notion of CBOR and
+
 
 Getting metadata
 ~~~~~~~~~~~~~~~~~

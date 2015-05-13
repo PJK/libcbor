@@ -20,6 +20,7 @@ extern "C" {
 * ============================================================================
 */
 
+/** Returns the
 size_t cbor_bytestring_length(const cbor_item_t *item);
 
 bool cbor_bytestring_is_definite(const cbor_item_t *item);
