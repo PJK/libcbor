@@ -40,12 +40,12 @@ typedef enum {
 	CBOR_ERR_SYNTAXERROR	/* Stack parsing algorithm failed */
 } cbor_error_code;
 
-/* Possible widths of CBOR_TYPE_UINT */
+/** Possible widths of #CBOR_TYPE_UINT items */
 typedef enum {
-	CBOR_INT_8,
-	CBOR_INT_16,
-	CBOR_INT_32,
-	CBOR_INT_64
+	CBOR_INT_8
+	,CBOR_INT_16
+	,CBOR_INT_32
+	,CBOR_INT_64
 } cbor_int_width;
 
 typedef enum {
