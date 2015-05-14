@@ -20,12 +20,32 @@ extern "C" {
 * ============================================================================
 */
 
+/** Create a new tag
+ *
+ * @param value The tag value. Please consult the tag repository
+ * @return **new** tag. Item reference is `NULL`.
+ */
 cbor_item_t *cbor_new_tag(uint64_t value);
 
+/** Get the tagged item
+ *
+ * @param item[borrow] A tag
+ * @return **incref** the tagged item
+ */
 cbor_item_t *cbor_tag_item(const cbor_item_t *item);
 
+/** Get tag value
+ *
+ * @param item[borrow] A tag
+ * @return The tag value. Please consult the tag repository
+ */
 uint64_t cbor_tag_value(const cbor_item_t *item);
 
+/** Set the tagged item
+ *
+ * @param item[borrow] A tag
+ * @param tagged_item[incref] The item to tag
+ */
 void cbor_tag_set_item(cbor_item_t *item, cbor_item_t *tagged_item);
 
 #ifdef __cplusplus
