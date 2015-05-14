@@ -3,6 +3,15 @@ Type 3 – UTF-8 strings
 
 CBOR strings work in much the same ways as :doc:`type_2`.
 
+==================================  ======================================================
+Corresponding :type:`cbor_type`     ``CBOR_TYPE_STRING``
+Number of allocations (definite)    One plus any manipulations with the data
+Number of allocations (indefinite)  One plus logarithmically many
+                                    reallocations relative  to chunk count
+Storage requirements (definite)     ``sizeof(cbor_item_t) + length(handle)``
+Storage requirements (indefinite)   ``sizeof(cbor_item_t) * (1 + chunk_count) + chunks``
+==================================  ======================================================
+
 Streaming indefinite strings
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -10,55 +19,37 @@ Please refer to :doc:`/streaming`.
 
 UTF-8 encoding validation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*libcbor* considers UTF-8 encoding validity to be a part of the well-formedness notion of CBOR and
+*libcbor* considers UTF-8 encoding validity to be a part of the well-formedness notion of CBOR and therefore invalid UTF-8 strings will be rejected by the parser. Strings created by the user are not checked.
 
 
 Getting metadata
 ~~~~~~~~~~~~~~~~~
 
-.. function:: size_t cbor_string_length(const cbor_item_t * item)
-
-    Definite strings only
-
-.. function:: bool cbor_string_is_definite(const cbor_item_t * item)
-.. function:: bool cbor_string_is_indefinite(const cbor_item_t * item)
+.. doxygenfunction:: cbor_string_length
+.. doxygenfunction:: cbor_string_is_definite
+.. doxygenfunction:: cbor_string_is_indefinite
+.. doxygenfunction:: cbor_string_chunk_count
 
 Reading data
 ~~~~~~~~~~~~~
 
-.. function:: unsigned char * cbor_string_handle(const cbor_item_t * item)
-
-	Returns a pointer to a contiguous area of memory containing :func:`cbor_string_length` bytes.
-
-
-.. function:: cbor_item_t * * cbor_string_chunks_handle(const cbor_item_t * item)
-
-    Indefinite strings only. Returns an array of chunks (definite strings)
-
-
-.. function:: size_t cbor_string_chunk_count(const cbor_item_t * item)
-
-    Indefinite strings only. Returns the number of chunks
+.. doxygenfunction:: cbor_string_handle
+.. doxygenfunction:: cbor_string_chunks_handle
 
 Creating new items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. function:: cbor_item_t * cbor_new_definite_string()
-.. function:: cbor_item_t * cbor_new_indefinite_string()
+.. doxygenfunction:: cbor_new_definite_string
+.. doxygenfunction:: cbor_new_indefinite_string
+
 
 Building items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. doxygenfunction:: cbor_build_string
 
-.. function:: cbor_item_t * cbor_string_add_chunk(cbor_item_t * item, cbor_item_t * chunk)
 
-    Returns the original pointer on success, ``NULL`` on failure. Might :func:`realloc` the storage
+Manipulating existing items
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. function:: cbor_item_t * cbor_string_delete_chunk(cbor_item_t * item, size_t index)
-
-Transformations
-~~~~~~~~~~~~~~~~~~~
-
-.. function:: cbor_item_t * cbor_string_concatenate(cbor_item_t * item)
-
-    Create new definite length string by concatenation all chunks of an indefinite one.
-
+.. doxygenfunction:: cbor_string_set_handle
+.. doxygenfunction:: cbor_string_add_chunk

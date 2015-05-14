@@ -17,6 +17,16 @@ In case a byte string is indefinite, it is encoded as a series of definite byte 
 represents two bytes, ``0x00`` and ``0xff``. This on one hand enables streaming messages even before they are fully generated, but on the other hand it adds more complexity to the client code.
 
 
+==================================  ======================================================
+Corresponding :type:`cbor_type`     ``CBOR_TYPE_BYTESTRING``
+Number of allocations (definite)    One plus any manipulations with the data
+Number of allocations (indefinite)  One plus logarithmically many
+                                    reallocations relative  to chunk count
+Storage requirements (definite)     ``sizeof(cbor_item_t) + length(handle)``
+Storage requirements (indefinite)   ``sizeof(cbor_item_t) * (1 + chunk_count) + chunks``
+==================================  ======================================================
+
+
 Streaming indefinite byte strings
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
