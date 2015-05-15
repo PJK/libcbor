@@ -49,11 +49,12 @@ typedef enum {
 	,CBOR_INT_64
 } cbor_int_width;
 
+/** Possible widths of #CBOR_TYPE_FLOAT_CTRL items */
 typedef enum {
-	CBOR_FLOAT_0, /* Registered for internal use - breaks and such */
-	CBOR_FLOAT_16,
-	CBOR_FLOAT_32,
-	CBOR_FLOAT_64
+	CBOR_FLOAT_0       /** Internal use - ctrl and special values */
+	,CBOR_FLOAT_16     /** Half float */
+	,CBOR_FLOAT_32     /** Single float */
+	,CBOR_FLOAT_64     /** Double */
 } cbor_float_width;
 
 typedef enum {

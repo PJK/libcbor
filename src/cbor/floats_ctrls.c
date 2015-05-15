@@ -89,7 +89,7 @@ void cbor_set_ctrl(cbor_item_t *item, uint8_t value)
 	item->metadata.float_ctrl_metadata.ctrl = value;
 }
 
-bool cbor_ctrl_bool(const cbor_item_t *item)
+bool cbor_ctrl_is_bool(const cbor_item_t *item)
 {
 	assert(cbor_is_bool(item));
 	return item->metadata.float_ctrl_metadata.ctrl == CBOR_CTRL_TRUE;
