@@ -13,6 +13,12 @@ size_t cbor_map_size(const cbor_item_t *item)
 	return item->metadata.map_metadata.end_ptr;
 }
 
+size_t cbor_map_allocated(const cbor_item_t *item)
+{
+	assert(cbor_isa_map(item));
+	return item->metadata.map_metadata.allocated;
+}
+
 cbor_item_t *cbor_new_definite_map(size_t size)
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));

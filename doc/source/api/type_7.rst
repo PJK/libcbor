@@ -7,6 +7,12 @@ Just like integers, they have different possible width (resulting in different v
 
 .. doxygenenum:: cbor_float_width
 
+==================================  =========================================
+Corresponding :type:`cbor_type`     ``CBOR_TYPE_FLOAT_CTRL``
+Number of allocations               One per lifetime
+Storage requirements                ``sizeof(cbor_item_t) + 1/4/8``
+==================================  =========================================
+
 Getting metadata
 ~~~~~~~~~~~~~~~~~
 

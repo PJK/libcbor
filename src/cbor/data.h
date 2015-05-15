@@ -57,11 +57,13 @@ typedef enum {
 	,CBOR_FLOAT_64     /** Double */
 } cbor_float_width;
 
+/** Metadata for dynamically sized types */
 typedef enum {
-	_CBOR_METADATA_DEFINITE,
-	_CBOR_METADATA_INDEFINITE
+	_CBOR_METADATA_DEFINITE
+	,_CBOR_METADATA_INDEFINITE
 } _cbor_dst_metadata;
 
+/** Semantic mapping for CTRL simple values */
 typedef enum {
 	CBOR_CTRL_NONE = 0,
 	CBOR_CTRL_FALSE = 20,
