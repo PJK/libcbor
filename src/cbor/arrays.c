@@ -14,6 +14,13 @@ size_t cbor_array_size(const cbor_item_t *item)
 	return item->metadata.array_metadata.end_ptr;
 }
 
+size_t cbor_array_allocated(const cbor_item_t * item)
+{
+	assert(cbor_isa_array(item));
+	return item->metadata.array_metadata.allocated;
+}
+
+
 cbor_item_t * cbor_array_get(const cbor_item_t * item, size_t index)
 {
 	return cbor_incref(((cbor_item_t **) item->data)[index]);

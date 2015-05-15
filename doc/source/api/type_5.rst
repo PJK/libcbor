@@ -10,7 +10,7 @@ Corresponding :type:`cbor_type`     ``CBOR_TYPE_MAP``
 Number of allocations (definite)    Two plus any manipulations with the data
 Number of allocations (indefinite)  Two plus logarithmically many
                                     reallocations relative to additions
-Storage requirements (definite)     ``(sizeof(cbor_item_t) + 1) * size``
+Storage requirements (definite)     ``sizeof(cbor_pair) * size + sizeof(cbor_item_t)``
 Storage requirements (indefinite)   ``<= sizeof(cbor_item_t) + sizeof(cbor_pair) * size * BUFFER_GROWTH``
 ==================================  =====================================================================================
 

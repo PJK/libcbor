@@ -3,6 +3,16 @@ Type 4 – Arrays
 
 CBOR arrays, just like :doc:`byte strings <type_2>` and :doc:`strings <type_3>`, can be encoded either as definite, or as indefinite.
 
+==================================  =====================================================================================
+Corresponding :type:`cbor_type`     ``CBOR_TYPE_ARRAY``
+Number of allocations (definite)    Two plus any manipulations with the data
+Number of allocations (indefinite)  Two plus logarithmically many
+                                    reallocations relative to additions
+Storage requirements (definite)     ``(sizeof(cbor_item_t) + 1) * size``
+Storage requirements (indefinite)   ``<= sizeof(cbor_item_t) + sizeof(cbor_item_t) * size * BUFFER_GROWTH``
+==================================  =====================================================================================
+
+
 Examples
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -25,20 +35,28 @@ Please refer to :doc:`/streaming`.
 
 Getting metadata
 ~~~~~~~~~~~~~~~~~
-.. function:: size_t cbor_array_get_size(cbor_item_t * item)
-.. function:: bool cbor_array_is_definite(cbor_item_t * item)
-.. function:: bool cbor_array_is_indefinite(cbor_item_t * item)
+
+.. doxygenfunction:: cbor_array_size
+.. doxygenfunction:: cbor_array_allocated
+.. doxygenfunction:: cbor_array_is_definite
+.. doxygenfunction:: cbor_array_is_indefinite
 
 Reading data
 ~~~~~~~~~~~~~
-.. function:: cbor_item_t ** cbor_array_handle(cbor_item_t * item)
+
+.. doxygenfunction:: cbor_array_handle
+.. doxygenfunction:: cbor_array_get
 
 Creating new items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. function:: cbor_item_t * cbor_new_definite_array(size_t)
-.. function:: cbor_item_t * cbor_new_indefinite_array()
+
+.. doxygenfunction:: cbor_new_definite_array
+.. doxygenfunction:: cbor_new_indefinite_array
 
 
-Building items
+Modifying items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. function:: cbor_item_t * cbor_array_push(cbor_item_t * array, cbor_item_t * pushee)
+
+.. doxygenfunction:: cbor_array_push
+.. doxygenfunction:: cbor_array_replace
+.. doxygenfunction:: cbor_array_set
