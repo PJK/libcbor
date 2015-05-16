@@ -7,6 +7,13 @@
 
 #include "encoders.h"
 
+#ifdef HAVE_ENDIAN_H
+#include <endian.h>
+#else
+// Props to http://esr.ibiblio.org/?p=5095
+#define IS_BIG_ENDIAN (*(uint16_t *)"\0\xff" < 0x100)
+#endif
+
 size_t _cbor_encode_uint8(uint8_t value, unsigned char *buffer, size_t buffer_size, uint8_t offset)
 {
 	if (value <= 23) {
@@ -29,11 +36,15 @@ size_t _cbor_encode_uint16(uint16_t value, unsigned char *buffer, size_t buffer_
 	if (buffer_size >= 3) {
 		buffer[0] = 0x19 + offset;
 
-#if defined(__clang__) || defined(__GNUC__)
-		*(uint16_t *) &buffer[1] = __builtin_bswap16(value);
+#ifdef HAVE_ENDIAN_H
+	*(uint16_t *) &buffer[1] = htobe16(value);
 #else
+	#ifdef IS_BIG_ENDIAN
+		*(uint16_t *) &buffer[1] = value;
+	#else
 		buffer[1] = value >> 8;
 		buffer[2] = value;
+	#endif
 #endif
 
 		return 3;
@@ -46,13 +57,17 @@ size_t _cbor_encode_uint32(uint32_t value, unsigned char *buffer, size_t buffer_
 	if (buffer_size >= 5) {
 		buffer[0] = 0x1A + offset;
 
-#if defined(__clang__) || defined(__GNUC__)
-		*(uint32_t *) &buffer[1] = __builtin_bswap32(value);
+#ifdef HAVE_ENDIAN_H
+		*(uint32_t *) &buffer[1] = htobe32(value);
 #else
+	#ifdef IS_BIG_ENDIAN
+		*(uint32_t *) &buffer[1] = value;
+	#else
 		buffer[1] = value >> 24;
 		buffer[2] = value >> 16;
 		buffer[3] = value >> 8;
 		buffer[4] = value;
+	#endif
 #endif
 
 		return 5;
@@ -65,9 +80,12 @@ size_t _cbor_encode_uint64(uint64_t value, unsigned char *buffer, size_t buffer_
 	if (buffer_size >= 9) {
 		buffer[0] = 0x1B + offset;
 
-#if defined(__clang__) || defined(__GNUC__)
-		*(uint64_t *) &buffer[1] = __builtin_bswap64(value);
+#ifdef HAVE_ENDIAN_H
+		*(uint64_t *) &buffer[1] = htobe64(value);
 #else
+	#ifdef IS_BIG_ENDIAN
+		*(uint64_t *) &buffer[1] = value;
+	#else
 		buffer[1] = value >> 56;
 		buffer[2] = value >> 48;
 		buffer[3] = value >> 40;
@@ -76,6 +94,7 @@ size_t _cbor_encode_uint64(uint64_t value, unsigned char *buffer, size_t buffer_
 		buffer[6] = value >> 16;
 		buffer[7] = value >> 8;
 		buffer[8] = value;
+	#endif
 #endif
 
 		return 9;
