@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
+cppcheck $SOURCE --error-exitcode=1
 cmake $SOURCE -DCUSTOM_ALLOC=$CUSTOM_ALLOC -DCMAKE_BUILD_TYPE=Debug
 make VERBOSE=1
 ctest -V

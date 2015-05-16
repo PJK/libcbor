@@ -5,7 +5,7 @@ before_install:
   - sudo apt-get install -y lcov
   - gem install coveralls-lcov
   - sudo apt-get update -qq
-  - sudo apt-get -qq install gcc-4.9 libjansson-dev valgrind
+  - sudo apt-get -qq install gcc-4.9 libjansson-dev valgrind cppcheck
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 90
   - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.9 90
   - git submodule update test/cmocka
