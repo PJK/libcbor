@@ -64,6 +64,11 @@ cbor_mutable_data cbor_string_handle(const cbor_item_t *item);
 
 /** Set the handle to the underlying string
  *
+ *
+ * \rst
+ * .. warning:: Using a pointer to a stack allocated constant is a common mistake. Lifetime of the string will expire when it goes out of scope and the CBOR item will be left inconsistent.
+ * \endrst
+ *
  * @param item[borrow] A definite string
  * @param data The memory block. The caller gives up the ownership of the block. libcbor will deallocate it when appropriate using its free function
  * @param length Length of the data block
