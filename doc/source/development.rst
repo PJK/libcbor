@@ -5,6 +5,7 @@ Development dependencies
 ---------------------------
 - `CMocka <http://cmocka.org/>`_ (testing)
 - `Python <https://www.python.org/>`_ and `pip <https://pypi.python.org/pypi/pip>`_ (Sphinx platform)
+- `Doxygen <http://www.stack.nl/~dimitri/doxygen/>`_
 - `Sphinx <http://sphinx-doc.org/>`_ (documentation)
 - There are some `Ruby <https://www.ruby-lang.org/en/>`_ scripts in ``misc``
 - `Valgrind <http://valgrind.org/>`_ (memory correctness & profiling)
