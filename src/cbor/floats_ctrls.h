@@ -130,7 +130,7 @@ cbor_item_t * cbor_build_bool(bool value);
  * @param item[borrow] A ctrl item
  * @param value The simple value to assign. Please consult the standard for allowed values
  */
-void cbor_set_ctrlcbor_set_ctrl(cbor_item_t * item, uint8_t value);
+void cbor_set_ctrl(cbor_item_t * item, uint8_t value);
 
 /** Assigns a float value
  *

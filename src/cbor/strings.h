@@ -29,6 +29,15 @@ extern "C" {
  */
 size_t cbor_string_length(const cbor_item_t *item);
 
+/** The number of codepoints in this string
+ *
+ * Might differ from length if there are multibyte ones
+ *
+ * @param item[borrow] A string
+ * @return The number of codepoints in this string
+ */
+size_t cbor_string_codepoint_count(const cbor_item_t *item);
+
 /** Is the string definite?
  *
  * @param item[borrow] a string 
