@@ -2,6 +2,15 @@ cmake_minimum_required(VERSION 2.8)
 project(libcbor)
 include(CTest)
 
+include(CheckIncludeFiles)
+
+check_include_files(endian.h HAVE_ENDIAN_H)
+if(HAVE_ENDIAN_H)
+    # BSD source needed or else GNU-y extensions will not be visible
+    add_definitions(-D_BSD_SOURCE=1)
+    add_definitions(-DHAVE_ENDIAN_H=1)
+endif()
+
 SET(CPACK_GENERATOR "DEB" "TGZ" "RPM")
 set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Pavel Kalvoda")
@@ -62,6 +71,7 @@ endif(PRETTY_PRINTER)
 
 set(BUFFER_GROWTH "2" CACHE STRING "Factor for buffer growth & shrinking")
 add_definitions(-DCBOR_BUFFER_GROWTH=${BUFFER_GROWTH})
+
 
 subdirs(src)
 subdirs(demo)
