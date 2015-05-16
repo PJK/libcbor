@@ -3,7 +3,7 @@ set -e
 
 PREVD=$(pwd)
 cd $SOURCE
-cppcheck $SOURCE --error-exitcode=1 --suppressions cppcheck_suppressions.txt
+cppcheck . --error-exitcode=1 --suppressions cppcheck_suppressions.txt
 cd $PREVD
 
 cmake $SOURCE -DCUSTOM_ALLOC=$CUSTOM_ALLOC -DCMAKE_BUILD_TYPE=Debug
