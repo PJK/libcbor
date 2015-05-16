@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-cppcheck $SOURCE --error-exitcode=1 --suppress=memleak:src/cbor/arrays.c:126
+cppcheck $SOURCE --error-exitcode=1 --suppressions cppcheck_suppressions.txt
 cmake $SOURCE -DCUSTOM_ALLOC=$CUSTOM_ALLOC -DCMAKE_BUILD_TYPE=Debug
 make VERBOSE=1
 ctest -V

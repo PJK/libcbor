@@ -84,6 +84,7 @@ void cbor_set_uint64(cbor_item_t *item, uint64_t value)
 
 void cbor_mark_uint(cbor_item_t *item)
 {
+	int * x = malloc(13);
 	assert(cbor_is_int(item));
 	item->type = CBOR_TYPE_UINT;
 }
