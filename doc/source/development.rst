@@ -4,7 +4,6 @@ Development
 Development dependencies
 ---------------------------
 - `CMocka <http://cmocka.org/>`_ (testing)
-- `Jansson <http://www.digip.org/jansson/>`_ (to benchmark against)
 - `Python <https://www.python.org/>`_ and `pip <https://pypi.python.org/pypi/pip>`_ (Sphinx platform)
 - `Sphinx <http://sphinx-doc.org/>`_ (documentation)
 - There are some `Ruby <https://www.ruby-lang.org/en/>`_ scripts in ``misc``
@@ -45,6 +44,6 @@ Live preview of docs
   make livehtml
 
 Testing and code coverage
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Please refer to :doc:`tests`

@@ -122,7 +122,7 @@ Generally speaking, data items consist of three parts:
 Decoding
 ---------
 
-As outlined in :doc:`api`, there decoding is based on the streaming decoder TODO. Essentially, the decoder is a custom set of callbacks for the streaming decoder.
+As outlined in :doc:`api`, there decoding is based on the streaming decoder Essentially, the decoder is a custom set of callbacks for the streaming decoder.
 
 Streaming decoder
 ~~~~~~~~~~~~~~~~
