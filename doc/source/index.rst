@@ -33,6 +33,7 @@ Contents
    tests
    rfc_conformance
    internal
+   changelog
    development
 
 .. _CBOR: http://tools.ietf.org/html/rfc7049
