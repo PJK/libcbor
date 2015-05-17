@@ -21,6 +21,7 @@ extern "C" {
 * ============================================================================
 */
 
+/** Primitive encoder */
 size_t cbor_encode_uint8(uint8_t, unsigned char *, size_t);
 
 size_t cbor_encode_uint16(uint16_t, unsigned char *, size_t);

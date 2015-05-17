@@ -6,9 +6,6 @@
  */
 
 #include "cbor.h"
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -34,20 +31,21 @@ void find_string(void * _ctx, cbor_data buffer, size_t len)
 
 int main(int argc, char * argv[])
 {
-	int fd = open(argv[1], O_RDONLY);
-	struct stat info;
-	fstat(fd, &info);
-	unsigned char * buffer = mmap(NULL, info.st_size, PROT_READ,
-	                              MAP_PRIVATE, fd, 0);
+	FILE * f = fopen(argv[1], "rb");
+	fseek(f, 0, SEEK_END);
+	size_t length = (size_t)ftell(f);
+	fseek(f, 0, SEEK_SET);
+	unsigned char * buffer = malloc(length);
+	fread(buffer, length, 1, f);
 
 	struct cbor_callbacks callbacks = cbor_empty_callbacks;
 	struct cbor_decoder_result decode_result;
 	size_t bytes_read = 0;
 	callbacks.string = find_string;
-	while (bytes_read < info.st_size) {
+	while (bytes_read < length) {
 		decode_result = cbor_stream_decode(buffer + bytes_read,
-		                                   info.st_size - bytes_read,
-		                                   &callbacks, NULL);
+										   length - bytes_read,
+										   &callbacks, NULL);
 		bytes_read += decode_result.read;
 	}
 }
