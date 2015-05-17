@@ -27,6 +27,7 @@ Contents
 .. toctree::
 
    getting_started
+   using
    api
    streaming
    tests

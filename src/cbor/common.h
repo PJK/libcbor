@@ -20,14 +20,16 @@ extern "C" {
 #endif
 
 #define CBOR_MAJOR_VERSION 0
-#define CBOR_MINOR_VERSION 0
-#define CBOR_PATCH_VERSION 1
+#define CBOR_MINOR_VERSION 2
+#define CBOR_PATCH_VERSION 0
 
 static const uint8_t cbor_major_version = CBOR_MAJOR_VERSION;
 static const uint8_t cbor_minor_version = CBOR_MINOR_VERSION;
 static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
 
 #define CBOR_VERSION TO_STR(CBOR_MAJOR_VERSION) "." TO_STR(CBOR_MINOR_VERSION) "." TO_STR(CBOR_PATCH_VERSION)
+
+#define CBOR_HEX_VERSION ((CBOR_MAJOR_VERSION << 16) | (CBOR_MINOR_VERSION << 8) | CBOR_PATCH_VERSION)
 
 #ifndef __STDC_VERSION__
 #error "C11 compliant compiler is required"
