@@ -5,7 +5,7 @@ Next
 - Overhauled endianess conversion - ARM now works as expected
 - 'sort.c' example added
 
-0.1.0 (May 6 2015)
+0.1.0 (2015-05-06)
 ---------------------
 
 The initial release, yay!
