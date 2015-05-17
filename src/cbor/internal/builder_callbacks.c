@@ -165,16 +165,29 @@ void cbor_builder_negint64_callback(void *context, uint64_t value)
 void cbor_builder_byte_string_callback(void *context, cbor_data data, size_t length)
 {
 	struct _cbor_decoder_context *ctx = context;
-	unsigned char *new_handle = _CBOR_MALLOC(length); //TODO
+	unsigned char *new_handle = _CBOR_MALLOC(length);
+	if (new_handle == NULL) {
+		ctx->creation_failed = true;
+		return;
+	}
+
 	memcpy(new_handle, data, length);
 	cbor_item_t *res = cbor_new_definite_bytestring();
+
+	if (res == NULL) {
+		_CBOR_FREE(new_handle);
+		ctx->creation_failed = true;
+		return;
+	}
+
 	cbor_bytestring_set_handle(res, new_handle, length);
 
 	if (ctx->stack->size > 0 && cbor_isa_bytestring(ctx->stack->top->item)) {
 		if (cbor_bytestring_is_indefinite(ctx->stack->top->item)) {
 			cbor_bytestring_add_chunk(ctx->stack->top->item, cbor_move(res));
 		} else {
-			// TODO complain
+			cbor_decref(&res);
+			ctx->syntax_error = true;
 		}
 	} else {
 		_cbor_builder_append(res, ctx);
@@ -198,11 +211,16 @@ void cbor_builder_string_callback(void *context, cbor_data data, size_t length)
 	size_t codepoint_count = _cbor_unicode_codepoint_count(data, length, &unicode_status);
 
 	if (unicode_status.status == _CBOR_UNICODE_BADCP) {
-		/* Invalid Unicode string - abort decoding */
-		//TODO complain
+		ctx->syntax_error = true;
+		return;
 	}
 
 	unsigned char *new_handle = _CBOR_MALLOC(length);
+
+	if (new_handle == NULL) {
+		ctx->creation_failed = true;
+		return;
+	}
 
 	memcpy(new_handle, data, length);
 	cbor_item_t *res = cbor_new_definite_string();
@@ -212,10 +230,10 @@ void cbor_builder_string_callback(void *context, cbor_data data, size_t length)
 	/* Careful here: order matters */
 	if (ctx->stack->size > 0 && cbor_isa_string(ctx->stack->top->item)) {
 		if (cbor_string_is_indefinite(ctx->stack->top->item)) {
-			cbor_string_add_chunk(ctx->stack->top->item, res);
+			cbor_string_add_chunk(ctx->stack->top->item, cbor_move(res));
 		} else {
-			printf("shouldnt happen type mismatch \n");
-			// TODO complain
+			cbor_decref(&res);
+			ctx->syntax_error = true;
 		}
 	} else {
 		_cbor_builder_append(res, ctx);

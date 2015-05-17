@@ -69,22 +69,23 @@ size_t cbor_string_chunk_count(const cbor_item_t *item)
 
 }
 
-cbor_item_t *cbor_string_add_chunk(cbor_item_t *item, cbor_item_t *chunk)
+bool cbor_string_add_chunk(cbor_item_t *item, cbor_item_t *chunk)
 {
 	assert(cbor_isa_string(item));
 	assert(cbor_string_is_indefinite(item));
 	struct cbor_indefinite_string_data *data = (struct cbor_indefinite_string_data *) item->data;
-	// TODO optimize this with exponential growth
 	if (data->chunk_count == data->chunk_capacity) {
 		/* We need more space */
-		data->chunk_capacity = data->chunk_capacity == 0 ? 1 : data->chunk_capacity * 2;
+		data->chunk_capacity = data->chunk_capacity == 0 ? 1 : (size_t)(CBOR_BUFFER_GROWTH * (data->chunk_capacity));
 		cbor_item_t **new_chunks_data =
 			_CBOR_REALLOC(data->chunks, data->chunk_capacity * sizeof(cbor_item_t *));
-		// TODO handle failures
-		data->chunks = new_chunks_data;
+		if (new_chunks_data == NULL)
+			return false;
+		else
+			data->chunks = new_chunks_data;
 	}
-	data->chunks[data->chunk_count++] = chunk;
-	return item;
+	data->chunks[data->chunk_count++] = cbor_incref(chunk);
+	return true;
 }
 
 size_t cbor_string_length(const cbor_item_t *item)
