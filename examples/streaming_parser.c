@@ -49,6 +49,7 @@ int main(int argc, char * argv[])
 		bytes_read += decode_result.read;
 	}
 
+	free(buffer);
 	fclose(f);
 }
 
