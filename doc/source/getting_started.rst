@@ -3,8 +3,8 @@ Getting started
 
 Pre-built Linux packages are distributed from `the libcbor website <http://libcbor.org/>`_. For other platforms, you will need to compile it from source.
 
-Building libcbor
-------------------
+Building & installing libcbor
+------------------------------
 
 Prerequisites:
  - C11 compiler
@@ -19,18 +19,19 @@ Prerequisites:
 
 A handful of configuration flags can be passed to `cmake`. The following table lists libcbor compile-time directives and several important generic flags.
 
-======================  =======================================================   ======================  =====================================================================================================================
-Option                  Meaning                                                   Default                 Possible values
-----------------------  -------------------------------------------------------   ----------------------  ---------------------------------------------------------------------------------------------------------------------
-``CMAKE_C_COMPILER``    C compiler to use                                         ``cc``                   ``gcc``, ``clang``, ``clang-3.5``, ...
-``CUSTOM_ALLOC``        Allow custom ``malloc``?                                  ``ON``                   ``ON``, ``OFF``
+========================  =======================================================   ======================  =====================================================================================================================
+Option                    Meaning                                                   Default                 Possible values
+------------------------  -------------------------------------------------------   ----------------------  ---------------------------------------------------------------------------------------------------------------------
+``CMAKE_C_COMPILER``      C compiler to use                                         ``cc``                   ``gcc``, ``clang``, ``clang-3.5``, ...
+``CMAKE_INSTALL_PREFIX``  Installation prefix                                       System-dependent         ``/usr/local/lib``, ...
+``CUSTOM_ALLOC``          Allow custom ``malloc``?                                  ``ON``                   ``ON``, ``OFF``
 
-``HUGE_FUZZ``           :doc:`Fuzz test </tests>` with 8GB of data                ``OFF``                   ``ON``, ``OFF``
-``SANE_MALLOC``         Assume ``malloc`` will refuse unreasonable allocations                   ``OFF``                   ``ON``, ``OFF``
-``COVERAGE``            Generate test coverage instrumentation                    ``OFF``                   ``ON``, ``OFF``
-``PRETTY_PRINTER``      Include a pretty-printer implementation                    ``ON``                   ``ON``, ``OFF``
-``BUFFER_GROWTH``       Buffer growth factor                                       ``2``                     ``>1``
-======================  =======================================================   ======================  =====================================================================================================================
+``HUGE_FUZZ``             :doc:`Fuzz test </tests>` with 8GB of data                ``OFF``                   ``ON``, ``OFF``
+``SANE_MALLOC``           Assume ``malloc`` will refuse unreasonable allocations                   ``OFF``                   ``ON``, ``OFF``
+``COVERAGE``              Generate test coverage instrumentation                    ``OFF``                   ``ON``, ``OFF``
+``PRETTY_PRINTER``        Include a pretty-printer implementation                    ``ON``                   ``ON``, ``OFF``
+``BUFFER_GROWTH``         Buffer growth factor                                       ``2``                     ``>1``
+========================  =======================================================   ======================  =====================================================================================================================
 
 
 If you want to pass other custom configuration options, please refer to `<http://www.cmake.org/Wiki/CMake_Useful_Variables>`_.
@@ -51,7 +52,7 @@ In order to install the libcbor headers and libraries, the usual
 
   make install
 
-is what your're looking for. Root permissions required on most systems.
+is what your're looking for. Root permissions are required on most systems.
 
 
 **Portability**
@@ -89,7 +90,8 @@ and compiling it
     cc hello_cbor.c -lcbor -o hello_cbor
 
 
-**Troubleshooting**
+Troubleshooting
+---------------------
 
 **cbor.h not found**: The headers directory is probably not in your include path. First, verify the installation
 location by checking the installation log. If you used make, it will look something like
@@ -102,7 +104,7 @@ location by checking the installation log. If you used make, it will look someth
     -- Installing: /usr/local/include/cbor/encoding.h
     ...
 
-Including the path path during compilation should suffice, e.g.:
+Make sure that ``CMAKE_INSTALL_PREFIX`` (if you provided it) was correct. Including the path path during compilation should suffice, e.g.:
 
 .. code-block:: bash
 
@@ -126,3 +128,4 @@ linker shared path using ``-R``, e.g.:
         libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f9af65eb000)
         /lib64/ld-linux-x86-64.so.2 (0x00007f9af6be9000)
 
+**compilation failed**: If your compiler supports C11 yet the compilation has failed, please report the issue to the `issue tracker <https://github.com/PJK/libcbor/issues>`_.
