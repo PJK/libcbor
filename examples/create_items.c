@@ -22,10 +22,11 @@ int main(int argc, char * argv[])
 		.value = cbor_move(cbor_build_string("Is the answer"))
 	});
 	/* Output: `length` bytes of data in the `buffer` */
-	unsigned char * buffer = malloc(1024);
-	size_t length = cbor_serialize(root, buffer, 1024);
+	unsigned char * buffer;
+	size_t buffer_size, length = cbor_serialize_alloc(root, &buffer, &buffer_size);
 
 	fwrite(buffer, 1, length, stdout);
+	free(buffer);
 
 	fflush(stdout);
 	cbor_decref(&root);

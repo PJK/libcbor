@@ -25,7 +25,7 @@ Option                  Meaning                                                 
 ``CMAKE_C_COMPILER``    C compiler to use                                         ``cc``                   ``gcc``, ``clang``, ``clang-3.5``, ...
 ``CUSTOM_ALLOC``        Allow custom ``malloc``?                                  ``ON``                   ``ON``, ``OFF``
 
-``HUGE_FUZZ``           `Fuzz test </tests>` with 8GB of data                      ``OFF``                   ``ON``, ``OFF``
+``HUGE_FUZZ``           :doc:`Fuzz test </tests>` with 8GB of data                ``OFF``                   ``ON``, ``OFF``
 ``SANE_MALLOC``         Assume ``malloc`` will refuse unreasonable allocations                   ``OFF``                   ``ON``, ``OFF``
 ``COVERAGE``            Generate test coverage instrumentation                    ``OFF``                   ``ON``, ``OFF``
 ``PRETTY_PRINTER``      Include a pretty-printer implementation                    ``ON``                   ``ON``, ``OFF``
@@ -54,6 +54,75 @@ In order to install the libcbor headers and libraries, the usual
 is what your're looking for. Root permissions required on most systems.
 
 
-**Building for ARM**
+**Portability**
 
-If you are building
+libcbor is highly portable and works on both little- and big-endian systems regardless of the operating system. After building
+on an exotic platform, you might wish to verify the result by running the :doc:`test suite </tests>`. If you encounter any problems, please
+report them to the `issue tracker <https://github.com/PJK/libcbor/issues>`_.
+
+libcbor is known to successfully work on ARM Android devices. Cross-compilation is possible with ``arm-linux-gnueabi-gcc``.
+
+
+Linking with libcbor
+---------------------
+
+If you include and linker paths include the directories to which libcbor has been installed, compiling programs that uses libcbor requires
+no extra considerations.
+
+You can verify that everything has been set up properly by creating a file with the following contents
+
+.. code-block:: c
+
+    #include <cbor.h>
+    #include <stdio.h>
+
+    int main(int argc, char * argv[])
+    {
+        printf("Hello from libcbor %s\n", CBOR_VERSION);
+    }
+
+
+and compiling it
+
+.. code-block:: bash
+
+    cc hello_cbor.c -lcbor -o hello_cbor
+
+
+**Troubleshooting**
+
+**cbor.h not found**: The headers directory is probably not in your include path. First, verify the installation
+location by checking the installation log. If you used make, it will look something like
+
+.. code-block:: text
+
+    ...
+    -- Installing: /usr/local/include/cbor
+    -- Installing: /usr/local/include/cbor/callbacks.h
+    -- Installing: /usr/local/include/cbor/encoding.h
+    ...
+
+Including the path path during compilation should suffice, e.g.:
+
+.. code-block:: bash
+
+    cc -I/usr/local/include hello_cbor.c -lcbor -o hello_cbor
+
+
+**cannot find -lcbor during linking**: Most likely the same problem as before. Include the installation directory in the
+linker shared path using ``-R``, e.g.:
+
+.. code-block:: bash
+
+    cc -Wl,-rpath,/usr/local/lib -lcbor -o hello_cbor
+
+**shared library missing during execution**: Verify the linkage using ``ldd``, ``otool``, or similar and adjust the compilation directives accordingly:
+
+.. code-block:: text
+
+    ⇒  ldd hello_cbor
+        linux-vdso.so.1 =>  (0x00007ffe85585000)
+        libcbor.so => /usr/local/lib/libcbor.so (0x00007f9af69da000)
+        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f9af65eb000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007f9af6be9000)
+

@@ -48,5 +48,7 @@ int main(int argc, char * argv[])
 										   &callbacks, NULL);
 		bytes_read += decode_result.read;
 	}
+
+	return EXIT_SUCCESS;
 }
 

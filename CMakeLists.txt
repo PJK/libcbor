@@ -74,6 +74,5 @@ add_definitions(-DCBOR_BUFFER_GROWTH=${BUFFER_GROWTH})
 
 
 subdirs(src)
-subdirs(demo)
 subdirs(test)
 subdirs(examples)

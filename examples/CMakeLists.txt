@@ -9,3 +9,7 @@ target_link_libraries(streaming_parser cbor)
 
 add_executable(sort sort.c)
 target_link_libraries(sort cbor)
+
+
+add_executable(hello hello.c)
+target_link_libraries(hello cbor)

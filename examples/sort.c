@@ -41,6 +41,4 @@ int main(int argc, char * argv[])
 
 	cbor_describe(array, stdout);
 	fflush(stdout);
-
-	return EXIT_SUCCESS;
 }
