@@ -36,4 +36,4 @@ or alternatively run ``lcov`` by hand using
 Fuzz testing
 -----------------
 
-TODO
+Every release is tested using a fuzz test. In this test, a huge buffer filled with random data is passed to the decoder. We require that it either succeeds or fail with a sensible error, without leaking any memory. This is intended to simulate real-world situations where data received from the network are CBOR-decoded before any further processing.

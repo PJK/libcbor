@@ -49,6 +49,6 @@ int main(int argc, char * argv[])
 		bytes_read += decode_result.read;
 	}
 
-	return EXIT_SUCCESS;
+	fclose(f);
 }
 
