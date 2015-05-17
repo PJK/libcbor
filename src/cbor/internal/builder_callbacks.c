@@ -165,14 +165,14 @@ void cbor_builder_negint64_callback(void *context, uint64_t value)
 void cbor_builder_byte_string_callback(void *context, cbor_data data, size_t length)
 {
 	struct _cbor_decoder_context *ctx = context;
-	unsigned char *new_handle = _CBOR_MALLOC(length);
+	unsigned char *new_handle = _CBOR_MALLOC(length); //TODO
 	memcpy(new_handle, data, length);
 	cbor_item_t *res = cbor_new_definite_bytestring();
 	cbor_bytestring_set_handle(res, new_handle, length);
 
 	if (ctx->stack->size > 0 && cbor_isa_bytestring(ctx->stack->top->item)) {
 		if (cbor_bytestring_is_indefinite(ctx->stack->top->item)) {
-			cbor_bytestring_add_chunk(ctx->stack->top->item, res);
+			cbor_bytestring_add_chunk(ctx->stack->top->item, cbor_move(res));
 		} else {
 			// TODO complain
 		}

@@ -85,9 +85,9 @@ size_t cbor_bytestring_chunk_count(const cbor_item_t *item);
  *
  * @param item[borrow] An indefinite byte string
  * @param item[incref] A definite byte string
- * @return the `item`. `NULL` on realloc failure. In that case, the refcount of `chunk` is not increased and the `item` is left intact.
+ * @return true on success, false on realloc failure. In that case, the refcount of `chunk` is not increased and the `item` is left intact.
  */
-cbor_item_t *cbor_bytestring_add_chunk(cbor_item_t *item, cbor_item_t *chunk);
+bool cbor_bytestring_add_chunk(cbor_item_t *item, cbor_item_t *chunk);
 
 /** Creates a new definite byte string
  *

@@ -251,6 +251,7 @@ static void test_two_indef(void **state)
 {
 	bs = cbor_load(data11, 9, &res);
 	assert_non_null(bs);
+	assert_int_equal(1, cbor_refcount(bs));
 	assert_true(cbor_typeof(bs) == CBOR_TYPE_BYTESTRING);
 	assert_true(cbor_isa_bytestring(bs));
 	assert_true(cbor_bytestring_length(bs) == 0);

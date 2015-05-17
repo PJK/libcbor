@@ -118,7 +118,7 @@ static void test_serialize_indefinite_bytestring(void **state)
 	bzero(data, 256); /* Prevent undefined behavior in comparison */
 	cbor_bytestring_set_handle(chunk, data, 256);
 
-	cbor_bytestring_add_chunk(item, chunk);
+	cbor_bytestring_add_chunk(item, cbor_move(chunk));
 	assert_int_equal(cbor_bytestring_chunk_count(item), 1);
 
 	assert_int_equal(1 + 3 + 256 + 1, cbor_serialize(item, buffer, 512));
