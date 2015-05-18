@@ -11,5 +11,5 @@ There is no explicit limitation of indefinite length byte strings. [#]_ *libcbor
 
 "Half-precision" IEEE 754 floats
 ---------------------------------
-As of C11, there is no standard implementation for 2 bytes floats. *libcbor* packs them as a :type:`double`. When encoding, *libcbor* selects the appropriate wire representation based on metadata and the actual value. This applies both to canonical and normal mode.
+As of C99 and even C11, there is no standard implementation for 2 bytes floats. *libcbor* packs them as a :type:`double`. When encoding, *libcbor* selects the appropriate wire representation based on metadata and the actual value. This applies both to canonical and normal mode.
 

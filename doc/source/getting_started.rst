@@ -7,12 +7,12 @@ Building & installing libcbor
 ------------------------------
 
 Prerequisites:
- - C11 compiler
+ - C99 compiler
  - CMake_ 2.8 or newer (might also be called ``cmakesetup``, ``cmake-gui`` or ``ccmake`` depending on the installed version and system)
  - C build system CMake can target (make, Apple Xcode, MinGW, ...)
  .. _CMake: http://cmake.org/
 
-.. note:: As of May 2015, the 2015 release candidate of Visual Studio does not support C11. While CMake will be happy to generate a VS solution that you can play with, libcbor currently cannot be compiled using the MSVC toolchain. Both `ICC <https://software.intel.com/en-us/c-compilers>`_ and GCC under `Cygwin <https://www.cygwin.com/>`_ will work.
+.. note:: TODOTODO As of May 2015, the 2015 release candidate of Visual Studio does not support C11. While CMake will be happy to generate a VS solution that you can play with, libcbor currently cannot be compiled using the MSVC toolchain. Both `ICC <https://software.intel.com/en-us/c-compilers>`_ and GCC under `Cygwin <https://www.cygwin.com/>`_ will work.
 
 
 **Configuration options**

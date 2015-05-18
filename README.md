@@ -7,7 +7,7 @@
 
 ## Main features
  - Complete RFC conformance
- - Robust C11 implementation
+ - Robust C99 implementation
  - Layered architecture offers both control and convenience
  - Flexible memory management
  - Proper handling of UTF-8
