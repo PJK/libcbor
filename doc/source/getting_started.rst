@@ -12,7 +12,7 @@ Prerequisites:
  - C build system CMake can target (make, Apple Xcode, MinGW, ...)
  .. _CMake: http://cmake.org/
 
-.. note:: TODOTODO As of May 2015, the 2015 release candidate of Visual Studio does not support C11. While CMake will be happy to generate a VS solution that you can play with, libcbor currently cannot be compiled using the MSVC toolchain. Both `ICC <https://software.intel.com/en-us/c-compilers>`_ and GCC under `Cygwin <https://www.cygwin.com/>`_ will work.
+.. note:: As of May 2015, not even the 2015 release candidate of Visual Studio supports C99. While CMake will be happy to generate a VS solution that you can play with, libcbor currently cannot be compiled using the MSVC toolchain. `ICC <https://software.intel.com/en-us/c-compilers>`_, GCC under `Cygwin <https://www.cygwin.com/>`_, and `MinGW's <http://www.mingw.org/>`_ GCC will all work. The MinGW build process is described below.
 
 
 **Configuration options**
@@ -88,6 +88,43 @@ and compiling it
 .. code-block:: bash
 
     cc hello_cbor.c -lcbor -o hello_cbor
+
+
+MinGW build instructions
+---------------------------
+Prerequisites:
+ - MinGW
+ - CMake GUI
+
+First of all, create a folder that will be used for the output. For this demonstration, we will use ``cbor_out``. Start CMake and select the source path and the destination folder.
+
+.. image:: img/win_1.png
+
+Then hit the 'Configure' button. You will be prompted to select the build system:
+
+.. image:: img/win_2.png
+
+Choose MinGW and confirm.
+
+.. note:: If you select Visual Studio at this point, a MSVC project will be generated for you. This is useful if you just want to browse through the source code.
+
+You can then adjust the build options. The defaults will work just fine. Hit 'Generate' when you are done.
+
+.. image:: img/win_3.png
+
+You can then adjust the build options. The defaults will work just fine. Hit 'Generate' when you are done.
+
+Open the shell, navigate to the output directory, and run ``mingw32-make cbor``.
+
+.. image:: img/win_4.png
+
+*libcbor* will be built and your ``.dll`` should be ready at this point
+
+.. image:: img/win_5.png
+
+Feel free to also try building and running some of the examples, e.g. ``mingw32-make sort``
+
+.. image:: img/win_6.png
 
 
 Troubleshooting
