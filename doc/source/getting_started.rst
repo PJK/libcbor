@@ -165,4 +165,4 @@ linker shared path using ``-R``, e.g.:
         libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f9af65eb000)
         /lib64/ld-linux-x86-64.so.2 (0x00007f9af6be9000)
 
-**compilation failed**: If your compiler supports C11 yet the compilation has failed, please report the issue to the `issue tracker <https://github.com/PJK/libcbor/issues>`_.
+**compilation failed**: If your compiler supports C99 yet the compilation has failed, please report the issue to the `issue tracker <https://github.com/PJK/libcbor/issues>`_.
