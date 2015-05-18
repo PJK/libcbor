@@ -32,13 +32,14 @@ typedef enum cbor_type {
 	,CBOR_TYPE_FLOAT_CTRL  /** 7 - decimals and special values (true, false, nil, ...) */
 } cbor_type;
 
+/** Possible decoding errors */
 typedef enum {
-	CBOR_ERR_NONE,
-	CBOR_ERR_NOTENOUGHDATA,
-	CBOR_ERR_NODATA,
-	CBOR_ERR_MALFORMATED,
-	CBOR_ERR_MEMERROR,		/* Memory error - item allocation failed. Is it too big for your allocator?? */
-	CBOR_ERR_SYNTAXERROR	/* Stack parsing algorithm failed */
+	CBOR_ERR_NONE
+	,CBOR_ERR_NOTENOUGHDATA
+	,CBOR_ERR_NODATA
+	,CBOR_ERR_MALFORMATED
+	,CBOR_ERR_MEMERROR		/** Memory error - item allocation failed. Is it too big for your allocator? */
+	,CBOR_ERR_SYNTAXERROR	/** Stack parsing algorithm failed */
 } cbor_error_code;
 
 /** Possible widths of #CBOR_TYPE_UINT items */
@@ -144,8 +145,11 @@ struct cbor_indefinite_string_data {
 	cbor_item_t * * chunks;
 };
 
+/** High-level decoding error */
 struct cbor_error {
+	/** Aproximate position */
 	size_t          position;
+	/** Description */
 	cbor_error_code code;
 };
 
@@ -153,8 +157,11 @@ struct cbor_pair {
 	cbor_item_t * key, * value;
 };
 
+/** High-level decoding result */
 struct cbor_load_result {
+	/** Error indicator */
 	struct cbor_error error;
+	/** Number of bytes read*/
 	size_t            read;
 };
 

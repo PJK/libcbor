@@ -35,6 +35,13 @@ extern "C" {
 * ============================================================================
 */
 
+/** Loads data item from a buffer
+ *
+ * @param source The buffer
+ * @param source_size
+ * @param result[out] Result indicator. #CBOR_ERR_NONE on success
+ * @return **new** CBOR item or `NULL` on failure. In that case, \p result contains location and description of the error.
+ */
 cbor_item_t * cbor_load(cbor_data source,
 						size_t source_size,
 						struct cbor_load_result * result);
