@@ -31,17 +31,6 @@ static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
 
 #define CBOR_HEX_VERSION ((CBOR_MAJOR_VERSION << 16) | (CBOR_MINOR_VERSION << 8) | CBOR_PATCH_VERSION)
 
-#ifndef __STDC_VERSION__
-#error "C11 compliant compiler is required"
-#endif
-
-#if __STDC_VERSION__ != 201112L
-#error "C11 compliant compiler is required"
-#endif
-
-
-_Static_assert(sizeof(size_t) >= 8, "size_t must be at least 64 bits"); /* Otherwise we cannot support reasonably sized chunks */
-
 /* http://stackoverflow.com/questions/1644868/c-define-macro-for-debug-printing */
 #ifdef DEBUG
 #include <stdio.h>

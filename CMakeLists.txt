@@ -17,16 +17,23 @@ SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Pavel Kalvoda")
 SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6")
 SET(CPACK_PACKAGE_VERSION_MAJOR "0")
 SET(CPACK_PACKAGE_VERSION_MINOR "2")
-SET(CPACK_PACKAGE_VERSION_PATCH "0")
+SET(CPACK_PACKAGE_VERSION_PATCH "1")
 
 include(CPack)
 
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -pedantic -g -ggdb -DDEBUG=true")
 set(CMAKE_C_FLAGS_RELEASE "-O3 -flto -Wall -pedantic -DNDEBUG")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 
 set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-g")
 set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-flto")
+
+
+include(CheckTypeSize)
+check_type_size("size_t" SIZEOF_SIZE_T)
+if (SIZEOF_SIZE_T LESS 8)
+    message(WARNING "Your size_t is less than 8 bytes. Long items with 64b length specifiers might not work as expected. Make sure to run the tests!")
+endif()
 
 enable_testing()
 
