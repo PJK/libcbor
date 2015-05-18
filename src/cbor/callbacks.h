@@ -46,48 +46,61 @@ typedef void(*cbor_bool_callback)(void *, bool);
 
 /** Callback bundle -- passed to the decoder */
 struct cbor_callbacks {
-	/* Type 0 - Unsigned integers */
-	cbor_int8_callback uint8;
-	cbor_int16_callback uint16;
-	cbor_int32_callback uint32;
+	/** Unsigned int */
 	cbor_int64_callback uint64;
+	/** Unsigned int */
+	cbor_int32_callback uint32;
+	/** Unsigned int */
+	cbor_int8_callback uint8;
+	/** Unsigned int */
+	cbor_int16_callback uint16;
 
-	/* Type 1 - Negative integers */
-	cbor_int8_callback negint8;
-	cbor_int16_callback negint16;
-	cbor_int32_callback negint32;
+	/** Negative int */
 	cbor_int64_callback negint64;
+	/** Negative int */
+	cbor_int32_callback negint32;
+	/** Negative int */
+	cbor_int16_callback negint16;
+	/** Negative int */
+	cbor_int8_callback negint8;
 
-	/* Type 2 - Byte strings */
-	cbor_string_callback byte_string;
+	/** Definite byte string */
 	cbor_simple_callback byte_string_start;
+	/** Indefinite byte string start */
+	cbor_string_callback byte_string;
 
-	/* Type 3 - Strings */
+	/** Definite string */
 	cbor_string_callback string;
+	/** Indefinite string start */
 	cbor_simple_callback string_start;
 
-	/* Type 4 - Arrays */
-	cbor_collection_callback array_start;
+	/** Definite array */
 	cbor_simple_callback indef_array_start;
+	/** Indefinite array */
+	cbor_collection_callback array_start;
 
-	/* Type 5 - Maps */
-	cbor_collection_callback map_start;
+	/** Definite map */
 	cbor_simple_callback indef_map_start;
+	/** Indefinite map */
+	cbor_collection_callback map_start;
 
-	/* Type 6 - Tags */
+	/** Tags */
 	cbor_int64_callback tag;
 
-	/* Type 7 - Floats & misc */
-	/* Type names cannot be member names */
+	/** Half float */
 	cbor_float_callback float2;
-	/* 2B float is not supported in standard C */
-	cbor_float_callback float4;
+	/** Single float */
 	cbor_double_callback float8;
+	/** Double float */
+	cbor_float_callback float4;
+	/** Undef */
 	cbor_simple_callback undefined;
+	/** Null */
 	cbor_simple_callback null;
+	/** Bool */
 	cbor_bool_callback boolean;
 
-	/* Shared indefinites */
+	/** Indefinite item break */
 	cbor_simple_callback indef_break;
 };
 

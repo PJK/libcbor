@@ -166,15 +166,19 @@ struct cbor_load_result {
 };
 
 
+/** Streaming decoder result - status */
 enum cbor_decoder_status {
-	CBOR_DECODER_FINISHED,		/* OK, finished */
-	CBOR_DECODER_NEDATA,		/* Not enough data - mismatch with MTB */
-	CBOR_DECODER_EBUFFER,		/* Buffer manipulation problem */
-	CBOR_DECODER_ERROR,			/* Malformed or reserved MTB/value */
+	CBOR_DECODER_FINISHED		/** OK, finished */
+	,CBOR_DECODER_NEDATA		/** Not enough data - mismatch with MTB */
+	,CBOR_DECODER_EBUFFER		/** Buffer manipulation problem */
+	,CBOR_DECODER_ERROR			/** Malformed or reserved MTB/value */
 };
 
+/** Streaming decoder result */
 struct cbor_decoder_result {
+	/** Bytes read */
 	size_t                   read;
+	/** The result */
 	enum cbor_decoder_status status;
 };
 
