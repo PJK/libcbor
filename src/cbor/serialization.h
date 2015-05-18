@@ -21,25 +21,99 @@ extern "C" {
 * ============================================================================
 */
 
-size_t cbor_serialize(const cbor_item_t *, unsigned char *, size_t);
+/** Serialize the given item
+ *
+ * @param item[borrow] A data item
+ * @param buffer Buffer to serialize to
+ * @param buffer_size Size of the \p buffer
+ * @return Length of the result. 0 on failure.
+ */
+size_t cbor_serialize(const cbor_item_t * item, cbor_mutable_data buffer, size_t buffer_size);
 
-size_t cbor_serialize_alloc(const cbor_item_t * item, unsigned char ** buffer, size_t * buffer_size);
+/** Serialize the given item, allocating buffers as needed
+ *
+ * \rst
+ * .. warning:: It is your responsibility to free the buffer using an appropriate ``free`` implementation.
+ * \endrst
+ *
+ * @param item[borrow] A data item
+ * @param buffer[out] Buffer containing the result
+ * @param buffer_size[out] Size of the \p buffer
+ * @return Length of the result. 0 on failure, in which case \p buffer is ``NULL``.
+ */
+size_t cbor_serialize_alloc(const cbor_item_t * item, cbor_mutable_data * buffer, size_t * buffer_size);
 
-size_t cbor_serialize_uint(const cbor_item_t *, unsigned char *, size_t);
+/** Serialize an uint
+ *
+ * @param item[borrow] A uint
+ * @param buffer Buffer to serialize to
+ * @param buffer_size Size of the \p buffer
+ * @return Length of the result. 0 on failure.
+ */
+size_t cbor_serialize_uint(const cbor_item_t *, cbor_mutable_data, size_t);
 
-size_t cbor_serialize_negint(const cbor_item_t *, unsigned char *, size_t);
+/** Serialize a negint
+ *
+ * @param item[borrow] A neging
+ * @param buffer Buffer to serialize to
+ * @param buffer_size Size of the \p buffer
+ * @return Length of the result. 0 on failure.
+ */
+size_t cbor_serialize_negint(const cbor_item_t *, cbor_mutable_data, size_t);
 
-size_t cbor_serialize_bytestring(const cbor_item_t *, unsigned char *, size_t);
+/** Serialize a bytestring
+ *
+ * @param item[borrow] A bytestring
+ * @param buffer Buffer to serialize to
+ * @param buffer_size Size of the \p buffer
+ * @return Length of the result. 0 on failure.
+ */
+size_t cbor_serialize_bytestring(const cbor_item_t *, cbor_mutable_data, size_t);
 
-size_t cbor_serialize_string(const cbor_item_t *, unsigned char *, size_t);
+/** Serialize a string
+ *
+ * @param item[borrow] A string
+ * @param buffer Buffer to serialize to
+ * @param buffer_size Size of the \p buffer
+ * @return Length of the result. 0 on failure.
+ */
+size_t cbor_serialize_string(const cbor_item_t *, cbor_mutable_data, size_t);
 
-size_t cbor_serialize_array(const cbor_item_t *, unsigned char *, size_t);
+/** Serialize an array
+ *
+ * @param item[borrow] An array
+ * @param buffer Buffer to serialize to
+ * @param buffer_size Size of the \p buffer
+ * @return Length of the result. 0 on failure.
+ */
+size_t cbor_serialize_array(const cbor_item_t *, cbor_mutable_data, size_t);
 
-size_t cbor_serialize_map(const cbor_item_t *, unsigned char *, size_t);
+/** Serialize a map
+ *
+ * @param item[borrow] A map
+ * @param buffer Buffer to serialize to
+ * @param buffer_size Size of the \p buffer
+ * @return Length of the result. 0 on failure.
+ */
+size_t cbor_serialize_map(const cbor_item_t *, cbor_mutable_data, size_t);
 
-size_t cbor_serialize_tag(const cbor_item_t *, unsigned char *, size_t);
+/** Serialize a tag
+ *
+ * @param item[borrow] A tag
+ * @param buffer Buffer to serialize to
+ * @param buffer_size Size of the \p buffer
+ * @return Length of the result. 0 on failure.
+ */
+size_t cbor_serialize_tag(const cbor_item_t *, cbor_mutable_data, size_t);
 
-size_t cbor_serialize_float_ctrl(const cbor_item_t *, unsigned char *, size_t);
+/** Serialize a
+ *
+ * @param item[borrow] A float or ctrl
+ * @param buffer Buffer to serialize to
+ * @param buffer_size Size of the \p buffer
+ * @return Length of the result. 0 on failure.
+ */
+size_t cbor_serialize_float_ctrl(const cbor_item_t *, cbor_mutable_data, size_t);
 
 #ifdef __cplusplus
 }
