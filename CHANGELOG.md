@@ -1,5 +1,7 @@
 Next
 ---------------------
+- Fixes, polishing, niceties across the code base
+- Update examples
 
 0.2.1 (2015-05-17)
 ---------------------

@@ -47,13 +47,13 @@ typedef void(*cbor_bool_callback)(void *, bool);
 /** Callback bundle -- passed to the decoder */
 struct cbor_callbacks {
 	/** Unsigned int */
-	cbor_int64_callback uint64;
-	/** Unsigned int */
-	cbor_int32_callback uint32;
-	/** Unsigned int */
 	cbor_int8_callback uint8;
 	/** Unsigned int */
 	cbor_int16_callback uint16;
+	/** Unsigned int */
+	cbor_int32_callback uint32;
+	/** Unsigned int */
+	cbor_int64_callback uint64;
 
 	/** Negative int */
 	cbor_int64_callback negint64;

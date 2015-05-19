@@ -22,7 +22,7 @@ int main(int argc, char * argv[])
 	unsigned char * buffer = malloc(length);
 	fread(buffer, length, 1, f);
 
-	/* Assuming `buffer` contains `info.st_size` bytes of input data */
+	/* Assuming `buffer` contains `length` bytes of input data */
 	struct cbor_load_result result;
 	cbor_item_t * item = cbor_load(buffer, length, &result);
 	/* Pretty-print the result */

@@ -132,10 +132,15 @@ union cbor_item_metadata {
 	struct _cbor_float_ctrl_metadata float_ctrl_metadata;
 };
 
+/** The item handle */
 typedef struct cbor_item_t {
+	/** Discriminated by type */
 	union cbor_item_metadata metadata;
+	/** Reference count - initialize to 0 */
 	size_t                   refcount;
+	/** Major type discriminator */
 	cbor_type                type;
+	/** Raw data block - interpretation depends on metadata */
 	unsigned char *          data;
 } cbor_item_t;
 

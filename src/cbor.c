@@ -55,7 +55,7 @@ cbor_item_t *cbor_load(cbor_data source,
 	struct _cbor_stack stack = _cbor_stack_init();
 
 	/* Target for callbacks */
-	struct _cbor_decoder_context context = (struct _cbor_decoder_context){
+	struct _cbor_decoder_context context = (struct _cbor_decoder_context) {
 		.stack = &stack,
 		.creation_failed = false,
 		.syntax_error = false
@@ -73,7 +73,8 @@ cbor_item_t *cbor_load(cbor_data source,
 		} else {
 			result->error = (struct cbor_error) {
 				.code = CBOR_ERR_NOTENOUGHDATA,
-				.position = result->read};
+				.position = result->read
+			};
 			goto error;
 		}
 
