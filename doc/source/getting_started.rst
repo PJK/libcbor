@@ -114,7 +114,7 @@ You can then adjust the build options. The defaults will work just fine. Hit 'Ge
 
 You can then adjust the build options. The defaults will work just fine. Hit 'Generate' when you are done.
 
-Open the shell, navigate to the output directory, and run ``mingw32-make cbor``.
+Open the shell, navigate to the output directory, and run ``mingw32-make cbor cbor_shared``.
 
 .. image:: img/win_4.png
 
