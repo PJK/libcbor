@@ -63,12 +63,47 @@ static void test_negints(void **state)
 	cbor_decref(&copy);
 }
 
+static void test_def_bytestring(void **state)
+{
+	item = cbor_build_bytestring((cbor_data) "abc", 3);
+	assert_memory_equal(
+		cbor_bytestring_handle(copy = cbor_copy(item)),
+		cbor_bytestring_handle(item),
+		3
+	);
+	cbor_decref(&item);
+	cbor_decref(&copy);
+}
+
+static void test_indef_bytestring(void **state)
+{
+	item = cbor_new_indefinite_bytestring();
+	cbor_bytestring_add_chunk(
+		item,
+		cbor_move(cbor_build_bytestring((cbor_data) "abc", 3))
+	);
+	copy = cbor_copy(item);
+
+	assert_int_equal(cbor_bytestring_chunk_count(item), cbor_bytestring_chunk_count(copy));
+
+	assert_memory_equal(
+		cbor_bytestring_handle(cbor_bytestring_chunks_handle(copy)[0]),
+		"abc",
+		3
+	);
+	cbor_decref(&item);
+	cbor_decref(&copy);
+}
+
+
 int main(void)
 {
 	const UnitTest tests[] = {
 
 		unit_test(test_uints),
-		unit_test(test_negints)
+		unit_test(test_negints),
+		unit_test(test_def_bytestring),
+		unit_test(test_indef_bytestring)
 	};
 	return run_tests(tests);
 }

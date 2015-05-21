@@ -152,6 +152,19 @@ cbor_item_t * cbor_copy(cbor_item_t * item)
 	case CBOR_TYPE_NEGINT:
 		return _cbor_copy_int(item, true);
 	case CBOR_TYPE_BYTESTRING:
+		if (cbor_bytestring_is_definite(item)) {
+			return cbor_build_bytestring(cbor_bytestring_handle(item), cbor_bytestring_length(item));
+		} else {
+			cbor_item_t * res = cbor_new_indefinite_bytestring();
+			for (size_t i = 0; i < cbor_bytestring_chunk_count(item); i++)
+				cbor_bytestring_add_chunk(
+					res,
+					cbor_move(
+						cbor_copy(cbor_bytestring_chunks_handle(item)[i])
+					)
+				);
+			return res;
+		}
 	case CBOR_TYPE_STRING:
 	case CBOR_TYPE_ARRAY:
 	case CBOR_TYPE_MAP:
