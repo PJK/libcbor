@@ -26,12 +26,14 @@
 
 #endif
 
+#ifdef CBOR_PRINT_FUZZ
 static void printmem(const unsigned char * ptr, size_t length)
 {
 	for (size_t i = 0; i < length; i++)
 		printf("%02X", ptr[i]);
 	printf("\n");
 }
+#endif
 
 static void run_round()
 {

@@ -47,6 +47,12 @@ static void test_simple_array(void **state)
 	assert_uint8(cbor_array_handle(arr)[0], 1);
 	cbor_item_t * intermediate = cbor_array_get(arr, 0);
 	assert_uint8(intermediate, 1);
+
+	cbor_item_t * new_val = cbor_build_uint8(10);
+	assert_false(cbor_array_set(arr, 1, new_val));
+	assert_false(cbor_array_set(arr, 3, new_val));
+	cbor_decref(&new_val);
+
 	cbor_decref(&arr);
 	cbor_decref(&intermediate);
 	assert_null(arr);
@@ -88,6 +94,8 @@ static void test_indef_arrays(void **state)
 	/* Check the values */
 	assert_uint8(cbor_array_handle(arr)[0], 1);
 	assert_uint8(cbor_array_handle(arr)[1], 2);
+
+	assert_true(cbor_array_set(arr, 1, cbor_move(cbor_build_uint8(10))));
 
 	cbor_decref(&arr);
 	assert_null(arr);

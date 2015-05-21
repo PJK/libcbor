@@ -13,10 +13,12 @@
 #include "cbor.h"
 #include "assertions.h"
 #include <inttypes.h>
+#include <tgmath.h>
 
 cbor_item_t *float_ctrl;
 struct cbor_load_result res;
 
+static const float eps = 0.00001f;
 
 unsigned char float2_data[] = {0xF9, 0x7B, 0xFF};
 
@@ -27,6 +29,7 @@ static void test_float2(void **state)
 	assert_true(cbor_is_float(float_ctrl));
 	assert_true(cbor_float_get_width(float_ctrl) == CBOR_FLOAT_16);
 	assert_true(cbor_float_get_float2(float_ctrl) == 65504.0F);
+	assert_true(fabs(cbor_float_get_float(float_ctrl) - 65504.0F) < eps);
 	cbor_decref(&float_ctrl);
 	assert_null(float_ctrl);
 }
@@ -40,6 +43,7 @@ static void test_float4(void **state)
 	assert_true(cbor_is_float(float_ctrl));
 	assert_true(cbor_float_get_width(float_ctrl) == CBOR_FLOAT_32);
 	assert_true(cbor_float_get_float4(float_ctrl) == 100000.0F);
+	assert_true(fabs(cbor_float_get_float(float_ctrl) - 100000.0F) < eps);
 	cbor_decref(&float_ctrl);
 	assert_null(float_ctrl);
 }
