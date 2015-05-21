@@ -1,0 +1,24 @@
+ [CBOR_TYPE_ARRAY] Definite, size: 11
+    [CBOR_TYPE_UINT] Width: 1B, Value: 1
+    [CBOR_TYPE_NEGINT] Width: 1B, Value: -0 -1
+    [CBOR_TYPE_BYTESTRING] Indefinite, with 2 chunks:
+        [CBOR_TYPE_BYTESTRING] Definite, length 1B
+        [CBOR_TYPE_BYTESTRING] Definite, length 1B
+    [CBOR_TYPE_STRING] Indefinite, with 2 chunks:
+        [CBOR_TYPE_STRING] Definite, length 1B, 1 codepoints
+            a
+        [CBOR_TYPE_STRING] Definite, length 1B, 1 codepoints
+            b
+    [CBOR_TYPE_ARRAY] Indefinite, size:  0
+    [CBOR_TYPE_MAP] Definite, size: 1
+        [CBOR_TYPE_STRING] Definite, length 1B, 1 codepoints
+            a
+        [CBOR_TYPE_STRING] Definite, length 1B, 1 codepoints
+            b
+    [CBOR_TYPE_TAG] Value: 0
+        [CBOR_TYPE_MAP] Indefinite, size:  0
+    [CBOR_TYPE_FLOAT_CTRL] Width: 8B, value: 3.140000
+    [CBOR_TYPE_FLOAT_CTRL] Null
+    [CBOR_TYPE_FLOAT_CTRL] Undefined
+    [CBOR_TYPE_FLOAT_CTRL] Bool: true
+

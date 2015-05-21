@@ -28,6 +28,13 @@ static void test_pretty_printer(void **state)
 	struct cbor_load_result res;
 	cbor_item_t * item = cbor_load(data, 37, &res);
 	cbor_describe(item, outfile);
+	cbor_decref(&item);
+
+	item = cbor_new_ctrl();
+	cbor_set_ctrl(item, 1);
+	cbor_describe(item, outfile);
+	cbor_decref(&item);
+	
 	fclose(outfile);
 }
 
