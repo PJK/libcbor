@@ -5,6 +5,7 @@ Next
 - `cbor_copy`
 - `cbor_build_negint8`, 16, 32, 64, matching asserts
 - `cbor_build_stringn`
+- `cbor_build_tag`
 
 0.2.1 (2015-05-17)
 ---------------------

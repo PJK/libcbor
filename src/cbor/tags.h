@@ -48,6 +48,14 @@ uint64_t cbor_tag_value(const cbor_item_t *item);
  */
 void cbor_tag_set_item(cbor_item_t *item, cbor_item_t *tagged_item);
 
+/** Build a new tag
+ *
+ * @param item[incref] The tagee
+ * @param value Tag value
+ * @return **new** tag item
+ */
+cbor_item_t * cbor_build_tag(uint64_t value, cbor_item_t * item);
+
 #ifdef __cplusplus
 }
 #endif

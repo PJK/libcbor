@@ -187,6 +187,20 @@ static void test_indef_map(void **state)
 	cbor_decref(&copy);
 }
 
+static void test_tag(void **state)
+{
+	item = cbor_build_tag(10, cbor_move(cbor_build_uint8(42)));
+
+	assert_uint8(
+		cbor_tag_item(copy = cbor_copy(item)),
+		42
+	);
+
+	cbor_decref(&item);
+	cbor_decref(&copy);
+}
+
+
 int main(void)
 {
 	const UnitTest tests[] = {
@@ -200,7 +214,8 @@ int main(void)
 		unit_test(test_def_array),
 		unit_test(test_indef_array),
 		unit_test(test_def_map),
-		unit_test(test_indef_map)
+		unit_test(test_indef_map),
+		unit_test(test_tag)
 	};
 	return run_tests(tests);
 }
