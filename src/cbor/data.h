@@ -73,55 +73,68 @@ typedef enum {
 	CBOR_CTRL_UNDEF = 23
 } _cbor_ctrl;
 
+/** Integers specific metadata */
 struct _cbor_int_metadata {
 	cbor_int_width width;
 };
 
+/** Bytestrings specific metadata */
 struct _cbor_bytestring_metadata {
 	size_t length;
 	_cbor_dst_metadata type;
 };
 
+/** Strings specific metadata */
 struct _cbor_string_metadata {
 	size_t             length;
 	size_t             codepoint_count; /* Sum of chunks' codepoint_counts for indefinite strings */
 	_cbor_dst_metadata type;
 };
 
+/** Arrays specific metadata */
 struct _cbor_array_metadata {
 	size_t             allocated;
 	size_t             end_ptr;
 	_cbor_dst_metadata type;
 };
 
+/** Maps specific metadata */
 struct _cbor_map_metadata {
 	size_t             allocated;
 	size_t             end_ptr;
 	_cbor_dst_metadata type;
 };
 
-/* cbor_item_metadata is 2 * sizeof(size_t) + sizeof(_cbor_string_type_metadata), lets use the space */
+/** Arrays specific metadata
+ *
+ * The pointer is included - cbor_item_metadata is
+ * 2 * sizeof(size_t) + sizeof(_cbor_string_type_metadata),
+ * lets use the space
+ */
 struct _cbor_tag_metadata {
 	struct cbor_item_t * tagged_item;
 	uint64_t             value;
 };
 
+/** Floats specific metadata - includes CTRL values */
 struct _cbor_float_ctrl_metadata {
 	cbor_float_width width;
 	uint8_t          ctrl;
 };
 
-/* Raw memory casts */
+/** Raw memory casts helper */
 union _cbor_float_helper {
 	float    as_float;
 	uint32_t as_uint;
 };
 
+/** Raw memory casts helper */
 union _cbor_double_helper {
 	double   as_double;
 	uint64_t as_uint;
 };
 
+/** Union of metadata across all possible types - discriminated in #cbor_item_t */
 union cbor_item_metadata {
 	struct _cbor_int_metadata        int_metadata;
 	struct _cbor_bytestring_metadata bytestring_metadata;
@@ -144,6 +157,10 @@ typedef struct cbor_item_t {
 	unsigned char *          data;
 } cbor_item_t;
 
+/** Defines cbor_item_t#data structure for indefinite strings and bytestrings
+ *
+ * Used to cast the raw representation for a sane manipulation
+ */
 struct cbor_indefinite_string_data {
 	size_t          chunk_count;
 	size_t          chunk_capacity;
@@ -158,6 +175,7 @@ struct cbor_error {
 	cbor_error_code code;
 };
 
+/** Simple pair of items for use in maps */
 struct cbor_pair {
 	cbor_item_t * key, * value;
 };

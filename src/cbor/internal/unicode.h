@@ -19,6 +19,7 @@ enum _cbor_unicode_status_error {
 	_CBOR_UNICODE_BADCP
 };
 
+/** Signals unicode validation error and possibly its location */
 struct _cbor_unicode_status {
 	enum _cbor_unicode_status_error status;
 	size_t                          location;

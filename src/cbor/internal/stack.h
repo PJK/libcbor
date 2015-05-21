@@ -14,12 +14,14 @@
 extern "C" {
 #endif
 
+/** Simple stack record for the parser */
 struct _cbor_stack_record {
 	struct _cbor_stack_record *lower;
 	cbor_item_t *item;
 	size_t subitems;
 };
 
+/** Stack handle - contents and size */
 struct _cbor_stack {
 	struct _cbor_stack_record *top;
 	size_t size;

@@ -16,10 +16,12 @@
 extern "C" {
 #endif
 
-
+/** High-level decoding context */
 struct _cbor_decoder_context {
-	bool creation_failed;		/* Callback creating the last item has failed */
-	bool syntax_error;			/* Stack expectation mismatch */
+	/** Callback creating the last item has failed */
+	bool creation_failed;
+	/** Stack expectation mismatch */
+	bool syntax_error;
 	cbor_item_t *root;
 	struct _cbor_stack *stack;
 };
