@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "cbor.h"
 #include <inttypes.h>
+#include <string.h>
 
 
 cbor_item_t *bs;
@@ -279,6 +280,13 @@ static void test_missing_indef(void **state)
 	assert_null(bs);
 }
 
+static void test_inline_creation(void **state)
+{
+	bs = cbor_build_bytestring((cbor_data) "Hello!", 6);
+	assert_memory_equal(cbor_bytestring_handle(bs), "Hello!", 6);
+	cbor_decref(&bs);
+}
+
 int main(void)
 {
 	const UnitTest tests[] = {
@@ -293,7 +301,8 @@ int main(void)
 		unit_test(test_zero_indef),
 		unit_test(test_short_indef),
 		unit_test(test_two_indef),
-		unit_test(test_missing_indef)
+		unit_test(test_missing_indef),
+		unit_test(test_inline_creation)
 	};
 	return run_tests(tests);
 }

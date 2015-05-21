@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "cbor.h"
 #include <inttypes.h>
+#include <string.h>
 
 
 cbor_item_t *string;
@@ -215,6 +216,13 @@ static void test_short_indef_string(void **state)
 	assert_null(string);
 }
 
+static void test_inline_creation(void **state)
+{
+	string = cbor_build_string("Hello!");
+	assert_memory_equal(cbor_string_handle(string), "Hello!", strlen("Hello!"));
+	cbor_decref(&string);
+}
+
 int main(void)
 {
 	const UnitTest tests[] = {
@@ -225,7 +233,8 @@ int main(void)
 		unit_test(test_int16_string),
 		unit_test(test_int32_string),
 		unit_test(test_int64_string),
-		unit_test(test_short_indef_string)
+		unit_test(test_short_indef_string),
+		unit_test(test_inline_creation)
 	};
 	return run_tests(tests);
 }

@@ -124,6 +124,25 @@ static void test_empty_input(void **state)
 	assert_true(res.error.code == CBOR_ERR_NODATA);
 }
 
+static void test_inline_creation(void **state)
+{
+	number = cbor_build_uint8(10);
+	assert_true(cbor_get_int(number) == 10);
+	cbor_decref(&number);
+
+	number = cbor_build_uint16(10);
+	assert_true(cbor_get_int(number) == 10);
+	cbor_decref(&number);
+
+	number = cbor_build_uint32(10);
+	assert_true(cbor_get_int(number) == 10);
+	cbor_decref(&number);
+
+	number = cbor_build_uint64(10);
+	assert_true(cbor_get_int(number) == 10);
+	cbor_decref(&number);
+}
+
 int main(void)
 {
 	const UnitTest tests[] = {
@@ -134,7 +153,8 @@ int main(void)
 		unit_test(test_long_int),
 		unit_test(test_incomplete_data),
 		unit_test(test_refcounting),
-		unit_test(test_empty_input)
+		unit_test(test_empty_input),
+		unit_test(test_inline_creation)
 	};
 	return run_tests(tests);
 }
