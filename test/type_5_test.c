@@ -29,6 +29,7 @@ static void test_empty_map(void **state)
 	assert_true(cbor_isa_map(map));
 	assert_true(cbor_map_size(map) == 0);
 	assert_true(res.read == 1);
+	assert_int_equal(cbor_map_allocated(map), 0);
 	cbor_decref(&map);
 	assert_null(map);
 }
