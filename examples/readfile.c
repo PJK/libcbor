@@ -8,6 +8,12 @@
 #include "cbor.h"
 #include <stdio.h>
 
+void usage()
+{
+	printf("Usage: readfile [input file]\n");
+	exit(1);
+}
+
 /*
  * Reads data from a file. Example usage:
  * $ ./examples/readfile examples/data/nested_array.cbor
@@ -15,7 +21,11 @@
 
 int main(int argc, char * argv[])
 {
+	if (argc != 2)
+		usage();
 	FILE * f = fopen(argv[1], "rb");
+	if (f == NULL)
+		usage();
 	fseek(f, 0, SEEK_END);
 	size_t length = (size_t)ftell(f);
 	fseek(f, 0, SEEK_SET);
