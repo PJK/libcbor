@@ -179,7 +179,17 @@ cbor_item_t * cbor_copy(cbor_item_t * item)
 				);
 			return res;
 		}
-	case CBOR_TYPE_ARRAY:
+	case CBOR_TYPE_ARRAY: {
+		cbor_item_t * res;
+		if (cbor_array_is_definite(item))
+			res = cbor_new_definite_array(cbor_array_size(item));
+		else
+			res = cbor_new_indefinite_array();
+
+		for (size_t i = 0; i < cbor_array_size(item); i++)
+			cbor_array_push(res, cbor_move(cbor_copy(cbor_array_get(item, i))));
+		return res;
+	}
 	case CBOR_TYPE_MAP:
 	case CBOR_TYPE_TAG:
 	case CBOR_TYPE_FLOAT_CTRL:

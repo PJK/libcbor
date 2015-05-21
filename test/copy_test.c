@@ -127,6 +127,32 @@ static void test_indef_string(void **state)
 	cbor_decref(&copy);
 }
 
+static void test_def_array(void **state)
+{
+	item = cbor_new_definite_array(1);
+	cbor_array_push(item, cbor_move(cbor_build_uint8(42)));
+
+	assert_uint8(
+		cbor_array_get(copy = cbor_copy(item), 0),
+		42
+	);
+	cbor_decref(&item);
+	cbor_decref(&copy);
+}
+
+static void test_indef_array(void **state)
+{
+	item = cbor_new_indefinite_array();
+	cbor_array_push(item, cbor_move(cbor_build_uint8(42)));
+
+	assert_uint8(
+		cbor_array_get(copy = cbor_copy(item), 0),
+		42
+	);
+	cbor_decref(&item);
+	cbor_decref(&copy);
+}
+
 
 int main(void)
 {
@@ -137,7 +163,9 @@ int main(void)
 		unit_test(test_def_bytestring),
 		unit_test(test_indef_bytestring),
 		unit_test(test_def_string),
-		unit_test(test_indef_string)
+		unit_test(test_indef_string),
+		unit_test(test_def_array),
+		unit_test(test_indef_array)
 	};
 	return run_tests(tests);
 }
