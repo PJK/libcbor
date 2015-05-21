@@ -20,8 +20,8 @@ extern "C" {
 #endif
 
 #define CBOR_MAJOR_VERSION 0
-#define CBOR_MINOR_VERSION 2
-#define CBOR_PATCH_VERSION 1
+#define CBOR_MINOR_VERSION 3
+#define CBOR_PATCH_VERSION 0
 
 static const uint8_t cbor_major_version = CBOR_MAJOR_VERSION;
 static const uint8_t cbor_minor_version = CBOR_MINOR_VERSION;

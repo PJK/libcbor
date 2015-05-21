@@ -136,6 +136,7 @@ static cbor_item_t * _cbor_copy_int(cbor_item_t * item, bool negative)
 	case CBOR_INT_16: res = cbor_build_uint16(cbor_get_uint16(item)); break;
 	case CBOR_INT_32: res = cbor_build_uint32(cbor_get_uint32(item)); break;
 	case CBOR_INT_64: res = cbor_build_uint64(cbor_get_uint64(item)); break;
+	default: return NULL;
 	}
 
 	if (negative)
