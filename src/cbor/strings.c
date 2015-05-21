@@ -46,6 +46,15 @@ cbor_item_t *cbor_build_string(const char *val)
 	return item;
 }
 
+cbor_item_t *cbor_build_stringn(const char *val, size_t length)
+{
+	cbor_item_t *item = cbor_new_definite_string();
+	unsigned char * handle = _CBOR_MALLOC(length);
+	memcpy(handle, val, length);
+	cbor_string_set_handle(item, handle, length);
+	return item;
+}
+
 void cbor_string_set_handle(cbor_item_t *item, unsigned char * restrict data, size_t length)
 {
 	assert(cbor_isa_string(item));

@@ -95,6 +95,38 @@ static void test_indef_bytestring(void **state)
 	cbor_decref(&copy);
 }
 
+static void test_def_string(void **state)
+{
+	item = cbor_build_string("abc");
+	assert_memory_equal(
+		cbor_string_handle(copy = cbor_copy(item)),
+		cbor_string_handle(item),
+		3
+	);
+	cbor_decref(&item);
+	cbor_decref(&copy);
+}
+
+static void test_indef_string(void **state)
+{
+	item = cbor_new_indefinite_string();
+	cbor_string_add_chunk(
+		item,
+		cbor_move(cbor_build_string("abc"))
+	);
+	copy = cbor_copy(item);
+
+	assert_int_equal(cbor_string_chunk_count(item), cbor_string_chunk_count(copy));
+
+	assert_memory_equal(
+		cbor_string_handle(cbor_string_chunks_handle(copy)[0]),
+		"abc",
+		3
+	);
+	cbor_decref(&item);
+	cbor_decref(&copy);
+}
+
 
 int main(void)
 {
@@ -103,7 +135,9 @@ int main(void)
 		unit_test(test_uints),
 		unit_test(test_negints),
 		unit_test(test_def_bytestring),
-		unit_test(test_indef_bytestring)
+		unit_test(test_indef_bytestring),
+		unit_test(test_def_string),
+		unit_test(test_indef_string)
 	};
 	return run_tests(tests);
 }

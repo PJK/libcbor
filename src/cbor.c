@@ -166,6 +166,19 @@ cbor_item_t * cbor_copy(cbor_item_t * item)
 			return res;
 		}
 	case CBOR_TYPE_STRING:
+		if (cbor_string_is_definite(item)) {
+			return cbor_build_stringn(cbor_string_handle(item), cbor_string_length(item));
+		} else {
+			cbor_item_t * res = cbor_new_indefinite_string();
+			for (size_t i = 0; i < cbor_string_chunk_count(item); i++)
+				cbor_string_add_chunk(
+					res,
+					cbor_move(
+						cbor_copy(cbor_string_chunks_handle(item)[i])
+					)
+				);
+			return res;
+		}
 	case CBOR_TYPE_ARRAY:
 	case CBOR_TYPE_MAP:
 	case CBOR_TYPE_TAG:

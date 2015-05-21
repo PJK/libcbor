@@ -121,12 +121,21 @@ cbor_item_t *cbor_new_indefinite_string();
 
 /** Creates a new string and initializes it
  *
- * The `handle` will be copied to a newly allocated block
+ * The `val` will be copied to a newly allocated block
  *
  * @param val A null-terminated UTF-8 string
  * @return A **new** string with content `handle`. `NULL` on malloc failure.
  */
 cbor_item_t *cbor_build_string(const char *val);
+
+/** Creates a new string and initializes it
+ *
+ * The `handle` will be copied to a newly allocated block
+ *
+ * @param val A UTF-8 string, at least \p length long (excluding the null byte)
+ * @return A **new** string with content `handle`. `NULL` on malloc failure.
+ */
+cbor_item_t *cbor_build_stringn(const char *val, size_t length);
 
 #ifdef __cplusplus
 }
