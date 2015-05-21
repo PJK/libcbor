@@ -9,5 +9,3 @@ foreach(TEST ${TESTS})
   add_test(${NAME} ${NAME})
   add_dependencies(coverage ${NAME})
 endforeach(TEST)
-
-
