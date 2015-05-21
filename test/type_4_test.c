@@ -42,8 +42,10 @@ static void test_simple_array(void **state)
 	assert_true(cbor_isa_array(arr));
 	assert_int_equal(cbor_array_size(arr), 1);
 	assert_true(res.read == 2);
+	assert_int_equal(cbor_array_allocated(arr), 1);
 	/* Check the values */
 	assert_uint8(cbor_array_handle(arr)[0], 1);
+	assert_uint8(cbor_array_get(arr, 0), 1);
 	cbor_decref(&arr);
 	assert_null(arr);
 }

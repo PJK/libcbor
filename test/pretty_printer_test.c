@@ -5,13 +5,6 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
-/*
- * Copyright (c) 2014-2015 Pavel Kalvoda <me@pavelkalvoda.com>
- *
- * libcbor is free software; you can redistribute it and/or modify
- * it under the terms of the MIT license. See LICENSE for details.
- */
-
 #include <stdarg.h>
 #include <stddef.h>
 #include <setjmp.h>
@@ -34,7 +27,7 @@ static void test_pretty_printer(void **state)
 	cbor_set_ctrl(item, 1);
 	cbor_describe(item, outfile);
 	cbor_decref(&item);
-	
+
 	fclose(outfile);
 }
 
