@@ -879,8 +879,8 @@ FILTER_SOURCE_PATTERNS =
 # (index.html). This can be useful if you have a project on for instance GitHub
 # and want to reuse the introduction page also for the doxygen output.
 
-INPUT += README.md
-USE_MDFILE_AS_MAINPAGE = README.md
+INPUT += doc/doxy_frontpage.md
+USE_MDFILE_AS_MAINPAGE = doc/doxy_frontpage.md
 
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing
