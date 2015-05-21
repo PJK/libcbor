@@ -54,7 +54,7 @@ cbor_item_t *cbor_new_indefinite_map();
  * maps, the storage will be expanded as needed
  *
  * @param item[borrow] A map
- * @param pair[incref] The key-value pair to add
+ * @param pair[incref] The key-value pair to add (incref is member-wise)
  * @return `true` on success, `false` if either reallocation failed or the preallcoated storage is full
  */
 bool cbor_map_add(cbor_item_t *item, struct cbor_pair pair);

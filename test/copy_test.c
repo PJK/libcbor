@@ -153,6 +153,39 @@ static void test_indef_array(void **state)
 	cbor_decref(&copy);
 }
 
+static void test_def_map(void **state)
+{
+	item = cbor_new_definite_map(1);
+	cbor_map_add(item, (struct cbor_pair) {
+		.key = cbor_move(cbor_build_uint8(42)),
+		.value = cbor_move(cbor_build_uint8(43)),
+	});
+
+	assert_uint8(
+		cbor_map_handle(copy = cbor_copy(item))[0].key,
+		42
+	);
+
+	cbor_decref(&item);
+	cbor_decref(&copy);
+}
+
+static void test_indef_map(void **state)
+{
+	item = cbor_new_indefinite_map(1);
+	cbor_map_add(item, (struct cbor_pair) {
+		.key = cbor_move(cbor_build_uint8(42)),
+		.value = cbor_move(cbor_build_uint8(43)),
+	});
+
+	assert_uint8(
+		cbor_map_handle(copy = cbor_copy(item))[0].key,
+		42
+	);
+
+	cbor_decref(&item);
+	cbor_decref(&copy);
+}
 
 int main(void)
 {
@@ -165,7 +198,9 @@ int main(void)
 		unit_test(test_def_string),
 		unit_test(test_indef_string),
 		unit_test(test_def_array),
-		unit_test(test_indef_array)
+		unit_test(test_indef_array),
+		unit_test(test_def_map),
+		unit_test(test_indef_map)
 	};
 	return run_tests(tests);
 }

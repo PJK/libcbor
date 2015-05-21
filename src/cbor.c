@@ -167,7 +167,7 @@ cbor_item_t * cbor_copy(cbor_item_t * item)
 		}
 	case CBOR_TYPE_STRING:
 		if (cbor_string_is_definite(item)) {
-			return cbor_build_stringn(cbor_string_handle(item), cbor_string_length(item));
+			return cbor_build_stringn((const char *) cbor_string_handle(item), cbor_string_length(item));
 		} else {
 			cbor_item_t * res = cbor_new_indefinite_string();
 			for (size_t i = 0; i < cbor_string_chunk_count(item); i++)
@@ -190,11 +190,27 @@ cbor_item_t * cbor_copy(cbor_item_t * item)
 			cbor_array_push(res, cbor_move(cbor_copy(cbor_array_get(item, i))));
 		return res;
 	}
-	case CBOR_TYPE_MAP:
+	case CBOR_TYPE_MAP: {
+		cbor_item_t * res;
+		if (cbor_map_is_definite(item))
+			res = cbor_new_definite_map(cbor_map_size(item));
+		else
+			res = cbor_new_indefinite_map();
+
+		struct cbor_pair * it = cbor_map_handle(item);
+		for (size_t i = 0; i < cbor_map_size(item); i++)
+			cbor_map_add(res, (struct cbor_pair) {
+				.key = cbor_move(cbor_copy(it[i].key)),
+				.value = cbor_move(cbor_copy(it[i].value))
+			});
+		return res;
+	}
 	case CBOR_TYPE_TAG:
 	case CBOR_TYPE_FLOAT_CTRL:
 		break;
 	}
+
+	return NULL;
 }
 
 #ifdef PRETTY_PRINTER
