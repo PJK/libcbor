@@ -173,3 +173,35 @@ cbor_item_t *cbor_build_uint64(uint64_t value)
 	cbor_mark_uint(item);
 	return item;
 }
+
+cbor_item_t *cbor_build_negint8(uint8_t value)
+{
+	cbor_item_t *item = cbor_new_int8();
+	cbor_set_uint8(item, value);
+	cbor_mark_negint(item);
+	return item;
+}
+
+cbor_item_t *cbor_build_negint16(uint16_t value)
+{
+	cbor_item_t *item = cbor_new_int16();
+	cbor_set_uint16(item, value);
+	cbor_mark_negint(item);
+	return item;
+}
+
+cbor_item_t *cbor_build_negint32(uint32_t value)
+{
+	cbor_item_t *item = cbor_new_int32();
+	cbor_set_uint32(item, value);
+	cbor_mark_negint(item);
+	return item;
+}
+
+cbor_item_t *cbor_build_negint64(uint64_t value)
+{
+	cbor_item_t *item = cbor_new_int64();
+	cbor_set_uint64(item, value);
+	cbor_mark_negint(item);
+	return item;
+}

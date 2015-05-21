@@ -166,6 +166,36 @@ cbor_item_t *cbor_build_uint32(uint32_t value);
  */
 cbor_item_t *cbor_build_uint64(uint64_t value);
 
+/** Constructs a new negative integer
+ *
+ * @param value the value to use
+ * @return **new** negative integer
+ */
+cbor_item_t *cbor_build_negint8(uint8_t value);
+
+/** Constructs a new negative integer
+ *
+ * @param value the value to use
+ * @return **new** negative integer
+ */
+cbor_item_t *cbor_build_negint16(uint16_t value);
+
+/** Constructs a new negative integer
+ *
+ * @param value the value to use
+ * @return **new** negative integer
+ */
+cbor_item_t *cbor_build_negint32(uint32_t value);
+
+/** Constructs a new negative integer
+ *
+ * @param value the value to use
+ * @return **new** negative integer
+ */
+cbor_item_t *cbor_build_negint64(uint64_t value);
+
+
+
 #ifdef __cplusplus
 }
 #endif

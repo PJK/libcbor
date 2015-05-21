@@ -127,6 +127,40 @@ cbor_item_t *cbor_load(cbor_data source,
 	return NULL;
 }
 
+
+static cbor_item_t * _cbor_copy_int(cbor_item_t * item, bool negative)
+{
+	cbor_item_t * res;
+	switch (cbor_int_get_width(item)) {
+	case CBOR_INT_8: res = cbor_build_uint8(cbor_get_uint8(item)); break;
+	case CBOR_INT_16: res = cbor_build_uint16(cbor_get_uint16(item)); break;
+	case CBOR_INT_32: res = cbor_build_uint32(cbor_get_uint32(item)); break;
+	case CBOR_INT_64: res = cbor_build_uint64(cbor_get_uint64(item)); break;
+	}
+
+	if (negative)
+		cbor_mark_negint(res);
+
+	return res;
+}
+
+cbor_item_t * cbor_copy(cbor_item_t * item)
+{
+	switch (cbor_typeof(item)) {
+	case CBOR_TYPE_UINT:
+		return _cbor_copy_int(item, false);
+	case CBOR_TYPE_NEGINT:
+		return _cbor_copy_int(item, true);
+	case CBOR_TYPE_BYTESTRING:
+	case CBOR_TYPE_STRING:
+	case CBOR_TYPE_ARRAY:
+	case CBOR_TYPE_MAP:
+	case CBOR_TYPE_TAG:
+	case CBOR_TYPE_FLOAT_CTRL:
+		break;
+	}
+}
+
 #ifdef PRETTY_PRINTER
 
 #include <inttypes.h>
