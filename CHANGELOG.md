@@ -1,7 +1,11 @@
 Next
 ---------------------
+
+0.3.0 (2015-05-21)
+---------------------
+
 - Fixes, polishing, niceties across the code base
-- Update examples
+- Updated examples
 - `cbor_copy`
 - `cbor_build_negint8`, 16, 32, 64, matching asserts
 - `cbor_build_stringn`
