@@ -144,6 +144,20 @@ static cbor_item_t * _cbor_copy_int(cbor_item_t * item, bool negative)
 	return res;
 }
 
+static cbor_item_t * _cbor_copy_float_ctrl(cbor_item_t * item)
+{
+	switch (cbor_float_get_width(item)) {
+	case CBOR_FLOAT_0:
+		return cbor_build_ctrl(cbor_ctrl_value(item));
+	case CBOR_FLOAT_16:
+		return cbor_build_float2(cbor_float_get_float2(item));
+	case CBOR_FLOAT_32:
+		return cbor_build_float4(cbor_float_get_float4(item));
+	case CBOR_FLOAT_64:
+		return cbor_build_float8(cbor_float_get_float8(item));
+	}
+}
+
 cbor_item_t * cbor_copy(cbor_item_t * item)
 {
 	switch (cbor_typeof(item)) {
@@ -214,7 +228,7 @@ cbor_item_t * cbor_copy(cbor_item_t * item)
 			cbor_move(cbor_copy(cbor_tag_item(item)))
 		);
 	case CBOR_TYPE_FLOAT_CTRL:
-		break;
+		return _cbor_copy_float_ctrl(item);
 	}
 
 	return NULL;

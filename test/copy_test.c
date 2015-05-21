@@ -202,6 +202,32 @@ static void test_tag(void **state)
 	cbor_decref(&copy);
 }
 
+static void test_ctrls(void **state)
+{
+	item = cbor_new_null();
+	assert_true(cbor_is_null(copy = cbor_copy(item)));
+	cbor_decref(&item);
+	cbor_decref(&copy);
+}
+
+static void test_floats(void **state)
+{
+	item = cbor_build_float2(3.14f);
+	assert_true(cbor_float_get_float2(copy = cbor_copy(item)) == cbor_float_get_float2(item));
+	cbor_decref(&item);
+	cbor_decref(&copy);
+
+	item = cbor_build_float4(3.14f);
+	assert_true(cbor_float_get_float4(copy = cbor_copy(item)) == cbor_float_get_float4(item));
+	cbor_decref(&item);
+	cbor_decref(&copy);
+
+	item = cbor_build_float8(3.14);
+	assert_true(cbor_float_get_float8(copy = cbor_copy(item)) == cbor_float_get_float8(item));
+	cbor_decref(&item);
+	cbor_decref(&copy);
+}
+
 
 int main(void)
 {
@@ -217,7 +243,9 @@ int main(void)
 		unit_test(test_indef_array),
 		unit_test(test_def_map),
 		unit_test(test_indef_map),
-		unit_test(test_tag)
+		unit_test(test_tag),
+		unit_test(test_ctrls),
+		unit_test(test_floats)
 	};
 	return run_tests(tests);
 }

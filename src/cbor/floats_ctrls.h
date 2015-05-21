@@ -167,6 +167,35 @@ uint8_t cbor_ctrl_value(const cbor_item_t * item);
  */
 bool cbor_ctrl_is_bool(const cbor_item_t * item);
 
+/** Constructs a new float
+ *
+ * @param value the value to use
+ * @return **new** float
+ */
+cbor_item_t *cbor_build_float2(float value);
+
+/** Constructs a new float
+ *
+ * @param value the value to use
+ * @return **new** float
+ */
+cbor_item_t *cbor_build_float4(float value);
+
+/** Constructs a new float
+ *
+ * @param value the value to use
+ * @return **new** float
+ */
+cbor_item_t *cbor_build_float8(double value);
+
+/** Constructs a ctrl item
+ *
+ * @param value the value to use
+ * @return **new** ctrl item
+ */
+cbor_item_t *cbor_build_ctrl(uint8_t  value);
+
+
 #ifdef __cplusplus
 }
 #endif
