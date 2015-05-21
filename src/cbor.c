@@ -132,6 +132,7 @@ cbor_item_t *cbor_load(cbor_data source,
 #include <inttypes.h>
 #include <wchar.h>
 #include <locale.h>
+#include <unistd.h>
 
 #define __STDC_FORMAT_MACROS
 
@@ -196,11 +197,10 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent)
 			/* Careful - this doesn't support multibyte characters! */
 			/* Printing those is out of the scope of this demo :) */
 			/* libICU is your friend */
-			fprintf(out,
-					"%*s%*s\n", indent + 4, " ",
-					(int) cbor_string_length(item),
-					cbor_string_handle(item)
-			);
+			fprintf(out, "%*s", indent + 4, " ");
+			/* XXX: no null at the end -> confused vprintf */
+			fwrite(cbor_string_handle(item), (int) cbor_string_length(item), 1, out);
+			fprintf(out, "\n");
 		}
 		break;
 	};

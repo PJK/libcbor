@@ -45,9 +45,12 @@ static void test_simple_array(void **state)
 	assert_int_equal(cbor_array_allocated(arr), 1);
 	/* Check the values */
 	assert_uint8(cbor_array_handle(arr)[0], 1);
-	assert_uint8(cbor_array_get(arr, 0), 1);
+	cbor_item_t * intermediate = cbor_array_get(arr, 0);
+	assert_uint8(intermediate, 1);
 	cbor_decref(&arr);
+	cbor_decref(&intermediate);
 	assert_null(arr);
+	assert_null(intermediate);
 }
 
 unsigned char data3[] = {0x82, 0x01, 0x81, 0x01, 0xFF};
