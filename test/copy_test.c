@@ -14,7 +14,7 @@
 #include <inttypes.h>
 #include "assertions.h"
 
-cbor_item_t * item, * copy;
+cbor_item_t * item, * copy, *tmp;
 
 
 static void test_uints(void **state)
@@ -133,11 +133,12 @@ static void test_def_array(void **state)
 	cbor_array_push(item, cbor_move(cbor_build_uint8(42)));
 
 	assert_uint8(
-		cbor_array_get(copy = cbor_copy(item), 0),
+		tmp = cbor_array_get(copy = cbor_copy(item), 0),
 		42
 	);
 	cbor_decref(&item);
 	cbor_decref(&copy);
+	cbor_decref(&tmp);
 }
 
 static void test_indef_array(void **state)
@@ -146,11 +147,12 @@ static void test_indef_array(void **state)
 	cbor_array_push(item, cbor_move(cbor_build_uint8(42)));
 
 	assert_uint8(
-		cbor_array_get(copy = cbor_copy(item), 0),
+		tmp = cbor_array_get(copy = cbor_copy(item), 0),
 		42
 	);
 	cbor_decref(&item);
 	cbor_decref(&copy);
+	cbor_decref(&tmp);
 }
 
 static void test_def_map(void **state)
