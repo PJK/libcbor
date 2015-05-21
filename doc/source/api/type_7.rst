@@ -45,6 +45,10 @@ Building items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. doxygenfunction:: cbor_build_bool
+.. doxygenfunction:: cbor_build_ctrl
+.. doxygenfunction:: cbor_build_float2
+.. doxygenfunction:: cbor_build_float4
+.. doxygenfunction:: cbor_build_float8
 
 
 Manipulating existing items

@@ -38,3 +38,4 @@ The destruction is synchronous and renders any pointers to items with refcount z
 .. doxygenfunction:: cbor_intermediate_decref
 .. doxygenfunction:: cbor_refcount
 .. doxygenfunction:: cbor_move
+.. doxygenfunction:: cbor_copy
