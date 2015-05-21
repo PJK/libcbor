@@ -42,7 +42,7 @@ If you want to pass other custom configuration options, please refer to `<http:/
 
   # Assuming you are in the directory where you want to build
   cmake -DCMAKE_BUILD_TYPE=Release path_to_libcbor_dir
-  make cbor
+  make cbor cbor_shared
 
 Both the shared (``libcbor.so``) and the static (``libcbor.a``) libraries should now be in the ``src`` subdirectory.
 

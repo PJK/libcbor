@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(libcbor)
 include(CTest)
 
+set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY true)
 include(CheckIncludeFiles)
 
 check_include_files(endian.h HAVE_ENDIAN_H)
