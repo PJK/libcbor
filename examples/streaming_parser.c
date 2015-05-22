@@ -9,6 +9,12 @@
 #include <stdio.h>
 #include <string.h>
 
+void usage()
+{
+	printf("Usage: streaming_parser [input file]\n");
+	exit(1);
+}
+
 /*
  * Illustrates how one might skim through a map (which is assumed to have
  * string keys and values only), looking for the value of a specific key
@@ -31,7 +37,11 @@ void find_string(void * _ctx, cbor_data buffer, size_t len)
 
 int main(int argc, char * argv[])
 {
+	if (argc != 2)
+		usage();
 	FILE * f = fopen(argv[1], "rb");
+	if (f == NULL)
+		usage();
 	fseek(f, 0, SEEK_END);
 	size_t length = (size_t)ftell(f);
 	fseek(f, 0, SEEK_SET);
