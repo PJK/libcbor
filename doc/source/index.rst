@@ -1,4 +1,3 @@
-
 libcbor
 ===================================
 
@@ -11,16 +10,18 @@ Overview
 
 Main features
  - Complete RFC conformance [#]_
- - Robust C11 implementation
+ - Robust C99 implementation
  - Layered architecture offers both control and convenience
  - Flexible memory management
+ - No shared global state - threading friendly [#]_
  - Proper handling of UTF-8
- - No shared global state - threading friendly
  - Full support for streams & incremental processing
  - Extensive documentation and test suite
  - No runtime dependencies, small footprint
 
-.. [#] :doc:`rfc_conformance`
+.. [#] See :doc:`rfc_conformance`
+
+.. [#] With the exception of custom memory allocators (see :doc:`api/item_reference_counting`)
 
 Contents
 ----------

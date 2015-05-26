@@ -10,6 +10,7 @@
  - Robust C99 implementation
  - Layered architecture offers both control and convenience
  - Flexible memory management
+ - No shared global state - threading friendly
  - Proper handling of UTF-8
  - Full support for streams & incremental processing
  - Extensive documentation and test suite
