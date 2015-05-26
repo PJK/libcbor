@@ -1,6 +1,10 @@
 Next
 ---------------------
 
+0.3.1 (2015-05-21)
+---------------------
+- documentation and comments improvements, mostly for the API reference
+
 0.3.0 (2015-05-21)
 ---------------------
 
