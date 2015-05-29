@@ -1,6 +1,7 @@
 Next
 ---------------------
 - pkg-config compatibility (by Vincent Bernat)
+- enable use of versioned SONAME (by Vincent Bernat)
 
 0.3.1 (2015-05-21)
 ---------------------
