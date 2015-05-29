@@ -14,7 +14,7 @@ endif()
 add_library(cbor ${SOURCES})
 add_library(cbor_shared SHARED ${SOURCES})
 
-set_target_properties(cbor_shared PROPERTIES OUTPUT_NAME cbor)
+set_target_properties(cbor_shared PROPERTIES OUTPUT_NAME cbor VERSION "0.0.0" SOVERSION 0)
 
 configure_file(libcbor.pc.in libcbor.pc @ONLY)
 
