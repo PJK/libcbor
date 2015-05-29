@@ -85,6 +85,11 @@ if(PRETTY_PRINTER)
     add_definitions(-DPRETTY_PRINTER=1)
 endif(PRETTY_PRINTER)
 
+option(PRINT_FUZZ "Print the fuzzer input" OFF)
+if(PRINT_FUZZ)
+    add_definitions(-DCBOR_PRINT_FUZZ=1)
+endif(PRINT_FUZZ)
+
 set(BUFFER_GROWTH "2" CACHE STRING "Factor for buffer growth & shrinking")
 add_definitions(-DCBOR_BUFFER_GROWTH=${BUFFER_GROWTH})
 

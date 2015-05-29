@@ -13,6 +13,7 @@
 #include "cbor.h"
 #include <inttypes.h>
 #include <stdlib.h>
+#include <time.h>
 
 #ifdef HUGE_FUZZ
 
@@ -34,6 +35,8 @@ static void printmem(const unsigned char * ptr, size_t length)
 	printf("\n");
 }
 #endif
+
+unsigned seed;
 
 static void run_round()
 {
@@ -61,9 +64,9 @@ static void run_round()
 
 static void fuzz(void **state)
 {
-	int seed = rand();
+	srand(seed);
 	printf(
-		"Fuzzing %llu rounds of up to %llu bytes with seed %d\n",
+		"Fuzzing %llu rounds of up to %llu bytes with seed %u\n",
 		ROUNDS,
 		MAXLEN,
 		seed);
@@ -72,11 +75,16 @@ static void fuzz(void **state)
 	for (size_t i = 0; i < ROUNDS; i++)
 		run_round();
 
-	printf("Successfully fuzzed through %llu MB of data\n", (ROUNDS * MAXLEN) / (1024 * 1024));
+	printf("Successfully fuzzed through %llu kB of data\n", (ROUNDS * MAXLEN) / 1024);
 }
 
-int main(void)
+int main(int argc, char * argv[])
 {
+	if (argc > 1)
+		seed = (unsigned)strtoul(argv[1], NULL, 10);
+	else
+		seed = (unsigned)time(NULL);
+
 	const UnitTest tests[] = {
 		unit_test(fuzz)
 	};

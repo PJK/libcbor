@@ -2,6 +2,7 @@ Next
 ---------------------
 - pkg-config compatibility (by Vincent Bernat)
 - enable use of versioned SONAME (by Vincent Bernat)
+- better fuzzer (wasn't random until now, ooops)
 
 0.3.1 (2015-05-21)
 ---------------------
