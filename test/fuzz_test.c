@@ -69,10 +69,14 @@ static void fuzz(void **state)
 		ROUNDS,
 		MAXLEN,
 		seed);
+	printf("Info\n");
 	srand(seed);
+	printf("Srand\n");
 
-	for (size_t i = 0; i < ROUNDS; i++)
+	for (size_t i = 0; i < ROUNDS; i++) {
 		run_round();
+		printf("Round\n");
+	}
 
 	printf("Successfully fuzzed through %llu kB of data\n", (ROUNDS * MAXLEN) / 1024);
 }
