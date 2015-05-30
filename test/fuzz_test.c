@@ -78,34 +78,26 @@ static void fuzz(void **state)
 #ifdef CBOR_CUSTOM_ALLOC
 	cbor_set_allocs(mock_malloc, realloc, free);
 #endif
-	printf("pre - Info\n");
-	printf("seed: %u\n", seed);
 	printf(
 		"Fuzzing %llu rounds of up to %llu bytes with seed %u\n",
 		ROUNDS,
 		MAXLEN,
 		seed);
-	printf("Info\n");
 	srand(seed);
-	printf("Srand\n");
-	fflush(stdout);
 
-	for (size_t i = 0; i < ROUNDS; i++) {
+	for (size_t i = 0; i < ROUNDS; i++)
 		run_round();
-	}
 
 	printf("Successfully fuzzed through %llu kB of data\n", (ROUNDS * MAXLEN) / 1024);
 }
 
 int main(int argc, char * argv[])
 {
-	printf("starting\n");
 	if (argc > 1)
 		seed = (unsigned)strtoul(argv[1], NULL, 10);
 	else
 		seed = (unsigned)time(NULL);
 
-	printf("seed set\n");
 	const UnitTest tests[] = {
 		unit_test(fuzz)
 	};
