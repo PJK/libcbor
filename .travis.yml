@@ -20,11 +20,7 @@ before_install:
 matrix:
   include:
     - compiler: clang
-      env: CUSTOM_ALLOC=ON
-    - compiler: clang
-      env: CUSTOM_ALLOC=OFF
     - compiler: gcc
-      env: CUSTOM_ALLOC=OFF
 
 script:
   - export SOURCE=$(pwd) && ./buildscript.sh
