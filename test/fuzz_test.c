@@ -64,6 +64,8 @@ static void run_round()
 
 static void fuzz(void **state)
 {
+	printf("pre - Info\n");
+	printf("seed: %u\n", seed);
 	printf(
 		"Fuzzing %llu rounds of up to %llu bytes with seed %u\n",
 		ROUNDS,
