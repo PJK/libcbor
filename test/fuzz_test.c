@@ -79,11 +79,13 @@ static void fuzz(void **state)
 
 int main(int argc, char * argv[])
 {
+	printf("starting\n");
 	if (argc > 1)
 		seed = (unsigned)strtoul(argv[1], NULL, 10);
 	else
 		seed = (unsigned)time(NULL);
 
+	printf("seed set\n");
 	const UnitTest tests[] = {
 		unit_test(fuzz)
 	};
