@@ -9,9 +9,6 @@
 
 #ifdef HAVE_ENDIAN_H
 #include <endian.h>
-#else
-// Props to http://esr.ibiblio.org/?p=5095
-#define IS_BIG_ENDIAN (*(uint16_t *)"\0\xff" < 0x100)
 #endif
 
 size_t _cbor_encode_uint8(uint8_t value, unsigned char *buffer, size_t buffer_size, uint8_t offset)

@@ -17,6 +17,12 @@ if(HAVE_ENDIAN_H)
     add_definitions(-DHAVE_ENDIAN_H=1)
 endif()
 
+include(TestBigEndian)
+TEST_BIG_ENDIAN(BIG_ENDIAN)
+if(BIG_ENDIAN)
+    add_definitions(-DIS_BIG_ENDIAN=1)
+endif()
+
 SET(CPACK_GENERATOR "DEB" "TGZ" "RPM")
 set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Pavel Kalvoda")
