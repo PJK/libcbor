@@ -34,14 +34,14 @@ size_t _cbor_encode_uint16(uint16_t value, unsigned char *buffer, size_t buffer_
 		buffer[0] = 0x19 + offset;
 
 #ifdef HAVE_ENDIAN_H
-        *(uint16_t *) &buffer[1] = htobe16(value);
+		*(uint16_t *) &buffer[1] = htobe16(value);
 #else
-        if IS_BIG_ENDIAN
-            *(uint16_t *) &buffer[1] = value;
-        else {
-            buffer[1] = value >> 8;
-            buffer[2] = value;
-        }
+	#if IS_BIG_ENDIAN
+			*(uint16_t *) &buffer[1] = value;
+	#else
+			buffer[1] = value >> 8;
+			buffer[2] = value;
+	#endif
 #endif
 
 		return 3;
@@ -57,14 +57,14 @@ size_t _cbor_encode_uint32(uint32_t value, unsigned char *buffer, size_t buffer_
 #ifdef HAVE_ENDIAN_H
 		*(uint32_t *) &buffer[1] = htobe32(value);
 #else
-        if IS_BIG_ENDIAN
-            *(uint32_t *) &buffer[1] = value;
-        else {
-            buffer[1] = value >> 24;
-            buffer[2] = value >> 16;
-            buffer[3] = value >> 8;
-            buffer[4] = value;
-        }
+	#if IS_BIG_ENDIAN
+			*(uint32_t *) &buffer[1] = value;
+	#else
+			buffer[1] = value >> 24;
+			buffer[2] = value >> 16;
+			buffer[3] = value >> 8;
+			buffer[4] = value;
+	#endif
 #endif
 
 		return 5;
@@ -80,18 +80,18 @@ size_t _cbor_encode_uint64(uint64_t value, unsigned char *buffer, size_t buffer_
 #ifdef HAVE_ENDIAN_H
 		*(uint64_t *) &buffer[1] = htobe64(value);
 #else
-        if IS_BIG_ENDIAN
-            *(uint64_t *) &buffer[1] = value;
-        else {
-            buffer[1] = value >> 56;
-            buffer[2] = value >> 48;
-            buffer[3] = value >> 40;
-            buffer[4] = value >> 32;
-            buffer[5] = value >> 24;
-            buffer[6] = value >> 16;
-            buffer[7] = value >> 8;
-            buffer[8] = value;
-        }
+		#if IS_BIG_ENDIAN
+			*(uint64_t *) &buffer[1] = value;
+		#else
+			buffer[1] = value >> 56;
+			buffer[2] = value >> 48;
+			buffer[3] = value >> 40;
+			buffer[4] = value >> 32;
+			buffer[5] = value >> 24;
+			buffer[6] = value >> 16;
+			buffer[7] = value >> 8;
+			buffer[8] = value;
+		#endif
 #endif
 
 		return 9;
