@@ -19,7 +19,7 @@ uint8_t _cbor_load_uint8(cbor_data source)
 
 uint16_t _cbor_load_uint16(const unsigned char *source)
 {
-#ifdef HAVE_ENDIAN_H
+#if HAVE_ENDIAN_H
 	return be16toh(*(uint16_t *) source);
 #else
 	if IS_BIG_ENDIAN
@@ -32,7 +32,7 @@ uint16_t _cbor_load_uint16(const unsigned char *source)
 
 uint32_t _cbor_load_uint32(const unsigned char *source)
 {
-#ifdef HAVE_ENDIAN_H
+#if HAVE_ENDIAN_H
 	return be32toh(*(uint32_t *) source);
 #else
 	if IS_BIG_ENDIAN
@@ -47,7 +47,7 @@ uint32_t _cbor_load_uint32(const unsigned char *source)
 
 uint64_t _cbor_load_uint64(const unsigned char *source)
 {
-#ifdef HAVE_ENDIAN_H
+#if HAVE_ENDIAN_H
 	return be64toh(*(uint64_t *) source);
 #else
 	if IS_BIG_ENDIAN

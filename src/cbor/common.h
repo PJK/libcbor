@@ -45,7 +45,7 @@ static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
 #define TO_STR_(x) #x
 #define TO_STR(x) TO_STR_(x) /* enables proper double expansion */
 
-#ifdef CBOR_CUSTOM_ALLOC
+#if CBOR_CUSTOM_ALLOC
 
 typedef void * (* _cbor_malloc_t)(size_t);
 typedef void * (* _cbor_realloc_t)(void *, size_t);
@@ -57,7 +57,7 @@ extern _cbor_free_t _cbor_free;
 
 /** Sets the memory management routines to use.
  *
- * Only available when CBOR_CUSTOM_ALLOC is defined
+ * Only available when CBOR_CUSTOM_ALLOC is truthy
  *
  * \rst
  * .. warning:: This function modifies the global state and should therefore be used accordingly. Changing the memory handlers while allocated items exist will result in a ``free``/``malloc`` mismatch. This function is not thread safe with respect to both itself and all the other *libcbor* functions that work with the heap.

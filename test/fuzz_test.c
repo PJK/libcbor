@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#ifdef HUGE_FUZZ
+#if HUGE_FUZZ
 
 #define ROUNDS 65536ULL
 #define MAXLEN 131072ULL
@@ -27,7 +27,7 @@
 
 #endif
 
-#ifdef CBOR_PRINT_FUZZ
+#if PRINT_FUZZ
 static void printmem(const unsigned char * ptr, size_t length)
 {
 	for (size_t i = 0; i < length; i++)
@@ -38,7 +38,7 @@ static void printmem(const unsigned char * ptr, size_t length)
 
 unsigned seed;
 
-#ifdef CBOR_CUSTOM_ALLOC
+#if CBOR_CUSTOM_ALLOC
 void *mock_malloc(size_t size)
 {
 	if (size > (1 << 19))
@@ -59,7 +59,7 @@ static void run_round()
 		data[i] = rand() % 0xFF;
 	}
 
-	#ifdef CBOR_PRINT_FUZZ
+	#if PRINT_FUZZ
 	printmem(data, length);
 	#endif
 
@@ -75,7 +75,7 @@ static void run_round()
 static void fuzz(void **state)
 {
 
-#ifdef CBOR_CUSTOM_ALLOC
+#if CBOR_CUSTOM_ALLOC
 	cbor_set_allocs(mock_malloc, realloc, free);
 #endif
 	printf(

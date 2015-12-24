@@ -55,7 +55,7 @@ cbor_item_t * cbor_load(cbor_data source,
  */
 cbor_item_t * cbor_copy(cbor_item_t * item);
 
-#ifdef PRETTY_PRINTER
+#if PRETTY_PRINTER
 #include <stdio.h>
 
 void cbor_describe(cbor_item_t * item, FILE * out);
