@@ -44,9 +44,18 @@ If you want to pass other custom configuration options, please refer to `<http:/
 
 **Building using make**
 
+CMake will generate a Makefile and other configuration files for the build. As a rule of thumb, you should configure the
+build *outside of the source tree* in order to keep different configurations isolated. If you are unsure where to
+execute the build, just use a temporary directory:
+
 .. code-block:: bash
 
-  # Assuming you are in the directory where you want to build. This should be *outside* the source tree/repository
+  cd $(mktemp -d /tmp/cbor_build.XXXX)
+
+Now, assuming you are in the directory where you want to build, execute the following to configure the build and run make
+
+.. code-block:: bash
+
   cmake -DCMAKE_BUILD_TYPE=Release path_to_libcbor_dir
   make cbor cbor_shared
 
@@ -58,7 +67,7 @@ In order to install the libcbor headers and libraries, the usual
 
   make install
 
-is what your're looking for. Root permissions are required on most systems.
+is what your're looking for. Root permissions are required on most systems when using the default installation prefix.
 
 
 **Portability**
