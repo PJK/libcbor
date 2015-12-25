@@ -24,6 +24,7 @@ if(BIG_ENDIAN)
 endif()
 
 option(CBOR_CUSTOM_ALLOC "Custom, dynamically defined allocator support" OFF)
+option(CBOR_PRETTY_PRINTER "Include a pretty-printing routine" ON)
 set(CBOR_BUFFER_GROWTH "2" CACHE STRING "Factor for buffer growth & shrinking")
 
 option(HUGE_FUZZ "[TEST] Fuzz through 8GB of data in the test. Do not use with memory instrumentation!" OFF)

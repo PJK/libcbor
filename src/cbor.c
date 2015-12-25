@@ -237,7 +237,7 @@ cbor_item_t * cbor_copy(cbor_item_t * item)
 	return NULL;
 }
 
-#if PRETTY_PRINTER
+#if CBOR_PRETTY_PRINTER
 
 #include <inttypes.h>
 #include <wchar.h>

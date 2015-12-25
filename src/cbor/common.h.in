@@ -32,6 +32,7 @@ static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
 
 #cmakedefine01 CBOR_CUSTOM_ALLOC
 #define CBOR_BUFFER_GROWTH ${CBOR_BUFFER_GROWTH}
+#cmakedefine01 CBOR_PRETTY_PRINTER
 
 /* http://stackoverflow.com/questions/1644868/c-define-macro-for-debug-printing */
 #ifdef DEBUG
