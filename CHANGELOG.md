@@ -1,5 +1,7 @@
 Next
 ---------------------
+- Improved build configuration and feature check macros
+- Endianess configuration fixes (by Erwin Kroon (@ekroon) and David Grigsby (@dgrigsby))
 - pkg-config compatibility (by Vincent Bernat)
 - enable use of versioned SONAME (by Vincent Bernat)
 - better fuzzer (wasn't random until now, ooops)
