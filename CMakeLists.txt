@@ -13,19 +13,33 @@ include(CheckIncludeFiles)
 check_include_files(endian.h HAVE_ENDIAN_H)
 if(HAVE_ENDIAN_H)
     # BSD source needed or else GNU-y extensions will not be visible
-    add_definitions(-D_BSD_SOURCE=1)
-    add_definitions(-DHAVE_ENDIAN_H=1)
-else()
-    add_definitions(-DHAVE_ENDIAN_H=0)
+    add_definitions(-D_BSD_SOURCE)
+    add_definitions(-DHAVE_ENDIAN_H)
 endif()
 
 include(TestBigEndian)
-TEST_BIG_ENDIAN(BIG_ENDIAN)
+test_big_endian(BIG_ENDIAN)
 if(BIG_ENDIAN)
-    add_definitions(-DIS_BIG_ENDIAN=1)
-else()
-    add_definitions(-DIS_BIG_ENDIAN=0)
+    add_definitions(-DIS_BIG_ENDIAN)
 endif()
+
+option(CBOR_CUSTOM_ALLOC "Custom, dynamically defined allocator support" OFF)
+set(CBOR_BUFFER_GROWTH "2" CACHE STRING "Factor for buffer growth & shrinking")
+
+option(HUGE_FUZZ "[TEST] Fuzz through 8GB of data in the test. Do not use with memory instrumentation!" OFF)
+if(HUGE_FUZZ)
+    add_definitions(-DHUGE_FUZZ)
+endif(HUGE_FUZZ)
+
+option(SANE_MALLOC "[TEST] Assume that malloc will not allocate multi-GB blocks. Tests only, platform specific" OFF)
+if(SANE_MALLOC)
+    add_definitions(-DSANE_MALLOC)
+endif(SANE_MALLOC)
+
+option(PRINT_FUZZ "[TEST] Print the fuzzer input" OFF)
+if(PRINT_FUZZ)
+    add_definitions(-DPRINT_FUZZ)
+endif(PRINT_FUZZ)
 
 SET(CPACK_GENERATOR "DEB" "TGZ" "RPM")
 set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
@@ -63,24 +77,6 @@ add_custom_target(coverage
                   COMMAND echo "Coverage report ready: file://${CMAKE_CURRENT_BINARY_DIR}/coverage_html/index.html")
 include_directories(src)
 
-
-option(CBOR_CUSTOM_ALLOC "Custom, dynamically defined allocator support" OFF)
-set(CBOR_BUFFER_GROWTH "2" CACHE STRING "Factor for buffer growth & shrinking")
-
-option(HUGE_FUZZ "[TEST] Fuzz through 8GB of data in the test. Do not use with memory instrumentation!" OFF)
-if(HUGE_FUZZ)
-    add_definitions(-DHUGE_FUZZ)
-endif(HUGE_FUZZ)
-
-option(SANE_MALLOC "[TEST] Assume that malloc will not allocate multi-GB blocks. Tests only, platform specific" OFF)
-if(SANE_MALLOC)
-    add_definitions(-DSANE_MALLOC)
-endif(SANE_MALLOC)
-
-option(PRINT_FUZZ "[TEST] Print the fuzzer input" OFF)
-if(PRINT_FUZZ)
-    add_definitions(-DPRINT_FUZZ)
-endif(PRINT_FUZZ)
 
 option(COVERAGE "Enable code coverage instrumentation" OFF)
 if(COVERAGE)

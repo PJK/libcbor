@@ -33,10 +33,10 @@ size_t _cbor_encode_uint16(uint16_t value, unsigned char *buffer, size_t buffer_
 	if (buffer_size >= 3) {
 		buffer[0] = 0x19 + offset;
 
-#if HAVE_ENDIAN_H
+#ifdef HAVE_ENDIAN_H
 		*(uint16_t *) &buffer[1] = htobe16(value);
 #else
-	#if IS_BIG_ENDIAN
+	#ifdef IS_BIG_ENDIAN
 			*(uint16_t *) &buffer[1] = value;
 	#else
 			buffer[1] = value >> 8;
@@ -54,10 +54,10 @@ size_t _cbor_encode_uint32(uint32_t value, unsigned char *buffer, size_t buffer_
 	if (buffer_size >= 5) {
 		buffer[0] = 0x1A + offset;
 
-#if HAVE_ENDIAN_H
+#ifdef HAVE_ENDIAN_H
 		*(uint32_t *) &buffer[1] = htobe32(value);
 #else
-	#if IS_BIG_ENDIAN
+	#ifdef IS_BIG_ENDIAN
 			*(uint32_t *) &buffer[1] = value;
 	#else
 			buffer[1] = value >> 24;
@@ -77,10 +77,10 @@ size_t _cbor_encode_uint64(uint64_t value, unsigned char *buffer, size_t buffer_
 	if (buffer_size >= 9) {
 		buffer[0] = 0x1B + offset;
 
-#if HAVE_ENDIAN_H
+#ifdef HAVE_ENDIAN_H
 		*(uint64_t *) &buffer[1] = htobe64(value);
 #else
-		#if IS_BIG_ENDIAN
+		#ifdef IS_BIG_ENDIAN
 			*(uint64_t *) &buffer[1] = value;
 		#else
 			buffer[1] = value >> 56;
