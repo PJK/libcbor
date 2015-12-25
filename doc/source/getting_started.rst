@@ -14,7 +14,6 @@ Prerequisites:
 
 .. note:: As of May 2015, not even the 2015 release candidate of Visual Studio supports C99. While CMake will be happy to generate a VS solution that you can play with, libcbor currently cannot be compiled using the MSVC toolchain. `ICC <https://software.intel.com/en-us/c-compilers>`_, GCC under `Cygwin <https://www.cygwin.com/>`_, and `MinGW's <http://www.mingw.org/>`_ GCC will all work. The MinGW build process is described below.
 
-
 **Configuration options**
 
 A handful of configuration flags can be passed to `cmake`. The following table lists libcbor compile-time directives and several important generic flags.
@@ -47,7 +46,7 @@ If you want to pass other custom configuration options, please refer to `<http:/
 
 .. code-block:: bash
 
-  # Assuming you are in the directory where you want to build
+  # Assuming you are in the directory where you want to build. This should be *outside* the source tree/repository
   cmake -DCMAKE_BUILD_TYPE=Release path_to_libcbor_dir
   make cbor cbor_shared
 
