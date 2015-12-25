@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -e
-set -o
 
 PREVD=$(pwd)
 cd $SOURCE
