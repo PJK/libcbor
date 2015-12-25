@@ -1,5 +1,10 @@
 Next
+-------
+
+
+0.4.0 (2015-12-25)
 ---------------------
+Breaks build & header compatibility due to:
 - Improved build configuration and feature check macros
 - Endianess configuration fixes (by Erwin Kroon (@ekroon) and David Grigsby (@dgrigsby))
 - pkg-config compatibility (by Vincent Bernat)
