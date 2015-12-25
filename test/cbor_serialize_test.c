@@ -11,7 +11,7 @@
 #include <cmocka.h>
 #include <stdio.h>
 #include "cbor.h"
-#include "../src/cbor.h"
+#include "cbor.h"
 #include <inttypes.h>
 #include <strings.h>
 #include <string.h>

@@ -5,11 +5,11 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
-
 #include "cbor.h"
 #include <stdio.h>
 
 int main(int argc, char * argv[])
 {
 	printf("Hello from libcbor %s\n", CBOR_VERSION);
+	printf("Custom allocation support: %s\n", CBOR_CUSTOM_ALLOC ? "yes" : "no");
 }

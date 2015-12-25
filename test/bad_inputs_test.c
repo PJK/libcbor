@@ -47,7 +47,7 @@ static void test_3(void **state)
 	assert_int_equal(res.error.position, 1);
 }
 
-#ifdef CBOR_ASSUME_SANE_MALLOC
+#ifdef SANE_MALLOC
 unsigned char data4[] = {0xBA, 0xC1, 0xE8, 0x3E, 0xE7, 0x20, 0xA8};
 static void test_4(void **state)
 {
@@ -86,7 +86,7 @@ int main(void)
 		unit_test(test_1),
 		unit_test(test_2),
 		unit_test(test_3),
-#ifdef CBOR_ASSUME_SANE_MALLOC
+#ifdef SANE_MALLOC
 		unit_test(test_4),
 		unit_test(test_5),
 #endif

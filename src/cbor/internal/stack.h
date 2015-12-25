@@ -8,7 +8,7 @@
 #ifndef LIBCBOR_STACK_H
 #define LIBCBOR_STACK_H
 
-#include "../common.h"
+#include "cbor/common.h"
 
 #ifdef __cplusplus
 extern "C" {

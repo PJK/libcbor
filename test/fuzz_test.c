@@ -15,19 +15,15 @@
 #include <stdlib.h>
 #include <time.h>
 
-#if HUGE_FUZZ
-
-#define ROUNDS 65536ULL
-#define MAXLEN 131072ULL
-
+#ifdef HUGE_FUZZ
+	#define ROUNDS 65536ULL
+	#define MAXLEN 131072ULL
 #else
-
-#define ROUNDS 256ULL
-#define MAXLEN 2048ULL
-
+	#define ROUNDS 256ULL
+	#define MAXLEN 2048ULL
 #endif
 
-#if PRINT_FUZZ
+#ifdef PRINT_FUZZ
 static void printmem(const unsigned char * ptr, size_t length)
 {
 	for (size_t i = 0; i < length; i++)
@@ -59,9 +55,9 @@ static void run_round()
 		data[i] = rand() % 0xFF;
 	}
 
-	#if PRINT_FUZZ
+#ifdef PRINT_FUZZ
 	printmem(data, length);
-	#endif
+#endif
 
 	item = cbor_load(data, length, &res);
 
@@ -94,9 +90,9 @@ static void fuzz(void **state)
 int main(int argc, char * argv[])
 {
 	if (argc > 1)
-		seed = (unsigned)strtoul(argv[1], NULL, 10);
+		seed = (unsigned) strtoul(argv[1], NULL, 10);
 	else
-		seed = (unsigned)time(NULL);
+		seed = (unsigned) time(NULL);
 
 	const UnitTest tests[] = {
 		unit_test(fuzz)
