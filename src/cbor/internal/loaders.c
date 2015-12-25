@@ -27,7 +27,7 @@ uint16_t _cbor_load_uint16(const unsigned char *source)
 	#else
  		return ((uint16_t) *(source + 0) << 8) +
 		        (uint8_t) *(source + 1);
-	#end
+	#endif
 #endif
 }
 
@@ -43,7 +43,7 @@ uint32_t _cbor_load_uint32(const unsigned char *source)
 		       ((uint32_t) *(source + 1) << 0x10) +
 		       ((uint16_t) *(source + 2) << 0x08) +
 		        (uint8_t) *(source + 3);
-	#end
+	#endif
 #endif
 }
 
@@ -63,7 +63,7 @@ uint64_t _cbor_load_uint64(const unsigned char *source)
 		       ((uint32_t) *(source + 5) << 0x10) +
 		       ((uint16_t) *(source + 6) << 0x08) +
 		        (uint8_t) *(source + 7);
-	#end
+	#endif
 #endif
 }
 
