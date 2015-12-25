@@ -8,7 +8,7 @@
 #ifndef LIBCBOR_SERIALIZATION_H
 #define LIBCBOR_SERIALIZATION_H
 
-#include "common.h"
+#include "cbor/common.h"
 
 #ifdef __cplusplus
 extern "C" {

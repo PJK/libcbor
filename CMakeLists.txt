@@ -90,8 +90,12 @@ if(COVERAGE)
 endif(COVERAGE)
 
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/cbor/common.h.in ${PROJECT_BINARY_DIR}/common.h)
+# We want to generate common.h from the template and make it so that it is accessible using the same
+# path during both library build and installed header use, without littering the source dir.
+# Using cbor/common.h in the build dir works b/c headers will be installe to <prefix>/cbor
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/cbor/common.h.in ${PROJECT_BINARY_DIR}/cbor/common.h)
 install(FILES ${PROJECT_BINARY_DIR}/common.h DESTINATION include/cbor)
+# Make the header visible at compile time
 include_directories(${PROJECT_BINARY_DIR})
 
 subdirs(src)

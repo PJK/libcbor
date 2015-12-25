@@ -8,7 +8,7 @@
 #ifndef LIBCBOR_STREAMING_H
 #define LIBCBOR_STREAMING_H
 
-#include "common.h"
+#include "cbor/common.h"
 #include "callbacks.h"
 
 #ifdef __cplusplus

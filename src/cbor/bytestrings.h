@@ -8,7 +8,7 @@
 #ifndef LIBCBOR_BYTESTRINGS_H
 #define LIBCBOR_BYTESTRINGS_H
 
-#include "common.h"
+#include "cbor/common.h"
 
 #ifdef __cplusplus
 extern "C" {
