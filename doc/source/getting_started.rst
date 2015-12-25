@@ -24,15 +24,22 @@ Option                    Meaning                                               
 ------------------------  -------------------------------------------------------   ----------------------  ---------------------------------------------------------------------------------------------------------------------
 ``CMAKE_C_COMPILER``      C compiler to use                                         ``cc``                   ``gcc``, ``clang``, ``clang-3.5``, ...
 ``CMAKE_INSTALL_PREFIX``  Installation prefix                                       System-dependent         ``/usr/local/lib``, ...
-``CUSTOM_ALLOC``          Allow custom ``malloc``?                                  ``ON``                   ``ON``, ``OFF``
-
 ``HUGE_FUZZ``             :doc:`Fuzz test </tests>` with 8GB of data                ``OFF``                   ``ON``, ``OFF``
-``SANE_MALLOC``           Assume ``malloc`` will refuse unreasonable allocations                   ``OFF``                   ``ON``, ``OFF``
+``SANE_MALLOC``           Assume ``malloc`` will refuse unreasonable allocations    ``OFF``                   ``ON``, ``OFF``
 ``COVERAGE``              Generate test coverage instrumentation                    ``OFF``                   ``ON``, ``OFF``
-``PRETTY_PRINTER``        Include a pretty-printer implementation                    ``ON``                   ``ON``, ``OFF``
-``BUFFER_GROWTH``         Buffer growth factor                                       ``2``                     ``>1``
 ========================  =======================================================   ======================  =====================================================================================================================
 
+The following configuration options will also be defined as macros[#]_ in ``<cbor/common.h>`` and can therefore be used in client code:
+
+========================  =======================================================   ======================  =====================================================================================================================
+Option                    Meaning                                                   Default                 Possible values
+------------------------  -------------------------------------------------------   ----------------------  ---------------------------------------------------------------------------------------------------------------------
+``CBOR_CUSTOM_ALLOC``     Enable custom allocator support                           ``OFF``                  ``ON``, ``OFF``
+``CBOR_PRETTY_PRINTER``   Include a pretty-printing routine                         ``ON``                  ``ON``, ``OFF``
+``CBOR_BUFFER_GROWTH``    Factor for buffer growth & shrinking                       ``2``                    Decimals > 1
+========================  =======================================================   ======================  =====================================================================================================================
+
+.. [#] ``ON`` & ``OFF`` will be translated to ``1`` and ``0`` using `cmakedefine <https://cmake.org/cmake/help/v3.2/command/configure_file.html?highlight=cmakedefine>`_.
 
 If you want to pass other custom configuration options, please refer to `<http://www.cmake.org/Wiki/CMake_Useful_Variables>`_.
 
@@ -88,6 +95,13 @@ and compiling it
 .. code-block:: bash
 
     cc hello_cbor.c -lcbor -o hello_cbor
+
+
+libcbor also comes with `pkg-config <https://wiki.freedesktop.org/www/Software/pkg-config/>`_ support. If you install libcbor with a custom prefix, you can use pkg-config to resolve the headers and objects:
+
+.. code-block:: bash
+
+    cc $(pkg-config --cflags libcbor) hello_cbor.c $(pkg-config --libs libcbor) -o hello_cbor
 
 
 MinGW build instructions
