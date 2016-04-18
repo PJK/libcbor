@@ -1,7 +1,16 @@
 Getting started
 ==========================
 
-Pre-built Linux packages are distributed from `the libcbor website <http://libcbor.org/>`_. For other platforms, you will need to compile it from source.
+Pre-built Linux packages are distributed from `the libcbor website <http://libcbor.org/>`_. 
+
+OS X users can use `Homebrew <http://brew.sh/>`_:
+
+.. code-block:: bash
+
+    brew tap pjk/libcbor
+    brew install libcbor
+
+For other platforms, you will need to compile it from source.
 
 Building & installing libcbor
 ------------------------------
