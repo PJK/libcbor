@@ -1,5 +1,19 @@
 Next
+-------
+
+
+0.4.0 (2015-12-25)
 ---------------------
+Breaks build & header compatibility due to:
+- Improved build configuration and feature check macros
+- Endianess configuration fixes (by Erwin Kroon (@ekroon) and David Grigsby (@dgrigsby))
+- pkg-config compatibility (by Vincent Bernat)
+- enable use of versioned SONAME (by Vincent Bernat)
+- better fuzzer (wasn't random until now, ooops)
+
+0.3.1 (2015-05-21)
+---------------------
+- documentation and comments improvements, mostly for the API reference
 
 0.3.0 (2015-05-21)
 ---------------------

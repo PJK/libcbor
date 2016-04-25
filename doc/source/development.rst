@@ -17,7 +17,7 @@ Building *cmocka*
 .. code-block:: bash
 
   # Starting from libcbor source directory
-  git submodule update test/cmocka
+  git submodule update --init test/cmocka
   cd test
   mkdir cmocka_build && cd cmocka_build
   cmake ../cmocka

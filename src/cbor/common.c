@@ -5,7 +5,7 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
-#include "common.h"
+#include "cbor/common.h"
 #include "arrays.h"
 #include "bytestrings.h"
 #include "data.h"

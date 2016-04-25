@@ -8,7 +8,7 @@
 #ifndef LIBCBOR_INTS_H
 #define LIBCBOR_INTS_H
 
-#include "common.h"
+#include "cbor/common.h"
 
 #ifdef __cplusplus
 extern "C" {

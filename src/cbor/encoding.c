@@ -144,7 +144,7 @@ size_t cbor_encode_half(float value, unsigned char *buffer, size_t buffer_size)
 		res = (val & 0x80000000) >> 16 | (uint16_t) (mant >> 13);
 	} else { /* Normal numbers */
 		exp -= 127;
-		if (exp > 15)
+		if (((int8_t) exp) > 15 || ((int8_t) exp) < -14)
 			return 0; /* No way we can represent magnitude in normalized way */
 		else
 			res = (val & 0x80000000) >> 16 | ((exp + 15) << 10) | (uint16_t) (mant >> 13);

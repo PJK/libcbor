@@ -23,7 +23,6 @@ Prerequisites:
 
 .. note:: As of May 2015, not even the 2015 release candidate of Visual Studio supports C99. While CMake will be happy to generate a VS solution that you can play with, libcbor currently cannot be compiled using the MSVC toolchain. `ICC <https://software.intel.com/en-us/c-compilers>`_, GCC under `Cygwin <https://www.cygwin.com/>`_, and `MinGW's <http://www.mingw.org/>`_ GCC will all work. The MinGW build process is described below.
 
-
 **Configuration options**
 
 A handful of configuration flags can be passed to `cmake`. The following table lists libcbor compile-time directives and several important generic flags.
@@ -33,23 +32,39 @@ Option                    Meaning                                               
 ------------------------  -------------------------------------------------------   ----------------------  ---------------------------------------------------------------------------------------------------------------------
 ``CMAKE_C_COMPILER``      C compiler to use                                         ``cc``                   ``gcc``, ``clang``, ``clang-3.5``, ...
 ``CMAKE_INSTALL_PREFIX``  Installation prefix                                       System-dependent         ``/usr/local/lib``, ...
-``CUSTOM_ALLOC``          Allow custom ``malloc``?                                  ``ON``                   ``ON``, ``OFF``
-
 ``HUGE_FUZZ``             :doc:`Fuzz test </tests>` with 8GB of data                ``OFF``                   ``ON``, ``OFF``
-``SANE_MALLOC``           Assume ``malloc`` will refuse unreasonable allocations                   ``OFF``                   ``ON``, ``OFF``
+``SANE_MALLOC``           Assume ``malloc`` will refuse unreasonable allocations    ``OFF``                   ``ON``, ``OFF``
 ``COVERAGE``              Generate test coverage instrumentation                    ``OFF``                   ``ON``, ``OFF``
-``PRETTY_PRINTER``        Include a pretty-printer implementation                    ``ON``                   ``ON``, ``OFF``
-``BUFFER_GROWTH``         Buffer growth factor                                       ``2``                     ``>1``
 ========================  =======================================================   ======================  =====================================================================================================================
 
+The following configuration options will also be defined as macros[#]_ in ``<cbor/common.h>`` and can therefore be used in client code:
+
+========================  =======================================================   ======================  =====================================================================================================================
+Option                    Meaning                                                   Default                 Possible values
+------------------------  -------------------------------------------------------   ----------------------  ---------------------------------------------------------------------------------------------------------------------
+``CBOR_CUSTOM_ALLOC``     Enable custom allocator support                           ``OFF``                  ``ON``, ``OFF``
+``CBOR_PRETTY_PRINTER``   Include a pretty-printing routine                         ``ON``                  ``ON``, ``OFF``
+``CBOR_BUFFER_GROWTH``    Factor for buffer growth & shrinking                       ``2``                    Decimals > 1
+========================  =======================================================   ======================  =====================================================================================================================
+
+.. [#] ``ON`` & ``OFF`` will be translated to ``1`` and ``0`` using `cmakedefine <https://cmake.org/cmake/help/v3.2/command/configure_file.html?highlight=cmakedefine>`_.
 
 If you want to pass other custom configuration options, please refer to `<http://www.cmake.org/Wiki/CMake_Useful_Variables>`_.
 
 **Building using make**
 
+CMake will generate a Makefile and other configuration files for the build. As a rule of thumb, you should configure the
+build *outside of the source tree* in order to keep different configurations isolated. If you are unsure where to
+execute the build, just use a temporary directory:
+
 .. code-block:: bash
 
-  # Assuming you are in the directory where you want to build
+  cd $(mktemp -d /tmp/cbor_build.XXXX)
+
+Now, assuming you are in the directory where you want to build, execute the following to configure the build and run make
+
+.. code-block:: bash
+
   cmake -DCMAKE_BUILD_TYPE=Release path_to_libcbor_dir
   make cbor cbor_shared
 
@@ -61,7 +76,7 @@ In order to install the libcbor headers and libraries, the usual
 
   make install
 
-is what your're looking for. Root permissions are required on most systems.
+is what your're looking for. Root permissions are required on most systems when using the default installation prefix.
 
 
 **Portability**
@@ -97,6 +112,13 @@ and compiling it
 .. code-block:: bash
 
     cc hello_cbor.c -lcbor -o hello_cbor
+
+
+libcbor also comes with `pkg-config <https://wiki.freedesktop.org/www/Software/pkg-config/>`_ support. If you install libcbor with a custom prefix, you can use pkg-config to resolve the headers and objects:
+
+.. code-block:: bash
+
+    cc $(pkg-config --cflags libcbor) hello_cbor.c $(pkg-config --libs libcbor) -o hello_cbor
 
 
 MinGW build instructions

@@ -14,7 +14,9 @@ endif()
 add_library(cbor ${SOURCES})
 add_library(cbor_shared SHARED ${SOURCES})
 
-set_target_properties(cbor_shared PROPERTIES OUTPUT_NAME cbor)
+set_target_properties(cbor_shared PROPERTIES OUTPUT_NAME cbor VERSION "0.0.0" SOVERSION 0)
+
+configure_file(libcbor.pc.in libcbor.pc @ONLY)
 
 #http://www.cmake.org/Wiki/CMake:Install_Commands
 
@@ -27,3 +29,6 @@ install(DIRECTORY cbor DESTINATION include
                 FILES_MATCHING PATTERN "*.h")
 
 install(FILES cbor.h DESTINATION include)
+
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libcbor.pc"
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")

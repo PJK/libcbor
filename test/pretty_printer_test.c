@@ -17,6 +17,7 @@ unsigned char data[] = {0x8B, 0x01, 0x20, 0x5F, 0x41, 0x01, 0x41, 0x02, 0xFF, 0x
 
 static void test_pretty_printer(void **state)
 {
+#if CBOR_PRETTY_PRINTER
 	FILE * outfile = tmpfile();
 	struct cbor_load_result res;
 	cbor_item_t * item = cbor_load(data, 37, &res);
@@ -29,12 +30,12 @@ static void test_pretty_printer(void **state)
 	cbor_decref(&item);
 
 	fclose(outfile);
+#endif
 }
 
 int main(void)
 {
 	const UnitTest tests[] = {
-
 		unit_test(test_pretty_printer)
 	};
 	return run_tests(tests);

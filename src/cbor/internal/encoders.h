@@ -8,7 +8,7 @@
 #ifndef LIBCBOR_ENCODERS_H
 #define LIBCBOR_ENCODERS_H
 
-#include "../common.h"
+#include "cbor/common.h"
 
 #ifdef __cplusplus
 extern "C" {

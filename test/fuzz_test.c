@@ -13,25 +13,34 @@
 #include "cbor.h"
 #include <inttypes.h>
 #include <stdlib.h>
+#include <time.h>
 
 #ifdef HUGE_FUZZ
-
-#define ROUNDS 65536ULL
-#define MAXLEN 131072ULL
-
+	#define ROUNDS 65536ULL
+	#define MAXLEN 131072ULL
 #else
-
-#define ROUNDS 256ULL
-#define MAXLEN 2048ULL
-
+	#define ROUNDS 256ULL
+	#define MAXLEN 2048ULL
 #endif
 
-#ifdef CBOR_PRINT_FUZZ
+#ifdef PRINT_FUZZ
 static void printmem(const unsigned char * ptr, size_t length)
 {
 	for (size_t i = 0; i < length; i++)
 		printf("%02X", ptr[i]);
 	printf("\n");
+}
+#endif
+
+unsigned seed;
+
+#if CBOR_CUSTOM_ALLOC
+void *mock_malloc(size_t size)
+{
+	if (size > (1 << 19))
+		return NULL;
+	else
+		return malloc(size);
 }
 #endif
 
@@ -46,9 +55,9 @@ static void run_round()
 		data[i] = rand() % 0xFF;
 	}
 
-	#ifdef CBOR_PRINT_FUZZ
+#ifdef PRINT_FUZZ
 	printmem(data, length);
-	#endif
+#endif
 
 	item = cbor_load(data, length, &res);
 
@@ -61,9 +70,12 @@ static void run_round()
 
 static void fuzz(void **state)
 {
-	int seed = rand();
+
+#if CBOR_CUSTOM_ALLOC
+	cbor_set_allocs(mock_malloc, realloc, free);
+#endif
 	printf(
-		"Fuzzing %llu rounds of up to %llu bytes with seed %d\n",
+		"Fuzzing %llu rounds of up to %llu bytes with seed %u\n",
 		ROUNDS,
 		MAXLEN,
 		seed);
@@ -72,11 +84,16 @@ static void fuzz(void **state)
 	for (size_t i = 0; i < ROUNDS; i++)
 		run_round();
 
-	printf("Successfully fuzzed through %llu MB of data\n", (ROUNDS * MAXLEN) / (1024 * 1024));
+	printf("Successfully fuzzed through %llu kB of data\n", (ROUNDS * MAXLEN) / 1024);
 }
 
-int main(void)
+int main(int argc, char * argv[])
 {
+	if (argc > 1)
+		seed = (unsigned) strtoul(argv[1], NULL, 10);
+	else
+		seed = (unsigned) time(NULL);
+
 	const UnitTest tests[] = {
 		unit_test(fuzz)
 	};

@@ -8,7 +8,7 @@
 #ifndef LIBCBOR_UNICODE_H
 #define LIBCBOR_UNICODE_H
 
-#include "../common.h"
+#include "cbor/common.h"
 
 #ifdef __cplusplus
 extern "C" {

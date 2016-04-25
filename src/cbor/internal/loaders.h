@@ -8,7 +8,7 @@
 #ifndef LIBCBOR_LOADERS_H
 #define LIBCBOR_LOADERS_H
 
-#include "../common.h"
+#include "cbor/common.h"
 
 #ifdef __cplusplus
 extern "C" {

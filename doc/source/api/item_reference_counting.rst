@@ -14,7 +14,7 @@ In order to use this feature, *libcbor* has to be compiled with the :doc:`approp
 
 .. code-block:: c
 
-    #ifdef CBOR_CUSTOM_ALLOC
+    #if CBOR_CUSTOM_ALLOC
         cbor_set_allocs(malloc, realloc, free);
     #else
        #error "libcbor built with support for custom allocation is required"

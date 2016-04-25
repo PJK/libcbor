@@ -8,7 +8,7 @@
 #ifndef LIBCBOR_BUILDER_CALLBACKS_H
 #define LIBCBOR_BUILDER_CALLBACKS_H
 
-#include "../common.h"
+#include "cbor/common.h"
 #include "../callbacks.h"
 #include "stack.h"
 

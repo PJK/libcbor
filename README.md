@@ -10,6 +10,7 @@
  - Robust C99 implementation
  - Layered architecture offers both control and convenience
  - Flexible memory management
+ - No shared global state - threading friendly
  - Proper handling of UTF-8
  - Full support for streams & incremental processing
  - Extensive documentation and test suite
@@ -21,6 +22,10 @@ Get the latest documentation at [libcbor.readthedocs.org](http://libcbor.readthe
 ## Contributions
 
 All bug reports and contributions are welcome. Please see https://github.com/PJK/libcbor for more info.
+
+### List of contributors
+
+- Vincent Bernat
 
 ## License
 The MIT License (MIT)
