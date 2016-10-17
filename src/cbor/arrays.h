@@ -42,7 +42,7 @@ cbor_item_t * cbor_array_get(const cbor_item_t * item, size_t index);
  *
  * @param item[borrow] An array
  * @param value[incref] The item to assign
- * @param index The index
+ * @param index The index, first item is 0.
  * @return true on success, false on allocation failure.
  */
 bool cbor_array_set(cbor_item_t * item, size_t index, cbor_item_t * value);
@@ -53,7 +53,7 @@ bool cbor_array_set(cbor_item_t * item, size_t index, cbor_item_t * value);
  *
  * @param item[borrow] An array
  * @param value[incref] The item to assign
- * @param index The index
+ * @param index The index, first item is 0.
  * @return true on success, false on allocation failure.
  */
 bool cbor_array_replace(cbor_item_t * item, size_t index, cbor_item_t * value);
