@@ -6,6 +6,7 @@ addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
+    - llvm-toolchain-precise-3.6
     - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
     packages:
     - libjansson-dev
@@ -21,9 +22,9 @@ before_install:
   - pushd $HOME
   - git clone git://git.cryptomilk.org/projects/cmocka.git
   - mkdir cmocka_build && cd cmocka_build
-  - cmake ../cmocka
+  - cmake -DCMAKE_INSTALL_PREFIX=$HOME ../cmocka
   - make -j 2
-  - make DESTDIR=$HOME install
+  - make install
 # Confuses CMake search
   - cd ..
   - rm -rf cmocka cmocka_build
