@@ -22,6 +22,7 @@ before_install:
   - make -j 2
   - make DESTDIR=$HOME install
 # Confuses CMake search
+  - cd ..
   - rm -r cmocka cmocka_build
   - popd
 
