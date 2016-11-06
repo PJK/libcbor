@@ -2,11 +2,6 @@ file(GLOB TESTS "*_test.c")
 
 find_package(CMocka REQUIRED)
 
-get_cmake_property(_variableNames VARIABLES)
-foreach (_variableName ${_variableNames})
-    message(STATUS "${_variableName}=${${_variableName}}")
-endforeach()
-
 foreach (TEST ${TESTS})
     string(REGEX REPLACE ".*/([^/]+).c" "\\1" NAME ${TEST})
     message("Adding test ${NAME}")
