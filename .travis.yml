@@ -21,9 +21,9 @@ before_install:
   - cmake ../cmocka
   - make -j 2
   - make DESTDIR=$HOME install
-  - popd
 # Confuses CMake search
-  - rm -r cmocka_build
+  - rm -r cmocka cmocka_build
+  - popd
 
 install:
 - if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi
