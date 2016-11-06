@@ -2,7 +2,12 @@ file(GLOB TESTS "*_test.c")
 
 find_package(CMocka REQUIRED)
 
-include_directories(${CMOCKA_INCLUDE_DIRS})
+if (CMOCKA_FOUND)
+    include_directories(${CMOCKA_INCLUDE_DIRS})
+else (CMOCKA_FOUND)
+    message(FATAL_ERROR "Couldn't find CMocka (https://cmocka.org/). Please ensure it is installed and in search paths")
+endif (CMOCKA_FOUND)
+
 
 foreach (TEST ${TESTS})
     string(REGEX REPLACE ".*/([^/]+).c" "\\1" NAME ${TEST})
