@@ -8,7 +8,6 @@ cd $PREVD
 
 cmake $SOURCE -DCBOR_CUSTOM_ALLOC=ON -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTS=ON -DCMAKE_PREFIX_PATH=$HOME/usr/local
 make VERBOSE=1
-./test/fuzz_test
 
 ctest -VV
 
