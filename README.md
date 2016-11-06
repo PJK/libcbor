@@ -23,9 +23,7 @@ Get the latest documentation at [libcbor.readthedocs.org](http://libcbor.readthe
 
 All bug reports and contributions are welcome. Please see https://github.com/PJK/libcbor for more info.
 
-### List of contributors
-
-- Vincent Bernat
+Kudos to all the [contributors](https://github.com/PJK/libcbor/graphs/contributors)!
 
 ## License
 The MIT License (MIT)

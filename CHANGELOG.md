@@ -3,13 +3,15 @@ Next
 - remove cmocka from the subtree (always rely on system or user-provided version)
 - containerize CI builds
 - only build tests if explicitely enabled (`-DWITH_TESTS=ON`)
+- fixed static header declarations (by cedric-d)
+- improved documentation (by Michael Richardson)
 
 0.4.0 (2015-12-25)
 ---------------------
 Breaks build & header compatibility due to:
 
 - Improved build configuration and feature check macros
-- Endianess configuration fixes (by Erwin Kroon (@ekroon) and David Grigsby (@dgrigsby))
+- Endianess configuration fixes (by Erwin Kroon and David Grigsby)
 - pkg-config compatibility (by Vincent Bernat)
 - enable use of versioned SONAME (by Vincent Bernat)
 - better fuzzer (wasn't random until now, ooops)
