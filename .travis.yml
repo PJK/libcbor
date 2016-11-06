@@ -15,12 +15,13 @@ addons:
 
 before_install:
   - gem install coveralls-lcov
+  - pushd $HOME
   - git clone git://git.cryptomilk.org/projects/cmocka.git
   - mkdir cmocka_build && cd cmocka_build
   - cmake ../cmocka
   - make -j 2
   - make DESTDIR=$HOME install
-  - cd ..
+  - popd
 
 install:
 - if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi
