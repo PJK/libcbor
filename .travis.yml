@@ -36,7 +36,16 @@ install:
 matrix:
   include:
     - compiler: clang
+     addons:
+       apt:
+         sources:
+         - llvm-toolchain-precise-3.6
+         packages:
+         - clang-3.6
+     env: CC="clang-3.6" CXX="clang++-3.6"
+
     - compiler: gcc
+
 
 script:
   - export SOURCE=$(pwd) && ./buildscript.sh
