@@ -10,10 +10,8 @@ addons:
     - libjansson-dev
     - valgrind
     - cppcheck
-    - cmocka
     - lcov
     - gcc-6
-
 
 before_install:
   - gem install coveralls-lcov
