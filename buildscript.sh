@@ -6,7 +6,7 @@ cd $SOURCE
 cppcheck . --error-exitcode=1 --suppressions cppcheck_suppressions.txt --force
 cd $PREVD
 
-cmake $SOURCE -DCMAKE_CUSTOM_ALLOC=ON -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTS=ON
+cmake $SOURCE -DCMAKE_CUSTOM_ALLOC=ON -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTS=ON -DCMAKE_PREFIX_PATH=$HOME
 make VERBOSE=1
 ctest -V
 
