@@ -32,23 +32,22 @@ install:
 
 matrix:
   include:
-    - compiler: clang
-     addons:
-       apt:
-         sources:
-         - llvm-toolchain-precise-3.6
-         packages:
-         - clang-3.6
-     env: CC="clang-3.6" CXX="clang++-3.6"
-
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-          - ubuntu-toolchain-r-test
-          packages:
-          - gcc-6
-      env: CC="gcc-6" CXX="g++-6"
+  - compiler: clang
+    addons:
+      apt:
+        sources:
+        - llvm-toolchain-precise-3.6
+        packages:
+        - clang-3.6
+    env: CC="clang-3.6" CXX="clang++-3.6"
+  - compiler: gcc
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - gcc-6
+    env: CC="gcc-6" CXX="g++-6"
 
 
 
