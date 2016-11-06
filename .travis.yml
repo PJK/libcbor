@@ -23,7 +23,7 @@ before_install:
   - make DESTDIR=$HOME install
 # Confuses CMake search
   - cd ..
-  - rm -r cmocka cmocka_build
+  - rm -rf cmocka cmocka_build
   - popd
 
 install:
