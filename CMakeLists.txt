@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.2)
 project(libcbor)
 include(CTest)
 
@@ -27,6 +27,11 @@ option(CBOR_CUSTOM_ALLOC "Custom, dynamically defined allocator support" OFF)
 option(CBOR_PRETTY_PRINTER "Include a pretty-printing routine" ON)
 set(CBOR_BUFFER_GROWTH "2" CACHE STRING "Factor for buffer growth & shrinking")
 
+option(WITH_TESTS "[TEST] Build unit tests (requires CMocka" OFF)
+if(WITH_TESTS)
+    add_definitions(-DWITH_TESTS)
+endif(WITH_TESTS)
+
 option(HUGE_FUZZ "[TEST] Fuzz through 8GB of data in the test. Do not use with memory instrumentation!" OFF)
 if(HUGE_FUZZ)
     add_definitions(-DHUGE_FUZZ)
@@ -41,6 +46,7 @@ option(PRINT_FUZZ "[TEST] Print the fuzzer input" OFF)
 if(PRINT_FUZZ)
     add_definitions(-DPRINT_FUZZ)
 endif(PRINT_FUZZ)
+
 
 set(CPACK_GENERATOR "DEB" "TGZ" "RPM")
 set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
@@ -80,7 +86,7 @@ include_directories(src)
 
 
 option(COVERAGE "Enable code coverage instrumentation" OFF)
-if(COVERAGE)
+if (COVERAGE)
     message("Configuring code coverage instrumentation")
     if(NOT CMAKE_C_COMPILER MATCHES "gcc")
         message(WARNING "Gcov instrumentation only works with GCC")
@@ -88,7 +94,7 @@ if(COVERAGE)
     # https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fprofile-arcs -ftest-coverage --coverage")
     set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -g -fprofile-arcs -ftest-coverage --coverage")
-endif(COVERAGE)
+endif (COVERAGE)
 
 
 # We want to generate common.h from the template and make it so that it is accessible using the same
@@ -100,5 +106,9 @@ install(FILES ${PROJECT_BINARY_DIR}/cbor/common.h DESTINATION include/cbor)
 include_directories(${PROJECT_BINARY_DIR})
 
 subdirs(src)
-subdirs(test)
+
+if (WITH_TESTS)
+    subdirs(test)
+endif (WITH_TESTS)
+
 subdirs(examples)

@@ -1,26 +1,56 @@
 language: c
 
+sudo: false
+
 before_install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -qq
-  - sudo apt-get install -y lcov
   - gem install coveralls-lcov
-  - sudo apt-get -qq install gcc-4.9 libjansson-dev valgrind cppcheck
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 90
-  - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-4.9 90
-  - git submodule update test/cmocka
-  - cd test
+  - pushd $HOME
+  - git clone git://git.cryptomilk.org/projects/cmocka.git
   - mkdir cmocka_build && cd cmocka_build
-  - cmake ../cmocka
-  - make -j 4
-  - sudo make install
-  - export LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH} 
-  - cd ../..
+  - cmake -DCMAKE_INSTALL_PREFIX=$HOME ../cmocka
+  - make -j 2
+  - make install
+# Confuses CMake search
+  - cd ..
+  - rm -rf cmocka cmocka_build
+  - popd
 
 matrix:
   include:
-    - compiler: clang
-    - compiler: gcc
+  - compiler: clang
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        - llvm-toolchain-precise-3.6
+        - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
+        packages:
+        - clang-3.6
+        - libjansson-dev
+        - valgrind
+        - cppcheck
+        - lcov
+        - cmake
+        - cmake-data
+    env: CC="clang-3.6" CXX="clang++-3.6"
+  - compiler: gcc
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
+        packages:
+        - gcc-6
+        - g++-6
+        - libjansson-dev
+        - valgrind
+        - cppcheck
+        - lcov
+        - cmake
+        - cmake-data
+    env: CC="gcc-6" CXX="g++-6"
+
+
 
 script:
   - export SOURCE=$(pwd) && ./buildscript.sh

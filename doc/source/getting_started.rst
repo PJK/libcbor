@@ -35,6 +35,7 @@ Option                    Meaning                                               
 ``HUGE_FUZZ``             :doc:`Fuzz test </tests>` with 8GB of data                ``OFF``                   ``ON``, ``OFF``
 ``SANE_MALLOC``           Assume ``malloc`` will refuse unreasonable allocations    ``OFF``                   ``ON``, ``OFF``
 ``COVERAGE``              Generate test coverage instrumentation                    ``OFF``                   ``ON``, ``OFF``
+``WITH_TESTS``            Build unit tests (see :doc:`development`)                 ``OFF``                   ``ON``, ``OFF``
 ========================  =======================================================   ======================  =====================================================================================================================
 
 The following configuration options will also be defined as macros[#]_ in ``<cbor/common.h>`` and can therefore be used in client code:
