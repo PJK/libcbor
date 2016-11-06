@@ -8,7 +8,7 @@ cd $PREVD
 
 cmake $SOURCE -DCMAKE_CUSTOM_ALLOC=ON -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTS=ON -DCMAKE_PREFIX_PATH=$HOME/usr/local
 make VERBOSE=1
-ctest -V
+ctest -VV
 
 ctest -T memcheck | tee memcheck.out
 if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
