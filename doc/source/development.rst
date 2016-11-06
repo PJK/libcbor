@@ -11,18 +11,6 @@ Development dependencies
 - `Valgrind <http://valgrind.org/>`_ (memory correctness & profiling)
 - `GCOV/LCOV <http://ltp.sourceforge.net/coverage/lcov.php>`_ (test coverage)
 
-Building *cmocka*
-~~~~~~~~~~~~~~~~~
-
-.. code-block:: bash
-
-  # Starting from libcbor source directory
-  git submodule update --init test/cmocka
-  cd test
-  mkdir cmocka_build && cd cmocka_build
-  cmake ../cmocka
-  make -j 4
-  make install
 
 Installing *sphinx*
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -31,6 +19,7 @@ Installing *sphinx*
 
   pip install sphinx
   pip install sphinx_rtd_theme
+  pip install breathe
   pip install https://github.com/lepture/python-livereload/archive/master.zip
   pip install sphinx-autobuild
 
