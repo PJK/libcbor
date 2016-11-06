@@ -18,11 +18,11 @@ before_install:
   - gem install coveralls-lcov
   - git submodule update test/cmocka
   - cd test
-  - mkdir cmocka_build && cd cmocka_build
-  - cmake ../cmocka
+  - mkdir cmocka_build ~/libs && cd cmocka_build
+  - cmake -DCMAKE_INSTALL_PREFIX:PATH=~/libs ../cmocka
   - make -j 4
   - make install
-  - export LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH} 
+  - export LD_LIBRARY_PATH=~libs:${LD_LIBRARY_PATH}
   - cd ../..
 
 install:
