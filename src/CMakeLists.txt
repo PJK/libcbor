@@ -3,9 +3,9 @@ set(SOURCES cbor.c cbor/streaming.c cbor/internal/encoders.c cbor/internal/build
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
 
-if(CUSTOM_ALLOC)
+if (CBOR_CUSTOM_ALLOC)
     LIST(APPEND SOURCES allocators.c)
-endif(CUSTOM_ALLOC)
+endif(CBOR_CUSTOM_ALLOC)
 
 if (NOT DEFINED CMAKE_MACOSX_RPATH)
 	set(CMAKE_MACOSX_RPATH 0)
