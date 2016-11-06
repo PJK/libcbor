@@ -5,6 +5,7 @@ Next
 - only build tests if explicitely enabled (`-DWITH_TESTS=ON`)
 - fixed static header declarations (by cedric-d)
 - improved documentation (by Michael Richardson)
+- improved `examples/readfile.c`
 
 0.4.0 (2015-12-25)
 ---------------------

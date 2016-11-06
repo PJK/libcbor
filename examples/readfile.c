@@ -35,6 +35,38 @@ int main(int argc, char * argv[])
 	/* Assuming `buffer` contains `length` bytes of input data */
 	struct cbor_load_result result;
 	cbor_item_t * item = cbor_load(buffer, length, &result);
+
+	if (result.error.code != CBOR_ERR_NONE) {
+		printf("There was an error while reading the input near byte %zu (read %zu bytes in total): ", result.error.position, result.read);
+		switch (result.error.code) {
+			case CBOR_ERR_MALFORMATED: {
+				printf("Malformed data\n");
+				break;
+			}
+			case CBOR_ERR_MEMERROR: {
+				printf("Memory error -- perhaps the input is too large?\n");
+				break;
+			}
+			case CBOR_ERR_NODATA: {
+				printf("The input is empty\n");
+				break;
+			}
+			case CBOR_ERR_NOTENOUGHDATA: {
+				printf("Data seem to be missing -- is the input complete?\n");
+				break;
+			}
+			case CBOR_ERR_SYNTAXERROR: {
+				printf("Syntactically malformed data -- see http://tools.ietf.org/html/rfc7049\n");
+				break;
+			}
+			case CBOR_ERR_NONE: {
+				// GCC's cheap dataflow analysis gag
+				break;
+			}
+		}
+		exit(1);
+	}
+
 	/* Pretty-print the result */
 	cbor_describe(item, stdout);
 	fflush(stdout);
