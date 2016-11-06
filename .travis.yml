@@ -2,18 +2,6 @@ language: c
 
 sudo: false
 
-addons:
-  apt:
-    sources:
-    - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
-    packages:
-    - libjansson-dev
-    - valgrind
-    - cppcheck
-    - lcov
-    - cmake
-    - cmake-data
-
 before_install:
   - gem install coveralls-lcov
   - pushd $HOME
@@ -27,9 +15,6 @@ before_install:
   - rm -rf cmocka cmocka_build
   - popd
 
-install:
-- if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi
-
 matrix:
   include:
   - compiler: clang
@@ -38,16 +23,30 @@ matrix:
         sources:
         - ubuntu-toolchain-r-test
         - llvm-toolchain-precise-3.6
+        - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
         packages:
         - clang-3.6
+        - libjansson-dev
+        - valgrind
+        - cppcheck
+        - lcov
+        - cmake
+        - cmake-data
     env: CC="clang-3.6" CXX="clang++-3.6"
   - compiler: gcc
     addons:
       apt:
         sources:
         - ubuntu-toolchain-r-test
+        - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
         packages:
         - gcc-6
+        - libjansson-dev
+        - valgrind
+        - cppcheck
+        - lcov
+        - cmake
+        - cmake-data
     env: CC="gcc-6" CXX="g++-6"
 
 
