@@ -2,7 +2,7 @@ file(GLOB TESTS "*_test.c")
 
 find_package(CMocka REQUIRED)
 
-include_directories(${CMocka_INCLUDE_DIRS})
+include_directories(${CMocka_INCLUDE_DIR})
 
 foreach (TEST ${TESTS})
     string(REGEX REPLACE ".*/([^/]+).c" "\\1" NAME ${TEST})
