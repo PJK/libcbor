@@ -2,17 +2,7 @@ file(GLOB TESTS "*_test.c")
 
 find_package(CMocka REQUIRED)
 
-get_cmake_property(_variableNames VARIABLES)
-foreach (_variableName ${_variableNames})
-    message(STATUS "${_variableName}=${${_variableName}}")
-endforeach()
-
-if (CMOCKA_FOUND)
-    include_directories(${CMOCKA_INCLUDE_DIRS})
-else (CMOCKA_FOUND)
-    message(FATAL_ERROR "Couldn't find CMocka (https://cmocka.org/). Please ensure it is installed and in search paths")
-endif (CMOCKA_FOUND)
-
+include_directories(${CMocka_INCLUDE_DIRS})
 
 foreach (TEST ${TESTS})
     string(REGEX REPLACE ".*/([^/]+).c" "\\1" NAME ${TEST})
