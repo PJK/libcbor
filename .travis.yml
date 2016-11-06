@@ -5,15 +5,12 @@ sudo: false
 addons:
   apt:
     sources:
-    - ubuntu-toolchain-r-test
-    - llvm-toolchain-precise-3.6
     - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
     packages:
     - libjansson-dev
     - valgrind
     - cppcheck
     - lcov
-    - gcc-6
     - cmake
     - cmake-data
 
@@ -45,6 +42,14 @@ matrix:
      env: CC="clang-3.6" CXX="clang++-3.6"
 
     - compiler: gcc
+      addons:
+        apt:
+          sources:
+          - ubuntu-toolchain-r-test
+          packages:
+          - gcc-6
+      env: CC="gcc-6" CXX="g++-6"
+
 
 
 script:
