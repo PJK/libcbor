@@ -24,7 +24,7 @@ size_t _cbor_highest_bit(size_t number)
 
 bool _cbor_safe_to_multiply(size_t a, size_t b)
 {
-	return _cbor_highest_bit(a) + _cbor_highest_bit(b) <= sizeof(size_t);
+	return _cbor_highest_bit(a) + _cbor_highest_bit(b) <= sizeof(size_t) * 8;
 }
 
 void * _cbor_alloc_multiple(size_t item_size, size_t item_count)

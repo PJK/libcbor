@@ -23,8 +23,9 @@ size_t cbor_map_allocated(const cbor_item_t *item)
 cbor_item_t *cbor_new_definite_map(size_t size)
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
-	if (item == NULL)
+	if (item == NULL) {
 		return NULL;
+	}
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_MAP,
@@ -83,8 +84,7 @@ bool _cbor_map_add_key(cbor_item_t *item, cbor_item_t *key)
 				return false;
 			}
 
-			size_t new_allocation = CBOR_BUFFER_GROWTH * (metadata->allocated);
-			new_allocation = new_allocation ? new_allocation : 1;
+			size_t new_allocation = metadata->allocated == 0 ? 1 : CBOR_BUFFER_GROWTH * metadata->allocated;
 
 			unsigned char * new_data = _cbor_realloc_multiple(item->data, sizeof(struct cbor_pair), new_allocation);
 

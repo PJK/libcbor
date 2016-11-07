@@ -56,8 +56,9 @@ bool cbor_array_push(cbor_item_t *array, cbor_item_t *pushee)
 	cbor_item_t **data = (cbor_item_t **) array->data;
 	if (cbor_array_is_definite(array)) {
 		/* Do not reallocate definite arrays */
-		if (metadata->end_ptr >= metadata->allocated)
+		if (metadata->end_ptr >= metadata->allocated) {
 			return false;
+		}
 		data[metadata->end_ptr++] = pushee;
 	} else {
 		/* Exponential realloc */
@@ -67,12 +68,12 @@ bool cbor_array_push(cbor_item_t *array, cbor_item_t *pushee)
 				return false;
 			}
 
-			size_t new_allocation = CBOR_BUFFER_GROWTH * (metadata->allocated);
-			new_allocation = new_allocation ? new_allocation : 1;
+			size_t new_allocation = metadata->allocated == 0 ? 1 : CBOR_BUFFER_GROWTH * metadata->allocated;
 
 			unsigned char * new_data = _cbor_realloc_multiple(array->data, sizeof(cbor_item_t *), new_allocation);
-			if (new_data == NULL)
+			if (new_data == NULL) {
 				return false;
+			}
 
 			array->data = new_data;
 			metadata->allocated = new_allocation;
