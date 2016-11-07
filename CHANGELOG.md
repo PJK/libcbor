@@ -6,6 +6,7 @@ Next
 - fixed static header declarations (by cedric-d)
 - improved documentation (by Michael Richardson)
 - improved `examples/readfile.c`
+- reworked (re)allocation to handle huge inputs and overflows in size_t [#16]
 
 0.4.0 (2015-12-25)
 ---------------------
