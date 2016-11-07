@@ -9,6 +9,10 @@
 #define LIBCBOR_MEMORY_UTILS_H
 
 #include <string.h>
+#include <stdbool.h>
+
+/** Can a and b be multiplied without overflowing size_t? */
+bool _cbor_safe_to_multiply(size_t a, size_t b);
 
 /** Overflow-proof contiguous array allocation
  *
@@ -20,6 +24,8 @@ void * _cbor_alloc_multiple(size_t item_size, size_t item_count);
 
 
 /** Overflow-proof contiguous array reallocation
+ *
+ * This implements the OpenBSD `reallocarray` functionality.
  *
  * @param pointer
  * @param item_size

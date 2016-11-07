@@ -7,7 +7,6 @@
 
 #include "memory_utils.h"
 #include "cbor/common.h"
-#include <stdbool.h>
 
 // TODO: Consider builtins (https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html)
 
@@ -39,5 +38,9 @@ void * _cbor_alloc_multiple(size_t item_size, size_t item_count)
 
 void * _cbor_realloc_multiple(void * pointer, size_t item_size, size_t item_count)
 {
-
+	if (_cbor_safe_to_multiply(item_size, item_count)) {
+		return _CBOR_REALLOC(pointer, item_size * item_count);
+	} else {
+		return NULL;
+	}
 }

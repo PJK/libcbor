@@ -68,20 +68,30 @@ bool _cbor_map_add_key(cbor_item_t *item, cbor_item_t *key)
 	struct _cbor_map_metadata *metadata = (struct _cbor_map_metadata *) &item->metadata;
 	if (cbor_map_is_definite(item)) {
 		struct cbor_pair *data = cbor_map_handle(item);
-		if (metadata->end_ptr >= metadata->allocated)
+		if (metadata->end_ptr >= metadata->allocated) {
 			/* Don't realloc definite preallocated map */
 			return false;
+		}
+
 		data[metadata->end_ptr].key = key;
 		data[metadata->end_ptr++].value = NULL;
 	} else {
 		if (metadata->end_ptr >= metadata->allocated) {
 			/* Exponential realloc */
-			size_t new_allocation = (size_t)(CBOR_BUFFER_GROWTH * (metadata->allocated));
-			new_allocation = new_allocation ? new_allocation : 1;
-			unsigned char * new_data = _CBOR_REALLOC(item->data,
-													 new_allocation * sizeof(struct cbor_pair));
-			if (new_data == NULL)
+			// Check for overflows first
+			if (!_cbor_safe_to_multiply(CBOR_BUFFER_GROWTH, metadata->allocated)) {
 				return false;
+			}
+
+			size_t new_allocation = CBOR_BUFFER_GROWTH * (metadata->allocated);
+			new_allocation = new_allocation ? new_allocation : 1;
+
+			unsigned char * new_data = _cbor_realloc_multiple(item->data, sizeof(struct cbor_pair), new_allocation);
+
+			if (new_data == NULL) {
+				return false;
+			}
+
 			item->data = new_data;
 			metadata->allocated = new_allocation;
 		}
