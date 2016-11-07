@@ -6,6 +6,7 @@
  */
 
 #include "maps.h"
+#include "internal/memory_utils.h"
 
 size_t cbor_map_size(const cbor_item_t *item)
 {
@@ -32,7 +33,7 @@ cbor_item_t *cbor_new_definite_map(size_t size)
 			.type = _CBOR_METADATA_DEFINITE,
 			.end_ptr = 0
 		}},
-		.data = _CBOR_MALLOC(sizeof(struct cbor_pair) * size)
+		.data = _cbor_alloc_multiple(sizeof(struct cbor_pair), size)
 	};
 	if (item->data == NULL) {
 		_CBOR_FREE(item);
