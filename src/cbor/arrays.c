@@ -7,6 +7,7 @@
 
 #include <string.h>
 #include "arrays.h"
+#include "internal/memory_utils.h"
 
 size_t cbor_array_size(const cbor_item_t *item)
 {
@@ -55,18 +56,25 @@ bool cbor_array_push(cbor_item_t *array, cbor_item_t *pushee)
 	cbor_item_t **data = (cbor_item_t **) array->data;
 	if (cbor_array_is_definite(array)) {
 		/* Do not reallocate definite arrays */
-		if (metadata->end_ptr >= metadata->allocated)
+		if (metadata->end_ptr >= metadata->allocated) {
 			return false;
+		}
 		data[metadata->end_ptr++] = pushee;
 	} else {
 		/* Exponential realloc */
 		if (metadata->end_ptr >= metadata->allocated) {
-			size_t new_allocation = (size_t)(CBOR_BUFFER_GROWTH * (metadata->allocated));
-			new_allocation = new_allocation ? new_allocation : 1;
-			unsigned char * new_data = _CBOR_REALLOC(array->data,
-													 new_allocation * sizeof(cbor_item_t *));
-			if (new_data == NULL)
+			// Check for overflows first
+			if (!_cbor_safe_to_multiply(CBOR_BUFFER_GROWTH, metadata->allocated)) {
 				return false;
+			}
+
+			size_t new_allocation = metadata->allocated == 0 ? 1 : CBOR_BUFFER_GROWTH * metadata->allocated;
+
+			unsigned char * new_data = _cbor_realloc_multiple(array->data, sizeof(cbor_item_t *), new_allocation);
+			if (new_data == NULL) {
+				return false;
+			}
+
 			array->data = new_data;
 			metadata->allocated = new_allocation;
 		}
@@ -98,10 +106,11 @@ cbor_item_t **cbor_array_handle(const cbor_item_t *item)
 cbor_item_t *cbor_new_definite_array(size_t size)
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
-	if (item == NULL)
+	if (item == NULL) {
 		return NULL;
+	}
 
-	cbor_item_t ** data = _CBOR_MALLOC(sizeof(cbor_item_t *) * size);
+	cbor_item_t ** data = _cbor_alloc_multiple(sizeof(cbor_item_t *), size);
 	if (data == NULL) {
 		_CBOR_FREE(item);
 		return NULL;

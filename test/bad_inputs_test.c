@@ -78,6 +78,15 @@ static void test_6(void **state)
 	assert_int_equal(res.error.position, 2);
 }
 
+/* Extremely high size value (overflows size_t in representation size) */
+unsigned char data7[] = {0xA2, 0x9B, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+static void test_7(void **state)
+{
+	item = cbor_load(data7, 16, &res);
+	assert_null(item);
+	assert_true(res.error.code == CBOR_ERR_MEMERROR);
+	assert_int_equal(res.error.position, 10);
+}
 
 
 int main(void)
@@ -90,7 +99,8 @@ int main(void)
 		unit_test(test_4),
 		unit_test(test_5),
 #endif
-		unit_test(test_6)
+		unit_test(test_6),
+		unit_test(test_7),
 	};
 	return run_tests(tests);
 }

@@ -7,6 +7,7 @@
 
 #include <string.h>
 #include "bytestrings.h"
+#include "internal/memory_utils.h"
 
 size_t cbor_bytestring_length(const cbor_item_t *item)
 {
@@ -98,13 +99,19 @@ bool cbor_bytestring_add_chunk(cbor_item_t *item, cbor_item_t *chunk)
 	struct cbor_indefinite_string_data *data = (struct cbor_indefinite_string_data *) item->data;
 	if (data->chunk_count == data->chunk_capacity) {
 		/* We need more space */
-		data->chunk_capacity = data->chunk_capacity == 0 ? 1 : (size_t)(CBOR_BUFFER_GROWTH * (data->chunk_capacity));
-		cbor_item_t **new_chunks_data =
-			_CBOR_REALLOC(data->chunks, data->chunk_capacity * sizeof(cbor_item_t *));
-		if (new_chunks_data == NULL)
+		if (!_cbor_safe_to_multiply(CBOR_BUFFER_GROWTH, data->chunk_capacity)) {
 			return false;
-		else
-			data->chunks = new_chunks_data;
+		}
+
+		data->chunk_capacity = data->chunk_capacity == 0 ? 1 : CBOR_BUFFER_GROWTH * (data->chunk_capacity);
+
+		cbor_item_t **new_chunks_data = _cbor_realloc_multiple(data->chunks, sizeof(cbor_item_t *), data->chunk_capacity);
+
+		if (new_chunks_data == NULL) {
+			return false;
+		}
+
+		data->chunks = new_chunks_data;
 	}
 	data->chunks[data->chunk_count++] = cbor_incref(chunk);
 	return true;
