@@ -18,4 +18,14 @@
  */
 void * _cbor_alloc_multiple(size_t item_size, size_t item_count);
 
+
+/** Overflow-proof contiguous array reallocation
+ *
+ * @param pointer
+ * @param item_size
+ * @param item_count
+ * @return Realloc'd of item_size * item_count bytes, or NULL if the total size overflows size_t or the underlying allocator failed
+ */
+void * _cbor_realloc_multiple(void * pointer, size_t item_size, size_t item_count);
+
 #endif //LIBCBOR_MEMORY_UTILS_H
