@@ -7,6 +7,7 @@
 
 #include <string.h>
 #include "arrays.h"
+#include "internal/memory_utils.h"
 
 size_t cbor_array_size(const cbor_item_t *item)
 {
@@ -98,10 +99,11 @@ cbor_item_t **cbor_array_handle(const cbor_item_t *item)
 cbor_item_t *cbor_new_definite_array(size_t size)
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
-	if (item == NULL)
+	if (item == NULL) {
 		return NULL;
+	}
 
-	cbor_item_t ** data = _CBOR_MALLOC(sizeof(cbor_item_t *) * size);
+	cbor_item_t ** data = _cbor_alloc_multiple(sizeof(cbor_item_t *), size);
 	if (data == NULL) {
 		_CBOR_FREE(item);
 		return NULL;
