@@ -37,12 +37,6 @@ extensions = [
 
 import subprocess, os
 
-read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
-
-if read_the_docs_build:
-    print os.getcwd()
-    subprocess.call('cd ../..; mkdir -p doc/build/doxygen; doxygen Doxyfile', shell=True)
-
 breathe_projects = {
     'libcbor': '../build/doxygen/xml'
 }
@@ -63,7 +57,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'libcbor'
-copyright = u'2014 - 2018, Pavel Kalvoda'
+copyright = u'2014 - 2016, Pavel Kalvoda'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -264,7 +258,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'libcbor', u'libcbor Documentation',
-   u'Pavel Kalvoda', 'libcbor', 'One line description of project.',
+   u'Pavel Kalvoda', 'libcbor', 'C library for parsing and generating CBOR.',
    'Miscellaneous'),
 ]
 
@@ -282,6 +276,9 @@ texinfo_documents = [
 
 # on_rtd is whether we are on readthedocs.org, this line of code grabbed from docs.readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+
+if on_rtd:
+    subprocess.call('cd ../..; doxygen', shell=True)
 
 if not on_rtd:  # only import and set the theme if we're building docs locally
     import sphinx_rtd_theme
