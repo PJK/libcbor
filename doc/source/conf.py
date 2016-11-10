@@ -37,11 +37,20 @@ extensions = [
 
 import subprocess, os
 
-read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+# on_rtd is whether we are on readthedocs.org, this line of code grabbed from docs.readthedocs.org
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
-if read_the_docs_build:
-    print os.getcwd()
-    subprocess.call('cd ../..; mkdir -p doc/build/doxygen; doxygen Doxyfile', shell=True)
+if on_rtd:
+    print subprocess.check_output('cd ../..; mkdir doc/build; doxygen', shell=True)
+
+if not on_rtd:  # only import and set the theme if we're building docs locally
+    import sphinx_rtd_theme
+    html_theme = 'sphinx_rtd_theme'
+    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
+
+print os.getcwd()
+print os.getcwd() + '/../build/doxygen/xml'
 
 breathe_projects = {
     'libcbor': '../build/doxygen/xml'
@@ -63,7 +72,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'libcbor'
-copyright = u'2014 - 2018, Pavel Kalvoda'
+copyright = u'2014 - 2016, Pavel Kalvoda'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -264,7 +273,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'libcbor', u'libcbor Documentation',
-   u'Pavel Kalvoda', 'libcbor', 'One line description of project.',
+   u'Pavel Kalvoda', 'libcbor', 'C library for parsing and generating CBOR.',
    'Miscellaneous'),
 ]
 
@@ -280,13 +289,6 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
 
-# on_rtd is whether we are on readthedocs.org, this line of code grabbed from docs.readthedocs.org
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-
-if not on_rtd:  # only import and set the theme if we're building docs locally
-    import sphinx_rtd_theme
-    html_theme = 'sphinx_rtd_theme'
-    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # otherwise, readthedocs.org uses their theme by default, so no need to specify it
 
