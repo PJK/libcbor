@@ -41,7 +41,7 @@ import subprocess, os
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 if on_rtd:
-    subprocess.call('cd ../..; doxygen', shell=True)
+    print subprocess.check_output('cd ../..; doxygen', shell=True)
 
 if not on_rtd:  # only import and set the theme if we're building docs locally
     import sphinx_rtd_theme
