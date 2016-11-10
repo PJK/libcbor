@@ -13,15 +13,12 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <assert.h>
-#include "cbor/data.h"
+#include "data.h"
+#include "cbor/configuration.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#define CBOR_MAJOR_VERSION ${CBOR_VERSION_MAJOR}
-#define CBOR_MINOR_VERSION ${CBOR_VERSION_MINOR}
-#define CBOR_PATCH_VERSION ${CBOR_VERSION_PATCH}
 
 static const uint8_t cbor_major_version = CBOR_MAJOR_VERSION;
 static const uint8_t cbor_minor_version = CBOR_MINOR_VERSION;
@@ -30,9 +27,6 @@ static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
 #define CBOR_VERSION TO_STR(CBOR_MAJOR_VERSION) "." TO_STR(CBOR_MINOR_VERSION) "." TO_STR(CBOR_PATCH_VERSION)
 #define CBOR_HEX_VERSION ((CBOR_MAJOR_VERSION << 16) | (CBOR_MINOR_VERSION << 8) | CBOR_PATCH_VERSION)
 
-#cmakedefine01 CBOR_CUSTOM_ALLOC
-#define CBOR_BUFFER_GROWTH ${CBOR_BUFFER_GROWTH}
-#cmakedefine01 CBOR_PRETTY_PRINTER
 
 /* http://stackoverflow.com/questions/1644868/c-define-macro-for-debug-printing */
 #ifdef DEBUG
