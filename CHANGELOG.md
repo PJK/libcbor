@@ -2,7 +2,7 @@ Next
 -------
 - remove cmocka from the subtree (always rely on system or user-provided version)
 - containerize CI builds
-- only build tests if explicitely enabled (`-DWITH_TESTS=ON`)
+- only build tests if explicitly enabled (`-DWITH_TESTS=ON`)
 - fixed static header declarations (by cedric-d)
 - improved documentation (by Michael Richardson)
 - improved `examples/readfile.c`
