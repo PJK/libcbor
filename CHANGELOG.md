@@ -1,12 +1,13 @@
 Next
 -------
-- remove cmocka from the subtree (always rely on system or user-provided version)
-- containerize CI builds
-- only build tests if explicitly enabled (`-DWITH_TESTS=ON`)
-- fixed static header declarations (by cedric-d)
-- improved documentation (by Michael Richardson)
-- improved `examples/readfile.c`
-- reworked (re)allocation to handle huge inputs and overflows in size_t [#16]
+- Remove cmocka from the subtree (always rely on system or user-provided version)
+- Containerize CI builds
+- Only build tests if explicitly enabled (`-DWITH_TESTS=ON`)
+- Fixed static header declarations (by cedric-d)
+- Improved documentation (by Michael Richardson)
+- Improved `examples/readfile.c`
+- Reworked (re)allocation to handle huge inputs and overflows in size_t [#16]
+- Improvements to C++ linkage (corrected `cbor_empty_callbacks`, fixed `restrict` pointers) (by Dennis Bijwaard)
 
 0.4.0 (2015-12-25)
 ---------------------
