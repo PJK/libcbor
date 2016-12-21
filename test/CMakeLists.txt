@@ -12,3 +12,6 @@ foreach (TEST ${TESTS})
     add_test(${NAME} ${NAME})
     add_dependencies(coverage ${NAME})
 endforeach (TEST)
+
+add_executable(cpp_linkage_test cpp_linkage_test.cpp)
+target_link_libraries(cpp_linkage_test cbor)
