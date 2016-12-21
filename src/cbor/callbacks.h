@@ -90,9 +90,9 @@ struct cbor_callbacks {
 	/** Half float */
 	cbor_float_callback float2;
 	/** Single float */
-	cbor_double_callback float8;
-	/** Double float */
 	cbor_float_callback float4;
+	/** Double float */
+	cbor_double_callback float8;
 	/** Undef */
 	cbor_simple_callback undefined;
 	/** Null */
