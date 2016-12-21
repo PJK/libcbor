@@ -8,6 +8,7 @@ Next
 - Improved `examples/readfile.c`
 - Reworked (re)allocation to handle huge inputs and overflows in size_t [#16]
 - Improvements to C++ linkage (corrected `cbor_empty_callbacks`, fixed `restrict` pointers) (by Dennis Bijwaard)
+- Fixed Linux installation directory depending on architecture [#34] (by jvymazal)
 
 0.4.0 (2015-12-25)
 ---------------------
