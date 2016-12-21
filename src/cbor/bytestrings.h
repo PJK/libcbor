@@ -59,7 +59,7 @@ cbor_mutable_data cbor_bytestring_handle(const cbor_item_t *item);
  * @param data The memory block. The caller gives up the ownership of the block. libcbor will deallocate it when appropriate using its free function
  * @param length Length of the data block
  */
-void cbor_bytestring_set_handle(cbor_item_t *item, cbor_mutable_data restrict data, size_t length);
+void cbor_bytestring_set_handle(cbor_item_t *item, cbor_mutable_data CBOR_RESTRICT_POINTER data, size_t length);
 
 /** Get the handle to the array of chunks
  * 
