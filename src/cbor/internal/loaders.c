@@ -37,7 +37,7 @@ uint32_t _cbor_load_uint32(const unsigned char *source)
 	return be32toh(*(uint32_t *) source);
 #else
 	#ifdef IS_BIG_ENDIAN
-		return *(uint16_t *) source;
+		return *(uint32_t *) source;
 	#else
 		return ((uint32_t) *(source + 0) << 0x18) +
 		       ((uint32_t) *(source + 1) << 0x10) +
