@@ -37,10 +37,10 @@ static void test_indef_map_start(void **state)
 
 int main(void)
 {
-	const UnitTest tests[] = {
-		unit_test(test_embedded_map_start),
-		unit_test(test_map_start),
-		unit_test(test_indef_map_start)
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test(test_embedded_map_start),
+		cmocka_unit_test(test_map_start),
+		cmocka_unit_test(test_indef_map_start)
 	};
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, NULL, NULL);
 }

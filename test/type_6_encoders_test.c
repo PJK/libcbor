@@ -30,9 +30,9 @@ static void test_tag(void **state)
 
 int main(void)
 {
-	const UnitTest tests[] = {
-		unit_test(test_embedded_tag),
-		unit_test(test_tag),
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test(test_embedded_tag),
+		cmocka_unit_test(test_tag),
 	};
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, NULL, NULL);
 }

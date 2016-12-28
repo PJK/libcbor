@@ -104,13 +104,13 @@ static void test_nested_tag(void **state)
 
 int main(void)
 {
-	const UnitTest tests[] = {
-		unit_test(test_embedded_tag),
-		unit_test(test_int8_tag),
-		unit_test(test_int16_tag),
-		unit_test(test_int32_tag),
-		unit_test(test_int64_tag),
-		unit_test(test_nested_tag)
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test(test_embedded_tag),
+		cmocka_unit_test(test_int8_tag),
+		cmocka_unit_test(test_int16_tag),
+		cmocka_unit_test(test_int32_tag),
+		cmocka_unit_test(test_int64_tag),
+		cmocka_unit_test(test_nested_tag)
 	};
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, NULL, NULL);
 }

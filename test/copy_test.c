@@ -231,21 +231,21 @@ static void test_floats(void **state)
 
 int main(void)
 {
-	const UnitTest tests[] = {
+	const struct CMUnitTest tests[] = {
 
-		unit_test(test_uints),
-		unit_test(test_negints),
-		unit_test(test_def_bytestring),
-		unit_test(test_indef_bytestring),
-		unit_test(test_def_string),
-		unit_test(test_indef_string),
-		unit_test(test_def_array),
-		unit_test(test_indef_array),
-		unit_test(test_def_map),
-		unit_test(test_indef_map),
-		unit_test(test_tag),
-		unit_test(test_ctrls),
-		unit_test(test_floats)
+		cmocka_unit_test(test_uints),
+		cmocka_unit_test(test_negints),
+		cmocka_unit_test(test_def_bytestring),
+		cmocka_unit_test(test_indef_bytestring),
+		cmocka_unit_test(test_def_string),
+		cmocka_unit_test(test_indef_string),
+		cmocka_unit_test(test_def_array),
+		cmocka_unit_test(test_indef_array),
+		cmocka_unit_test(test_def_map),
+		cmocka_unit_test(test_indef_map),
+		cmocka_unit_test(test_tag),
+		cmocka_unit_test(test_ctrls),
+		cmocka_unit_test(test_floats)
 	};
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, NULL, NULL);
 }

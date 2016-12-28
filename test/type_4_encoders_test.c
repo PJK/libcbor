@@ -51,11 +51,11 @@ static void test_indef_array_encoding(void **state)
 
 int main(void)
 {
-	const UnitTest tests[] = {
-		unit_test(test_embedded_array_start),
-		unit_test(test_array_start),
-		unit_test(test_indef_array_start),
-		unit_test(test_indef_array_encoding)
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test(test_embedded_array_start),
+		cmocka_unit_test(test_array_start),
+		cmocka_unit_test(test_indef_array_start),
+		cmocka_unit_test(test_indef_array_encoding)
 	};
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, NULL, NULL);
 }

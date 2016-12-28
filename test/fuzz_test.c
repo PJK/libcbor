@@ -94,8 +94,8 @@ int main(int argc, char * argv[])
 	else
 		seed = (unsigned) time(NULL);
 
-	const UnitTest tests[] = {
-		unit_test(fuzz)
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test(fuzz)
 	};
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, NULL, NULL);
 }

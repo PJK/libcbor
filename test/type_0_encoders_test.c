@@ -64,13 +64,13 @@ static void test_unspecified(void **state)
 
 int main(void)
 {
-	const UnitTest tests[] = {
-		unit_test(test_embedded_uint8),
-		unit_test(test_uint8),
-		unit_test(test_uint16),
-		unit_test(test_uint32),
-		unit_test(test_uint64),
-		unit_test(test_unspecified)
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test(test_embedded_uint8),
+		cmocka_unit_test(test_uint8),
+		cmocka_unit_test(test_uint16),
+		cmocka_unit_test(test_uint32),
+		cmocka_unit_test(test_uint64),
+		cmocka_unit_test(test_unspecified)
 	};
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, NULL, NULL);
 }

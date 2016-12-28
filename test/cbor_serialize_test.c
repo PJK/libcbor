@@ -304,30 +304,30 @@ static void test_auto_serialize(void **state)
 
 int main(void)
 {
-	const UnitTest tests[] = {
-		unit_test(test_serialize_uint8),
-		unit_test(test_serialize_uint16),
-		unit_test(test_serialize_uint32),
-		unit_test(test_serialize_uint64),
-		unit_test(test_serialize_negint8),
-		unit_test(test_serialize_negint16),
-		unit_test(test_serialize_negint32),
-		unit_test(test_serialize_negint64),
-		unit_test(test_serialize_definite_bytestring),
-		unit_test(test_serialize_indefinite_bytestring),
-		unit_test(test_serialize_definite_string),
-		unit_test(test_serialize_indefinite_string),
-		unit_test(test_serialize_definite_array),
-		unit_test(test_serialize_indefinite_array),
-		unit_test(test_serialize_definite_map),
-		unit_test(test_serialize_indefinite_map),
-		unit_test(test_serialize_tags),
-		unit_test(test_serialize_half),
-		unit_test(test_serialize_single),
-		unit_test(test_serialize_double),
-		unit_test(test_serialize_ctrl),
-		unit_test(test_serialize_long_ctrl),
-		unit_test(test_auto_serialize)
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test(test_serialize_uint8),
+		cmocka_unit_test(test_serialize_uint16),
+		cmocka_unit_test(test_serialize_uint32),
+		cmocka_unit_test(test_serialize_uint64),
+		cmocka_unit_test(test_serialize_negint8),
+		cmocka_unit_test(test_serialize_negint16),
+		cmocka_unit_test(test_serialize_negint32),
+		cmocka_unit_test(test_serialize_negint64),
+		cmocka_unit_test(test_serialize_definite_bytestring),
+		cmocka_unit_test(test_serialize_indefinite_bytestring),
+		cmocka_unit_test(test_serialize_definite_string),
+		cmocka_unit_test(test_serialize_indefinite_string),
+		cmocka_unit_test(test_serialize_definite_array),
+		cmocka_unit_test(test_serialize_indefinite_array),
+		cmocka_unit_test(test_serialize_definite_map),
+		cmocka_unit_test(test_serialize_indefinite_map),
+		cmocka_unit_test(test_serialize_tags),
+		cmocka_unit_test(test_serialize_half),
+		cmocka_unit_test(test_serialize_single),
+		cmocka_unit_test(test_serialize_double),
+		cmocka_unit_test(test_serialize_ctrl),
+		cmocka_unit_test(test_serialize_long_ctrl),
+		cmocka_unit_test(test_auto_serialize)
 	};
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, NULL, NULL);
 }

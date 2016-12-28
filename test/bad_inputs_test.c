@@ -91,16 +91,16 @@ static void test_7(void **state)
 
 int main(void)
 {
-	const UnitTest tests[] = {
-		unit_test(test_1),
-		unit_test(test_2),
-		unit_test(test_3),
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test(test_1),
+		cmocka_unit_test(test_2),
+		cmocka_unit_test(test_3),
 #ifdef SANE_MALLOC
-		unit_test(test_4),
-		unit_test(test_5),
+		cmocka_unit_test(test_4),
+		cmocka_unit_test(test_5),
 #endif
-		unit_test(test_6),
-		unit_test(test_7),
+		cmocka_unit_test(test_6),
+		cmocka_unit_test(test_7),
 	};
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, NULL, NULL);
 }

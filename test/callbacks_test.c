@@ -28,9 +28,9 @@ static void test_default_callbacks(void **state)
 
 int main(void)
 {
-	const UnitTest tests[] = {
+	const struct CMUnitTest tests[] = {
 
-		unit_test(test_default_callbacks)
+		cmocka_unit_test(test_default_callbacks)
 	};
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, NULL, NULL);
 }

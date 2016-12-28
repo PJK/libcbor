@@ -145,16 +145,16 @@ static void test_inline_creation(void **state)
 
 int main(void)
 {
-	const UnitTest tests[] = {
-		unit_test(test_very_short_int),
-		unit_test(test_short_int),
-		unit_test(test_half_int),
-		unit_test(test_int),
-		unit_test(test_long_int),
-		unit_test(test_incomplete_data),
-		unit_test(test_refcounting),
-		unit_test(test_empty_input),
-		unit_test(test_inline_creation)
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test(test_very_short_int),
+		cmocka_unit_test(test_short_int),
+		cmocka_unit_test(test_half_int),
+		cmocka_unit_test(test_int),
+		cmocka_unit_test(test_long_int),
+		cmocka_unit_test(test_incomplete_data),
+		cmocka_unit_test(test_refcounting),
+		cmocka_unit_test(test_empty_input),
+		cmocka_unit_test(test_inline_creation)
 	};
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, NULL, NULL);
 }

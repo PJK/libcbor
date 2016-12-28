@@ -104,13 +104,13 @@ static void test_bool(void **state)
 
 int main(void)
 {
-	const UnitTest tests[] = {
-		unit_test(test_float2),
-		unit_test(test_float4),
-		unit_test(test_float8),
-		unit_test(test_null),
-		unit_test(test_undef),
-		unit_test(test_bool)
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test(test_float2),
+		cmocka_unit_test(test_float4),
+		cmocka_unit_test(test_float8),
+		cmocka_unit_test(test_null),
+		cmocka_unit_test(test_undef),
+		cmocka_unit_test(test_bool)
 	};
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, NULL, NULL);
 }

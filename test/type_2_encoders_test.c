@@ -37,10 +37,10 @@ static void test_indef_bytestring_start(void **state)
 
 int main(void)
 {
-	const UnitTest tests[] = {
-		unit_test(test_embedded_bytestring_start),
-		unit_test(test_bytestring_start),
-		unit_test(test_indef_bytestring_start)
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test(test_embedded_bytestring_start),
+		cmocka_unit_test(test_bytestring_start),
+		cmocka_unit_test(test_indef_bytestring_start)
 	};
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, NULL, NULL);
 }

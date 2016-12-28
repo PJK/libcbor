@@ -37,10 +37,10 @@ static void test_indef_string_start(void **state)
 
 int main(void)
 {
-	const UnitTest tests[] = {
-		unit_test(test_embedded_string_start),
-		unit_test(test_string_start),
-		unit_test(test_indef_string_start)
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test(test_embedded_string_start),
+		cmocka_unit_test(test_string_start),
+		cmocka_unit_test(test_indef_string_start)
 	};
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, NULL, NULL);
 }

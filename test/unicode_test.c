@@ -38,9 +38,9 @@ static void test_invalid_sequence(void **state)
 
 int main(void)
 {
-	const UnitTest tests[] = {
-		unit_test(test_missing_bytes),
-		unit_test(test_invalid_sequence)
+	const struct CMUnitTest tests[] = {
+		cmocka_unit_test(test_missing_bytes),
+		cmocka_unit_test(test_invalid_sequence)
 	};
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, NULL, NULL);
 }
