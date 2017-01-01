@@ -68,8 +68,10 @@ set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-flto")
 
 include(CheckTypeSize)
 check_type_size("size_t" SIZEOF_SIZE_T)
-if (SIZEOF_SIZE_T LESS 8)
+if(SIZEOF_SIZE_T LESS 8)
     message(WARNING "Your size_t is less than 8 bytes. Long items with 64b length specifiers might not work as expected. Make sure to run the tests!")
+else()
+    add_definitions(-DEIGHT_BYTE_SIZE_T)
 endif()
 
 enable_testing()

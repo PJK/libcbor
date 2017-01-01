@@ -274,7 +274,7 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent)
 		fprintf(out, "%*s[CBOR_TYPE_BYTESTRING] ", indent, " ");
 		if (cbor_bytestring_is_indefinite(item)) {
 			fprintf(out,
-					"Indefinite, with %"PRIuPTR" chunks:\n",
+					"Indefinite, with %zu chunks:\n",
 					cbor_bytestring_chunk_count(item));
 			for (size_t i = 0; i < cbor_bytestring_chunk_count(item); i++)
 				_cbor_nested_describe(
@@ -283,7 +283,7 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent)
 					indent + 4);
 		} else {
 			fprintf(out,
-					"Definite, length %"PRIuPTR"B\n",
+					"Definite, length %zuB\n",
 					cbor_bytestring_length(item));
 		}
 		break;
@@ -292,7 +292,7 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent)
 		fprintf(out, "%*s[CBOR_TYPE_STRING] ", indent, " ");
 		if (cbor_string_is_indefinite(item)) {
 			fprintf(out,
-					"Indefinite, with %"PRIuPTR" chunks:\n",
+					"Indefinite, with %zu chunks:\n",
 					cbor_string_chunk_count(item));
 			for (size_t i = 0; i < cbor_string_chunk_count(item); i++)
 				_cbor_nested_describe(
@@ -301,7 +301,7 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent)
 					indent + 4);
 		} else {
 			fprintf(out,
-					"Definite, length %"PRIuPTR"B, %"PRIuPTR" codepoints\n",
+					"Definite, length %zuB, %zu codepoints\n",
 					cbor_string_length(item),
 					cbor_string_codepoint_count(item));
 			/* Careful - this doesn't support multibyte characters! */
@@ -318,11 +318,11 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent)
 		fprintf(out, "%*s[CBOR_TYPE_ARRAY] ", indent, " ");
 		if (cbor_array_is_definite(item)) {
 			fprintf(out,
-					"Definite, size: %"PRIuPTR"\n",
+					"Definite, size: %zu\n",
 					cbor_array_size(item));
 		} else {
 			fprintf(out,
-					"Indefinite, size:  %"PRIuPTR"\n",
+					"Indefinite, size:  %zu\n",
 					cbor_array_size(item));
 		}
 
@@ -337,11 +337,11 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent)
 		fprintf(out, "%*s[CBOR_TYPE_MAP] ", indent, " ");
 		if (cbor_map_is_definite(item)) {
 			fprintf(out,
-					"Definite, size: %"PRIuPTR"\n",
+					"Definite, size: %zu\n",
 					cbor_map_size(item));
 		} else {
 			fprintf(out,
-					"Indefinite, size:  %"PRIuPTR"\n",
+					"Indefinite, size:  %zu\n",
 					cbor_map_size(item));
 		}
 
@@ -359,7 +359,7 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent)
 	};
 	case CBOR_TYPE_TAG: {
 		fprintf(out, "%*s[CBOR_TYPE_TAG] ", indent, " ");
-		fprintf(out, "Value: %"PRIuPTR"\n", cbor_tag_value(item));
+		fprintf(out, "Value: %"PRIu64"\n", cbor_tag_value(item));
 		_cbor_nested_describe(cbor_tag_item(item), out, indent + 4);
 		break;
 	};

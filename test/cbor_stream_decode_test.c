@@ -184,6 +184,7 @@ static void test_bstring_int32_decoding(void **state)
 	);
 }
 
+#ifdef EIGHT_BYTE_SIZE_T
 unsigned char bstring_int64_data[] = { 0x5B, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 /*, [4294967296 bytes] */ };
 static void test_bstring_int64_decoding(void **state)
 {
@@ -192,7 +193,7 @@ static void test_bstring_int64_decoding(void **state)
 		decode(bstring_int64_data, 9 + 4294967296)
 	);
 }
-
+#endif
 
 unsigned char bstring_indef_1_data[] = { 0x5F, 0x40 /* Empty byte string */, 0xFF };
 static void test_bstring_indef_decoding_1(void **state)
@@ -646,7 +647,9 @@ int main(void)
 		cmocka_unit_test(test_bstring_int8_decoding),
 		cmocka_unit_test(test_bstring_int16_decoding),
 		cmocka_unit_test(test_bstring_int32_decoding),
+#ifdef EIGHT_BYTE_SIZE_T
 		cmocka_unit_test(test_bstring_int64_decoding),
+#endif
 		cmocka_unit_test(test_bstring_indef_decoding_1),
 		cmocka_unit_test(test_bstring_indef_decoding_2),
 		cmocka_unit_test(test_bstring_indef_decoding_3),

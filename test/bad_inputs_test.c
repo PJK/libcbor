@@ -78,7 +78,8 @@ static void test_6(void **state)
 	assert_int_equal(res.error.position, 2);
 }
 
-/* Extremely high size value (overflows size_t in representation size) */
+#ifdef EIGHT_BYTE_SIZE_T
+/* Extremely high size value (overflows size_t in representation size). Only works with 64b sizes */
 unsigned char data7[] = {0xA2, 0x9B, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 static void test_7(void **state)
 {
@@ -87,6 +88,7 @@ static void test_7(void **state)
 	assert_true(res.error.code == CBOR_ERR_MEMERROR);
 	assert_int_equal(res.error.position, 10);
 }
+#endif
 
 
 int main(void)
@@ -100,7 +102,9 @@ int main(void)
 		cmocka_unit_test(test_5),
 #endif
 		cmocka_unit_test(test_6),
+#ifdef EIGHT_BYTE_SIZE_T
 		cmocka_unit_test(test_7),
+#endif
 	};
 	return cmocka_run_group_tests(tests, NULL, NULL);
 }

@@ -56,7 +56,8 @@ static void test_float8(void **state)
 	assert_true(cbor_isa_float_ctrl(float_ctrl));
 	assert_true(cbor_is_float(float_ctrl));
 	assert_true(cbor_float_get_width(float_ctrl) == CBOR_FLOAT_64);
-	assert_true(cbor_float_get_float8(float_ctrl) == 1.0e+300);
+	// XXX: the cast prevents promotion to 80-bit floats on 32-bit x86
+	assert_true(cbor_float_get_float8(float_ctrl) == (double) 1.0e+300);
 	cbor_decref(&float_ctrl);
 	assert_null(float_ctrl);
 }
