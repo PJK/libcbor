@@ -238,11 +238,12 @@ void cbor_intermediate_decref(cbor_item_t * item);
  */
 size_t cbor_refcount(const cbor_item_t * item);
 
-/** Provide CPP-like move construct
+/** Provides CPP-like move construct
  *
- * Decreases the reference count by one, but does not deallocate the item even if it reach zero.
- * This is useful for passing intermediate values to functions that increase reference count,
- * Should only be used with functions that `incref` their arguments.
+ * Decreases the reference count by one, but does not deallocate the item even if its refcount
+ * reaches zero. This is useful for passing intermediate values to functions that increase
+ * reference count. Should only be used with functions that `incref` their arguments.
+ *
  * \rst
  * .. warning:: If the item is moved without correctly increasing the reference count afterwards, the memory will be leaked.
  * \endrst
