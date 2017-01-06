@@ -14,6 +14,8 @@
  */
 
 #include <string.h>
+#include <math.h>
+#include <float.h>
 #include <cjson/cJSON.h>
 #include "cbor.h"
 #include "cbor/internal/builder_callbacks.h"
@@ -24,37 +26,14 @@ typedef void(*cbor_load_callback_t)(cJSON *, const struct cbor_callbacks *, void
 cbor_item_t * cjson_cbor_load(void *source, cbor_load_callback_t cbor_load_callback)
 {
 	static struct cbor_callbacks callbacks = {
-		.uint8 = &cbor_builder_uint8_callback,
-		.uint16 = &cbor_builder_uint16_callback,
-		.uint32 = &cbor_builder_uint32_callback,
 		.uint64 = &cbor_builder_uint64_callback,
-
-		.negint8 = &cbor_builder_negint8_callback,
-		.negint16 = &cbor_builder_negint16_callback,
-		.negint32 = &cbor_builder_negint32_callback,
 		.negint64 = &cbor_builder_negint64_callback,
-
-		.byte_string = &cbor_builder_byte_string_callback,
-		.byte_string_start = &cbor_builder_byte_string_start_callback,
-
 		.string = &cbor_builder_string_callback,
-		.string_start = &cbor_builder_string_start_callback,
-
 		.array_start = &cbor_builder_array_start_callback,
-		.indef_array_start = &cbor_builder_indef_array_start_callback,
-
 		.map_start = &cbor_builder_map_start_callback,
-		.indef_map_start = &cbor_builder_indef_map_start_callback,
-
-		.tag = &cbor_builder_tag_callback,
-
 		.null = &cbor_builder_null_callback,
-		.undefined = &cbor_builder_undefined_callback,
 		.boolean = &cbor_builder_boolean_callback,
-		.float2 = &cbor_builder_float2_callback,
 		.float4 = &cbor_builder_float4_callback,
-		.float8 = &cbor_builder_float8_callback,
-		.indef_break = &cbor_builder_indef_break_callback
 	};
 
 	/* Context stack */
@@ -93,7 +72,16 @@ void cjson_cbor_stream_decode(cJSON * source,
 		}
 		case cJSON_Number:
 		{
-			callbacks->uint32(context, source->valueint);
+			// This is stupid -- ints and doubles cannot are not distinguished
+			if (fabs(source->valuedouble - source->valueint) > DBL_EPSILON) {
+				callbacks->float4(context, source->valuedouble);
+			} else {
+				if (source->valueint >= 0) {
+					callbacks->uint64(context, source->valueint);
+				} else {
+					callbacks->negint64(context, source->valueint + 1);
+				}
+			}
 			return;
 		}
 		case cJSON_String:
