@@ -51,8 +51,8 @@ cbor_item_t * cjson_cbor_load(void *source, cbor_load_callback_t cbor_load_callb
 }
 
 void cjson_cbor_stream_decode(cJSON * source,
-													const struct cbor_callbacks *callbacks,
-													void * context)
+							  const struct cbor_callbacks *callbacks,
+							  void * context)
 {
 	switch (source->type) {
 		case cJSON_False:
@@ -76,6 +76,7 @@ void cjson_cbor_stream_decode(cJSON * source,
 			if (fabs(source->valuedouble - source->valueint) > DBL_EPSILON) {
 				callbacks->float4(context, source->valuedouble);
 			} else {
+				// XXX: This is not portable
 				if (source->valueint >= 0) {
 					callbacks->uint64(context, source->valueint);
 				} else {
@@ -86,6 +87,7 @@ void cjson_cbor_stream_decode(cJSON * source,
 		}
 		case cJSON_String:
 		{
+			// XXX: Assume cJSON handled unicode correctly
 			callbacks->string(context, (unsigned char *)source->valuestring, strlen(source->valuestring));
 			return;
 		}
