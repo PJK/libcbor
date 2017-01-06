@@ -9,6 +9,7 @@
 /**
  * This code demonstrates how cJSON (https://github.com/DaveGamble/cJSON) callbacks
  * can be used in conjuction with the streaming parser to translate JSON to CBOR.
+ * Please note that cbor_builder_* APIs are internal and thus subject to change.
  *
  * The example will only be compiled when cJSON is available
  */
@@ -43,7 +44,6 @@ cbor_item_t * cjson_cbor_load(void *source, cbor_load_callback_t cbor_load_callb
 	struct _cbor_decoder_context context = (struct _cbor_decoder_context) {
 		.stack = &stack,
 	};
-	struct cbor_decoder_result decode_result;
 
 	cbor_load_callback(source, &callbacks, &context);
 
@@ -151,5 +151,4 @@ int main(int argc, char * argv[])
 	fflush(stdout);
 	cJSON_Delete(json);
 	cbor_decref(&cbor);
-
 }
