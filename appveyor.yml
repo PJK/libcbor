@@ -8,6 +8,10 @@ branches:
 platform: x64
 
 
+environment:
+  matrix:
+  - CMAKE_GENERATOR: "Visual Studio 15 2017 Win64"
+
 # Via https://github.com/apitrace/apitrace/blob/master/appveyor.yml
 
 before_build:
