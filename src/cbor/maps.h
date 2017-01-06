@@ -39,7 +39,7 @@ size_t cbor_map_allocated(const cbor_item_t *item);
  * @param size The number of slots to preallocate
  * @return **new** definite map. `NULL` on malloc failure.
  */
-cbor_item_t *cbor_new_definite_map(const size_t size);
+cbor_item_t *cbor_new_definite_map(size_t size);
 
 /** Create a new indefinite map
  *

@@ -29,9 +29,13 @@ extern "C" {
 
 #else
 
-#define CBOR_RESTRICT_POINTER restrict
+// MSVC + C++ workaround
+#define CBOR_RESTRICT_POINTER CBOR_RESTRICT_SPECIFIER
 
 #endif
+
+// MSVC workaround
+#define CBOR_INLINE_FUNCTION CBOR_INLINE_SPECIFIER
 
 static const uint8_t cbor_major_version = CBOR_MAJOR_VERSION;
 static const uint8_t cbor_minor_version = CBOR_MINOR_VERSION;
