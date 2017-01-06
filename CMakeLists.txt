@@ -58,14 +58,22 @@ set(CPACK_PACKAGE_VERSION_PATCH ${CBOR_VERSION_PATCH})
 
 include(CPack)
 
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -pedantic -g -ggdb -DDEBUG=true")
-set(CMAKE_C_FLAGS_RELEASE "-O3 -flto -Wall -pedantic -DNDEBUG")
-
 if(MINGW)
     # https://github.com/PJK/libcbor/issues/13
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
-else()
+elseif(NOT MSVC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
+endif()
+
+if(MSVC)
+    set(CBOR_RESTRICT_SPECIFIER "__restrict")
+    set(CBOR_INLINE_SPECIFIER "__inline")
+else()
+    set(CBOR_RESTRICT_SPECIFIER "restrict")
+    set(CBOR_INLINE_SPECIFIER "inline")
+
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -pedantic -g -ggdb -DDEBUG=true")
+    set(CMAKE_C_FLAGS_RELEASE "-O3 -flto -Wall -pedantic -DNDEBUG")
 endif()
 
 set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-g")

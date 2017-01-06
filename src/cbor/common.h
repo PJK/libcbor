@@ -29,7 +29,9 @@ extern "C" {
 
 #else
 
-#define CBOR_RESTRICT_POINTER restrict
+// Windows + C++ workarounds
+#define CBOR_RESTRICT_POINTER CBOR_RESTRICT_SPECIFIER
+#define CBOR_INLINE_FUNCTION CBOR_INLINE_SPECIFIER
 
 #endif
 
