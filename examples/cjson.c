@@ -19,14 +19,10 @@
 #include "cbor/internal/builder_callbacks.h"
 #include "cbor/internal/loaders.h"
 
-typedef struct cbor_decoder_result(*cbor_load_callback_t)(void *, size_t,  const struct cbor_callbacks *, void *);
+typedef void(*cbor_load_callback_t)(cJSON *, const struct cbor_callbacks *, void *);
 
-cbor_item_t *cjson_cbor_load(void *source,
-							 size_t source_size,
-							 struct cbor_load_result *result,
-							 cbor_load_callback_t cbor_load_callback)
+cbor_item_t * cjson_cbor_load(void *source, cbor_load_callback_t cbor_load_callback)
 {
-	/* Context stack */
 	static struct cbor_callbacks callbacks = {
 		.uint8 = &cbor_builder_uint8_callback,
 		.uint16 = &cbor_builder_uint16_callback,
@@ -61,134 +57,59 @@ cbor_item_t *cjson_cbor_load(void *source,
 		.indef_break = &cbor_builder_indef_break_callback
 	};
 
-	if (source_size == 0) {
-		result->error.code = CBOR_ERR_NODATA;
-		return NULL;
-	}
+	/* Context stack */
 	struct _cbor_stack stack = _cbor_stack_init();
 
 	/* Target for callbacks */
 	struct _cbor_decoder_context context = (struct _cbor_decoder_context) {
 		.stack = &stack,
-		.creation_failed = false,
-		.syntax_error = false
 	};
 	struct cbor_decoder_result decode_result;
-	*result = (struct cbor_load_result) {.read = 0, .error = {.code = CBOR_ERR_NONE}};
 
-	do {
-		if (source_size > result->read) { /* Check for overflows */
-			decode_result = cbor_load_callback(
-					source, 24,
-					&callbacks,
-					&context
-			);
-		} else {
-			result->error = (struct cbor_error) {
-					.code = CBOR_ERR_NOTENOUGHDATA,
-					.position = result->read
-			};
-			goto error;
-		}
+	cbor_load_callback(source, &callbacks, &context);
 
-		switch (decode_result.status) {
-			case CBOR_DECODER_FINISHED:
-				/* Everything OK */
-			{
-				result->read += decode_result.read;
-				break;
-			}
-			case CBOR_DECODER_NEDATA:
-				/* Data length doesn't match MTB expectation */
-			{
-				result->error.code = CBOR_ERR_NOTENOUGHDATA;
-				goto error;
-			}
-			case CBOR_DECODER_EBUFFER:
-				/* Fallthrough */
-			case CBOR_DECODER_ERROR:
-				/* Reserved/malformated item */
-			{
-				result->error.code = CBOR_ERR_MALFORMATED;
-				goto error;
-			}
-		}
-
-		if (context.creation_failed) {
-			/* Most likely unsuccessful allocation - our callback has failed */
-			result->error.code = CBOR_ERR_MEMERROR;
-			goto error;
-		} else if (context.syntax_error) {
-			result->error.code = CBOR_ERR_SYNTAXERROR;
-			goto error;
-		}
-	} while (stack.size > 0);
-
-	/* Move the result before free */
-	cbor_item_t *result_item = context.root;
-	return result_item;
-
-	error:
-	result->error.position = result->read;
-	//debug_print("Failed with decoder error %d at %d\n", result->error.code, result->error.position);
-	//cbor_describe(stack.top->item, stdout);
-	/* Free the stack */
-	while (stack.size > 0) {
-		cbor_decref(&stack.top->item);
-		_cbor_stack_pop(&stack);
-	}
-	return NULL;
+	return context.root;
 }
 
-struct cbor_decoder_result cjson_cbor_stream_decode(void *source_void, size_t source_size,
+void cjson_cbor_stream_decode(cJSON * source,
 													const struct cbor_callbacks *callbacks,
-													void *context)
+													void * context)
 {
-	cJSON *source = source_void;
-	/* If we have no data, we cannot read even the MTB */
-	if (source_size < 1) {
-		return (struct cbor_decoder_result) {0, CBOR_DECODER_EBUFFER};
-	}
-
-	/* If we have a byte, assume it's the MTB */
-	struct cbor_decoder_result result = {1, CBOR_DECODER_FINISHED};
-
 	switch (source->type) {
 		case cJSON_False:
 		{
 			callbacks->boolean(context, false);
-			return result;
+			return;
 		}
 		case cJSON_True:
 		{
-			callbacks->boolean(context, false);
-			return result;
+			callbacks->boolean(context, true);
+			return;
 		}
 		case cJSON_NULL:
 		{
 			callbacks->null(context);
-			return result;
+			return;
 		}
 		case cJSON_Number:
 		{
 			callbacks->uint32(context, source->valueint);
-			return result;
+			return;
 		}
 		case cJSON_String:
 		{
 			callbacks->string(context, (unsigned char *)source->valuestring, strlen(source->valuestring));
-			return result;
+			return;
 		}
 		case cJSON_Array:
 		{
 			callbacks->array_start(context, cJSON_GetArraySize(source));
 			cJSON *item = source->child;
 			while (item != NULL) {
-				cjson_cbor_stream_decode(item, 2, callbacks, context);
+				cjson_cbor_stream_decode(item, callbacks, context);
 				item = item->next;
 			}
-
-			return result;
+			return;
 		}
 		case cJSON_Object:
 		{
@@ -196,23 +117,12 @@ struct cbor_decoder_result cjson_cbor_stream_decode(void *source_void, size_t so
 			cJSON *item = source->child;
 			while (item != NULL) {
 				callbacks->string(context, (unsigned char *) item->string, strlen(item->string));
-				cjson_cbor_stream_decode(item, 2, callbacks, context);
+				cjson_cbor_stream_decode(item, callbacks, context);
 				item = item->next;
 			}
-
-			return result;
-		}
-		default: /* Never happens - this shuts up the compiler */
-		{
-			return result;
+			return;
 		}
 	}
-}
-
-cbor_item_t * cjson_to_cbor(cJSON *json)
-{
-	struct cbor_load_result result;
-	return cjson_cbor_load(json, 10, &result, cjson_cbor_stream_decode);
 }
 
 void usage()
@@ -238,7 +148,7 @@ int main(int argc, char * argv[])
 
 	/* Convert between JSON and CBOR */
 	cJSON * json = cJSON_Parse(json_buffer);
-	cbor_item_t * cbor = cjson_to_cbor(json);
+	cbor_item_t * cbor = cjson_cbor_load(json, cjson_cbor_stream_decode);
 
 	/* Print out CBOR bytes */
 	unsigned char * buffer;
