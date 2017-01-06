@@ -242,7 +242,7 @@ cbor_item_t * cbor_copy(cbor_item_t * item)
 #include <inttypes.h>
 #include <wchar.h>
 #include <locale.h>
-#include <unistd.h>
+#include <stdlib.h>
 
 #define __STDC_FORMAT_MACROS
 
