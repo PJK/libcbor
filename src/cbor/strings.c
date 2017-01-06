@@ -56,7 +56,7 @@ cbor_item_t *cbor_build_stringn(const char *val, size_t length)
 	return item;
 }
 
-void cbor_string_set_handle(cbor_item_t *item, unsigned char * restrict data, size_t length)
+void cbor_string_set_handle(cbor_item_t *item, cbor_mutable_data CBOR_RESTRICT_POINTER data, size_t length)
 {
 	assert(cbor_isa_string(item));
 	assert(cbor_string_is_definite(item));
