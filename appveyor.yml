@@ -16,6 +16,7 @@ environment:
 
 before_build:
 - cmake -H. -Bbuild -G "%CMAKE_GENERATOR%"
+- C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /?
 
 build_script:
 - if "%APPVEYOR_REPO_TAG%"=="true" (set CONFIGURATION=RelWithDebInfo) else (set CONFIGURATION=Debug)
