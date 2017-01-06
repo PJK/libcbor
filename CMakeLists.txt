@@ -66,7 +66,8 @@ elseif(NOT MSVC)
 endif()
 
 if(MSVC)
-    set(CBOR_RESTRICT_SPECIFIER "__restrict")
+    # This just doesn't work right -- https://msdn.microsoft.com/en-us/library/5ft82fed.aspx
+    set(CBOR_RESTRICT_SPECIFIER "")
     set(CBOR_INLINE_SPECIFIER "__inline")
 else()
     set(CBOR_RESTRICT_SPECIFIER "restrict")
