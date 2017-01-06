@@ -9,9 +9,9 @@
 #include "cbor/internal/builder_callbacks.h"
 #include "cbor/internal/loaders.h"
 
-cbor_item_t *cbor_load(cbor_data source,
-					   size_t source_size,
-					   struct cbor_load_result *result)
+cbor_item_t * cbor_load(cbor_data source,
+						size_t source_size,
+						struct cbor_load_result *result)
 {
 	/* Context stack */
 	static struct cbor_callbacks callbacks = {

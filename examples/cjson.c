@@ -19,16 +19,12 @@
 #include "cbor/internal/builder_callbacks.h"
 #include "cbor/internal/loaders.h"
 
-#ifndef CBOR_LOAD_CALLBACK_T_DEFINED
 typedef struct cbor_decoder_result(*cbor_load_callback_t)(void *, size_t,  const struct cbor_callbacks *, void *);
-#endif
-
-
 
 cbor_item_t *cjson_cbor_load(void *source,
 							 size_t source_size,
 							 struct cbor_load_result *result,
-							 cbor_load_callback_t *cbor_load_callback)
+							 cbor_load_callback_t cbor_load_callback)
 {
 	/* Context stack */
 	static struct cbor_callbacks callbacks = {
@@ -82,10 +78,11 @@ cbor_item_t *cjson_cbor_load(void *source,
 
 	do {
 		if (source_size > result->read) { /* Check for overflows */
-			decode_result = (*cbor_load_callback)(
+			decode_result = cbor_load_callback(
 					source, 24,
 					&callbacks,
-					&context);
+					&context
+			);
 		} else {
 			result->error = (struct cbor_error) {
 					.code = CBOR_ERR_NOTENOUGHDATA,
@@ -156,10 +153,6 @@ struct cbor_decoder_result cjson_cbor_stream_decode(void *source_void, size_t so
 	/* If we have a byte, assume it's the MTB */
 	struct cbor_decoder_result result = {1, CBOR_DECODER_FINISHED};
 
-	const char *name = source->string;
-	if (name) {
-		callbacks->string(context, (unsigned char *)name, strlen(name));
-	}
 	switch (source->type) {
 		case cJSON_False:
 		{
@@ -171,7 +164,11 @@ struct cbor_decoder_result cjson_cbor_stream_decode(void *source_void, size_t so
 			callbacks->boolean(context, false);
 			return result;
 		}
-			/* case cJSON_NULL: */
+		case cJSON_NULL:
+		{
+			callbacks->null(context);
+			return result;
+		}
 		case cJSON_Number:
 		{
 			callbacks->uint32(context, source->valueint);
@@ -185,25 +182,24 @@ struct cbor_decoder_result cjson_cbor_stream_decode(void *source_void, size_t so
 		case cJSON_Array:
 		{
 			callbacks->array_start(context, cJSON_GetArraySize(source));
-			cJSON *item;
-			cJSON_Foreach_Array_Item_Begin(source, item)
-			{
-				cjson_cbor_stream_decode(item , 2, callbacks, context);
-
+			cJSON *item = source->child;
+			while (item != NULL) {
+				cjson_cbor_stream_decode(item, 2, callbacks, context);
+				item = item->next;
 			}
-			cJSON_Foreach_Array_Item_End(source, item)
+
 			return result;
 		}
 		case cJSON_Object:
 		{
 			callbacks->map_start(context, cJSON_GetArraySize(source));
-			cJSON *item;
-			cJSON_Foreach_Object_Item_Begin(source, item)
-			{
-				cjson_cbor_stream_decode(item , 2, callbacks, context);
-
+			cJSON *item = source->child;
+			while (item != NULL) {
+				callbacks->string(context, (unsigned char *) item->string, strlen(item->string));
+				cjson_cbor_stream_decode(item, 2, callbacks, context);
+				item = item->next;
 			}
-			cJSON_Foreach_Object_Item_End(source, item)
+
 			return result;
 		}
 		default: /* Never happens - this shuts up the compiler */
@@ -213,15 +209,47 @@ struct cbor_decoder_result cjson_cbor_stream_decode(void *source_void, size_t so
 	}
 }
 
-cbor_item_t *
-cjson_to_cbor(cJSON *json)
+cbor_item_t * cjson_to_cbor(cJSON *json)
 {
 	struct cbor_load_result result;
-	cbor_load_callback_t call = &cjson_cbor_stream_decode;
-	return (cjson_cbor_load((void *)json, 10, &result, &call));
+	return cjson_cbor_load(json, 10, &result, cjson_cbor_stream_decode);
+}
+
+void usage()
+{
+	printf("Usage: cjson [input JSON file]\n");
+	exit(1);
 }
 
 int main(int argc, char * argv[])
 {
+	if (argc != 2)
+		usage();
+	FILE * f = fopen(argv[1], "rb");
+	if (f == NULL)
+		usage();
+	/* Read input file into a buffer (cJSON doesn't work with streams) */
+	fseek(f, 0, SEEK_END);
+	size_t length = (size_t)ftell(f);
+	fseek(f, 0, SEEK_SET);
+	char * json_buffer = malloc(length + 1);
+	fread(json_buffer, length, 1, f);
+	json_buffer[length] = '\0';
+
+	/* Convert between JSON and CBOR */
+	cJSON * json = cJSON_Parse(json_buffer);
+	cbor_item_t * cbor = cjson_to_cbor(json);
+
+	/* Print out CBOR bytes */
+	unsigned char * buffer;
+	size_t buffer_size,
+			cbor_length = cbor_serialize_alloc(cbor, &buffer, &buffer_size);
+
+	fwrite(buffer, 1, cbor_length, stdout);
+
+	free(buffer);
+	fflush(stdout);
+	cJSON_Delete(json);
+	cbor_decref(&cbor);
 
 }
