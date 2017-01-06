@@ -23,3 +23,5 @@ build_script:
 - cmake --build build --config "%CONFIGURATION%"
 
 # TODO enable CMocka tests, maybe package the binaries
+# TODO add MinGW
+# TODO add older MSVC

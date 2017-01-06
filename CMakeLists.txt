@@ -68,7 +68,8 @@ endif()
 if(MSVC)
     # This just doesn't work right -- https://msdn.microsoft.com/en-us/library/5ft82fed.aspx
     set(CBOR_RESTRICT_SPECIFIER "")
-    set(CBOR_INLINE_SPECIFIER "__inline")
+    # This also didn't link -- https://msdn.microsoft.com/en-us/library/799kze2z.aspx
+    set(CBOR_INLINE_SPECIFIER "")
 else()
     set(CBOR_RESTRICT_SPECIFIER "restrict")
     set(CBOR_INLINE_SPECIFIER "inline")
