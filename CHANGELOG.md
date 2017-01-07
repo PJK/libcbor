@@ -10,6 +10,7 @@ Next
 - Improvements to C++ linkage (corrected `cbor_empty_callbacks`, fixed `restrict` pointers) (by Dennis Bijwaard)
 - Fixed Linux installation directory depending on architecture [#34] (by jvymazal)
 - Improved 32-bit support [#35]
+- Fixed MSVC compatibility [#31]
 
 0.4.0 (2015-12-25)
 ---------------------
