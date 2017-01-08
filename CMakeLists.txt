@@ -68,11 +68,8 @@ endif()
 if(MSVC)
     # This just doesn't work right -- https://msdn.microsoft.com/en-us/library/5ft82fed.aspx
     set(CBOR_RESTRICT_SPECIFIER "")
-    # This also didn't link -- https://msdn.microsoft.com/en-us/library/799kze2z.aspx
-    set(CBOR_INLINE_SPECIFIER "")
 else()
     set(CBOR_RESTRICT_SPECIFIER "restrict")
-    set(CBOR_INLINE_SPECIFIER "inline")
 
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -pedantic -g -ggdb -DDEBUG=true")
     set(CMAKE_C_FLAGS_RELEASE "-O3 -flto -Wall -pedantic -DNDEBUG")

@@ -34,9 +34,6 @@ extern "C" {
 
 #endif
 
-// MSVC workaround
-#define CBOR_INLINE_FUNCTION CBOR_INLINE_SPECIFIER
-
 static const uint8_t cbor_major_version = CBOR_MAJOR_VERSION;
 static const uint8_t cbor_minor_version = CBOR_MINOR_VERSION;
 static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
