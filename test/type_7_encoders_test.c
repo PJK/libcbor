@@ -45,14 +45,20 @@ static void test_break(void **state)
 
 static void test_half(void **state)
 {
-	assert_int_equal(3, cbor_encode_half(1.5, buffer, 512));
+	assert_int_equal(3, cbor_encode_half(1.5f, buffer, 512));
 	assert_memory_equal(buffer, ((unsigned char[]) {0xF9, 0x3E, 0x00}), 3);
 	assert_int_equal(3, cbor_encode_half(-0.0f, buffer, 512));
 	assert_memory_equal(buffer, ((unsigned char[]) {0xF9, 0x80, 0x00}), 3);
 	assert_int_equal(3, cbor_encode_half(0.0f, buffer, 512));
 	assert_memory_equal(buffer, ((unsigned char[]) {0xF9, 0x00, 0x00}), 3);
-	assert_int_equal(3, cbor_encode_half(65504.0, buffer, 512));
+	assert_int_equal(3, cbor_encode_half(65504.0f, buffer, 512));
 	assert_memory_equal(buffer, ((unsigned char[]) {0xF9, 0x7B, 0xFF}), 3);
+	assert_int_equal(3, cbor_encode_half(0.00006103515625f, buffer, 512));
+	assert_memory_equal(buffer, ((unsigned char[]) {0xF9, 0x04, 0x00}), 3);
+	assert_int_equal(3, cbor_encode_half(-4.0f, buffer, 512));
+	assert_memory_equal(buffer, ((unsigned char[]) {0xF9, 0x40, 0x00}), 3);
+	assert_int_equal(3, cbor_encode_half(5.960464477539063e-8f, buffer, 512));
+	assert_memory_equal(buffer, ((unsigned char[]) {0xF9, 0x00, 0x01}), 3);
 	assert_int_equal(3, cbor_encode_half(INFINITY, buffer, 512));
 	assert_memory_equal(buffer, ((unsigned char[]) {0xF9, 0x7C, 0x00}), 3);
 }
