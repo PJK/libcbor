@@ -55,7 +55,6 @@ matrix:
 
 script:
   - "bash -ex .travis-qemu.sh"
-  - export SOURCE=$(pwd) && ./buildscript.sh
 
 notifications:
   email: false
