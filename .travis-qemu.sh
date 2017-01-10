@@ -39,7 +39,7 @@ function setup_arm_chroot {
 
     # Create build dir and copy travis build files to our chroot environ	ment
     sudo mkdir -p ${CHROOT_DIR}/${TRAVIS_BUILD_DIR}
-    sudo rsync -av ${TRAVIS_BUILD_DIR}/ ${CHROOT_DIR}/${TRAVIS_BUILD_DIR}/
+    sudo rsync -a ${TRAVIS_BUILD_DIR}/ ${CHROOT_DIR}/${TRAVIS_BUILD_DIR}/
 
     # Indicate chroot environment has been set up
     sudo touch ${CHROOT_DIR}/.chroot_is_done
@@ -53,7 +53,7 @@ if [ -e "/.chroot_is_done" ]; then
   echo "Running inside chrooted environment"
 
   wget http://www.cmake.org/files/v3.4/cmake-3.4.1.tar.gz
-  tar -xvzf cmake-3.4.1.tar.gz
+  tar -xzf cmake-3.4.1.tar.gz
   cd cmake-3.4.1/
   ./configure
   make
