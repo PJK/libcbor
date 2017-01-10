@@ -11,7 +11,7 @@ CHROOT_ARCH=armhf
 HOST_DEPENDENCIES="debootstrap qemu-user-static binfmt-support sbuild"
 
 # Debian package dependencies for the chrooted environment
-GUEST_DEPENDENCIES="build-essential git gcc cmake cmake-data cppcheck"
+GUEST_DEPENDENCIES="build-essential git gcc cppcheck"
 
 function setup_arm_chroot {
     # Host dependencies
@@ -51,6 +51,14 @@ function setup_arm_chroot {
 if [ -e "/.chroot_is_done" ]; then
   # We are inside ARM chroot
   echo "Running inside chrooted environment"
+
+  wget http://www.cmake.org/files/v3.4/cmake-3.4.1.tar.gz
+  tar -xvzf cmake-3.4.1.tar.gz
+  cd cmake-3.4.1/
+  ./configure
+  make
+  make install
+  cd ..
 
   pushd $HOME
   git clone git://git.cryptomilk.org/projects/cmocka.git
