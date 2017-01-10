@@ -1,6 +1,6 @@
 language: c
 
-sudo: false
+sudo: true
 
 before_install:
   - gem install coveralls-lcov
