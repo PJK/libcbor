@@ -11,7 +11,7 @@ CHROOT_ARCH=armhf
 HOST_DEPENDENCIES="debootstrap qemu-user-static binfmt-support sbuild"
 
 # Debian package dependencies for the chrooted environment
-GUEST_DEPENDENCIES="build-essential git gcc cmocka cmake cmake-data"
+GUEST_DEPENDENCIES="build-essential git gcc cmake cmake-data ctest"
 
 # Command used to run the tests
 TEST_COMMAND="make test"
@@ -55,7 +55,17 @@ if [ -e "/.chroot_is_done" ]; then
   # We are inside ARM chroot
   echo "Running inside chrooted environment"
 
-  . ./envvars.sh
+  pushd $HOME
+  git clone git://git.cryptomilk.org/projects/cmocka.git
+  mkdir cmocka_build && cd cmocka_build
+  cmake -DCMAKE_INSTALL_PREFIX=$HOME ../cmocka
+  make -j 2
+  make install
+  cd ..
+  rm -rf cmocka cmocka_build
+  popd
+
+  ./buildscript.sh
 else
   if [ "${ARCH}" = "arm" ]; then
     # ARM test run, need to set up chrooted environment first
