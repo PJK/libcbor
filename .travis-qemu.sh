@@ -5,16 +5,12 @@
 CHROOT_DIR=/tmp/arm-chroot
 MIRROR=http://archive.raspbian.org/raspbian
 VERSION=wheezy
-CHROOT_ARCH=armhf
 
 # Debian package dependencies for the host
 HOST_DEPENDENCIES="debootstrap qemu-user-static binfmt-support sbuild"
 
 # Debian package dependencies for the chrooted environment
-GUEST_DEPENDENCIES="build-essential git gcc cmake cmake-data ctest"
-
-# Command used to run the tests
-TEST_COMMAND="make test"
+GUEST_DEPENDENCIES="build-essential git gcc cmake cmake-data"
 
 function setup_arm_chroot {
     # Host dependencies
@@ -65,7 +61,6 @@ if [ -e "/.chroot_is_done" ]; then
   rm -rf cmocka cmocka_build
   popd
 
-  ./buildscript.sh
 else
   if [ "${ARCH}" = "arm" ]; then
     # ARM test run, need to set up chrooted environment first
@@ -77,4 +72,4 @@ fi
 echo "Running tests"
 echo "Environment: $(uname -a)"
 
-${TEST_COMMAND}
+export SOURCE=$(pwd) && ./buildscript.sh
