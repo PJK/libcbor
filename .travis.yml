@@ -49,6 +49,7 @@ matrix:
         - cmake
         - cmake-data
     env: CC="gcc-6" CXX="g++-6"
+  - env: ARCH=arm
 
 
 
