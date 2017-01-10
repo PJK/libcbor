@@ -53,6 +53,7 @@ matrix:
 
 
 script:
+  - "bash -ex .travis-ci.sh"
   - export SOURCE=$(pwd) && ./buildscript.sh
 
 notifications:
