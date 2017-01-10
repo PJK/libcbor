@@ -11,7 +11,7 @@ CHROOT_ARCH=armhf
 HOST_DEPENDENCIES="debootstrap qemu-user-static binfmt-support sbuild"
 
 # Debian package dependencies for the chrooted environment
-GUEST_DEPENDENCIES="build-essential git gcc cmake cmake-data"
+GUEST_DEPENDENCIES="build-essential git gcc cmake cmake-data cppcheck"
 
 function setup_arm_chroot {
     # Host dependencies
