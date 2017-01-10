@@ -53,7 +53,7 @@ matrix:
 
 
 script:
-  - "bash -ex .travis-ci.sh"
+  - "bash -ex .travis-qemu.sh"
   - export SOURCE=$(pwd) && ./buildscript.sh
 
 notifications:
