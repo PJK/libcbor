@@ -11,7 +11,7 @@ CHROOT_ARCH=armhf
 HOST_DEPENDENCIES="debootstrap qemu-user-static binfmt-support sbuild"
 
 # Debian package dependencies for the chrooted environment
-GUEST_DEPENDENCIES="cmake"
+GUEST_DEPENDENCIES="cmake git"
 
 function setup_arm_chroot {
 	# Host dependencies
@@ -54,7 +54,15 @@ if [ "${ARCH}" = "arm" ]; then
 		# We are inside ARM chroot
 		echo "Running inside chrooted environment, will execute tests only"
 
-		# Hack: We don't have CMake (takes too long to compile)
+		# We need CMocka since the executables are dynamically linked
+		git clone git://git.cryptomilk.org/projects/cmocka.git
+		mkdir cmocka_build && cd cmocka_build
+		cmake ../cmocka
+		make VERBOSE=1
+		make install
+		cd ..
+
+		# Hack: We don't have the right CMake (takes too long to compile)
 		# Poor man's 'make test'
 
 		for test in `find test -type f -executable`; do ./${test}; done
