@@ -60,6 +60,7 @@ matrix:
         - lib32ncurses5
         - lib32bz2-1.0
         - lib32z1-dev
+        - libc6-dev-armhf-cross
         - cmake
         - cmake-data
 
