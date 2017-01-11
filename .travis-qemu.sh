@@ -59,7 +59,23 @@ if [ "${ARCH}" = "arm" ]; then
 		# Compilation on QEMU is too slow and times out on Travis. Crosscompile at the host
 		echo "Initial execution on ARM environment, will crosscompile"
 
-		cmake $SOURCE -DCBOR_CUSTOM_ALLOC=ON -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTS=ON -DCMAKE_PREFIX_PATH=$HOME/usr/local
+		# Crosscompile CMocka
+		pushd $HOME
+		git clone git://git.cryptomilk.org/projects/cmocka.git
+		mkdir cmocka_build && cd cmocka_build
+		cmake -DCMAKE_INSTALL_PREFIX=$HOME ../cmocka
+		CC=arm-linux-gnueabi-gcc make -j 2
+		make install
+		cd ..
+		rm -rf cmocka cmocka_build
+		popd
+
+
+		cmake $SOURCE -DCBOR_CUSTOM_ALLOC=ON \
+						-DCMAKE_BUILD_TYPE=Debug \
+						-DWITH_TESTS=ON \
+						-DCMAKE_PREFIX_PATH=$HOME/usr/local \
+						-DCMAKE_C_COMPILER=arm-linux-gnueabi-gcc
 		make VERBOSE=1
 
 		# ARM test run, need to set up chrooted environment first
