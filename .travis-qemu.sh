@@ -2,6 +2,8 @@
 # Based on a test script from avsm/ocaml repo https://github.com/avsm/ocaml
 # Adapted from https://www.tomaz.me/2013/12/02/running-travis-ci-tests-on-arm.html
 
+set -e
+
 CHROOT_DIR=/tmp/arm-chroot
 MIRROR=http://archive.raspbian.org/raspbian
 VERSION=wheezy
@@ -52,7 +54,7 @@ function setup_arm_chroot {
 if [ "${ARCH}" = "arm" ]; then
 	if [ -e "/.chroot_is_done" ]; then
 		# We are inside ARM chroot
-		echo "Running inside chrooted environment, will execute tests only"
+		echo "Running inside chrooted environment, will execute only tests"
 
 		# We need CMocka since the executables are dynamically linked
 		git clone git://git.cryptomilk.org/projects/cmocka.git
@@ -62,12 +64,8 @@ if [ "${ARCH}" = "arm" ]; then
 		make install
 		cd ..
 
-		# Hack: We don't have the right CMake (takes too long to compile)
-		# Poor man's 'make test'
-
-		for test in `find test -type f -executable`; do ./${test}; done
+		# Hack: We don't have the right CMake (takes too long to compile), but this works
 		ctest -VV
-		make test
 	else
 		# Compilation on QEMU is too slow and times out on Travis. Crosscompile at the host
 		echo "Initial execution on ARM environment, will crosscompile"
@@ -111,8 +109,16 @@ else
 	popd
 
 	echo "Running tests"
-	echo "Environment: $(uname -a)"
+	cppcheck . --error-exitcode=1 --suppressions cppcheck_suppressions.txt --force
 
-	export SOURCE=$(pwd) && ./buildscript.sh
+	cmake . -DCBOR_CUSTOM_ALLOC=ON -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTS=ON -DCMAKE_PREFIX_PATH=$HOME/usr/local
+	make VERBOSE=1
+
+	ctest -VV
+
+	ctest -T memcheck | tee memcheck.out
+	if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
+		exit 1
+	fi
 fi
 
