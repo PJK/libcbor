@@ -64,19 +64,22 @@ if [ "${ARCH}" = "arm" ]; then
 		pushd $HOME
 		git clone git://git.cryptomilk.org/projects/cmocka.git
 		mkdir cmocka_build && cd cmocka_build
-		cmake -DCMAKE_INSTALL_PREFIX=$HOME ../cmocka
-		CC=arm-linux-gnueabihf-gcc-4.6 make -j 2
+		cmake ../cmocka \
+				-DCMAKE_INSTALL_PREFIX=$HOME \
+				-DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-4.6
+		make VERBOSE=1
 		make install
 		cd ..
 		rm -rf cmocka cmocka_build
 		popd
 
 
-		cmake $SOURCE -DCBOR_CUSTOM_ALLOC=ON \
-						-DCMAKE_BUILD_TYPE=Debug \
-						-DWITH_TESTS=ON \
-						-DCMAKE_PREFIX_PATH=$HOME/usr/local \
-						-DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-4.6
+		cmake $SOURCE \
+				-DCBOR_CUSTOM_ALLOC=ON \
+				-DCMAKE_BUILD_TYPE=Debug \
+				-DWITH_TESTS=ON \
+				-DCMAKE_PREFIX_PATH=$HOME/usr/local \
+				-DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-4.6
 		make VERBOSE=1
 
 		# ARM test run, need to set up chrooted environment first
