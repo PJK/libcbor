@@ -78,7 +78,6 @@ if [ "${ARCH}" = "arm" ]; then
 		git clone git://git.cryptomilk.org/projects/cmocka.git
 		mkdir cmocka_build && cd cmocka_build
 		cmake ../cmocka \
-				-DCMAKE_INSTALL_PREFIX=$HOME \
 				-DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-4.6
 		make VERBOSE=1
 		make install
@@ -91,7 +90,6 @@ if [ "${ARCH}" = "arm" ]; then
 				-DCBOR_CUSTOM_ALLOC=ON \
 				-DCMAKE_BUILD_TYPE=Debug \
 				-DWITH_TESTS=ON \
-				-DCMAKE_PREFIX_PATH=$HOME/usr/local \
 				-DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-4.6
 		make VERBOSE=1
 
@@ -105,7 +103,7 @@ else
 	pushd $HOME
 	git clone git://git.cryptomilk.org/projects/cmocka.git
 	mkdir cmocka_build && cd cmocka_build
-	cmake -DCMAKE_INSTALL_PREFIX=$HOME ../cmocka
+	cmake ../cmocka
 	make -j 2
 	make install
 	cd ..
