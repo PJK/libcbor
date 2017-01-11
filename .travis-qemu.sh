@@ -85,6 +85,16 @@ if [ "${ARCH}" = "arm" ]; then
 	fi
 else
 	# Proceed as normal
+	gem install coveralls-lcov
+	pushd $HOME
+	git clone git://git.cryptomilk.org/projects/cmocka.git
+	mkdir cmocka_build && cd cmocka_build
+	cmake -DCMAKE_INSTALL_PREFIX=$HOME ../cmocka
+	make -j 2
+	make install
+	cd ..
+	rm -rf cmocka cmocka_build
+	popd
 
 	echo "Running tests"
 	echo "Environment: $(uname -a)"

@@ -3,17 +3,6 @@ language: c
 sudo: true
 
 before_install:
-  - gem install coveralls-lcov
-  - pushd $HOME
-  - git clone git://git.cryptomilk.org/projects/cmocka.git
-  - mkdir cmocka_build && cd cmocka_build
-  - cmake -DCMAKE_INSTALL_PREFIX=$HOME ../cmocka
-  - make -j 2
-  - make install
-# Confuses CMake search
-  - cd ..
-  - rm -rf cmocka cmocka_build
-  - popd
 
 matrix:
   include:
