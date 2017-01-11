@@ -59,7 +59,7 @@ if [ "${ARCH}" = "arm" ]; then
 		mkdir cmocka_build && cd cmocka_build
 		cmake ../cmocka
 		make VERBOSE=1
-		make install
+		sudo make install
 		cd ..
 
 		# Hack: We don't have the right CMake (takes too long to compile)
@@ -80,7 +80,7 @@ if [ "${ARCH}" = "arm" ]; then
 		cmake ../cmocka \
 				-DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-4.6
 		make VERBOSE=1
-		make install
+		sudo make install
 		cd ..
 		rm -rf cmocka cmocka_build
 		popd
@@ -105,7 +105,7 @@ else
 	mkdir cmocka_build && cd cmocka_build
 	cmake ../cmocka
 	make -j 2
-	make install
+	sudo make install
 	cd ..
 	rm -rf cmocka cmocka_build
 	popd
