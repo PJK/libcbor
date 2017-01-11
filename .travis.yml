@@ -56,6 +56,10 @@ matrix:
         - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
         packages:
         - gcc-arm-linux-gnueabihf
+        - lib32z1
+        - lib32ncurses5
+        - lib32bz2-1.0
+        - lib32z1-dev
         - cmake
         - cmake-data
 
