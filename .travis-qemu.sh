@@ -11,74 +11,67 @@ CHROOT_ARCH=armhf
 HOST_DEPENDENCIES="debootstrap qemu-user-static binfmt-support sbuild"
 
 # Debian package dependencies for the chrooted environment
-GUEST_DEPENDENCIES="build-essential git gcc cppcheck"
+GUEST_DEPENDENCIES=""
 
 function setup_arm_chroot {
-    # Host dependencies
-    sudo apt-get install -qq -y ${HOST_DEPENDENCIES}
+	# Host dependencies
+	sudo apt-get install -qq -y ${HOST_DEPENDENCIES}
 
-    # Create chrooted environment
-    sudo mkdir ${CHROOT_DIR}
-    sudo debootstrap --foreign --no-check-gpg --include=fakeroot,build-essential \
-        --arch=${CHROOT_ARCH} ${VERSION} ${CHROOT_DIR} ${MIRROR}
-    sudo cp /usr/bin/qemu-arm-static ${CHROOT_DIR}/usr/bin/
-    sudo chroot ${CHROOT_DIR} ./debootstrap/debootstrap --second-stage
-    sudo sbuild-createchroot --arch=${CHROOT_ARCH} --foreign --setup-only \
-        ${VERSION} ${CHROOT_DIR} ${MIRROR}
+	# Create chrooted environment
+	sudo mkdir ${CHROOT_DIR}
+	sudo debootstrap --foreign --no-check-gpg --include=fakeroot,build-essential \
+		--arch=${CHROOT_ARCH} ${VERSION} ${CHROOT_DIR} ${MIRROR}
+	sudo cp /usr/bin/qemu-arm-static ${CHROOT_DIR}/usr/bin/
+	sudo chroot ${CHROOT_DIR} ./debootstrap/debootstrap --second-stage
+	sudo sbuild-createchroot --arch=${CHROOT_ARCH} --foreign --setup-only \
+		${VERSION} ${CHROOT_DIR} ${MIRROR}
 
-    # Create file with environment variables which will be used inside chrooted
-    # environment
-    echo "export ARCH=${ARCH}" > envvars.sh
-    echo "export TRAVIS_BUILD_DIR=${TRAVIS_BUILD_DIR}" >> envvars.sh
-    chmod a+x envvars.sh
+	# Create file with environment variables which will be used inside chrooted
+	# environment
+	echo "export ARCH=${ARCH}" > envvars.sh
+	echo "export TRAVIS_BUILD_DIR=${TRAVIS_BUILD_DIR}" >> envvars.sh
+	chmod a+x envvars.sh
 
-    # Install dependencies inside chroot
-    sudo chroot ${CHROOT_DIR} apt-get update
-    sudo chroot ${CHROOT_DIR} apt-get --allow-unauthenticated install \
-        -qq -y ${GUEST_DEPENDENCIES}
+	# Install dependencies inside chroot
+	sudo chroot ${CHROOT_DIR} apt-get update
+	sudo chroot ${CHROOT_DIR} apt-get --allow-unauthenticated install \
+		-qq -y ${GUEST_DEPENDENCIES}
 
-    # Create build dir and copy travis build files to our chroot environ	ment
-    sudo mkdir -p ${CHROOT_DIR}/${TRAVIS_BUILD_DIR}
-    sudo rsync -a ${TRAVIS_BUILD_DIR}/ ${CHROOT_DIR}/${TRAVIS_BUILD_DIR}/
+	# Create build dir and copy travis build files to our chroot environ	ment
+	sudo mkdir -p ${CHROOT_DIR}/${TRAVIS_BUILD_DIR}
+	sudo rsync -a ${TRAVIS_BUILD_DIR}/ ${CHROOT_DIR}/${TRAVIS_BUILD_DIR}/
 
-    # Indicate chroot environment has been set up
-    sudo touch ${CHROOT_DIR}/.chroot_is_done
+	# Indicate chroot environment has been set up
+	sudo touch ${CHROOT_DIR}/.chroot_is_done
 
-    # Call ourselves again which will cause tests to run
-    sudo chroot ${CHROOT_DIR} bash -c "cd ${TRAVIS_BUILD_DIR} && ./.travis-qemu.sh"
+	# Call ourselves again which will cause tests to run
+	sudo chroot ${CHROOT_DIR} bash -c "cd ${TRAVIS_BUILD_DIR} && ./.travis-qemu.sh"
 }
 
-if [ -e "/.chroot_is_done" ]; then
-  # We are inside ARM chroot
-  echo "Running inside chrooted environment"
 
-  wget http://www.cmake.org/files/v3.4/cmake-3.4.1.tar.gz
-  tar -xzf cmake-3.4.1.tar.gz
-  cd cmake-3.4.1/
-  ./configure
-  make
-  make install
-  cd ..
+if [ "${ARCH}" = "arm" ]; then
+	if [ -e "/.chroot_is_done" ]; then
+		# We are inside ARM chroot
+		echo "Running inside chrooted environment, will execute tests only"
 
-  pushd $HOME
-  git clone git://git.cryptomilk.org/projects/cmocka.git
-  mkdir cmocka_build && cd cmocka_build
-  cmake -DCMAKE_INSTALL_PREFIX=$HOME ../cmocka
-  make -j 2
-  make install
-  cd ..
-  rm -rf cmocka cmocka_build
-  popd
 
+	else
+		# Compilation on QEMU is too slow and times out on Travis. Crosscompile at the host
+		echo "Initial execution on ARM environment, will crosscompile"
+
+		cmake $SOURCE -DCBOR_CUSTOM_ALLOC=ON -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTS=ON -DCMAKE_PREFIX_PATH=$HOME/usr/local
+		make VERBOSE=1
+
+		# ARM test run, need to set up chrooted environment first
+		echo "Setting up chrooted ARM environment"
+		setup_arm_chroot
+	fi
 else
-  if [ "${ARCH}" = "arm" ]; then
-    # ARM test run, need to set up chrooted environment first
-    echo "Setting up chrooted ARM environment"
-    setup_arm_chroot
-  fi
+	# Proceed as normal
+
+	echo "Running tests"
+	echo "Environment: $(uname -a)"
+
+	export SOURCE=$(pwd) && ./buildscript.sh
 fi
 
-echo "Running tests"
-echo "Environment: $(uname -a)"
-
-export SOURCE=$(pwd) && ./buildscript.sh
