@@ -11,7 +11,7 @@ CHROOT_ARCH=armhf
 HOST_DEPENDENCIES="debootstrap qemu-user-static binfmt-support sbuild"
 
 # Debian package dependencies for the chrooted environment
-GUEST_DEPENDENCIES=""
+GUEST_DEPENDENCIES="cmake"
 
 function setup_arm_chroot {
 	# Host dependencies
@@ -53,6 +53,9 @@ if [ "${ARCH}" = "arm" ]; then
 	if [ -e "/.chroot_is_done" ]; then
 		# We are inside ARM chroot
 		echo "Running inside chrooted environment, will execute tests only"
+
+		# Hack: We don't have CMake (takes too long to compile)
+		# Poor man's 'make test'
 
 		make test
 	else
