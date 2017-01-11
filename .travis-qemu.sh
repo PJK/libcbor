@@ -59,6 +59,8 @@ if [ "${ARCH}" = "arm" ]; then
 		# Compilation on QEMU is too slow and times out on Travis. Crosscompile at the host
 		echo "Initial execution on ARM environment, will crosscompile"
 
+		arm-linux-gnueabi-gcc -v
+
 		# Crosscompile CMocka
 		pushd $HOME
 		git clone git://git.cryptomilk.org/projects/cmocka.git
