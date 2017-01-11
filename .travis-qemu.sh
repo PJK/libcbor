@@ -59,7 +59,7 @@ if [ "${ARCH}" = "arm" ]; then
 		mkdir cmocka_build && cd cmocka_build
 		cmake ../cmocka
 		make VERBOSE=1
-		sudo make install
+		make install
 		cd ..
 
 		# Hack: We don't have the right CMake (takes too long to compile)
