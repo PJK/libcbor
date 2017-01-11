@@ -57,6 +57,8 @@ if [ "${ARCH}" = "arm" ]; then
 		# Hack: We don't have CMake (takes too long to compile)
 		# Poor man's 'make test'
 
+		for test in `find test -type f -executable`; do ./${test}; done
+		ctest -VV
 		make test
 	else
 		# Compilation on QEMU is too slow and times out on Travis. Crosscompile at the host
