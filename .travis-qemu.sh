@@ -56,6 +56,8 @@ if [ "${ARCH}" = "arm" ]; then
 		# We are inside ARM chroot
 		echo "Running inside chrooted environment, will execute only tests"
 
+		. ./envvars.sh
+
 		# We need CMocka since the executables are dynamically linked
 		git clone git://git.cryptomilk.org/projects/cmocka.git
 		mkdir cmocka_build && cd cmocka_build
@@ -83,7 +85,7 @@ if [ "${ARCH}" = "arm" ]; then
 		rm -rf cmocka cmocka_build
 		popd
 
-
+		# Crosscompile libcbor
 		cmake $SOURCE \
 				-DCBOR_CUSTOM_ALLOC=ON \
 				-DCMAKE_BUILD_TYPE=Debug \
