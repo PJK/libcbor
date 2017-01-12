@@ -67,8 +67,13 @@ static void test_half(void **state)
 	assert_int_equal(3, cbor_encode_half(5.960464477539063e-8f, buffer, 512));
 	assert_memory_equal(buffer, ((unsigned char[]) {0xF9, 0x00, 0x01}), 3);
 
-	/* Smaller than the smallest, round off to zero */
+	/* Smaller than the smallest, approximate magnitude representation */
 	assert_int_equal(3, cbor_encode_half(5.960464477539062e-8f, buffer, 512));
+	assert_memory_equal(buffer, ((unsigned char[]) {0xF9, 0x00, 0x01}), 3);
+
+	/* Smaller than the smallest and even the magnitude cannot be represented,
+	   round off to zero */
+	assert_int_equal(3, cbor_encode_half(1e-25f, buffer, 512));
 	assert_memory_equal(buffer, ((unsigned char[]) {0xF9, 0x00, 0x00}), 3);
 
 	assert_int_equal(3, cbor_encode_half(1.1920928955078125e-7, buffer, 512));
