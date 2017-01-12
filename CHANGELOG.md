@@ -11,6 +11,7 @@ Next
 - Fixed Linux installation directory depending on architecture [#34] (by jvymazal)
 - Improved 32-bit support [#35]
 - Fixed MSVC compatibility [#31]
+- Fixed and improved half-float encoding [#5] [#11]
 
 0.4.0 (2015-12-25)
 ---------------------
