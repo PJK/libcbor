@@ -60,10 +60,12 @@ Manipulating existing items
 .. doxygenfunction:: cbor_set_float8
 
 
+.. _api_type_7_hard_floats:
+
 Half floats
 ~~~~~~~~~~~~
 CBOR supports two `bytes wide ("half-precision") <https://en.wikipedia.org/wiki/Half-precision_floating-point_format>`_
-floats which are not supported by the C language. *libcbor* represents them using ``float``
+floats which are not supported by the C language. *libcbor* represents them using :type:`float`
 values throughout the API, which has important implications when manipulating these values.
 
 In particular, if a user uses some of the manipulation APIs
