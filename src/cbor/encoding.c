@@ -133,21 +133,30 @@ size_t cbor_encode_half(float value, unsigned char *buffer, size_t buffer_size)
 	/* Assuming value is normalized */
 	uint32_t val = ((union _cbor_float_helper) {.as_float = value}).as_uint;
 	uint16_t res;
-	uint8_t exp = (val & 0x7F800000) >> 23; /* 0b0111_1111_1000_0000_0000_0000_0000_0000 */
+	uint8_t exp = (uint8_t) ((val & 0x7F800000) >> 23); /* 0b0111_1111_1000_0000_0000_0000_0000_0000 */
 	uint32_t mant = val & 0x7FFFFF; /* 0b0000_0000_0111_1111_1111_1111_1111_1111 */
 	if (exp == 0xFF) { /* Infinity or NaNs */
-		if (value != value)
+		if (value != value) {
 			res = (uint16_t) 0x00e700; /* Not IEEE semantics - required by CBOR [s. 3.9] */
-		else
-			res = (val & 0x80000000) >> 16 | 0x7C00 | (mant ? 1 : 0) << 15;
+		} else {
+			res = (uint16_t) ((val & 0x80000000) >> 16 | 0x7C00 | (mant ? 1 : 0) << 15);
+		}
 	} else if (exp == 0x00) { /* Zeroes or subnorms */
-		res = (val & 0x80000000) >> 16 | (uint16_t) (mant >> 13);
+		res = (uint16_t) ((val & 0x80000000) >> 16 | mant >> 13);
 	} else { /* Normal numbers */
-		exp -= 127;
-		if (((int8_t) exp) > 15 || ((int8_t) exp) < -14)
-			return 0; /* No way we can represent magnitude in normalized way */
-		else
-			res = (val & 0x80000000) >> 16 | ((exp + 15) << 10) | (uint16_t) (mant >> 13);
+		int8_t logical_exp = (int8_t) (exp - 127);
+		assert(logical_exp == exp - 127);
+
+		// Now we know that 2^exp <= 0 logically
+		if (logical_exp < -24) {
+			// TODO maybe handle in a different way and give some encoding
+			return 0; /* No unambiguous representation exists, this float is not a halft float */
+		} else if (logical_exp < -14) {
+			/* Offset the remaining decimal places by shifting the significand, the value is lost */
+			res = (uint16_t) (val & 0x80000000) >> 16 | (uint16_t) (1 << (24 + logical_exp));
+		} else {
+			res = (uint16_t) ((val & 0x80000000) >> 16 | ((((uint8_t) logical_exp) + 15) << 10) | (uint16_t) (mant >> 13));
+		}
 	}
 	return _cbor_encode_uint16(res, buffer, buffer_size, 0xE0);
 }
