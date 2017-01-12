@@ -149,10 +149,13 @@ size_t cbor_encode_half(float value, unsigned char *buffer, size_t buffer_size)
 
 		// Now we know that 2^exp <= 0 logically
 		if (logical_exp < -24) {
-			// TODO maybe handle in a different way and give some encoding
-			return 0; /* No unambiguous representation exists, this float is not a halft float */
+			/* No unambiguous representation exists, this float is not a half float and is too small to
+			   be represented using a half, round off to zero. Consistent with the reference implementation. */
+			res = 0;
 		} else if (logical_exp < -14) {
-			/* Offset the remaining decimal places by shifting the significand, the value is lost */
+			/* Offset the remaining decimal places by shifting the significand, the value is lost.
+			   This is an implementation decision that works around the absence of standard half-float
+			   in the language. */
 			res = (uint16_t) (val & 0x80000000) >> 16 | (uint16_t) (1 << (24 + logical_exp));
 		} else {
 			res = (uint16_t) ((val & 0x80000000) >> 16 | ((((uint8_t) logical_exp) + 15) << 10) | (uint16_t) (mant >> 13));
