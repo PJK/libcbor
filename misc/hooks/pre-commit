@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -e
+
+# Refresh libcbor.org ...
+cd docs 
+
+if [[ $(git -C .. diff --cached --name-only) == *"index.html.erb"* ]]; then
+	echo "The homepage template has been updated, regenerating and checking in the HTML."
+	erb index.html.erb > index.html
+	git -C .. add $(pwd)/index.html
+fi
+
+cd ..
