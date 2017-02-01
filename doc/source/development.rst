@@ -25,6 +25,7 @@ Installing *sphinx*
 
 Further instructions on configuring advanced features can be found at `<http://read-the-docs.readthedocs.org/en/latest/install.html>`_.
 
+
 Live preview of docs
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -32,6 +33,17 @@ Live preview of docs
 
   cd doc
   make livehtml
+
+
+Set up git hooks
+~~~~~~~~~~~~~~~~~
+
+A git hook that automatically refereshes the `GH pages <https://pages.github.com/>`_ contents located in ``docs`` can be symlinked:
+
+.. code-block:: bash
+
+  ln -s misc/hooks/pre-commit .git/hooks
+
 
 Testing and code coverage
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
