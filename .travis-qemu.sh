@@ -113,7 +113,12 @@ else
 	echo "Running tests"
 	cppcheck . --error-exitcode=1 --suppressions cppcheck_suppressions.txt --force
 
-	cmake . -DCBOR_CUSTOM_ALLOC=ON -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTS=ON -DCMAKE_PREFIX_PATH=$HOME/usr/local
+	cmake . \
+		-DCBOR_CUSTOM_ALLOC=ON \
+		-DCMAKE_BUILD_TYPE=Debug \
+		-DWITH_TESTS=ON \
+		-DCMAKE_PREFIX_PATH=$HOME/usr/local \
+		-DPACKAGE=ON
 	make VERBOSE=1
 
 	ctest -VV
