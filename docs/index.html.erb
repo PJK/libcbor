@@ -19,8 +19,7 @@
       <h2 class="project-tagline">Latest release: <%= Release.tag %></h2>
       <a href="https://github.com/PJK/libcbor" class="btn">View on GitHub</a>
       <a href="https://github.com/PJK/libcbor/archive/<%= Release.tag %>.tar.gz" class="btn">Download source</a>
-      <a href="https://github.com/PJK/libcbor/releases/download/<%= Release.tag %>/libcbor-<%= Release.version %>-Linux.deb" class="btn">Download x64 .deb</a>
-      <a href="https://github.com/PJK/libcbor/releases/download/<%= Release.tag %>/libcbor-<%= Release.version %>-Linux.rpm" class="btn">Download x64 .rpm</a>
+      <a href="http://libcbor.readthedocs.io/en/<%= Release.tag %>/using.html" class="btn">Get started</a>
     </section>
 
     <section class="main-content">
@@ -32,18 +31,45 @@
 <a id="main-features" class="anchor" href="#main-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Main features</h2>
 
 <ul>
-<li>Complete RFC conformance</li>
-<li>Robust C99 implementation</li>
-<li>Layered architecture offers both control and convenience</li>
-<li>Flexible memory management</li>
-<li>Proper handling of UTF-8</li>
-<li>Full support for streams &amp; incremental processing</li>
-<li>Extensive documentation and test suite</li>
-<li>No runtime dependencies, small footprint</li>
+  <li>Complete RFC conformance</li>
+  <li>Robust portable C99 implementation</li>
+  <li>Layered architecture offers both control and convenience</li>
+  <li>Flexible memory management</li>
+  <li>Proper handling of UTF-8</li>
+  <li>Full support for streams &amp; incremental processing</li>
+  <li>Extensive documentation and test suite</li>
+  <li>No runtime dependencies, small footprint</li>
+  <li>Tested across architectures and operating systems</li>
 </ul>
 
 <h2>A taste of the API</h2>
 <script src="https://gist.github.com/PJK/962a468886d24195d1ee.js"></script>
+
+<h2><a id="distrib" class="anchor" href="#distrib" aria-hidden="true"><span class="octicon octicon-link"></span></a>Distribution</h2>
+
+<h3>OS X</h3>
+<pre><code>brew tap pjk/libcbor
+brew install libcbor
+</code></pre>
+
+<h3>Linux</h3>
+<p>
+  Please refer to <a href="http://libcbor.readthedocs.io/en/latest/getting_started.html">the documentation</a> on how to build <i>libcbor</i>.
+</p>
+
+<p>
+  deb and RPM packages can be built effortlessly using <a href="https://cmake.org/cmake/help/v3.0/module/CPack.html">CPack</a>. <i>libcbor</i> also comes with <a href="https://www.freedesktop.org/wiki/Software/pkg-config/">pkg-config</a> support</li>.
+</p>
+
+<h3>Windows</h3>
+<p>
+  Windows are supported and <a href="https://ci.appveyor.com/project/PJK/libcbor">tested for</a>. CMake can target both MSVC and Cygwin toolchains. Please refer to <a href="http://libcbor.readthedocs.io/en/latest/getting_started.html">the documentation</a> on how to do so.
+</p>
+
+<h3>Other platforms</h3>
+<p>
+  As long as CMake and a C99 compiler are available, <i>libcbor</i> will work. Read more <a href="http://libcbor.readthedocs.io/en/latest/getting_started.html">here</a>.
+</p>
 
 <h2>
 <a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resources &amp; documentation</h2>
@@ -58,19 +84,10 @@
 </ul>
 
 <h2>Ruby bindings</h2>
-<p>If you write Ruby, you might be interested in the <a href="https://github.com/PJK/libcbor-ruby">Ruby bindings for <i>libcbor</i></a>.
+<p>If you write Ruby, you might be interested in the <a href="https://github.com/PJK/libcbor-ruby">Ruby bindings for <i>libcbor</i></a>.</p>
 
-<h2><a id="distrib" class="anchor" href="#distrib" aria-hidden="true"><span class="octicon octicon-link"></span></a>Distribution</h2>
 
-<h3>OS X</h3>
-<pre><code>brew tap pjk/libcbor
-brew install libcbor
-</code></pre>
-
-Ubuntu PPA is coming soon.
-
-<h2>
-<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>Licensing</h2>
+<h2><a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>Licensing</h2>
 
 <p><i>libcbor</i> is distributed under the terms of the MIT license, as found in the source code.</p>
 
