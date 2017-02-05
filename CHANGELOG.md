@@ -1,7 +1,10 @@
 Next
 -------
+
+0.5.0 (2017-02-06)
+---------------------
 - Remove cmocka from the subtree (always rely on system or user-provided version)
-- Containerize CI builds
+- Windows CI
 - Only build tests if explicitly enabled (`-DWITH_TESTS=ON`)
 - Fixed static header declarations (by cedric-d)
 - Improved documentation (by Michael Richardson)
