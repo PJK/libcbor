@@ -21,7 +21,7 @@ TAG_NAME="v$1"
 cd $DIR
 
 echo ">>>>> Checking changelog"
-grep -A 5 $1 CHANGELOG.md || true
+grep -A 5 -F $1 CHANGELOG.md || true
 prompt "Is the changelog correct and complete?"
 
 echo ">>>>> Checking Doxyfile"
