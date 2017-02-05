@@ -47,16 +47,28 @@ if(PRINT_FUZZ)
     add_definitions(-DPRINT_FUZZ)
 endif(PRINT_FUZZ)
 
+option(PACKAGE "Configure to build packages. Requires dpkg." OFF)
 
-set(CPACK_GENERATOR "DEB" "TGZ" "RPM")
-set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Pavel Kalvoda")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6")
-set(CPACK_PACKAGE_VERSION_MAJOR ${CBOR_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR ${CBOR_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH ${CBOR_VERSION_PATCH})
+if(PACKAGE)
+    # http://stackoverflow.com/questions/11944060/how-to-detect-target-architecture-using-cmake
+    execute_process(COMMAND
+            dpkg-architecture
+            -qDEB_HOST_ARCH
+            OUTPUT_VARIABLE
+            CMAKE_DEB_HOST_ARCH
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
 
-include(CPack)
+    set(CPACK_GENERATOR "DEB" "TGZ" "RPM")
+    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${CMAKE_DEB_HOST_ARCH})
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Pavel Kalvoda")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6")
+    set(CPACK_PACKAGE_VERSION_MAJOR ${CBOR_VERSION_MAJOR})
+    set(CPACK_PACKAGE_VERSION_MINOR ${CBOR_VERSION_MINOR})
+    set(CPACK_PACKAGE_VERSION_PATCH ${CBOR_VERSION_PATCH})
+
+    include(CPack)
+endif(PACKAGE)
 
 if(MINGW)
     # https://github.com/PJK/libcbor/issues/13

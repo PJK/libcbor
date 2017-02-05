@@ -52,3 +52,8 @@ script:
 
 notifications:
   email: false
+
+addons:
+  artifacts:
+    s3_region: "us-west-2"
+    paths: *.deb

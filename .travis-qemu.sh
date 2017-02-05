@@ -122,5 +122,7 @@ else
 	if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
 		exit 1
 	fi
+
+	cpack -V
 fi
 
