@@ -32,6 +32,10 @@ echo ">>>>> Checking CMakeLists"
 grep -A 2 'SET(CBOR_VERSION_MAJOR' CMakeLists.txt
 prompt "Is the CMake version correct?"
 
+echo ">>>>> Checking docs"
+grep 'version =\|release =' doc/source/conf.py
+prompt "Are the versions correct?"
+
 set -x
 pushd doc
 make clean
