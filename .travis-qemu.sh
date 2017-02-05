@@ -129,5 +129,7 @@ else
 	fi
 
 	cpack -V
+
+	artifacts upload
 fi
 
