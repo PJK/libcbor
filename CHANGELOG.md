@@ -1,5 +1,6 @@
 Next
 -------
+- Correctly set .so version [#52]. Warning: All previous releases will be identified as 0.0 by the linker.
 
 0.5.0 (2017-02-06)
 ---------------------
