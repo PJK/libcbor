@@ -32,6 +32,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 extensions = [
     'breathe',
     'sphinx.ext.mathjax',
+    'sphinx.ext.autodoc',
     'sphinx.ext.ifconfig'
 ]
 
@@ -90,7 +91,8 @@ release = '0.5.0'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+# https://github.com/michaeljones/breathe/issues/197
+exclude_patterns = ['breathe/*']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
