@@ -11,7 +11,7 @@ Please consult the official `IANA repository of CBOR tags <https://www.iana.org/
 Corresponding :type:`cbor_type`     ``CBOR_TYPE_TAG``
 Number of allocations               One plus any manipulations with the data
                                     reallocations relative  to chunk count
-Storage requirements               ``sizeof(cbor_item_t) + the tagged item``
+Storage requirements                ``sizeof(cbor_item_t) + the tagged item``
 ==================================  ======================================================
 
 .. doxygenfunction:: cbor_new_tag
