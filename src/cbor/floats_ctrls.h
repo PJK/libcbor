@@ -108,9 +108,9 @@ cbor_item_t * cbor_new_float8();
  */
 cbor_item_t * cbor_new_null();
 
-/** Constructs new under ctrl item
+/** Constructs new undef ctrl item
  *
- * @return **new** under ctrl item
+ * @return **new** undef ctrl item
  */
 cbor_item_t * cbor_new_undef();
 
