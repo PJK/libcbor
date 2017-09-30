@@ -10,7 +10,7 @@ VERSION=wheezy
 CHROOT_ARCH=armhf
 
 # Debian package dependencies for the host
-HOST_DEPENDENCIES="debootstrap qemu-user-static binfmt-support sbuild"
+HOST_DEPENDENCIES="debootstrap qemu-user-static binfmt-support sbuild gcc-arm-linux-gnueabihf"
 
 # Debian package dependencies for the chrooted environment
 GUEST_DEPENDENCIES="cmake git"
@@ -72,14 +72,13 @@ if [ "${ARCH}" = "arm" ]; then
 		# Compilation on QEMU is too slow and times out on Travis. Crosscompile at the host
 		echo "Initial execution on ARM environment, will crosscompile"
 		apt-cache search arm-linux-gnueabihf
-		arm-linux-gnueabihf-gcc-4.6 -v
 
 		# Crosscompile CMocka
 		pushd $HOME
 		git clone git://git.cryptomilk.org/projects/cmocka.git
 		mkdir cmocka_build && cd cmocka_build
 		cmake ../cmocka \
-				-DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-4.6
+				-DCMAKE_C_COMPILER=gcc-arm-linux-gnueabihf
 		make VERBOSE=1
 		sudo make install
 		cd ..
@@ -91,7 +90,7 @@ if [ "${ARCH}" = "arm" ]; then
 				-DCBOR_CUSTOM_ALLOC=ON \
 				-DCMAKE_BUILD_TYPE=Debug \
 				-DWITH_TESTS=ON \
-				-DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc-4.6
+				-DCMAKE_C_COMPILER=gcc-arm-linux-gnueabihf
 		make VERBOSE=1
 
 		# ARM test run, need to set up chrooted environment first
