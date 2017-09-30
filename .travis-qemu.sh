@@ -10,7 +10,7 @@ VERSION=wheezy
 CHROOT_ARCH=armhf
 
 # Debian package dependencies for the host
-HOST_DEPENDENCIES="debootstrap qemu-user-static binfmt-support sbuild gcc-arm-linux-gnueabihf"
+HOST_DEPENDENCIES="debootstrap qemu-user-static binfmt-support sbuild"
 
 # Debian package dependencies for the chrooted environment
 GUEST_DEPENDENCIES="cmake git"
@@ -71,7 +71,8 @@ if [ "${ARCH}" = "arm" ]; then
 	else
 		# Compilation on QEMU is too slow and times out on Travis. Crosscompile at the host
 		echo "Initial execution on ARM environment, will crosscompile"
-		apt-cache search arm-linux-gnueabihf
+		sudo apt-get install arm-linux-gnueabihf
+		gcc-arm-linux-gnueabihf -v
 
 		# Crosscompile CMocka
 		pushd $HOME
