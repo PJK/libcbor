@@ -91,7 +91,7 @@ if [ "${ARCH}" = "arm" ]; then
 				-DCBOR_CUSTOM_ALLOC=ON \
 				-DCMAKE_BUILD_TYPE=Debug \
 				-DWITH_TESTS=ON \
-				-DCMAKE_C_COMPILER=${CROSS_COMPILER}s
+				-DCMAKE_C_COMPILER=${CROSS_COMPILER}
 		make VERBOSE=1
 
 		# ARM test run, need to set up chrooted environment first
