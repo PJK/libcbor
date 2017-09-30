@@ -36,7 +36,7 @@ function setup_arm_chroot {
 	chmod a+x envvars.sh
 
 	# Install dependencies inside chroot
-	sudo chroot ${CHROOT_DIR} apt-get update
+#	sudo chroot ${CHROOT_DIR} apt-get update
 	sudo chroot ${CHROOT_DIR} apt-get --allow-unauthenticated install \
 		-qq -y ${GUEST_DEPENDENCIES}
 
