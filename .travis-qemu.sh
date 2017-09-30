@@ -26,7 +26,7 @@ function setup_arm_chroot {
 		--arch=${CHROOT_ARCH} ${VERSION} ${CHROOT_DIR} ${MIRROR}
 	sudo cp /usr/bin/qemu-arm-static ${CHROOT_DIR}/usr/bin/
 	sudo chroot ${CHROOT_DIR} ./debootstrap/debootstrap --second-stage
-	sudo sbuild-createchroot --arch=${CHROOT_ARCH} --foreign --setup-only \
+	sudo sbuild-createchroot --arch=${CHROOT_ARCH} --setup-only \
 		${VERSION} ${CHROOT_DIR} ${MIRROR}
 
 	# Create file with environment variables which will be used inside chrooted
@@ -36,7 +36,7 @@ function setup_arm_chroot {
 	chmod a+x envvars.sh
 
 	# Install dependencies inside chroot
-#	sudo chroot ${CHROOT_DIR} apt-get update
+	sudo chroot ${CHROOT_DIR} apt-get update
 	sudo chroot ${CHROOT_DIR} apt-get --allow-unauthenticated install \
 		-qq -y ${GUEST_DEPENDENCIES}
 
