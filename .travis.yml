@@ -36,16 +36,18 @@ matrix:
         - cmake
         - cmake-data
     env: CC="gcc-6" CXX="g++-6"
-  - env: ARCH=arm
-    addons:
-      apt:
-        sources:
-        - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
-        packages:
-        - gcc-arm-linux-gnueabihf
-        - libc6-dev-armhf-cross
-        - cmake
-        - cmake-data
+# Temporarily disabled due to slow performance and problems with Raspbian
+# chroot (https://travis-ci.org/PJK/libcbor/jobs/281748138)
+#  - env: ARCH=arm
+#    addons:
+#      apt:
+#        sources:
+#        - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
+#        packages:
+#        - gcc-arm-linux-gnueabihf
+#        - libc6-dev-armhf-cross
+#        - cmake
+#        - cmake-data
 
 script:
   - "bash -ex .travis-qemu.sh"
