@@ -4,3 +4,4 @@ nbproject
 .idea
 doxygen_docs
 */*.out
+cmake-build-debug
