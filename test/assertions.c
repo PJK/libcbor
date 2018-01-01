@@ -39,4 +39,12 @@ void assert_decoder_result(size_t read, enum cbor_decoder_status status, struct 
 {
 	assert_true(read == result.read);
 	assert_true(status == result.status);
+	assert_true(0 == result.required);
+}
+
+void assert_decoder_result_nedata(size_t required, struct cbor_decoder_result result)
+{
+	assert_true(0 == result.read);
+	assert_true(CBOR_DECODER_NEDATA == result.status);
+	assert_int_equal((int)required, (int)result.required);
 }

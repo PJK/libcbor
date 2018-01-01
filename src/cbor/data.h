@@ -203,6 +203,9 @@ struct cbor_decoder_result {
 	size_t                   read;
 	/** The result */
 	enum cbor_decoder_status status;
+	/** When status == CBOR_DECODER_NEDATA,
+	 *  the minimum number of bytes required to continue parsing */
+	size_t                   required;
 };
 
 #ifdef __cplusplus

@@ -15,9 +15,11 @@ bool static _cbor_claim_bytes(size_t required,
 		/* We need to keep all the metadata if parsing is to be resumed */
 		result->read = 0;
 		result->status = CBOR_DECODER_NEDATA;
+		result->required = required;
 		return false;
 	} else {
 		result->read += required;
+		result->required = 0;
 		return true;
 	}
 }

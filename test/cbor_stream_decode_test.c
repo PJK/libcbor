@@ -509,6 +509,33 @@ static void test_indef_map_decoding_1(void **state)
 	);
 }
 
+unsigned char map_nedata[] = { 0xBB, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x19, 0x01, 0xf4, 0x01 };
+static void test_nedata_map_decoding(void **state)
+{
+	assert_decoder_result_nedata(8,
+		decode(map_nedata, 1)
+	);
+
+	assert_map_start(1);
+	assert_decoder_result(9, CBOR_DECODER_FINISHED,
+		decode(map_nedata, 9)
+	);
+
+	assert_decoder_result_nedata(2,
+		decode(map_nedata + 9, 1)
+	);
+
+	assert_uint16_eq(500);
+	assert_decoder_result(3, CBOR_DECODER_FINISHED,
+		decode(map_nedata + 9, 3)
+	);
+
+	assert_uint8_eq(1);
+	assert_decoder_result(1, CBOR_DECODER_FINISHED,
+		decode(map_nedata + 12, 1)
+	);
+}
+
 unsigned char embedded_tag_data[] = { 0xC1 };
 static void test_embedded_tag_decoding(void **state)
 {
@@ -668,6 +695,7 @@ int main(void)
 		cmocka_unit_test(test_map_int32_decoding),
 		cmocka_unit_test(test_map_int64_decoding),
 		cmocka_unit_test(test_indef_map_decoding_1),
+		cmocka_unit_test(test_nedata_map_decoding),
 
 		cmocka_unit_test(test_embedded_tag_decoding),
 		cmocka_unit_test(test_int8_tag_decoding),
