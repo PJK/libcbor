@@ -28,11 +28,12 @@ bool key_found = false;
 void find_string(void * _ctx, cbor_data buffer, size_t len)
 {
 	if (key_found) {
-		char *tmp = strndup(buffer, len);
+		char *tmp = calloc(1, len + 1);
 		if (!tmp) {
-			fprintf(stderr, "strndup failed\n");
+			fprintf(stderr, "calloc failed\n");
 			exit(1);
 		}
+		memcpy(tmp, buffer, len);
 		printf("Found the value: %s\n", tmp);
 		free(tmp);
 		key_found = false;
