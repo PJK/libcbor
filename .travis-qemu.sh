@@ -74,7 +74,7 @@ if [ "${ARCH}" = "arm" ]; then
 		arm-linux-gnueabihf-gcc-4.6 -v
 
 		# Crosscompile CMocka
-		pushd $HOME
+		pushd ${HOME}
 		git clone git://git.cryptomilk.org/projects/cmocka.git
 		mkdir cmocka_build && cd cmocka_build
 		cmake ../cmocka \
@@ -86,7 +86,7 @@ if [ "${ARCH}" = "arm" ]; then
 		popd
 
 		# Crosscompile libcbor
-		cmake $SOURCE \
+		cmake ${SOURCE} \
 				-DCBOR_CUSTOM_ALLOC=ON \
 				-DCMAKE_BUILD_TYPE=Debug \
 				-DWITH_TESTS=ON \
@@ -100,7 +100,7 @@ if [ "${ARCH}" = "arm" ]; then
 else
 	# Proceed as normal
 	gem install coveralls-lcov
-	pushd $HOME
+	pushd ${HOME}
 	git clone git://git.cryptomilk.org/projects/cmocka.git
 	mkdir cmocka_build && cd cmocka_build
 	cmake ../cmocka
@@ -113,7 +113,13 @@ else
 	echo "Running tests"
 	cppcheck . --error-exitcode=1 --suppressions cppcheck_suppressions.txt --force
 
-	cmake . -DCBOR_CUSTOM_ALLOC=ON -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTS=ON -DCMAKE_PREFIX_PATH=$HOME/usr/local
+	cmake \
+	    -DCBOR_CUSTOM_ALLOC=ON \
+	    -DCMAKE_BUILD_TYPE=Debug \
+	    -DSANITIZE=OFF \
+	    -DWITH_TESTS=ON \
+	    -DCMAKE_PREFIX_PATH=${HOME}/usr/local \
+	    .
 	make VERBOSE=1
 
 	ctest -VV
