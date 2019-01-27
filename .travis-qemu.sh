@@ -103,7 +103,7 @@ else
 	pushd $HOME
 	git clone git://git.cryptomilk.org/projects/cmocka.git
 	mkdir cmocka_build && cd cmocka_build
-	cmake ../cmocka
+	cmake -DCMAKE_C_COMPILER=$CC -DDCMAKE_CXX_COMPILER=$CXX ../cmocka
 	make -j 2
 	sudo make install
 	cd ..
@@ -113,7 +113,13 @@ else
 	echo "Running tests"
 	cppcheck . --error-exitcode=1 --suppressions cppcheck_suppressions.txt --force
 
-	cmake . -DCBOR_CUSTOM_ALLOC=ON -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTS=ON -DCMAKE_PREFIX_PATH=$HOME/usr/local
+	cmake \
+	    -DCBOR_CUSTOM_ALLOC=ON \
+	    -DCMAKE_BUILD_TYPE=Debug \
+	    -DWITH_TESTS=ON \
+	    -DCMAKE_PREFIX_PATH=$HOME/usr/local \
+	    -DCMAKE_C_COMPILER=$CC -DDCMAKE_CXX_COMPILER=$CXX \
+	    .
 	make VERBOSE=1
 
 	ctest -VV
