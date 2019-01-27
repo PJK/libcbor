@@ -116,6 +116,7 @@ else
 	cmake \
 	    -DCBOR_CUSTOM_ALLOC=ON \
 	    -DCMAKE_BUILD_TYPE=Debug \
+	    -DSANITIZE=OFF \
 	    -DWITH_TESTS=ON \
 	    -DCMAKE_PREFIX_PATH=${HOME}/usr/local \
 	    .

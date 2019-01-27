@@ -76,12 +76,7 @@ else()
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto -Wall -pedantic -DNDEBUG")
 
     if(SANITIZE)
-        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=address -fsanitize=bounds -fsanitize=alignment")
-        # fsanitize=undefined causes the linker to fail on certain GCC toolchains
-        # https://stackoverflow.com/questions/50024731/ld-unrecognized-option-push-state-no-as-needed
-        if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-            set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=undefined")
-        endif()
+        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=undefined -fsanitize=address -fsanitize=bounds -fsanitize=alignment")
     endif()
 endif()
 
