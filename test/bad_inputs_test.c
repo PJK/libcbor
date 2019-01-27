@@ -100,6 +100,15 @@ static void test_8(void **state)
 	assert_int_equal(res.error.position, 7);
 }
 
+unsigned char data9[] = {0xBF, 0x05, 0xFF, 0x00, 0x00, 0x00, 0x10, 0x04};
+static void test_9(void **state)
+{
+	item = cbor_load(data9, 8, &res);
+	assert_null(item);
+	assert_true(res.error.code == CBOR_ERR_SYNTAXERROR);
+	assert_int_equal(res.error.position, 3);
+}
+
 
 int main(void)
 {
@@ -116,6 +125,7 @@ int main(void)
 		cmocka_unit_test(test_7),
 #endif
 		cmocka_unit_test(test_8),
+		cmocka_unit_test(test_9),
 	};
 	return cmocka_run_group_tests(tests, NULL, NULL);
 }

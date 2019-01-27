@@ -26,6 +26,10 @@ void _cbor_builder_append(cbor_item_t *item, struct _cbor_decoder_context *ctx)
 		switch (ctx->stack->top->item->type) {
 			case CBOR_TYPE_ARRAY: {
 				if (cbor_array_is_definite(ctx->stack->top->item)) {
+					/*
+					 * We don't need an explicit check for whether the item still belongs into this array
+					 * because if there are extra items, they will cause a syntax error when decoded.
+					 */
 					assert(ctx->stack->top->subitems > 0);
 					cbor_array_push(ctx->stack->top->item, item);
 					ctx->stack->top->subitems--;
@@ -311,17 +315,19 @@ bool _cbor_is_indefinite(cbor_item_t *item)
 void cbor_builder_indef_break_callback(void *context)
 {
 	struct _cbor_decoder_context *ctx = context;
-	if (ctx->stack->size == 0) {
-		ctx->syntax_error = true;
-	} else {
+	/* There must be an item to break out of*/
+	if (ctx->stack->size > 0) {
 		cbor_item_t *item = ctx->stack->top->item;
-		if (_cbor_is_indefinite(item)) {
+		if (_cbor_is_indefinite(item) && /* Only indefinite items can be terminated by 0xFF */
+			/* Special case: we cannot append up if an indefinite map is incomplete (we are expecting a value). */
+			(item->type != CBOR_TYPE_MAP || ctx->stack->top->subitems % 2 == 0)) {
 			_cbor_stack_pop(ctx->stack);
 			_cbor_builder_append(item, ctx);
-		} else {
-			ctx->syntax_error = true;
+			return;
 		}
 	}
+
+	ctx->syntax_error = true;
 }
 
 void cbor_builder_float2_callback(void *context, float value)

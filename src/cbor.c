@@ -101,6 +101,8 @@ cbor_item_t * cbor_load(cbor_data source,
 		}
 		}
 
+		printf("\nres: %d\n",context.syntax_error);
+
 		if (context.creation_failed) {
 			/* Most likely unsuccessful allocation - our callback has failed */
 			result->error.code = CBOR_ERR_MEMERROR;
