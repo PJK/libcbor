@@ -74,7 +74,7 @@ if [ "${ARCH}" = "arm" ]; then
 		arm-linux-gnueabihf-gcc-4.6 -v
 
 		# Crosscompile CMocka
-		pushd $HOME
+		pushd ${HOME}
 		git clone git://git.cryptomilk.org/projects/cmocka.git
 		mkdir cmocka_build && cd cmocka_build
 		cmake ../cmocka \
@@ -86,7 +86,7 @@ if [ "${ARCH}" = "arm" ]; then
 		popd
 
 		# Crosscompile libcbor
-		cmake $SOURCE \
+		cmake ${SOURCE} \
 				-DCBOR_CUSTOM_ALLOC=ON \
 				-DCMAKE_BUILD_TYPE=Debug \
 				-DWITH_TESTS=ON \
@@ -100,10 +100,10 @@ if [ "${ARCH}" = "arm" ]; then
 else
 	# Proceed as normal
 	gem install coveralls-lcov
-	pushd $HOME
+	pushd ${HOME}
 	git clone git://git.cryptomilk.org/projects/cmocka.git
 	mkdir cmocka_build && cd cmocka_build
-	cmake -DCMAKE_C_COMPILER=$CC -DDCMAKE_CXX_COMPILER=$CXX ../cmocka
+	cmake -DCMAKE_C_COMPILER=${CC} -DDCMAKE_CXX_COMPILER=${CXX} ../cmocka
 	make -j 2
 	sudo make install
 	cd ..
@@ -117,8 +117,8 @@ else
 	    -DCBOR_CUSTOM_ALLOC=ON \
 	    -DCMAKE_BUILD_TYPE=Debug \
 	    -DWITH_TESTS=ON \
-	    -DCMAKE_PREFIX_PATH=$HOME/usr/local \
-	    -DCMAKE_C_COMPILER=$CC -DDCMAKE_CXX_COMPILER=$CXX \
+	    -DCMAKE_PREFIX_PATH=${HOME}/usr/local \
+	    -DCMAKE_C_COMPILER=${CC} -DDCMAKE_CXX_COMPILER=${CXX} \
 	    .
 	make VERBOSE=1
 
