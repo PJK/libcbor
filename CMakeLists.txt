@@ -47,6 +47,7 @@ if(PRINT_FUZZ)
     add_definitions(-DPRINT_FUZZ)
 endif(PRINT_FUZZ)
 
+option(SANITIZE "Enable ASan & a few compatible sanitizers in Debug mode" ON)
 
 set(CPACK_GENERATOR "DEB" "TGZ" "RPM")
 set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
@@ -72,7 +73,11 @@ else()
     set(CBOR_RESTRICT_SPECIFIER "restrict")
 
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -pedantic -g -ggdb -DDEBUG=true")
-    set(CMAKE_C_FLAGS_RELEASE "-O3 -flto -Wall -pedantic -DNDEBUG")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto -Wall -pedantic -DNDEBUG")
+
+    if(SANITIZE)
+        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=address -fsanitize=undefined -fsanitize=bounds -fsanitize=alignment")
+    endif()
 endif()
 
 set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-g")

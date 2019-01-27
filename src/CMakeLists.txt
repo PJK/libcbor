@@ -11,7 +11,7 @@ if (NOT DEFINED CMAKE_MACOSX_RPATH)
 	set(CMAKE_MACOSX_RPATH 0)
 endif()
 
-add_library(cbor ${SOURCES})
+add_library(cbor STATIC ${SOURCES})
 add_library(cbor_shared SHARED ${SOURCES})
 
 set_target_properties(cbor_shared PROPERTIES OUTPUT_NAME cbor VERSION ${CBOR_VERSION})
@@ -20,7 +20,7 @@ configure_file(libcbor.pc.in libcbor.pc @ONLY)
 
 #http://www.cmake.org/Wiki/CMake:Install_Commands
 
-install(TARGETS cbor  cbor_shared
+install(TARGETS cbor_shared
 	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 	RUNTIME DESTINATION bin)
