@@ -91,6 +91,25 @@ static void test_7(void **state)
 #endif
 
 
+unsigned char data8[] = {0xA3, 0x64, 0x68, 0x61, 0x6C, 0x66, 0xFF, 0x00, 0x00, 0x66, 0x73, 0x69, 0x6E, 0x67, 0x6C, 0x65, 0xFA, 0x7F, 0x7F, 0xFF, 0xFF, 0x6D, 0x73, 0x69, 0x6D, 0x70, 0x6C, 0x65, 0x20, 0x76, 0x61, 0x6C, 0x75, 0x65, 0x73, 0x83, 0xF5, 0xF4, 0xF6};
+static void test_8(void **state)
+{
+	item = cbor_load(data8, 39, &res);
+	assert_null(item);
+	assert_true(res.error.code == CBOR_ERR_SYNTAXERROR);
+	assert_int_equal(res.error.position, 7);
+}
+
+unsigned char data9[] = {0xBF, 0x05, 0xFF, 0x00, 0x00, 0x00, 0x10, 0x04};
+static void test_9(void **state)
+{
+	item = cbor_load(data9, 8, &res);
+	assert_null(item);
+	assert_true(res.error.code == CBOR_ERR_SYNTAXERROR);
+	assert_int_equal(res.error.position, 3);
+}
+
+
 int main(void)
 {
 	const struct CMUnitTest tests[] = {
@@ -105,6 +124,8 @@ int main(void)
 #ifdef EIGHT_BYTE_SIZE_T
 		cmocka_unit_test(test_7),
 #endif
+		cmocka_unit_test(test_8),
+		cmocka_unit_test(test_9),
 	};
 	return cmocka_run_group_tests(tests, NULL, NULL);
 }
