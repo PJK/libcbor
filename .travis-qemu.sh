@@ -103,7 +103,7 @@ else
 	pushd ${HOME}
 	git clone git://git.cryptomilk.org/projects/cmocka.git
 	mkdir cmocka_build && cd cmocka_build
-	cmake -DCMAKE_C_COMPILER=${CC} -DDCMAKE_CXX_COMPILER=${CXX} ../cmocka
+	cmake ../cmocka
 	make -j 2
 	sudo make install
 	cd ..
@@ -118,7 +118,6 @@ else
 	    -DCMAKE_BUILD_TYPE=Debug \
 	    -DWITH_TESTS=ON \
 	    -DCMAKE_PREFIX_PATH=${HOME}/usr/local \
-	    -DCMAKE_C_COMPILER=${CC} -DDCMAKE_CXX_COMPILER=${CXX} \
 	    .
 	make VERBOSE=1
 

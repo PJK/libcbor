@@ -19,8 +19,7 @@ matrix:
         - lcov
         - cmake
         - cmake-data
-    env: CC="clang-3.6" CXX="clang++-3.6"
-  - compiler: gcc
+  - compiler: gcc-6
     addons:
       apt:
         sources:
@@ -35,7 +34,6 @@ matrix:
         - lcov
         - cmake
         - cmake-data
-    env: CC="gcc-6" CXX="g++-6"
 # Temporarily disabled due to slow performance and problems with Raspbian
 # chroot (https://travis-ci.org/PJK/libcbor/jobs/281748138)
 #  - env: ARCH=arm
