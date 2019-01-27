@@ -24,63 +24,64 @@ void _cbor_builder_append(cbor_item_t *item, struct _cbor_decoder_context *ctx)
 	} else {
 		/* Part of a bigger structure */
 		switch (ctx->stack->top->item->type) {
-		case CBOR_TYPE_ARRAY: {
-			if (cbor_array_is_definite(ctx->stack->top->item)) {
-				assert(ctx->stack->top->subitems > 0);
-				cbor_array_push(ctx->stack->top->item, item);
-				ctx->stack->top->subitems--;
-				if (ctx->stack->top->subitems == 0) {
-					cbor_item_t *item = ctx->stack->top->item;
-					_cbor_stack_pop(ctx->stack);
-					_cbor_builder_append(item, ctx);
+			case CBOR_TYPE_ARRAY: {
+				if (cbor_array_is_definite(ctx->stack->top->item)) {
+					assert(ctx->stack->top->subitems > 0);
+					cbor_array_push(ctx->stack->top->item, item);
+					ctx->stack->top->subitems--;
+					if (ctx->stack->top->subitems == 0) {
+						cbor_item_t *item = ctx->stack->top->item;
+						_cbor_stack_pop(ctx->stack);
+						_cbor_builder_append(item, ctx);
+					}
+					cbor_decref(&item);
+				} else {
+					/* Indefinite array, don't bother with subitems */
+					cbor_array_push(ctx->stack->top->item, item);
+					cbor_decref(&item);
 				}
-				cbor_decref(&item);
-			} else {
-				/* Indefinite array, don't bother with subitems */
-				cbor_array_push(ctx->stack->top->item, item);
-				cbor_decref(&item);
+				break;
 			}
-			break;
-		}
-		case CBOR_TYPE_MAP: {
-			/* We use 0 and 1 subitems to distinguish between keys and values in indefinite items */
-			if (ctx->stack->top->subitems % 2) {
-				/* Odd record, this is a value */
-				_cbor_map_add_value(ctx->stack->top->item, cbor_move(item));
-			} else {
-				/* Even record, this is a key */
-				_cbor_map_add_key(ctx->stack->top->item, cbor_move(item));
-			}
-			if (cbor_map_is_definite(ctx->stack->top->item)) {
-				ctx->stack->top->subitems--;
-				if (ctx->stack->top->subitems == 0) {
-					cbor_item_t *item = ctx->stack->top->item;
-					_cbor_stack_pop(ctx->stack);
-					_cbor_builder_append(item, ctx);
+			case CBOR_TYPE_MAP: {
+				/* We use 0 and 1 subitems to distinguish between keys and values in indefinite items */
+				if (ctx->stack->top->subitems % 2) {
+					/* Odd record, this is a value */
+					_cbor_map_add_value(ctx->stack->top->item, cbor_move(item));
+				} else {
+					/* Even record, this is a key */
+					_cbor_map_add_key(ctx->stack->top->item, cbor_move(item));
 				}
-			} else {
-				ctx->stack->top->subitems ^= 1; /* Flip the indicator for indefinite items */
+				if (cbor_map_is_definite(ctx->stack->top->item)) {
+					ctx->stack->top->subitems--;
+					if (ctx->stack->top->subitems == 0) {
+						cbor_item_t *item = ctx->stack->top->item;
+						_cbor_stack_pop(ctx->stack);
+						_cbor_builder_append(item, ctx);
+					}
+				} else {
+					ctx->stack->top->subitems ^= 1; /* Flip the indicator for indefinite items */
+				}
+				break;
 			}
-			break;
-		}
-		case CBOR_TYPE_TAG: {
-			assert(ctx->stack->top->subitems == 1);
-			cbor_tag_set_item(ctx->stack->top->item, item);
-			cbor_decref(&item); /* Give up on our reference */
-			cbor_item_t *item = ctx->stack->top->item;
-			_cbor_stack_pop(ctx->stack);
-			_cbor_builder_append(item, ctx);
-			break;
-		}
-		default: {
-			cbor_decref(&item);
-			ctx->syntax_error = true;
-		}
+			case CBOR_TYPE_TAG: {
+				assert(ctx->stack->top->subitems == 1);
+				cbor_tag_set_item(ctx->stack->top->item, item);
+				cbor_decref(&item); /* Give up on our reference */
+				cbor_item_t *item = ctx->stack->top->item;
+				_cbor_stack_pop(ctx->stack);
+				_cbor_builder_append(item, ctx);
+				break;
+			}
+			default: {
+				cbor_decref(&item);
+				ctx->syntax_error = true;
+			}
 		}
 	}
 }
 
 
+// TODO: refactor this to take the parameter name, this is way too magical
 #define CHECK_RES do { if (res == NULL) { ctx->creation_failed = true; return; } } while (0)
 
 void cbor_builder_uint8_callback(void *context, uint8_t value)
@@ -288,15 +289,38 @@ void cbor_builder_map_start_callback(void *context, size_t size)
 	}
 }
 
+/**
+ * Is the (partially constructed) item indefinite?
+ */
+bool _cbor_is_indefinite(cbor_item_t *item)
+{
+	switch (item->type) {
+		case CBOR_TYPE_BYTESTRING:
+			return item->metadata.bytestring_metadata.type == _CBOR_METADATA_INDEFINITE;
+		case CBOR_TYPE_STRING:
+			return item->metadata.string_metadata.type == _CBOR_METADATA_INDEFINITE;
+		case CBOR_TYPE_ARRAY:
+			return item->metadata.array_metadata.type == _CBOR_METADATA_INDEFINITE;
+		case CBOR_TYPE_MAP:
+			return item->metadata.map_metadata.type == _CBOR_METADATA_INDEFINITE;
+		default:
+			return false;
+	}
+}
+
 void cbor_builder_indef_break_callback(void *context)
 {
 	struct _cbor_decoder_context *ctx = context;
 	if (ctx->stack->size == 0) {
-		// TODO complain
+		ctx->syntax_error = true;
 	} else {
 		cbor_item_t *item = ctx->stack->top->item;
-		_cbor_stack_pop(ctx->stack);
-		_cbor_builder_append(item, ctx);
+		if (_cbor_is_indefinite(item)) {
+			_cbor_stack_pop(ctx->stack);
+			_cbor_builder_append(item, ctx);
+		} else {
+			ctx->syntax_error = true;
+		}
 	}
 }
 
