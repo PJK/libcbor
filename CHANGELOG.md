@@ -2,6 +2,7 @@ Next
 -------
 - Correctly set .so version [#52]. Warning: All previous releases will be identified as 0.0 by the linker.
 - Fix & prevent heap overflow error in example code [#74] [#76] (by nevun@)
+- Correctly set OSX dynamic library version [#75]
 
 0.5.0 (2017-02-06)
 ---------------------

@@ -14,7 +14,7 @@ endif()
 add_library(cbor STATIC ${SOURCES})
 add_library(cbor_shared SHARED ${SOURCES})
 
-set_target_properties(cbor_shared PROPERTIES OUTPUT_NAME cbor VERSION ${CBOR_VERSION})
+set_target_properties(cbor_shared PROPERTIES OUTPUT_NAME cbor VERSION ${CBOR_VERSION} SOVERSION ${CBOR_VERSION})
 
 configure_file(libcbor.pc.in libcbor.pc @ONLY)
 
