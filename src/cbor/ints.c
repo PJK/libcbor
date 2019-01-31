@@ -50,6 +50,7 @@ uint64_t cbor_get_int(const cbor_item_t * item)
 		case CBOR_INT_32: return cbor_get_uint32(item);
 		case CBOR_INT_64: return cbor_get_uint64(item);
 	}
+	// TODO: This should be handled in a default branch
 	return 0xDEADBEEF; /* Compiler complaints */
 }
 
@@ -97,6 +98,7 @@ void cbor_mark_negint(cbor_item_t *item)
 cbor_item_t *cbor_new_int8()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 1);
+	_CBOR_NOTNULL(item);
 	*item = (cbor_item_t) {
 		.data = (unsigned char *) item + sizeof(cbor_item_t),
 		.refcount = 1,
@@ -109,6 +111,7 @@ cbor_item_t *cbor_new_int8()
 cbor_item_t *cbor_new_int16()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 2);
+	_CBOR_NOTNULL(item);
 	*item = (cbor_item_t) {
 		.data = (unsigned char *) item + sizeof(cbor_item_t),
 		.refcount = 1,
@@ -121,6 +124,7 @@ cbor_item_t *cbor_new_int16()
 cbor_item_t *cbor_new_int32()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
+	_CBOR_NOTNULL(item);
 	*item = (cbor_item_t) {
 		.data = (unsigned char *) item + sizeof(cbor_item_t),
 		.refcount = 1,
@@ -133,6 +137,7 @@ cbor_item_t *cbor_new_int32()
 cbor_item_t *cbor_new_int64()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 8);
+	_CBOR_NOTNULL(item);
 	*item = (cbor_item_t) {
 		.data = (unsigned char *) item + sizeof(cbor_item_t),
 		.refcount = 1,
@@ -145,6 +150,7 @@ cbor_item_t *cbor_new_int64()
 cbor_item_t *cbor_build_uint8(uint8_t value)
 {
 	cbor_item_t *item = cbor_new_int8();
+	_CBOR_NOTNULL(item);
 	cbor_set_uint8(item, value);
 	cbor_mark_uint(item);
 	return item;
@@ -153,6 +159,7 @@ cbor_item_t *cbor_build_uint8(uint8_t value)
 cbor_item_t *cbor_build_uint16(uint16_t value)
 {
 	cbor_item_t *item = cbor_new_int16();
+	_CBOR_NOTNULL(item);
 	cbor_set_uint16(item, value);
 	cbor_mark_uint(item);
 	return item;
@@ -161,6 +168,7 @@ cbor_item_t *cbor_build_uint16(uint16_t value)
 cbor_item_t *cbor_build_uint32(uint32_t value)
 {
 	cbor_item_t *item = cbor_new_int32();
+	_CBOR_NOTNULL(item);
 	cbor_set_uint32(item, value);
 	cbor_mark_uint(item);
 	return item;
@@ -169,6 +177,7 @@ cbor_item_t *cbor_build_uint32(uint32_t value)
 cbor_item_t *cbor_build_uint64(uint64_t value)
 {
 	cbor_item_t *item = cbor_new_int64();
+	_CBOR_NOTNULL(item);
 	cbor_set_uint64(item, value);
 	cbor_mark_uint(item);
 	return item;
@@ -177,6 +186,7 @@ cbor_item_t *cbor_build_uint64(uint64_t value)
 cbor_item_t *cbor_build_negint8(uint8_t value)
 {
 	cbor_item_t *item = cbor_new_int8();
+	_CBOR_NOTNULL(item);
 	cbor_set_uint8(item, value);
 	cbor_mark_negint(item);
 	return item;
@@ -185,6 +195,7 @@ cbor_item_t *cbor_build_negint8(uint8_t value)
 cbor_item_t *cbor_build_negint16(uint16_t value)
 {
 	cbor_item_t *item = cbor_new_int16();
+	_CBOR_NOTNULL(item);
 	cbor_set_uint16(item, value);
 	cbor_mark_negint(item);
 	return item;
@@ -193,6 +204,7 @@ cbor_item_t *cbor_build_negint16(uint16_t value)
 cbor_item_t *cbor_build_negint32(uint32_t value)
 {
 	cbor_item_t *item = cbor_new_int32();
+	_CBOR_NOTNULL(item);
 	cbor_set_uint32(item, value);
 	cbor_mark_negint(item);
 	return item;
@@ -201,6 +213,7 @@ cbor_item_t *cbor_build_negint32(uint32_t value)
 cbor_item_t *cbor_build_negint64(uint64_t value)
 {
 	cbor_item_t *item = cbor_new_int64();
+	_CBOR_NOTNULL(item);
 	cbor_set_uint64(item, value);
 	cbor_mark_negint(item);
 	return item;

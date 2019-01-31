@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Pavel Kalvoda <me@pavelkalvoda.com>
+ * Copyright (c) 2014-2019 Pavel Kalvoda <me@pavelkalvoda.com>
  *
  * libcbor is free software; you can redistribute it and/or modify
  * it under the terms of the MIT license. See LICENSE for details.
@@ -55,6 +55,13 @@ static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
 
 #define TO_STR_(x) #x
 #define TO_STR(x) TO_STR_(x) /* enables proper double expansion */
+
+// Macro to short-circuit builder functions when memory allocation fails
+#define _CBOR_NOTNULL(cbor_item) do { \
+		if (cbor_item == NULL) { \
+			return NULL; \
+		} \
+	} while (0)
 
 #if CBOR_CUSTOM_ALLOC
 
