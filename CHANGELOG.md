@@ -9,7 +9,7 @@ Next
   - All cbor_new_ and cbor_build_ functions will now explicitly return NULL
     when memory allocation fails
   - It is up to the client to handle such cases
-- Globally enforced code style (#83)
+- Globally enforced code style [#83]
 
 0.5.0 (2017-02-06)
 ---------------------
