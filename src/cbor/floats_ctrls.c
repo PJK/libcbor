@@ -49,14 +49,18 @@ double cbor_float_get_float8(const cbor_item_t *item)
 	return *(double *) item->data;
 }
 
-double cbor_float_get_float(const cbor_item_t * item)
+double cbor_float_get_float(const cbor_item_t *item)
 {
 	assert(cbor_is_float(item));
-	switch(cbor_float_get_width(item)) {
-	case CBOR_FLOAT_0: return NAN;
-	case CBOR_FLOAT_16: return cbor_float_get_float2(item);
-	case CBOR_FLOAT_32: return cbor_float_get_float4(item);
-	case CBOR_FLOAT_64: return cbor_float_get_float8(item);
+	switch (cbor_float_get_width(item)) {
+		case CBOR_FLOAT_0:
+			return NAN;
+		case CBOR_FLOAT_16:
+			return cbor_float_get_float2(item);
+		case CBOR_FLOAT_32:
+			return cbor_float_get_float4(item);
+		case CBOR_FLOAT_64:
+			return cbor_float_get_float8(item);
 	}
 	return NAN; /* Compiler complaints */
 }
@@ -99,10 +103,10 @@ cbor_item_t *cbor_new_ctrl()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
 	*item = (cbor_item_t) {
-		.type = CBOR_TYPE_FLOAT_CTRL,
-		.data = NULL,
-		.refcount = 1,
-		.metadata = {.float_ctrl_metadata = {.width = CBOR_FLOAT_0, .ctrl = CBOR_CTRL_NONE}}
+			.type = CBOR_TYPE_FLOAT_CTRL,
+			.data = NULL,
+			.refcount = 1,
+			.metadata = {.float_ctrl_metadata = {.width = CBOR_FLOAT_0, .ctrl = CBOR_CTRL_NONE}}
 	};
 	return item;
 }
@@ -111,10 +115,10 @@ cbor_item_t *cbor_new_float2()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
 	*item = (cbor_item_t) {
-		.type = CBOR_TYPE_FLOAT_CTRL,
-		.data = (unsigned char *) item + sizeof(cbor_item_t),
-		.refcount = 1,
-		.metadata = {.float_ctrl_metadata = {.width = CBOR_FLOAT_16}}
+			.type = CBOR_TYPE_FLOAT_CTRL,
+			.data = (unsigned char *) item + sizeof(cbor_item_t),
+			.refcount = 1,
+			.metadata = {.float_ctrl_metadata = {.width = CBOR_FLOAT_16}}
 	};
 	return item;
 }
@@ -123,10 +127,10 @@ cbor_item_t *cbor_new_float4()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
 	*item = (cbor_item_t) {
-		.type = CBOR_TYPE_FLOAT_CTRL,
-		.data = (unsigned char *) item + sizeof(cbor_item_t),
-		.refcount = 1,
-		.metadata = {.float_ctrl_metadata = {.width = CBOR_FLOAT_32}}
+			.type = CBOR_TYPE_FLOAT_CTRL,
+			.data = (unsigned char *) item + sizeof(cbor_item_t),
+			.refcount = 1,
+			.metadata = {.float_ctrl_metadata = {.width = CBOR_FLOAT_32}}
 	};
 	return item;
 }
@@ -135,10 +139,10 @@ cbor_item_t *cbor_new_float8()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 8);
 	*item = (cbor_item_t) {
-		.type = CBOR_TYPE_FLOAT_CTRL,
-		.data = (unsigned char *) item + sizeof(cbor_item_t),
-		.refcount = 1,
-		.metadata = {.float_ctrl_metadata = {.width = CBOR_FLOAT_64}}
+			.type = CBOR_TYPE_FLOAT_CTRL,
+			.data = (unsigned char *) item + sizeof(cbor_item_t),
+			.refcount = 1,
+			.metadata = {.float_ctrl_metadata = {.width = CBOR_FLOAT_64}}
 	};
 	return item;
 }
@@ -183,7 +187,7 @@ cbor_item_t *cbor_build_float8(double value)
 	return item;
 }
 
-cbor_item_t *cbor_build_ctrl(uint8_t  value)
+cbor_item_t *cbor_build_ctrl(uint8_t value)
 {
 	cbor_item_t *item = cbor_new_ctrl();
 	cbor_set_ctrl(item, value);
