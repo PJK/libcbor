@@ -11,8 +11,8 @@
 
 #include <cmocka.h>
 
-#include "cbor.h"
 #include <string.h>
+#include "cbor.h"
 
 cbor_item_t *string;
 struct cbor_load_result res;

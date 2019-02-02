@@ -11,7 +11,6 @@
 
 #include <cmocka.h>
 
-
 #include "cbor.h"
 
 unsigned char buffer[512];
