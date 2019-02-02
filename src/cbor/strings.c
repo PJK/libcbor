@@ -24,12 +24,17 @@ cbor_item_t *cbor_new_definite_string()
 cbor_item_t *cbor_new_indefinite_string()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	_CBOR_NOTNULL(item);
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_STRING,
 		.metadata = {.string_metadata = {.type = _CBOR_METADATA_INDEFINITE, .length = 0}},
 		.data = _CBOR_MALLOC(sizeof(struct cbor_indefinite_string_data))
 	};
+	if (item->data == NULL) {
+		_CBOR_FREE(item);
+		return NULL;
+	}
 	*((struct cbor_indefinite_string_data *) item->data) = (struct cbor_indefinite_string_data) {
 		.chunk_count = 0,
 		.chunk_capacity = 0,

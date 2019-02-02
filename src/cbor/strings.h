@@ -134,8 +134,6 @@ cbor_item_t *cbor_build_string(const char *val);
  *
  * @param val A UTF-8 string, at least \p length long (excluding the null byte)
  * @return A **new** string with content `handle`. `NULL` on malloc failure.
- *
- * TODO: The name is misspelled :(
  */
 cbor_item_t *cbor_build_stringn(const char *val, size_t length);
 
