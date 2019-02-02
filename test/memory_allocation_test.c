@@ -150,6 +150,16 @@ static void test_tag_creation(void **state)
 	WITH_FAILING_MALLOC({ assert_null(cbor_new_tag(42)); });
 }
 
+static void test_float_ctrl_creation(void **state)
+{
+	WITH_FAILING_MALLOC({ assert_null(cbor_new_ctrl()); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_new_float2()); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_new_float4()); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_new_float8()); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_new_null()); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_new_undef()); });
+}
+
 int main(void)
 {
 #if CBOR_CUSTOM_ALLOC
@@ -163,6 +173,7 @@ int main(void)
 			cmocka_unit_test(test_array_creation),
 			cmocka_unit_test(test_map_creation),
 			cmocka_unit_test(test_tag_creation),
+			cmocka_unit_test(test_float_ctrl_creation),
 	};
 #else
 	// Can't do anything without a custom allocator

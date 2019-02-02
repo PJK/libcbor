@@ -102,6 +102,8 @@ bool cbor_ctrl_is_bool(const cbor_item_t *item)
 cbor_item_t *cbor_new_ctrl()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	_CBOR_NOTNULL(item);
+
 	*item = (cbor_item_t) {
 			.type = CBOR_TYPE_FLOAT_CTRL,
 			.data = NULL,
@@ -114,6 +116,8 @@ cbor_item_t *cbor_new_ctrl()
 cbor_item_t *cbor_new_float2()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
+	_CBOR_NOTNULL(item);
+
 	*item = (cbor_item_t) {
 			.type = CBOR_TYPE_FLOAT_CTRL,
 			.data = (unsigned char *) item + sizeof(cbor_item_t),
@@ -126,6 +130,8 @@ cbor_item_t *cbor_new_float2()
 cbor_item_t *cbor_new_float4()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
+	_CBOR_NOTNULL(item);
+
 	*item = (cbor_item_t) {
 			.type = CBOR_TYPE_FLOAT_CTRL,
 			.data = (unsigned char *) item + sizeof(cbor_item_t),
@@ -138,6 +144,8 @@ cbor_item_t *cbor_new_float4()
 cbor_item_t *cbor_new_float8()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 8);
+	_CBOR_NOTNULL(item);
+
 	*item = (cbor_item_t) {
 			.type = CBOR_TYPE_FLOAT_CTRL,
 			.data = (unsigned char *) item + sizeof(cbor_item_t),
@@ -150,6 +158,7 @@ cbor_item_t *cbor_new_float8()
 cbor_item_t *cbor_new_null()
 {
 	cbor_item_t *item = cbor_new_ctrl();
+	_CBOR_NOTNULL(item);
 	cbor_set_ctrl(item, CBOR_CTRL_NULL);
 	return item;
 }
@@ -157,6 +166,7 @@ cbor_item_t *cbor_new_null()
 cbor_item_t *cbor_new_undef()
 {
 	cbor_item_t *item = cbor_new_ctrl();
+	_CBOR_NOTNULL(item);
 	cbor_set_ctrl(item, CBOR_CTRL_UNDEF);
 	return item;
 }
