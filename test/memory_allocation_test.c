@@ -229,6 +229,7 @@ static void test_array_push(void **state) {
         assert_null(array->data);
         assert_int_equal(array->metadata.array_metadata.end_ptr, 0);
 
+        cbor_decref(&string);
         cbor_decref(&array);
       },
       4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
