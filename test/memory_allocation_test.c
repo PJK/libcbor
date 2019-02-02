@@ -19,41 +19,74 @@
 //
 // WARNING: The test only works with CBOR_CUSTOM_ALLOC
 
-// How many malloc calls we expect
-int malloc_calls_expected;
-// How many malloc calls we got
-int malloc_calls;
+typedef enum call_expectation {
+  MALLOC,
+  MALLOC_FAIL,
+  REALLOC,
+  REALLOC_FAIL
+} call_expectation;
+
+// How many alloc calls we expect
+int alloc_calls_expected;
+// How many alloc calls we got
+int alloc_calls;
 // Array of booleans indicating whether to return a block or fail with NULL
-bool *should_succeed;
+call_expectation *expectations;
 
 void set_mock_malloc(int calls, ...) {
   va_list args;
   va_start(args, calls);
-  malloc_calls_expected = calls;
-  malloc_calls = 0;
-  should_succeed = malloc(calls * sizeof(bool));
+  alloc_calls_expected = calls;
+  alloc_calls = 0;
+  expectations = calloc(calls, sizeof(expectations));
   for (int i = 0; i < calls; i++) {
     // Promotable types, baby
-    should_succeed[i] = (bool)va_arg(args, int);
+    expectations[i] = va_arg(args, call_expectation);
   }
   va_end(args);
 }
 
 void finalize_mock_malloc() {
-  assert_int_equal(malloc_calls, malloc_calls_expected);
-  free(should_succeed);
+  assert_int_equal(alloc_calls, alloc_calls_expected);
+  free(expectations);
 }
 
 void *instrumented_malloc(size_t size) {
-  if (malloc_calls >= malloc_calls_expected) {
-    // We failed to properly mock a call
-    fail();
+  if (alloc_calls >= alloc_calls_expected) {
+    goto error;
   }
-  if (should_succeed[malloc_calls++]) {
+
+  if (expectations[alloc_calls] == MALLOC) {
+    alloc_calls++;
     return malloc(size);
-  } else {
+  } else if (expectations[alloc_calls] == MALLOC_FAIL) {
+    alloc_calls++;
     return NULL;
   }
+
+error:
+  print_error("Unexpected call to malloc");
+  fail();
+  return NULL;
+}
+
+void *instrumented_realloc(void *ptr, size_t size) {
+  if (alloc_calls >= alloc_calls_expected) {
+    goto error;
+  }
+
+  if (expectations[alloc_calls] == REALLOC) {
+    alloc_calls++;
+    return realloc(ptr, size);
+  } else if (expectations[alloc_calls] == REALLOC_FAIL) {
+    alloc_calls++;
+    return NULL;
+  }
+
+error:
+  print_error("Unexpected call to realloc");
+  fail();
+  return NULL;
 }
 
 #define WITH_MOCK_MALLOC(block, malloc_calls, ...) \
@@ -63,7 +96,7 @@ void *instrumented_malloc(size_t size) {
     finalize_mock_malloc();                        \
   } while (0)
 
-#define WITH_FAILING_MALLOC(block) WITH_MOCK_MALLOC(block, 1, false)
+#define WITH_FAILING_MALLOC(block) WITH_MOCK_MALLOC(block, 1, MALLOC_FAIL)
 
 static void test_int_creation(void **state) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_int8()); });
@@ -86,42 +119,40 @@ static void test_bytestring_creation(void **state) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_bytestring()); });
 
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_bytestring()); });
-  WITH_MOCK_MALLOC({ assert_null(cbor_new_indefinite_bytestring()); }, 2, true,
-                   false);
+  WITH_MOCK_MALLOC({ assert_null(cbor_new_indefinite_bytestring()); }, 2, MALLOC,
+                   MALLOC_FAIL);
 
   unsigned char bytes[] = {0, 0, 0xFF, 0xAB};
 
   WITH_FAILING_MALLOC({ assert_null(cbor_build_bytestring(bytes, 4)); });
-  WITH_MOCK_MALLOC({ assert_null(cbor_build_bytestring(bytes, 4)); }, 2, true,
-                   false);
+  WITH_MOCK_MALLOC({ assert_null(cbor_build_bytestring(bytes, 4)); }, 2, MALLOC,
+                   MALLOC_FAIL);
 }
 
 static void test_string_creation(void **state) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_string()); });
 
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_string()); });
-  WITH_MOCK_MALLOC({ assert_null(cbor_new_indefinite_string()); }, 2, true,
-                   false);
+  WITH_MOCK_MALLOC({ assert_null(cbor_new_indefinite_string()); }, 2, MALLOC,
+                   MALLOC_FAIL);
 
   WITH_FAILING_MALLOC({ assert_null(cbor_build_string("Test")); });
-  WITH_MOCK_MALLOC({ assert_null(cbor_build_string("Test")); }, 2, true, false);
+  WITH_MOCK_MALLOC({ assert_null(cbor_build_string("Test")); }, 2, MALLOC, MALLOC_FAIL);
 
   WITH_FAILING_MALLOC({ assert_null(cbor_build_stringn("Test", 4)); });
-  WITH_MOCK_MALLOC({ assert_null(cbor_build_stringn("Test", 4)); }, 2, true,
-                   false);
+  WITH_MOCK_MALLOC({ assert_null(cbor_build_stringn("Test", 4)); }, 2, MALLOC, MALLOC_FAIL);
 }
 
 static void test_array_creation(void **state) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_array(42)); });
-  WITH_MOCK_MALLOC({ assert_null(cbor_new_definite_array(42)); }, 2, true,
-                   false);
+  WITH_MOCK_MALLOC({ assert_null(cbor_new_definite_array(42)); }, 2, MALLOC, MALLOC_FAIL);
 
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_array()); });
 }
 
 static void test_map_creation(void **state) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_map(42)); });
-  WITH_MOCK_MALLOC({ assert_null(cbor_new_definite_map(42)); }, 2, true, false);
+  WITH_MOCK_MALLOC({ assert_null(cbor_new_definite_map(42)); }, 2, MALLOC, MALLOC_FAIL);
 
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_map()); });
 }
@@ -145,9 +176,21 @@ static void test_float_ctrl_creation(void **state) {
   WITH_FAILING_MALLOC({ assert_null(cbor_build_ctrl(0xAF)); });
 }
 
+static void test_bytestring_add_chunk(void **state) {
+  unsigned char bytes[] = {0, 0, 0xFF, 0xAB};
+  WITH_MOCK_MALLOC(
+      {
+        cbor_item_t *bytestring = cbor_new_indefinite_bytestring();
+        cbor_item_t *chunk = cbor_build_bytestring(bytes, 4);
+
+        assert_false(cbor_bytestring_add_chunk(bytestring, chunk));
+      },
+      3, true, true, false);
+}
+
 int main(void) {
 #if CBOR_CUSTOM_ALLOC
-  cbor_set_allocs(instrumented_malloc, realloc, free);
+  cbor_set_allocs(instrumented_malloc, instrumented_realloc, free);
 
   // TODO: string chunks realloc test
   const struct CMUnitTest tests[] = {
@@ -158,6 +201,8 @@ int main(void) {
       cmocka_unit_test(test_map_creation),
       cmocka_unit_test(test_tag_creation),
       cmocka_unit_test(test_float_ctrl_creation),
+
+      cmocka_unit_test(test_bytestring_add_chunk),
   };
 #else
   // Can't do anything without a custom allocator

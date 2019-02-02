@@ -93,12 +93,14 @@ bool cbor_bytestring_add_chunk(cbor_item_t *item, cbor_item_t *chunk) {
   assert(cbor_bytestring_is_indefinite(item));
   struct cbor_indefinite_string_data *data =
       (struct cbor_indefinite_string_data *)item->data;
+  printf("growin!\n");
   if (data->chunk_count == data->chunk_capacity) {
     /* We need more space */
     if (!_cbor_safe_to_multiply(CBOR_BUFFER_GROWTH, data->chunk_capacity)) {
       return false;
     }
 
+    printf("growin!\n");
     data->chunk_capacity = data->chunk_capacity == 0
                                ? 1
                                : CBOR_BUFFER_GROWTH * (data->chunk_capacity);
@@ -107,6 +109,7 @@ bool cbor_bytestring_add_chunk(cbor_item_t *item, cbor_item_t *chunk) {
         data->chunks, sizeof(cbor_item_t *), data->chunk_capacity);
 
     if (new_chunks_data == NULL) {
+      printf("fail!\n");
       return false;
     }
 
