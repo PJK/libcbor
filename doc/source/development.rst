@@ -10,6 +10,7 @@ Development dependencies
 - There are some `Ruby <https://www.ruby-lang.org/en/>`_ scripts in ``misc``
 - `Valgrind <http://valgrind.org/>`_ (memory correctness & profiling)
 - `GCOV/LCOV <http://ltp.sourceforge.net/coverage/lcov.php>`_ (test coverage)
+- `clang-format`
 
 
 Installing *sphinx*
@@ -38,11 +39,13 @@ Live preview of docs
 Set up git hooks
 ~~~~~~~~~~~~~~~~~
 
-A git hook that automatically refereshes the `GH pages <https://pages.github.com/>`_ contents located in ``docs`` can be symlinked:
+A catch-all git hook that runs clang-format and automatically refreshes the `GH
+pages <https://pages.github.com/>`_  contents located in ``docs`` can be
+symlinked:
 
 .. code-block:: bash
 
-  ln -s misc/hooks/pre-commit .git/hooks
+  ln -sf $(pwd)/misc/hooks/pre-commit .git/hooks
 
 
 Testing and code coverage
