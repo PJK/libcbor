@@ -179,6 +179,7 @@ cbor_item_t *cbor_build_bool(bool value)
 cbor_item_t *cbor_build_float2(float value)
 {
 	cbor_item_t *item = cbor_new_float2();
+	_CBOR_NOTNULL(item);
 	cbor_set_float2(item, value);
 	return item;
 }
@@ -186,6 +187,7 @@ cbor_item_t *cbor_build_float2(float value)
 cbor_item_t *cbor_build_float4(float value)
 {
 	cbor_item_t *item = cbor_new_float4();
+	_CBOR_NOTNULL(item);
 	cbor_set_float4(item, value);
 	return item;
 }
@@ -193,6 +195,7 @@ cbor_item_t *cbor_build_float4(float value)
 cbor_item_t *cbor_build_float8(double value)
 {
 	cbor_item_t *item = cbor_new_float8();
+	_CBOR_NOTNULL(item);
 	cbor_set_float8(item, value);
 	return item;
 }
@@ -200,6 +203,7 @@ cbor_item_t *cbor_build_float8(double value)
 cbor_item_t *cbor_build_ctrl(uint8_t value)
 {
 	cbor_item_t *item = cbor_new_ctrl();
+	_CBOR_NOTNULL(item);
 	cbor_set_ctrl(item, value);
 	return item;
 }

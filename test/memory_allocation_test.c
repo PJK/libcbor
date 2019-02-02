@@ -158,6 +158,12 @@ static void test_float_ctrl_creation(void **state)
 	WITH_FAILING_MALLOC({ assert_null(cbor_new_float8()); });
 	WITH_FAILING_MALLOC({ assert_null(cbor_new_null()); });
 	WITH_FAILING_MALLOC({ assert_null(cbor_new_undef()); });
+
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_bool(false)); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_float2(3.14)); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_float4(3.14)); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_float8(3.14)); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_ctrl(0xAF)); });
 }
 
 int main(void)
