@@ -11,12 +11,6 @@
 
 #include <cmocka.h>
 
-#include <cmocka.h>
-#include <inttypes.h>
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdio.h>
 #include "cbor.h"
 
 /* These tests verify behavior on interesting randomly generated inputs from the

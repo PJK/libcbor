@@ -11,14 +11,8 @@
 
 #include <cmocka.h>
 
-#include <cmocka.h>
-#include <inttypes.h>
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <string.h>
 #include "cbor.h"
+#include <string.h>
 
 cbor_item_t *string;
 struct cbor_load_result res;

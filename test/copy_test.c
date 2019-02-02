@@ -5,19 +5,12 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
-
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
 
 #include <cmocka.h>
 
-#include <cmocka.h>
-#include <inttypes.h>
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdio.h>
 #include "assertions.h"
 #include "cbor.h"
 

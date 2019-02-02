@@ -5,21 +5,12 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
-
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
 
 #include <cmocka.h>
 
-#include <cmocka.h>
-#include <inttypes.h>
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include "cbor.h"
 
 // This test simulates cases when malloc unexpectedly fails and leaves a

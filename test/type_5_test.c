@@ -11,13 +11,6 @@
 
 #include <cmocka.h>
 
-
-#include <cmocka.h>
-#include <inttypes.h>
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdio.h>
 #include <string.h>
 #include "assertions.h"
 #include "cbor.h"

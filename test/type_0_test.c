@@ -11,13 +11,6 @@
 
 #include <cmocka.h>
 
-
-#include <cmocka.h>
-#include <inttypes.h>
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdio.h>
 #include "cbor.h"
 
 cbor_item_t *number;
