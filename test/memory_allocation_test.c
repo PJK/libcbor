@@ -193,6 +193,8 @@ static void test_bytestring_add_chunk(void **state) {
             ((struct cbor_indefinite_string_data *)bytestring->data)
                 ->chunk_capacity,
             0);
+        cbor_decref(&chunk);
+        cbor_decref(&bytestring);
       },
       5, MALLOC, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }
