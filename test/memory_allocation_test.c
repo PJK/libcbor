@@ -218,6 +218,21 @@ static void test_string_add_chunk(void **state) {
       5, MALLOC, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }
 
+static void test_array_push(void **state) {
+  WITH_MOCK_MALLOC(
+          {
+            cbor_item_t *array = cbor_new_indefinite_array();
+            cbor_item_t *string = cbor_build_string("Hello!");
+
+            assert_false(cbor_array_push(array, cbor_move(string)));
+            assert_int_equal(cbor_array_allocated(array), 0);
+            assert_null(array->data);
+            assert_int_equal(array->metadata.array_metadata.end_ptr, 0);
+
+            cbor_decref(&array);
+          }, 4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
+}
+
 int main(void) {
 #if CBOR_CUSTOM_ALLOC
   cbor_set_allocs(instrumented_malloc, instrumented_realloc, free);
@@ -234,6 +249,7 @@ int main(void) {
 
       cmocka_unit_test(test_bytestring_add_chunk),
       cmocka_unit_test(test_string_add_chunk),
+      cmocka_unit_test(test_array_push),
   };
 #else
   // Can't do anything without a custom allocator
