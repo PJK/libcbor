@@ -116,7 +116,7 @@ else
     clang-format -version
     clang-format-8 -version
 	./clang-format.sh
-    git status | "nothing to commit, working tree clean"
+    git status | grep "nothing to commit, working tree clean"
 
 	cmake \
 	    -DCBOR_CUSTOM_ALLOC=ON \
