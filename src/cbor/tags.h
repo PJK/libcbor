@@ -15,10 +15,10 @@ extern "C" {
 #endif
 
 /*
-* ============================================================================
-* Tag manipulation
-* ============================================================================
-*/
+ * ============================================================================
+ * Tag manipulation
+ * ============================================================================
+ */
 
 /** Create a new tag
  *
@@ -55,10 +55,10 @@ void cbor_tag_set_item(cbor_item_t *item, cbor_item_t *tagged_item);
  * @param value Tag value
  * @return **new** tag item
  */
-cbor_item_t * cbor_build_tag(uint64_t value, cbor_item_t * item);
+cbor_item_t *cbor_build_tag(uint64_t value, cbor_item_t *item);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //LIBCBOR_TAGS_H
+#endif  // LIBCBOR_TAGS_H

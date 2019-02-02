@@ -15,10 +15,10 @@ extern "C" {
 #endif
 
 /*
-* ============================================================================
-* Integer (uints and negints) manipulation
-* ============================================================================
-*/
+ * ============================================================================
+ * Integer (uints and negints) manipulation
+ * ============================================================================
+ */
 
 /** Extracts the integer value
  *
@@ -58,28 +58,32 @@ uint64_t cbor_get_int(const cbor_item_t *item);
 /** Assigns the integer value
  *
  * @param item[borrow] positive or negative integer item
- * @param value the value to assign. For negative integer, the logical value is `-value - 1`
+ * @param value the value to assign. For negative integer, the logical value is
+ * `-value - 1`
  */
 void cbor_set_uint8(cbor_item_t *item, uint8_t value);
 
 /** Assigns the integer value
  *
  * @param item[borrow] positive or negative integer item
- * @param value the value to assign. For negative integer, the logical value is `-value - 1`
+ * @param value the value to assign. For negative integer, the logical value is
+ * `-value - 1`
  */
 void cbor_set_uint16(cbor_item_t *item, uint16_t value);
 
 /** Assigns the integer value
  *
  * @param item[borrow] positive or negative integer item
- * @param value the value to assign. For negative integer, the logical value is `-value - 1`
+ * @param value the value to assign. For negative integer, the logical value is
+ * `-value - 1`
  */
 void cbor_set_uint32(cbor_item_t *item, uint32_t value);
 
 /** Assigns the integer value
  *
  * @param item[borrow] positive or negative integer item
- * @param value the value to assign. For negative integer, the logical value is `-value - 1`
+ * @param value the value to assign. For negative integer, the logical value is
+ * `-value - 1`
  */
 void cbor_set_uint64(cbor_item_t *item, uint64_t value);
 
@@ -198,9 +202,8 @@ cbor_item_t *cbor_build_negint32(uint32_t value);
  */
 cbor_item_t *cbor_build_negint64(uint64_t value);
 
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif //LIBCBOR_INTS_H
+#endif  // LIBCBOR_INTS_H
