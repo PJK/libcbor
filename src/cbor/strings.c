@@ -86,12 +86,7 @@ bool cbor_string_add_chunk(cbor_item_t *item, cbor_item_t *chunk) {
   struct cbor_indefinite_string_data *data =
       (struct cbor_indefinite_string_data *)item->data;
   if (data->chunk_count == data->chunk_capacity) {
-    /* We need more space */
-    if (!_cbor_safe_to_multiply(CBOR_BUFFER_GROWTH, data->chunk_capacity)) {
-      return false;
-    }
-
-    data->chunk_capacity = data->chunk_capacity == 0
+    size_t new_chunk_capacity = data->chunk_capacity == 0
                                ? 1
                                : CBOR_BUFFER_GROWTH * (data->chunk_capacity);
     cbor_item_t **new_chunks_data = _cbor_realloc_multiple(
@@ -101,6 +96,7 @@ bool cbor_string_add_chunk(cbor_item_t *item, cbor_item_t *chunk) {
       return false;
     }
 
+    data->chunk_capacity = new_chunk_capacity;
     data->chunks = new_chunks_data;
   }
   data->chunks[data->chunk_count++] = cbor_incref(chunk);

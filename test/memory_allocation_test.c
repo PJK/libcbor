@@ -193,10 +193,30 @@ static void test_bytestring_add_chunk(void **state) {
             ((struct cbor_indefinite_string_data *)bytestring->data)
                 ->chunk_capacity,
             0);
+
         cbor_decref(&chunk);
         cbor_decref(&bytestring);
       },
       5, MALLOC, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
+}
+
+static void test_string_add_chunk(void **state) {
+  WITH_MOCK_MALLOC(
+          {
+            cbor_item_t *string = cbor_new_indefinite_string();
+            cbor_item_t *chunk = cbor_build_string("Hello!");
+
+            assert_false(cbor_string_add_chunk(string, chunk));
+            assert_int_equal(cbor_string_length(string), 0);
+            assert_int_equal(
+                    ((struct cbor_indefinite_string_data *)string->data)
+                            ->chunk_capacity,
+                    0);
+
+            cbor_decref(&chunk);
+            cbor_decref(&string);
+          },
+          5, MALLOC, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }
 
 int main(void) {
@@ -214,6 +234,7 @@ int main(void) {
       cmocka_unit_test(test_float_ctrl_creation),
 
       cmocka_unit_test(test_bytestring_add_chunk),
+      cmocka_unit_test(test_string_add_chunk),
   };
 #else
   // Can't do anything without a custom allocator
