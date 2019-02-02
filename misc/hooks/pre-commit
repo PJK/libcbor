@@ -13,7 +13,14 @@ fi
 
 cd ..
 
-# Run clang-format
+# Run clang-format and add modified files
+MODIFIED_UNSTAGED=$(git -C . diff --name-only)
+
 ./clang-format.sh
+
+if [[ ${MODIFIED_UNSTAGED} != $(git -C . diff --name-only) ]]; then
+  echo "WARNING: Non-staged files were reformatted. Please review and/or add" \
+    "them"
+fi
 
 
