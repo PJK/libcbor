@@ -145,6 +145,11 @@ static void test_map_creation(void **state)
 	WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_map()); });
 }
 
+static void test_tag_creation(void **state)
+{
+	WITH_FAILING_MALLOC({ assert_null(cbor_new_tag(42)); });
+}
+
 int main(void)
 {
 #if CBOR_CUSTOM_ALLOC
@@ -157,6 +162,7 @@ int main(void)
 			cmocka_unit_test(test_string_creation),
 			cmocka_unit_test(test_array_creation),
 			cmocka_unit_test(test_map_creation),
+			cmocka_unit_test(test_tag_creation),
 	};
 #else
 	// Can't do anything without a custom allocator
