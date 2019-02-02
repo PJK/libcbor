@@ -35,6 +35,7 @@ bool cbor_bytestring_is_indefinite(const cbor_item_t *item)
 cbor_item_t *cbor_new_definite_bytestring()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	_CBOR_NOTNULL(item);
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_BYTESTRING,
@@ -46,12 +47,14 @@ cbor_item_t *cbor_new_definite_bytestring()
 cbor_item_t *cbor_new_indefinite_bytestring()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	_CBOR_NOTNULL(item);
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_BYTESTRING,
 		.metadata = {.bytestring_metadata = {.type = _CBOR_METADATA_INDEFINITE, .length = 0}},
 		.data = _CBOR_MALLOC(sizeof(struct cbor_indefinite_string_data))
 	};
+	_CBOR_DEPENDENT_NOTNULL(item, item->data);
 	*((struct cbor_indefinite_string_data *) item->data) = (struct cbor_indefinite_string_data) {
 		.chunk_count = 0,
 		.chunk_capacity = 0,
@@ -62,11 +65,13 @@ cbor_item_t *cbor_new_indefinite_bytestring()
 
 cbor_item_t *cbor_build_bytestring(cbor_data handle, size_t length)
 {
-	cbor_item_t *res = cbor_new_definite_bytestring();
+	cbor_item_t *item = cbor_new_definite_bytestring();
+	_CBOR_NOTNULL(item);
 	void * content = _CBOR_MALLOC(length);
+	_CBOR_DEPENDENT_NOTNULL(item, content);
 	memcpy(content, handle, length);
-	cbor_bytestring_set_handle(res, content, length);
-	return res;
+	cbor_bytestring_set_handle(item, content, length);
+	return item;
 }
 
 void cbor_bytestring_set_handle(cbor_item_t *item, cbor_mutable_data CBOR_RESTRICT_POINTER data, size_t length)

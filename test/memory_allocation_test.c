@@ -87,6 +87,27 @@ static void test_int_creation(void **state)
 	WITH_FAILING_MALLOC({ assert_null(cbor_build_negint64(0xFF)); });
 }
 
+static void test_bytestring_creation(void **state)
+{
+	WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_bytestring()); });
+
+	// Failure allocating the handle
+	WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_bytestring()); });
+	// Failure allocating the chunk data
+	WITH_MOCK_MALLOC({
+						 assert_null(cbor_new_indefinite_bytestring());
+					 }, 2, true, false);
+
+	unsigned char bytes[] = { 0, 0, 0xFF, 0xAB };
+
+	// Failure allocating the handle
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_bytestring(bytes, 4)); });
+	// Failure allocating the chunk data
+	WITH_MOCK_MALLOC({
+						 assert_null(cbor_build_bytestring(bytes, 4));
+					 }, 2, true, false);
+}
+
 static void test_string_creation(void **state)
 {
 	WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_string()); });
@@ -119,8 +140,10 @@ int main(void)
 #if CBOR_CUSTOM_ALLOC
 	cbor_set_allocs(instrumented_malloc, realloc, free);
 
+	// TODO: string chunks realloc test
 	const struct CMUnitTest tests[] = {
 			cmocka_unit_test(test_int_creation),
+			cmocka_unit_test(test_bytestring_creation),
 			cmocka_unit_test(test_string_creation),
 	};
 #else
