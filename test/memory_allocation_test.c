@@ -57,49 +57,33 @@ void *instrumented_malloc(size_t size)
 	}
 }
 
-void test_constructor(cbor_item_t* (*constructor)())
-{
-	set_mock_malloc(1, false);
-	assert_null(constructor());
-	finalize_mock_malloc();
-
-}
-
-#define TEST_BUILDER(builder, value) do { \
-		set_mock_malloc(1, false); \
-		assert_null(builder(value)); \
-		finalize_mock_malloc(); \
-	} while (0)
-
 #define WITH_MOCK_MALLOC(malloc_calls, malloc_calls_expected, block) do { \
-		set_mock_malloc(malloc_calls, malloc_calls_expected); \
-		block; \
-		finalize_mock_malloc(); \
-	} while (0)
+        set_mock_malloc(malloc_calls, malloc_calls_expected); \
+        block; \
+        finalize_mock_malloc(); \
+    } while (0)
 
 static void test_int_creation(void **state)
 {
-	test_constructor(cbor_new_int8);
-	test_constructor(cbor_new_int16);
-	test_constructor(cbor_new_int32);
-	test_constructor(cbor_new_int64);
+	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_new_int8()); });
+	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_new_int16()); });
+	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_new_int32()); });
+	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_new_int64()); });
 
-	TEST_BUILDER(cbor_build_uint8, 0xFF);
-	TEST_BUILDER(cbor_build_uint16, 0xFF);
-	TEST_BUILDER(cbor_build_uint32, 0xFF);
-	TEST_BUILDER(cbor_build_uint64, 0xFF);
+	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_uint8(0xFF)); });
+	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_uint16(0xFF)); });
+	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_uint32(0xFF)); });
+	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_uint64(0xFF)); });
 
-	TEST_BUILDER(cbor_build_negint8, 0xFF);
-	TEST_BUILDER(cbor_build_negint16, 0xFF);
-	TEST_BUILDER(cbor_build_negint32, 0xFF);
-	TEST_BUILDER(cbor_build_negint64, 0xFF);
+	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_negint8(0xFF)); });
+	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_negint16(0xFF)); });
+	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_negint32(0xFF)); });
+	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_negint64(0xFF)); });
 }
 
 static void test_string_creation(void **state)
 {
-	WITH_MOCK_MALLOC(1, false, {
-		assert_null(cbor_new_definite_string());
-	});
+	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_new_definite_string()); });
 
 }
 
