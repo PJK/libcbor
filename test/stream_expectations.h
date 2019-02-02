@@ -8,10 +8,12 @@
 #ifndef STREAM_EXPECTATIONS_H_
 #define STREAM_EXPECTATIONS_H_
 
-#include <cmocka.h>
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
+
+#include <cmocka.h>
+
 #include <stdint.h>
 #include "cbor.h"
 

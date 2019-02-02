@@ -1,6 +1,9 @@
-#include <cmocka.h>
 #include <setjmp.h>
 #include <stdarg.h>
+#include <stddef.h>
+
+#include <cmocka.h>
+
 #include "cbor.h"
 
 #ifndef ASSERTIONS_H_

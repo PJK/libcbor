@@ -5,13 +5,13 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
-#include "../src/cbor/internal/unicode.h"
-#include <cmocka.h>
-#include <inttypes.h>
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
-#include <stdio.h>
+
+#include <cmocka.h>
+
+#include "../src/cbor/internal/unicode.h"
 
 struct _cbor_unicode_status status;
 
