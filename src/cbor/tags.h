@@ -23,7 +23,8 @@ extern "C" {
 /** Create a new tag
  *
  * @param value The tag value. Please consult the tag repository
- * @return **new** tag. Item reference is `NULL`.
+ * @return **new** tag. Item reference is `NULL`. Returns `NULL` upon
+ * 	memory allocation failure
  */
 cbor_item_t *cbor_new_tag(uint64_t value);
 

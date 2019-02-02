@@ -110,7 +110,8 @@ void cbor_mark_negint(cbor_item_t *item);
  *
  * The width cannot be changed once allocated
  *
- * @return **new** positive integer. The value is not initialized.
+ * @return **new** positive integer or `NULL` on memory allocation failure. The
+ * value is not initialized
  */
 cbor_item_t *cbor_new_int8();
 
@@ -118,7 +119,8 @@ cbor_item_t *cbor_new_int8();
  *
  * The width cannot be changed once allocated
  *
- * @return **new** positive integer. The value is not initialized.
+ * @return **new** positive integer or `NULL` on memory allocation failure. The
+ * value is not initialized
  */
 cbor_item_t *cbor_new_int16();
 
@@ -126,7 +128,8 @@ cbor_item_t *cbor_new_int16();
  *
  * The width cannot be changed once allocated
  *
- * @return **new** positive integer. The value is not initialized.
+ * @return **new** positive integer or `NULL` on memory allocation failure. The
+ * value is not initialized
  */
 cbor_item_t *cbor_new_int32();
 
@@ -134,66 +137,66 @@ cbor_item_t *cbor_new_int32();
  *
  * The width cannot be changed once allocated
  *
- * @return **new** positive integer. The value is not initialized.
+ * @return **new** positive integer or `NULL` on memory allocation failure. The
+ * value is not initialized
  */
 cbor_item_t *cbor_new_int64();
 
 /** Constructs a new positive integer
  *
  * @param value the value to use
- * @return **new** positive integer
+ * @return **new** positive integer or `NULL` on memory allocation failure
  */
 cbor_item_t *cbor_build_uint8(uint8_t value);
 
 /** Constructs a new positive integer
  *
  * @param value the value to use
- * @return **new** positive integer
+ * @return **new** positive integer or `NULL` on memory allocation failure
  */
 cbor_item_t *cbor_build_uint16(uint16_t value);
 
 /** Constructs a new positive integer
  *
  * @param value the value to use
- * @return **new** positive integer
+ * @return **new** positive integer or `NULL` on memory allocation failure
  */
 cbor_item_t *cbor_build_uint32(uint32_t value);
 
 /** Constructs a new positive integer
  *
  * @param value the value to use
- * @return **new** positive integer
+ * @return **new** positive integer or `NULL` on memory allocation failure
  */
 cbor_item_t *cbor_build_uint64(uint64_t value);
 
 /** Constructs a new negative integer
  *
  * @param value the value to use
- * @return **new** negative integer
+ * @return **new** negative integer or `NULL` on memory allocation failure
  */
 cbor_item_t *cbor_build_negint8(uint8_t value);
 
 /** Constructs a new negative integer
  *
  * @param value the value to use
- * @return **new** negative integer
+ * @return **new** negative integer or `NULL` on memory allocation failure
  */
 cbor_item_t *cbor_build_negint16(uint16_t value);
 
 /** Constructs a new negative integer
  *
  * @param value the value to use
- * @return **new** negative integer
+ * @return **new** negative integer or `NULL` on memory allocation failure
  */
 cbor_item_t *cbor_build_negint32(uint32_t value);
 
 /** Constructs a new negative integer
  *
  * @param value the value to use
- * @return **new** negative integer
+ * @return **new** negative integer or `NULL` on memory allocation failure
  */
 cbor_item_t *cbor_build_negint64(uint64_t value);
-
 
 
 #ifdef __cplusplus

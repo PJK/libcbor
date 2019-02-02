@@ -4,6 +4,11 @@ Next
 - Fix & prevent heap overflow error in example code [#74] [#76] (by @nevun)
 - Correctly set OSX dynamic library version [#75]
 - Fix misplaced 0xFF bytes in maps possibly causing memory corruption [#82]
+- BREAKING: Fix handling & cleanup of failed memory allocation in constructor
+  and builder helper functions [#84]
+  - All cbor_new_ and cbor_build_ functions will now explicitly return NULL
+    when memory allocation fails
+  - It is up to the client to handle such cases
 
 0.5.0 (2017-02-06)
 ---------------------

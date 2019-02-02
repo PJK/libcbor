@@ -36,6 +36,8 @@ bool cbor_array_set(cbor_item_t * item, size_t index, cbor_item_t * value)
 	} else {
 		return false;
 	}
+	// TODO: This is unreachable and the index checking logic above seems
+	// suspicious -- out of bounds index is a caller error. Figure out & fix.
 	return true;
 }
 
@@ -106,18 +108,13 @@ cbor_item_t **cbor_array_handle(const cbor_item_t *item)
 cbor_item_t *cbor_new_definite_array(size_t size)
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
-	if (item == NULL) {
-		return NULL;
-	}
-
+	_CBOR_NOTNULL(item);
 	cbor_item_t ** data = _cbor_alloc_multiple(sizeof(cbor_item_t *), size);
-	if (data == NULL) {
-		_CBOR_FREE(item);
-		return NULL;
-	}
+	_CBOR_DEPENDENT_NOTNULL(item, data);
 
-	for (size_t i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++) {
 		data[i] = NULL;
+	}
 
 	*item = (cbor_item_t) {
 		.refcount = 1,
@@ -138,8 +135,7 @@ cbor_item_t *cbor_new_definite_array(size_t size)
 cbor_item_t *cbor_new_indefinite_array()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
-	if (item == NULL)
-		return NULL;
+	_CBOR_NOTNULL(item);
 
 	*item = (cbor_item_t) {
 		.refcount = 1,
