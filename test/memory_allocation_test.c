@@ -188,7 +188,7 @@ static void test_bytestring_add_chunk(void **state) {
         cbor_item_t *chunk = cbor_build_bytestring(bytes, 4);
 
         assert_false(cbor_bytestring_add_chunk(bytestring, chunk));
-        assert_int_equal(cbor_bytestring_length(bytestring), 0);
+        assert_int_equal(cbor_bytestring_chunk_count(bytestring), 0);
         assert_int_equal(
             ((struct cbor_indefinite_string_data *)bytestring->data)
                 ->chunk_capacity,
@@ -207,7 +207,7 @@ static void test_string_add_chunk(void **state) {
         cbor_item_t *chunk = cbor_build_string("Hello!");
 
         assert_false(cbor_string_add_chunk(string, chunk));
-        assert_int_equal(cbor_string_length(string), 0);
+        assert_int_equal(cbor_string_chunk_count(string), 0);
         assert_int_equal(((struct cbor_indefinite_string_data *)string->data)
                              ->chunk_capacity,
                          0);

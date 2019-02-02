@@ -146,7 +146,7 @@ static void test_serialize_indefinite_string(void **state) {
   strncpy((char *)data, "Hello world!", 12);
   cbor_string_set_handle(chunk, data, 12);
 
-  cbor_string_add_chunk(item, cbor_move(chunk));
+  assert_true(cbor_string_add_chunk(item, cbor_move(chunk)));
   assert_int_equal(cbor_string_chunk_count(item), 1);
 
   assert_int_equal(15, cbor_serialize(item, buffer, 512));

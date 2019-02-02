@@ -95,7 +95,7 @@ bool cbor_string_add_chunk(cbor_item_t *item, cbor_item_t *chunk) {
                                ? 1
                                : CBOR_BUFFER_GROWTH * (data->chunk_capacity);
     cbor_item_t **new_chunks_data = _cbor_realloc_multiple(
-        data->chunks, sizeof(cbor_item_t *), data->chunk_capacity);
+        data->chunks, sizeof(cbor_item_t *), new_chunk_capacity);
 
     if (new_chunks_data == NULL) {
       return false;
