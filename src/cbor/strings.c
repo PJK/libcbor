@@ -31,10 +31,7 @@ cbor_item_t *cbor_new_indefinite_string()
 		.metadata = {.string_metadata = {.type = _CBOR_METADATA_INDEFINITE, .length = 0}},
 		.data = _CBOR_MALLOC(sizeof(struct cbor_indefinite_string_data))
 	};
-	if (item->data == NULL) {
-		_CBOR_FREE(item);
-		return NULL;
-	}
+	_CBOR_DEPENDENT_NOTNULL(item, item->data);
 	*((struct cbor_indefinite_string_data *) item->data) = (struct cbor_indefinite_string_data) {
 		.chunk_count = 0,
 		.chunk_capacity = 0,
@@ -49,10 +46,7 @@ cbor_item_t *cbor_build_string(const char *val)
 	_CBOR_NOTNULL(item);
 	size_t len = strlen(val);
 	unsigned char * handle = _CBOR_MALLOC(len);
-	if (handle == NULL) {
-		_CBOR_FREE(item);
-		return NULL;
-	}
+	_CBOR_DEPENDENT_NOTNULL(item, handle);
 	memcpy(handle, val, len);
 	cbor_string_set_handle(item, handle, len);
 	return item;
@@ -61,7 +55,9 @@ cbor_item_t *cbor_build_string(const char *val)
 cbor_item_t *cbor_build_stringn(const char *val, size_t length)
 {
 	cbor_item_t *item = cbor_new_definite_string();
+	_CBOR_NOTNULL(item);
 	unsigned char * handle = _CBOR_MALLOC(length);
+	_CBOR_DEPENDENT_NOTNULL(item, handle);
 	memcpy(handle, val, length);
 	cbor_string_set_handle(item, handle, length);
 	return item;

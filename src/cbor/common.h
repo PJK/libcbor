@@ -64,6 +64,14 @@ static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
 		} \
 	} while (0)
 
+// Macro to short-circuit builders when memory allocation of nested data fails
+#define _CBOR_DEPENDENT_NOTNULL(cbor_item, pointer) do { \
+		if (pointer == NULL) { \
+			_CBOR_FREE(cbor_item); \
+			return NULL; \
+		} \
+	} while (0)
+
 #if CBOR_CUSTOM_ALLOC
 
 typedef void * (* _cbor_malloc_t)(size_t);
