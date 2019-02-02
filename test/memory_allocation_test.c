@@ -71,6 +71,12 @@ void test_constructor(cbor_item_t* (*constructor)())
 		finalize_mock_malloc(); \
 	} while (0)
 
+#define WITH_MOCK_MALLOC(malloc_calls, malloc_calls_expected, block) do { \
+		set_mock_malloc(malloc_calls, malloc_calls_expected); \
+		block; \
+		finalize_mock_malloc(); \
+	} while (0)
+
 static void test_int_creation(void **state)
 {
 	test_constructor(cbor_new_int8);
@@ -89,6 +95,14 @@ static void test_int_creation(void **state)
 	TEST_BUILDER(cbor_build_negint64, 0xFF);
 }
 
+static void test_string_creation(void **state)
+{
+	WITH_MOCK_MALLOC(1, false, {
+		assert_null(cbor_new_definite_string());
+	});
+
+}
+
 int main(void)
 {
 #if CBOR_CUSTOM_ALLOC
@@ -96,6 +110,7 @@ int main(void)
 
 	const struct CMUnitTest tests[] = {
 			cmocka_unit_test(test_int_creation),
+			cmocka_unit_test(test_string_creation),
 	};
 #else
 	// Can't do anything without a custom allocator

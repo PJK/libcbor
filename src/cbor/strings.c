@@ -12,6 +12,7 @@
 cbor_item_t *cbor_new_definite_string()
 {
 	cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+	_CBOR_NOTNULL(item);
 	*item = (cbor_item_t) {
 		.refcount = 1,
 		.type = CBOR_TYPE_STRING,
