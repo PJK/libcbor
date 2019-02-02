@@ -46,8 +46,13 @@ cbor_item_t *cbor_new_indefinite_string()
 cbor_item_t *cbor_build_string(const char *val)
 {
 	cbor_item_t *item = cbor_new_definite_string();
+	_CBOR_NOTNULL(item);
 	size_t len = strlen(val);
 	unsigned char * handle = _CBOR_MALLOC(len);
+	if (handle == NULL) {
+		_CBOR_FREE(item);
+		return NULL;
+	}
 	memcpy(handle, val, len);
 	cbor_string_set_handle(item, handle, len);
 	return item;

@@ -67,37 +67,51 @@ void *instrumented_malloc(size_t size)
         finalize_mock_malloc(); \
     } while (0)
 
+#define WITH_FAILING_MALLOC(block) WITH_MOCK_MALLOC(block, 1, false)
+
 static void test_int_creation(void **state)
 {
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_new_int8()); });
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_new_int16()); });
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_new_int32()); });
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_new_int64()); });
-//
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_uint8(0xFF)); });
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_uint16(0xFF)); });
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_uint32(0xFF)); });
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_uint64(0xFF)); });
-//
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_negint8(0xFF)); });
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_negint16(0xFF)); });
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_negint32(0xFF)); });
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_negint64(0xFF)); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_new_int8()); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_new_int16()); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_new_int32()); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_new_int64()); });
+
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_uint8(0xFF)); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_uint16(0xFF)); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_uint32(0xFF)); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_uint64(0xFF)); });
+
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_negint8(0xFF)); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_negint16(0xFF)); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_negint32(0xFF)); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_negint64(0xFF)); });
 }
 
 static void test_string_creation(void **state)
 {
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_new_definite_string()); });
-//
-//	// Failure allocating the handle
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_new_indefinite_string()); });
+	WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_string()); });
+
+	// Failure allocating the handle
+	WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_string()); });
 	// Failure allocating the chunk data
 	WITH_MOCK_MALLOC({
-		assert_null(cbor_new_indefinite_string());
-	}, 2, true, false);
+						 assert_null(cbor_new_indefinite_string());
+					 }, 2, true, false);
 
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_string("Test")); });
-//	WITH_MOCK_MALLOC(1, false, { assert_null(cbor_build_stringn("Test", 4)); });
+	// Failure allocating the handle
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_string("Test")); });
+	// Failure allocating the chunk data
+	WITH_MOCK_MALLOC({
+						 assert_null(cbor_build_string("Test"));
+					 }, 2, true, false);
+
+	// Failure allocating the handle
+	WITH_FAILING_MALLOC({ assert_null(cbor_build_stringn("Test", 4)); });
+	// Failure allocating the chunk data
+	WITH_MOCK_MALLOC({
+						 assert_null(cbor_build_stringn("Test", 4));
+					 }, 2, true, false);
+
 }
 
 int main(void)
