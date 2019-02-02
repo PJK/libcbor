@@ -224,7 +224,7 @@ static void test_array_push(void **state) {
         cbor_item_t *array = cbor_new_indefinite_array();
         cbor_item_t *string = cbor_build_string("Hello!");
 
-        assert_false(cbor_array_push(array, cbor_move(string)));
+        assert_false(cbor_array_push(array, string));
         assert_int_equal(cbor_array_allocated(array), 0);
         assert_null(array->data);
         assert_int_equal(array->metadata.array_metadata.end_ptr, 0);
@@ -233,6 +233,27 @@ static void test_array_push(void **state) {
         cbor_decref(&array);
       },
       4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
+}
+
+static void test_map_add(void **state) {
+  WITH_MOCK_MALLOC(
+          {
+            cbor_item_t *map = cbor_new_indefinite_map();
+            cbor_item_t *key = cbor_build_uint8(0);
+            cbor_item_t *value = cbor_build_bool(true);
+
+            assert_false(cbor_map_add(map, (struct cbor_pair) {
+                    .key = key,
+                    .value = value
+            }));
+            assert_int_equal(cbor_map_allocated(map), 0);
+            assert_null(map->data);
+
+            cbor_decref(&map);
+            cbor_decref(&key);
+            cbor_decref(&value);
+          },
+          4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }
 
 int main(void) {
@@ -252,6 +273,7 @@ int main(void) {
       cmocka_unit_test(test_bytestring_add_chunk),
       cmocka_unit_test(test_string_add_chunk),
       cmocka_unit_test(test_array_push),
+      cmocka_unit_test(test_map_add),
   };
 #else
   // Can't do anything without a custom allocator
