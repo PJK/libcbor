@@ -13,7 +13,7 @@ CHROOT_ARCH=armhf
 HOST_DEPENDENCIES="debootstrap qemu-user-static binfmt-support sbuild"
 
 # Debian package dependencies for the chrooted environment
-GUEST_DEPENDENCIES="cmake git"
+GUEST_DEPENDENCIES="cmake git clang-format"
 
 function setup_arm_chroot {
 	# Host dependencies
@@ -112,6 +112,11 @@ else
 
 	echo "Running tests"
 	cppcheck . --error-exitcode=1 --suppressions cppcheck_suppressions.txt --force
+
+    clang-format -version
+    clang-format-8 -version
+	./clang-format.sh
+    git status | grep "nothing to commit, working tree clean"
 
 	cmake \
 	    -DCBOR_CUSTOM_ALLOC=ON \

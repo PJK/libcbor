@@ -11,6 +11,8 @@ matrix:
         - ubuntu-toolchain-r-test
         - llvm-toolchain-precise-3.6
         - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
+        - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-8 main'
+          key_url: https://apt.llvm.org/llvm-snapshot.gpg.key
         packages:
         - clang-3.6
         - libjansson-dev
@@ -19,12 +21,15 @@ matrix:
         - lcov
         - cmake
         - cmake-data
+        - clang-format-8
   - compiler: gcc-6
     addons:
       apt:
         sources:
         - ubuntu-toolchain-r-test
         - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
+        - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-8 main'
+          key_url: https://apt.llvm.org/llvm-snapshot.gpg.key
         packages:
         - gcc-6
         - g++-6
@@ -34,6 +39,7 @@ matrix:
         - lcov
         - cmake
         - cmake-data
+        - clang-format-8
 # Temporarily disabled due to slow performance and problems with Raspbian
 # chroot (https://travis-ci.org/PJK/libcbor/jobs/281748138)
 #  - env: ARCH=arm

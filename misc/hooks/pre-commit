@@ -3,7 +3,7 @@
 set -e
 
 # Refresh libcbor.org ...
-cd docs 
+cd docs
 
 if [[ $(git -C .. diff --cached --name-only) == *"index.html.erb"* ]]; then
 	echo "The homepage template has been updated, regenerating and checking in the HTML."
@@ -12,3 +12,15 @@ if [[ $(git -C .. diff --cached --name-only) == *"index.html.erb"* ]]; then
 fi
 
 cd ..
+
+# Run clang-format and add modified files
+MODIFIED_UNSTAGED=$(git -C . diff --name-only)
+
+./clang-format.sh
+
+if [[ ${MODIFIED_UNSTAGED} != $(git -C . diff --name-only) ]]; then
+  echo "WARNING: Non-staged files were reformatted. Please review and/or add" \
+    "them"
+fi
+
+

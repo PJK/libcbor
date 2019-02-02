@@ -1,79 +1,81 @@
 /*
- * This file provides testing tools for the streaming decoder. The intended usage is as follows:
- * 	1) SE API wrapper is initialized
- * 	2) Client builds (ordered) series of expectations
- * 	3) The decoder is executed
- * 	4) SE checks all assertions
- * 	5) Go to 2) if desired
+ * This file provides testing tools for the streaming decoder. The intended
+ * usage is as follows: 1) SE API wrapper is initialized 2) Client builds
+ * (ordered) series of expectations 3) The decoder is executed 4) SE checks all
+ * assertions 5) Go to 2) if desired
  */
 
 #ifndef STREAM_EXPECTATIONS_H_
 #define STREAM_EXPECTATIONS_H_
 
-#include <stdint.h>
-#include <stddef.h>
-#include "cbor.h"
-#include <stdarg.h>
 #include <setjmp.h>
+#include <stdarg.h>
+#include <stddef.h>
+
 #include <cmocka.h>
 
+#include <stdint.h>
+#include "cbor.h"
 
 #define MAX_QUEUE_ITEMS 30
 
 enum test_expectation {
-	UINT8_EQ,
-	UINT16_EQ,
-	UINT32_EQ,
-	UINT64_EQ,
+  UINT8_EQ,
+  UINT16_EQ,
+  UINT32_EQ,
+  UINT64_EQ,
 
-	NEGINT8_EQ,
-	NEGINT16_EQ,
-	NEGINT32_EQ,
-	NEGINT64_EQ,
+  NEGINT8_EQ,
+  NEGINT16_EQ,
+  NEGINT32_EQ,
+  NEGINT64_EQ,
 
-	BSTRING_MEM_EQ, /* Matches length and memory address for definite byte strings */
-	BSTRING_INDEF_START,
+  BSTRING_MEM_EQ, /* Matches length and memory address for definite byte strings
+                   */
+  BSTRING_INDEF_START,
 
-	ARRAY_START, /* Definite arrays only */
-	ARRAY_INDEF_START,
+  ARRAY_START, /* Definite arrays only */
+  ARRAY_INDEF_START,
 
-	MAP_START, /* Definite maps only */
-	MAP_INDEF_START,
+  MAP_START, /* Definite maps only */
+  MAP_INDEF_START,
 
-	TAG_EQ,
+  TAG_EQ,
 
-	HALF_EQ,
-	FLOAT_EQ,
-	DOUBLE_EQ,
-	BOOL_EQ,
-	NIL,
-	UNDEF,
-	INDEF_BREAK /* Expect "Break" */
+  HALF_EQ,
+  FLOAT_EQ,
+  DOUBLE_EQ,
+  BOOL_EQ,
+  NIL,
+  UNDEF,
+  INDEF_BREAK /* Expect "Break" */
 };
 
 union test_expectation_data {
-	uint8_t int8;
-	uint16_t int16;
-	uint32_t int32;
-	uint64_t int64;
-	struct string {
-		cbor_data address;
-		size_t    length;
-	} string;
-	size_t length;
-	float float2;
-	float float4;
-	double float8;
-	bool boolean;
+  uint8_t int8;
+  uint16_t int16;
+  uint32_t int32;
+  uint64_t int64;
+  struct string {
+    cbor_data address;
+    size_t length;
+  } string;
+  size_t length;
+  float float2;
+  float float4;
+  double float8;
+  bool boolean;
 };
 
 struct test_assertion {
-	enum test_expectation       expectation;
-	union test_expectation_data data;
+  enum test_expectation expectation;
+  union test_expectation_data data;
 };
 
 /* Tested function */
-typedef struct cbor_decoder_result decoder_t(cbor_data, size_t, const struct cbor_callbacks *, void *);
+typedef struct cbor_decoder_result decoder_t(cbor_data, size_t,
+                                             const struct cbor_callbacks *,
+                                             void *);
 
 void set_decoder(decoder_t *);
 struct cbor_decoder_result decode(cbor_data, size_t);

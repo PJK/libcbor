@@ -8,8 +8,4 @@
 #include <iostream>
 #include "cbor.h"
 
-int main()
-{
-	std::cout << "Hello from libcbor " << CBOR_VERSION << std::endl;
-}
-
+int main() { std::cout << "Hello from libcbor " << CBOR_VERSION << std::endl; }

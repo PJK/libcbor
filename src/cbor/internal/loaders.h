@@ -33,4 +33,4 @@ double _cbor_load_double(cbor_data source);
 }
 #endif
 
-#endif //LIBCBOR_LOADERS_H
+#endif  // LIBCBOR_LOADERS_H
