@@ -10,6 +10,8 @@ Next
     when memory allocation fails
   - It is up to the client to handle such cases
 - Globally enforced code style [#83]
+- Fix issue possible memory corruption bug on repeated 
+  cbor_(byte)string_add_chunk calls with intermittently failing realloc calls
 
 0.5.0 (2017-02-06)
 ---------------------
