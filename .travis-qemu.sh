@@ -113,7 +113,7 @@ else
 	echo "Running tests"
 	cppcheck . --error-exitcode=1 --suppressions cppcheck_suppressions.txt --force
 
-    clang-format -v
+    clang-format -version
 	./clang-format.sh
     git status | "nothing to commit, working tree clean"
 
