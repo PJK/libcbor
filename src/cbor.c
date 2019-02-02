@@ -15,7 +15,7 @@ cbor_item_t *cbor_load(cbor_data source, size_t source_size,
   static struct cbor_callbacks callbacks = {
       .uint8 = &cbor_builder_uint8_callback,
       .uint16 = &cbor_builder_uint16_callback,
-      .uint32 = &cbor_builder_uint32_callback,
+                  .uint32 = &cbor_builder_uint32_callback,
       .uint64 = &cbor_builder_uint64_callback,
 
       .negint8 = &cbor_builder_negint8_callback,
