@@ -237,23 +237,21 @@ static void test_array_push(void **state) {
 
 static void test_map_add(void **state) {
   WITH_MOCK_MALLOC(
-          {
-            cbor_item_t *map = cbor_new_indefinite_map();
-            cbor_item_t *key = cbor_build_uint8(0);
-            cbor_item_t *value = cbor_build_bool(true);
+      {
+        cbor_item_t *map = cbor_new_indefinite_map();
+        cbor_item_t *key = cbor_build_uint8(0);
+        cbor_item_t *value = cbor_build_bool(true);
 
-            assert_false(cbor_map_add(map, (struct cbor_pair) {
-                    .key = key,
-                    .value = value
-            }));
-            assert_int_equal(cbor_map_allocated(map), 0);
-            assert_null(map->data);
+        assert_false(
+            cbor_map_add(map, (struct cbor_pair){.key = key, .value = value}));
+        assert_int_equal(cbor_map_allocated(map), 0);
+        assert_null(map->data);
 
-            cbor_decref(&map);
-            cbor_decref(&key);
-            cbor_decref(&value);
-          },
-          4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
+        cbor_decref(&map);
+        cbor_decref(&key);
+        cbor_decref(&value);
+      },
+      4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }
 
 int main(void) {
