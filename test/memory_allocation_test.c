@@ -119,8 +119,8 @@ static void test_bytestring_creation(void **state) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_bytestring()); });
 
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_bytestring()); });
-  WITH_MOCK_MALLOC({ assert_null(cbor_new_indefinite_bytestring()); }, 2, MALLOC,
-                   MALLOC_FAIL);
+  WITH_MOCK_MALLOC({ assert_null(cbor_new_indefinite_bytestring()); }, 2,
+                   MALLOC, MALLOC_FAIL);
 
   unsigned char bytes[] = {0, 0, 0xFF, 0xAB};
 
@@ -137,22 +137,26 @@ static void test_string_creation(void **state) {
                    MALLOC_FAIL);
 
   WITH_FAILING_MALLOC({ assert_null(cbor_build_string("Test")); });
-  WITH_MOCK_MALLOC({ assert_null(cbor_build_string("Test")); }, 2, MALLOC, MALLOC_FAIL);
+  WITH_MOCK_MALLOC({ assert_null(cbor_build_string("Test")); }, 2, MALLOC,
+                   MALLOC_FAIL);
 
   WITH_FAILING_MALLOC({ assert_null(cbor_build_stringn("Test", 4)); });
-  WITH_MOCK_MALLOC({ assert_null(cbor_build_stringn("Test", 4)); }, 2, MALLOC, MALLOC_FAIL);
+  WITH_MOCK_MALLOC({ assert_null(cbor_build_stringn("Test", 4)); }, 2, MALLOC,
+                   MALLOC_FAIL);
 }
 
 static void test_array_creation(void **state) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_array(42)); });
-  WITH_MOCK_MALLOC({ assert_null(cbor_new_definite_array(42)); }, 2, MALLOC, MALLOC_FAIL);
+  WITH_MOCK_MALLOC({ assert_null(cbor_new_definite_array(42)); }, 2, MALLOC,
+                   MALLOC_FAIL);
 
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_array()); });
 }
 
 static void test_map_creation(void **state) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_map(42)); });
-  WITH_MOCK_MALLOC({ assert_null(cbor_new_definite_map(42)); }, 2, MALLOC, MALLOC_FAIL);
+  WITH_MOCK_MALLOC({ assert_null(cbor_new_definite_map(42)); }, 2, MALLOC,
+                   MALLOC_FAIL);
 
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_map()); });
 }
@@ -185,7 +189,7 @@ static void test_bytestring_add_chunk(void **state) {
 
         assert_false(cbor_bytestring_add_chunk(bytestring, chunk));
       },
-      3, true, true, false);
+      5, MALLOC, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }
 
 int main(void) {
