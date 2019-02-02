@@ -15,6 +15,12 @@
 #include <inttypes.h>
 #include <stdlib.h>
 
+// This test simulates cases when malloc unexpectedly fails and leaves a
+// possibly partially constructed object behind. It this is especially useful
+// in conjunction with the memory correctness check.
+//
+// WARNING: The test only works with CBOR_CUSTOM_ALLOC
+
 // How many malloc calls we expect
 int malloc_calls_expected;
 // How many malloc calls we got
@@ -93,7 +99,6 @@ int main(void)
 	};
 #else
 	// Can't do anything without a custom allocator
-
 	const struct CMUnitTest tests[] = {};
 #endif
 
