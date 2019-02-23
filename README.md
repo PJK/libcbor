@@ -16,6 +16,41 @@
  - Full support for streams & incremental processing
  - Extensive documentation and test suite
  - No runtime dependencies, small footprint
+ 
+## Getting started
+
+### Compile from source
+
+```bash
+git clone https://github.com/PJK/libcbor
+cmake -DCMAKE_BUILD_TYPE=Release -DCBOR_CUSTOM_ALLOC=ON libcbor
+make
+make install
+```
+
+### Homebrew
+
+```bash
+brew tap pjk/libcbor
+brew install libcbor
+```
+
+### Ubuntu 18.04 and above
+
+```bash
+sudo add-apt-repository universe
+sudo apt-get install libcbor-dev
+```
+
+### Fedora & RPM friends
+
+```bash
+yum install libcbor-devel
+```
+
+## Usage example
+
+<script src="https://gist.github.com/PJK/962a468886d24195d1ee.js"></script>
 
 ## Documentation
 Get the latest documentation at [libcbor.readthedocs.org](http://libcbor.readthedocs.org/)
