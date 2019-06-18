@@ -104,6 +104,15 @@ bool cbor_map_is_indefinite(const cbor_item_t *item);
  */
 struct cbor_pair *cbor_map_handle(const cbor_item_t *item);
 
+/** Get the value storage from the given key
+ *
+ * @param item[borrow] A map
+ * @param key[incref] The key to look for
+ * @return cbor_item of the value corresponding to the given key, NULL if the 
+ * key doesn't exist. Manipulation is possible as long as references remain valid.
+ */
+struct cbor_item_t *cbor_map_get(const cbor_item_t *item, const cbor_item_t * key);
+
 #ifdef __cplusplus
 }
 #endif
