@@ -127,7 +127,7 @@ struct cbor_pair *cbor_map_handle(const cbor_item_t *item) {
 struct cbor_item_t *cbor_map_get(const cbor_item_t *item, const cbor_item_t * key) {
   size_t i;
   struct cbor_pair pair;
-  struct cbor_item_t * value = NULL;
+  cbor_item_t * value = NULL;
   assert(cbor_isa_map(item));
   
   for (i=0; i<cbor_map_size(item); i++) {
