@@ -158,3 +158,85 @@ cbor_item_t *cbor_move(cbor_item_t *item) {
   item->refcount--;
   return item;
 }
+
+bool cbor_equal(cbor_item_t *item1, cbor_item_t *item2) {
+  size_t i;
+  
+  if (item1 != NULL && item2 != NULL) {
+    if (item1->type != item2->type) {
+      return false;
+    } else {
+      switch (item1->type) {
+        case CBOR_TYPE_UINT:
+        case CBOR_TYPE_NEGINT:
+          if (cbor_int_get_width(item1) != cbor_int_get_width(item2)) {
+            return false;
+          } else {
+            if (cbor_int_get_width(item1) == CBOR_INT_8)
+              return !memcmp(item1->data, item2->data, sizeof(uint8_t))?true:false;
+            else if (cbor_int_get_width(item1) == CBOR_INT_16)
+              return !memcmp(item1->data, item2->data, sizeof(uint16_t))?true:false;
+            else if (cbor_int_get_width(item1) == CBOR_INT_32)
+              return !memcmp(item1->data, item2->data, sizeof(uint32_t))?true:false;
+            else if (cbor_int_get_width(item1) == CBOR_INT_64)
+              return !memcmp(item1->data, item2->data, sizeof(uint64_t))?true:false;
+            else
+              return false;
+          }
+          break;
+        case CBOR_TYPE_BYTESTRING:
+          if (cbor_bytestring_length(item1) != cbor_bytestring_length(item2))
+            return false;
+          else
+            return !memcmp(item1->data, item2->data, cbor_bytestring_length(item1))?true:false;
+          break;
+        case CBOR_TYPE_STRING:
+          if (cbor_string_length(item1) != cbor_string_length(item2))
+            return false;
+          else
+            return !memcmp(item1->data, item2->data, cbor_bytestring_length(item1))?true:false;
+          break;
+        case CBOR_TYPE_ARRAY:
+          if (cbor_array_size(item1) != cbor_array_size(item2)) {
+            return false;
+          } else {
+            for (i=0; i<cbor_array_size(item1); i++) {
+              if (cbor_equal(cbor_array_get(item1, i), cbor_array_get(item2, i)) == false)
+                return false;
+            }
+            return true;
+          }
+          break;
+        case CBOR_TYPE_MAP:
+          if (cbor_map_size(item1) != cbor_map_size(item2)) {
+            return false;
+          } else {
+            for (i=0; i<cbor_map_size(item1); i++) {
+              struct cbor_pair pair1 = cbor_map_handle(item1)[i];
+              struct cbor_pair pair2 = cbor_map_handle(item2)[i];
+              if (cbor_equal(pair1.key, pair2.key) == false || cbor_equal(pair1.value, pair2.value) == false)
+                return false;
+            }
+            return true;
+          }
+          break;
+        case CBOR_TYPE_TAG:
+          if (cbor_tag_value(item1) != cbor_tag_value(item2))
+            return false;
+          else
+            return cbor_equal(cbor_tag_item(item1), cbor_tag_item(item2));
+          break;
+        case CBOR_TYPE_FLOAT_CTRL:
+          if (cbor_float_get_width(item1) != cbor_float_get_width(item2))
+            return false;
+          else
+            return cbor_float_get_float(item1)==cbor_float_get_float(item2)?true:false;
+          break;
+      }
+    }
+  } else if (item1 == NULL && item2 == NULL) {
+    return true;
+  } else {
+    return false;
+  }
+}

@@ -13,6 +13,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdio.h> // TODO REMOVE ME
 #include "cbor/configuration.h"
 #include "data.h"
 
@@ -284,6 +286,8 @@ size_t cbor_refcount(const cbor_item_t *item);
  * @return the item with reference count decreased by one
  */
 cbor_item_t *cbor_move(cbor_item_t *item);
+
+bool cbor_equal(cbor_item_t *item1, cbor_item_t *item2);
 
 #ifdef __cplusplus
 }
