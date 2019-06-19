@@ -161,6 +161,8 @@ cbor_item_t *cbor_move(cbor_item_t *item) {
 
 bool cbor_equal(cbor_item_t *item1, cbor_item_t *item2) {
   size_t i;
+  cbor_item_t * cur_item1, * cur_item2;
+  bool ret;
   
   if (item1 != NULL && item2 != NULL) {
     if (item1->type != item2->type) {
@@ -200,11 +202,17 @@ bool cbor_equal(cbor_item_t *item1, cbor_item_t *item2) {
           if (cbor_array_size(item1) != cbor_array_size(item2)) {
             return false;
           } else {
+            ret = true;
             for (i=0; i<cbor_array_size(item1); i++) {
-              if (cbor_equal(cbor_array_get(item1, i), cbor_array_get(item2, i)) == false)
-                return false;
+              cur_item1 = cbor_array_get(item1, i);
+              cur_item2 = cbor_array_get(item2, i);
+              if (cbor_equal(cur_item1, cur_item2) == false) {
+                ret = false;
+              }
+              cbor_decref(&cur_item1);
+              cbor_decref(&cur_item2);
             }
-            return true;
+            return ret;
           }
           break;
         case CBOR_TYPE_MAP:
