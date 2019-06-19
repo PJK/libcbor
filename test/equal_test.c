@@ -409,16 +409,57 @@ static void test_equal_tag(void **state) {
   tag2 = cbor_new_tag(8);
 
   assert_true(cbor_equal(tag1, tag2) == true);
+  cbor_decref(&tag1);
+  cbor_decref(&tag2);
 
   tag1 = cbor_new_tag(6);
   tag2 = cbor_new_tag(8);
 
   assert_true(cbor_equal(tag1, tag2) == false);
+  cbor_decref(&tag1);
+  cbor_decref(&tag2);
 
   tag1 = cbor_new_tag(6);
   tag2 = cbor_build_bytestring("test", 4);
 
   assert_true(cbor_equal(tag1, tag2) == false);
+  cbor_decref(&tag1);
+  cbor_decref(&tag2);
+
+  item1 = cbor_build_negint8(10);
+  item2 = cbor_build_negint8(10);
+  tag1 = cbor_new_tag(8);
+  tag2 = cbor_new_tag(8);
+  cbor_tag_set_item(tag1, item1);
+  cbor_tag_set_item(tag2, item2);
+  assert_true(cbor_equal(tag1, tag2) == true);
+  cbor_decref(&item1);
+  cbor_decref(&item2);
+  cbor_decref(&tag1);
+  cbor_decref(&tag2);
+
+  item1 = cbor_build_negint8(10);
+  item2 = cbor_build_negint8(10);
+  tag1 = cbor_new_tag(8);
+  tag2 = cbor_new_tag(6);
+  cbor_tag_set_item(tag1, item1);
+  cbor_tag_set_item(tag2, item2);
+  assert_true(cbor_equal(tag1, tag2) == false);
+  cbor_decref(&item1);
+  cbor_decref(&item2);
+  cbor_decref(&tag1);
+  cbor_decref(&tag2);
+
+  item1 = cbor_build_negint8(10);
+  item2 = cbor_build_negint8(8);
+  tag1 = cbor_new_tag(8);
+  tag2 = cbor_new_tag(8);
+  cbor_tag_set_item(tag1, item1);
+  cbor_tag_set_item(tag2, item2);
+  assert_true(cbor_equal(tag1, tag2) == false);
+  cbor_decref(&item1);
+  cbor_decref(&item2);
+  cbor_decref(&tag1);
   cbor_decref(&tag2);
 }
 

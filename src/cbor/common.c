@@ -221,7 +221,11 @@ bool cbor_equal(cbor_item_t *item1, cbor_item_t *item2) {
           }
           break;
         case CBOR_TYPE_TAG:
-          return (cbor_tag_value(item1) == cbor_tag_value(item2))?true:false;
+          if (cbor_tag_value(item1) != cbor_tag_value(item2)) {
+            return false;
+          } else {
+            return cbor_equal(cbor_tag_item(item1), cbor_tag_item(item2));
+          }
         case CBOR_TYPE_FLOAT_CTRL:
           if (cbor_is_float(item1) && cbor_is_float(item2)) {
             if (cbor_float_get_width(item1) != cbor_float_get_width(item2))
