@@ -23,25 +23,25 @@ static void test_equal_uint(void **state) {
   assert_true(cbor_equal(item1, item2) == true);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_build_uint8(10);
   item2 = cbor_build_uint8(8);
   assert_true(cbor_equal(item1, item2) == false);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_build_uint8(10);
   item2 = cbor_build_uint16(10);
   assert_true(cbor_equal(item1, item2) == false);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_build_uint8(10);
   item2 = cbor_build_negint8(10);
   assert_true(cbor_equal(item1, item2) == false);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_build_uint8(10);
   item2 = cbor_build_bytestring("test", 4);
   assert_true(cbor_equal(item1, item2) == false);
@@ -55,25 +55,25 @@ static void test_equal_negint(void **state) {
   assert_true(cbor_equal(item1, item2) == true);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_build_negint8(10);
   item2 = cbor_build_negint8(8);
   assert_true(cbor_equal(item1, item2) == false);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_build_negint8(10);
   item2 = cbor_build_negint16(10);
   assert_true(cbor_equal(item1, item2) == false);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_build_negint8(10);
   item2 = cbor_build_uint8(10);
   assert_true(cbor_equal(item1, item2) == false);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_build_negint8(10);
   item2 = cbor_build_bytestring("test", 4);
   assert_true(cbor_equal(item1, item2) == false);
@@ -87,19 +87,19 @@ static void test_equal_bytestring(void **state) {
   assert_true(cbor_equal(item1, item2) == true);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_build_bytestring("test", 4);
   item2 = cbor_build_bytestring("tes", 3);
   assert_true(cbor_equal(item1, item2) == false);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_build_bytestring("test", 4);
   item2 = cbor_build_bytestring("tset", 4);
   assert_true(cbor_equal(item1, item2) == false);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_build_bytestring("test", 4);
   item2 = cbor_build_negint8(10);
   assert_true(cbor_equal(item1, item2) == false);
@@ -113,19 +113,19 @@ static void test_equal_string(void **state) {
   assert_true(cbor_equal(item1, item2) == true);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_build_string("test");
   item2 = cbor_build_string("tes");
   assert_true(cbor_equal(item1, item2) == false);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_build_string("test");
   item2 = cbor_build_string("tset");
   assert_true(cbor_equal(item1, item2) == false);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_build_string("test");
   item2 = cbor_build_negint8(10);
   assert_true(cbor_equal(item1, item2) == false);
@@ -134,93 +134,93 @@ static void test_equal_string(void **state) {
 }
 
 static void test_equal_array(void **state) {
-  cbor_item_t * element;
-  
+  cbor_item_t *element;
+
   item1 = cbor_new_definite_array(3);
   item2 = cbor_new_definite_array(3);
-  
+
   element = cbor_build_string("test1");
   cbor_array_push(item1, element);
   cbor_decref(&element);
-  
+
   element = cbor_build_string("test1");
   cbor_array_push(item2, element);
   cbor_decref(&element);
-  
+
   element = cbor_build_negint8(10);
   cbor_array_push(item1, element);
   cbor_decref(&element);
-  
+
   element = cbor_build_negint8(10);
   cbor_array_push(item2, element);
   cbor_decref(&element);
-  
+
   element = cbor_build_bytestring("test", 4);
   cbor_array_push(item1, element);
   cbor_decref(&element);
-  
+
   element = cbor_build_bytestring("test", 4);
   cbor_array_push(item2, element);
   cbor_decref(&element);
-  
+
   assert_true(cbor_equal(item1, item2) == true);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_new_definite_array(3);
   item2 = cbor_new_definite_array(3);
-  
+
   element = cbor_build_negint8(10);
   cbor_array_push(item1, element);
   cbor_decref(&element);
-  
+
   element = cbor_build_string("test1");
   cbor_array_push(item2, element);
   cbor_decref(&element);
-  
+
   element = cbor_build_string("test1");
   cbor_array_push(item1, element);
   cbor_decref(&element);
-  
+
   element = cbor_build_negint8(10);
   cbor_array_push(item2, element);
   cbor_decref(&element);
-  
+
   element = cbor_build_bytestring("test", 4);
   cbor_array_push(item1, element);
   cbor_decref(&element);
-  
+
   element = cbor_build_bytestring("test", 4);
   cbor_array_push(item2, element);
   cbor_decref(&element);
-  
+
   assert_true(cbor_equal(item1, item2) == false);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_new_definite_array(3);
   item2 = cbor_new_definite_array(2);
-  
+
   element = cbor_build_string("test1");
   cbor_array_push(item1, element);
   cbor_decref(&element);
-  
+
   element = cbor_build_string("test1");
   cbor_array_push(item2, element);
   cbor_decref(&element);
-  
+
   element = cbor_build_negint8(10);
   cbor_array_push(item1, element);
   cbor_decref(&element);
-  
+
   element = cbor_build_negint8(10);
   cbor_array_push(item2, element);
   cbor_decref(&element);
-  
+
   element = cbor_build_bytestring("test", 4);
   cbor_array_push(item1, element);
   cbor_decref(&element);
-  
+
   assert_true(cbor_equal(item1, item2) == false);
   cbor_decref(&item1);
   cbor_decref(&item2);
@@ -228,196 +228,196 @@ static void test_equal_array(void **state) {
 
 static void test_equal_map(void **state) {
   struct cbor_pair pair;
-  
+
   item1 = cbor_new_definite_map(3);
   item2 = cbor_new_definite_map(3);
-  
+
   pair.key = cbor_build_string("key1");
   pair.value = cbor_build_string("value1");
   assert_true(cbor_map_add(item1, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_string("key1");
   pair.value = cbor_build_string("value1");
   assert_true(cbor_map_add(item2, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_negint8(10);
   pair.value = cbor_build_string("value2");
   assert_true(cbor_map_add(item1, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_negint8(10);
   pair.value = cbor_build_string("value2");
   assert_true(cbor_map_add(item2, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_uint8(4);
   pair.value = cbor_build_bytestring("test", 4);
   assert_true(cbor_map_add(item1, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_uint8(4);
   pair.value = cbor_build_bytestring("test", 4);
   assert_true(cbor_map_add(item2, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   assert_true(cbor_equal(item1, item2) == true);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_new_definite_map(3);
   item2 = cbor_new_definite_map(3);
-  
+
   pair.key = cbor_build_string("key1");
   pair.value = cbor_build_string("value1");
   assert_true(cbor_map_add(item1, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_string("key1");
   pair.value = cbor_build_string("value2");
   assert_true(cbor_map_add(item2, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_negint8(10);
   pair.value = cbor_build_string("value2");
   assert_true(cbor_map_add(item1, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_negint8(10);
   pair.value = cbor_build_string("value2");
   assert_true(cbor_map_add(item2, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_uint8(4);
   pair.value = cbor_build_bytestring("test", 4);
   assert_true(cbor_map_add(item1, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_uint8(4);
   pair.value = cbor_build_bytestring("test", 4);
   assert_true(cbor_map_add(item2, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   assert_true(cbor_equal(item1, item2) == false);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_new_definite_map(3);
   item2 = cbor_new_definite_map(3);
-  
+
   pair.key = cbor_build_string("key1");
   pair.value = cbor_build_string("value1");
   assert_true(cbor_map_add(item1, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_string("key1");
   pair.value = cbor_build_string("value1");
   assert_true(cbor_map_add(item2, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_negint8(10);
   pair.value = cbor_build_string("value2");
   assert_true(cbor_map_add(item1, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_negint8(10);
   pair.value = cbor_build_string("value2");
   assert_true(cbor_map_add(item2, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_uint8(4);
   pair.value = cbor_build_bytestring("test", 4);
   assert_true(cbor_map_add(item1, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_uint8(4);
   pair.value = cbor_build_string("test");
   assert_true(cbor_map_add(item2, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   assert_true(cbor_equal(item1, item2) == false);
   cbor_decref(&item1);
   cbor_decref(&item2);
-  
+
   item1 = cbor_new_definite_map(3);
   item2 = cbor_new_definite_map(3);
-  
+
   pair.key = cbor_build_negint8(10);
   pair.value = cbor_build_string("value2");
   assert_true(cbor_map_add(item1, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_string("key1");
   pair.value = cbor_build_string("value1");
   assert_true(cbor_map_add(item2, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_string("key1");
   pair.value = cbor_build_string("value1");
   assert_true(cbor_map_add(item1, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_negint8(10);
   pair.value = cbor_build_string("value2");
   assert_true(cbor_map_add(item2, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_uint8(4);
   pair.value = cbor_build_bytestring("test", 4);
   assert_true(cbor_map_add(item1, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   pair.key = cbor_build_uint8(4);
   pair.value = cbor_build_bytestring("test", 4);
   assert_true(cbor_map_add(item2, pair) == true);
   cbor_decref(&pair.key);
   cbor_decref(&pair.value);
-  
+
   assert_true(cbor_equal(item1, item2) == false);
   cbor_decref(&item1);
   cbor_decref(&item2);
 }
 
 static void test_equal_tag(void **state) {
-  cbor_item_t * tag1, * tag2;
-  
+  cbor_item_t *tag1, *tag2;
+
   tag1 = cbor_new_tag(8);
   tag2 = cbor_new_tag(8);
-  
+
   assert_true(cbor_equal(tag1, tag2) == true);
-  
+
   tag1 = cbor_new_tag(6);
   tag2 = cbor_new_tag(8);
-  
+
   assert_true(cbor_equal(tag1, tag2) == false);
-  
+
   tag1 = cbor_new_tag(6);
   tag2 = cbor_build_bytestring("test", 4);
-  
+
   assert_true(cbor_equal(tag1, tag2) == false);
   cbor_decref(&tag2);
 }
@@ -482,7 +482,6 @@ int main(void) {
       cmocka_unit_test(test_equal_array),
       cmocka_unit_test(test_equal_map),
       cmocka_unit_test(test_equal_tag),
-      cmocka_unit_test(test_equal_float_ctrl)
-  };
+      cmocka_unit_test(test_equal_float_ctrl)};
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
