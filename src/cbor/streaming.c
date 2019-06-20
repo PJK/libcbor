@@ -386,7 +386,7 @@ struct cbor_decoder_result cbor_stream_decode(
         return result;
       }
     case 0x99:
-      /* Two bytes length string */
+      /* Two bytes length array */
       {
         if (_cbor_claim_bytes(2, source_size, &result)) {
           callbacks->array_start(context,
@@ -395,7 +395,7 @@ struct cbor_decoder_result cbor_stream_decode(
         return result;
       }
     case 0x9A:
-      /* Four bytes length string */
+      /* Four bytes length array */
       {
         if (_cbor_claim_bytes(4, source_size, &result)) {
           callbacks->array_start(context,
@@ -404,7 +404,7 @@ struct cbor_decoder_result cbor_stream_decode(
         return result;
       }
     case 0x9B:
-      /* Eight bytes length string */
+      /* Eight bytes length array */
       {
         if (_cbor_claim_bytes(8, source_size, &result)) {
           callbacks->array_start(context,
