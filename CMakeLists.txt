@@ -10,13 +10,6 @@ SET(CBOR_VERSION ${CBOR_VERSION_MAJOR}.${CBOR_VERSION_MINOR}.${CBOR_VERSION_PATC
 set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY true)
 include(CheckIncludeFiles)
 
-check_include_files(endian.h HAVE_ENDIAN_H)
-if(HAVE_ENDIAN_H)
-    # BSD source needed or else GNU-y extensions will not be visible
-    add_definitions(-D_BSD_SOURCE)
-    add_definitions(-DHAVE_ENDIAN_H)
-endif()
-
 include(TestBigEndian)
 test_big_endian(BIG_ENDIAN)
 if(BIG_ENDIAN)
@@ -76,7 +69,9 @@ else()
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto -Wall -pedantic -DNDEBUG")
 
     if(SANITIZE)
-        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=undefined -fsanitize=address -fsanitize=bounds -fsanitize=alignment")
+        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} \
+            -fsanitize-trap=undefined -fsanitize=address \
+            -fsanitize-trap=bounds -fsanitize=alignment")
     endif()
 endif()
 

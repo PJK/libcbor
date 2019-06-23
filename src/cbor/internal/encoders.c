@@ -6,10 +6,7 @@
  */
 
 #include "encoders.h"
-
-#if HAVE_ENDIAN_H
-#include <endian.h>
-#endif
+#include <string.h>
 
 size_t _cbor_encode_uint8(uint8_t value, unsigned char *buffer,
                           size_t buffer_size, uint8_t offset) {
@@ -33,15 +30,11 @@ size_t _cbor_encode_uint16(uint16_t value, unsigned char *buffer,
   if (buffer_size >= 3) {
     buffer[0] = 0x19 + offset;
 
-#ifdef HAVE_ENDIAN_H
-    *(uint16_t *)&buffer[1] = htobe16(value);
-#else
 #ifdef IS_BIG_ENDIAN
-    *(uint16_t *)&buffer[1] = value;
+    memcpy(buffer + 1, &value, 2);
 #else
     buffer[1] = value >> 8;
     buffer[2] = value;
-#endif
 #endif
 
     return 3;
@@ -54,17 +47,13 @@ size_t _cbor_encode_uint32(uint32_t value, unsigned char *buffer,
   if (buffer_size >= 5) {
     buffer[0] = 0x1A + offset;
 
-#ifdef HAVE_ENDIAN_H
-    *(uint32_t *)&buffer[1] = htobe32(value);
-#else
 #ifdef IS_BIG_ENDIAN
-    *(uint32_t *)&buffer[1] = value;
+    memcpy(buffer + 1, &value, 4);
 #else
     buffer[1] = value >> 24;
     buffer[2] = value >> 16;
     buffer[3] = value >> 8;
     buffer[4] = value;
-#endif
 #endif
 
     return 5;
@@ -77,11 +66,8 @@ size_t _cbor_encode_uint64(uint64_t value, unsigned char *buffer,
   if (buffer_size >= 9) {
     buffer[0] = 0x1B + offset;
 
-#ifdef HAVE_ENDIAN_H
-    *(uint64_t *)&buffer[1] = htobe64(value);
-#else
 #ifdef IS_BIG_ENDIAN
-    *(uint64_t *)&buffer[1] = value;
+      memcpy(buffer + 1, &value, 8);
 #else
     buffer[1] = value >> 56;
     buffer[2] = value >> 48;
@@ -91,7 +77,6 @@ size_t _cbor_encode_uint64(uint64_t value, unsigned char *buffer,
     buffer[6] = value >> 16;
     buffer[7] = value >> 8;
     buffer[8] = value;
-#endif
 #endif
 
     return 9;
