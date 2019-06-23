@@ -76,7 +76,9 @@ else()
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto -Wall -pedantic -DNDEBUG")
 
     if(SANITIZE)
-        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsanitize=undefined -fsanitize=address -fsanitize=bounds -fsanitize=alignment")
+        set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} \
+            -fsanitize-trap=undefined -fsanitize=address \
+            -fsanitize-trap=bounds -fsanitize=alignment")
     endif()
 endif()
 
