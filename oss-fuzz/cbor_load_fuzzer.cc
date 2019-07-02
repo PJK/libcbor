@@ -29,6 +29,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
         size_t buffer_size;
         cbor_serialize_alloc(item, &buffer, &buffer_size);
         free(buffer);
+        cbor_item_t *copied = cbor_copy(item);
+        cbor_decref(&copied);
         cbor_decref(&item);
     }
     return 0;
