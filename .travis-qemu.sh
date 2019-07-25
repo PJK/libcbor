@@ -113,18 +113,18 @@ else
 	echo "Running tests"
 	cppcheck . --error-exitcode=1 --suppressions cppcheck_suppressions.txt --force
 
-    clang-format -version
-    clang-format-8 -version
+	clang-format -version
+	clang-format-8 -version
 	./clang-format.sh
-    git status | grep "nothing to commit, working tree clean"
+	git diff-index --quiet HEAD
 
 	cmake \
-	    -DCBOR_CUSTOM_ALLOC=ON \
-	    -DCMAKE_BUILD_TYPE=Debug \
-	    -DSANITIZE=OFF \
-	    -DWITH_TESTS=ON \
-	    -DCMAKE_PREFIX_PATH=${HOME}/usr/local \
-	    .
+		-DCBOR_CUSTOM_ALLOC=ON \
+		-DCMAKE_BUILD_TYPE=Debug \
+		-DSANITIZE=OFF \
+		-DWITH_TESTS=ON \
+		-DCMAKE_PREFIX_PATH=${HOME}/usr/local \
+		.
 	make VERBOSE=1
 
 	ctest -VV
