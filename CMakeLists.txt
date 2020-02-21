@@ -25,6 +25,8 @@ if(WITH_TESTS)
     add_definitions(-DWITH_TESTS)
 endif(WITH_TESTS)
 
+option(WITH_EXAMPLES "Build examples" ON)
+
 option(HUGE_FUZZ "[TEST] Fuzz through 8GB of data in the test. Do not use with memory instrumentation!" OFF)
 if(HUGE_FUZZ)
     add_definitions(-DHUGE_FUZZ)
@@ -126,4 +128,6 @@ if (WITH_TESTS)
     subdirs(test)
 endif (WITH_TESTS)
 
-subdirs(examples)
+if (WITH_EXAMPLES)
+     subdirs(examples)
+endif (WITH_EXAMPLES)
