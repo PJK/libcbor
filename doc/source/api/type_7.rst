@@ -28,7 +28,6 @@ Reading data
 .. doxygenfunction:: cbor_float_get_float8
 .. doxygenfunction:: cbor_float_get_float
 .. doxygenfunction:: cbor_ctrl_value
-.. doxygenfunction::
 
 Creating new items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -110,16 +110,16 @@ Generally speaking, data items consist of three parts:
 
     Union type of the following members, based on the item type:
 
-    .. member:: struct _cbor_int_metadata int_metadata;
+    .. member:: struct _cbor_int_metadata int_metadata
 
         Used both by both :doc:`api/type_0_1`
 
-    .. member:: struct _cbor_bytestring_metadata bytestring_metadata;
-    .. member:: struct _cbor_string_metadata string_metadata;
-    .. member:: struct _cbor_array_metadata array_metadata;
-    .. member:: struct _cbor_map_metadata map_metadata;
-    .. member:: struct _cbor_tag_metadata tag_metadata;
-    .. member:: struct _cbor_float_ctrl_metadata float_ctrl_metadata;
+    .. member:: struct _cbor_bytestring_metadata bytestring_metadata
+    .. member:: struct _cbor_string_metadata string_metadata
+    .. member:: struct _cbor_array_metadata array_metadata
+    .. member:: struct _cbor_map_metadata map_metadata
+    .. member:: struct _cbor_tag_metadata tag_metadata
+    .. member:: struct _cbor_float_ctrl_metadata float_ctrl_metadata
 
 Decoding
 ---------

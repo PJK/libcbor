@@ -23,7 +23,7 @@ Goals
 ~~~~~~~~~~~~~~~~~~~~~~
 
 RFC-conformance and full feature support
-^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Anything the standard allows, libcbor can do.
 
@@ -62,7 +62,7 @@ was the original niche of libcbor. Users who rely on libcbor expect future
 updates to work on their target platform.
 
 Stable and predictable API
-^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 libcbor will not break without a warning.
 
