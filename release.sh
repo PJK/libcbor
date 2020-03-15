@@ -60,10 +60,6 @@ cmake $DIR -DCMAKE_BUILD_TYPE=Release -DWITH_TESTS=ON
 make
 ctest
 
-cd $DIR
-git add docs/doxygen
-git commit -m "[Release] Add current API documentation"
-
 prompt "Will proceed to tag the release with $TAG_NAME."
 git tag $TAG_NAME
 git push origin
@@ -84,5 +80,5 @@ git push
 
 set +x
 
-echo "Update the Hombrew tap (https://github.com/PJK/homebrew-libcbor) *now*"
-prompt "Have you updated the tap?"
+echo "Update the Hombrew formula (https://github.com/Homebrew/homebrew-core/blob/master/Formula/libcbor.rb) *now*"
+prompt "Have you updated the formula?"

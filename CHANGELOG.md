@@ -1,20 +1,22 @@
-Next
+0.6.0 (2020-03-15)
 -------
-- Correctly set .so version [#52]. Warning: All previous releases will be identified as 0.0 by the linker.
-- Fix & prevent heap overflow error in example code [#74] [#76] (by @nevun)
-- Correctly set OSX dynamic library version [#75]
-- Fix misplaced 0xFF bytes in maps possibly causing memory corruption [#82]
+- Correctly set .so version [[Fixes #52]](https://github.com/PJK/libcbor/issues/52). 
+    - **Warning**: All previous releases will be identified as 0.0 by the linker.
+- Fix & prevent heap overflow error in example code [[#74]](https://github.com/PJK/libcbor/pull/74) [[#76]](https://github.com/PJK/libcbor/pull/76) (by @nevun)
+- Correctly set OSX dynamic library version [[Fixes #75]](https://github.com/PJK/libcbor/issues/75)
+- [Fix misplaced 0xFF bytes in maps possibly causing memory corruption](https://github.com/PJK/libcbor/pull/82)
 - BREAKING: Fix handling & cleanup of failed memory allocation in constructor
-  and builder helper functions [#84]
+  and builder helper functions [[Fixes #84]](https://github.com/PJK/libcbor/issues/84)
   - All cbor_new_ and cbor_build_ functions will now explicitly return NULL
     when memory allocation fails
   - It is up to the client to handle such cases
-- Globally enforced code style [#83]
+- Globally enforced code style [[Fixes #83]](https://github.com/PJK/libcbor/issues/83)
 - Fix issue possible memory corruption bug on repeated 
   cbor_(byte)string_add_chunk calls with intermittently failing realloc calls
 - Fix possibly misaligned reads and writes when endian.h is uses or when
-  running on a big-endian machine [#99, #100]
-- Improve CI setup with Travis-native arm64 support [#116]
+  running on a big-endian machine [[Fixes #99](https://github.com/PJK/libcbor/issues/99), [#100](https://github.com/PJK/libcbor/issues/100)]
+- [Improved CI setup with Travis-native arm64 support](https://github.com/PJK/libcbor/pull/116)
+- [Docs migrated to Sphinx 2.4 and Python3](https://github.com/PJK/libcbor/pull/117)
 
 0.5.0 (2017-02-06)
 ---------------------
@@ -24,12 +26,12 @@ Next
 - Fixed static header declarations (by cedric-d)
 - Improved documentation (by Michael Richardson)
 - Improved `examples/readfile.c`
-- Reworked (re)allocation to handle huge inputs and overflows in size_t [#16]
+- Reworked (re)allocation to handle huge inputs and overflows in size_t [[Fixes #16]](https://github.com/PJK/libcbor/issues/16)
 - Improvements to C++ linkage (corrected `cbor_empty_callbacks`, fixed `restrict` pointers) (by Dennis Bijwaard)
-- Fixed Linux installation directory depending on architecture [#34] (by jvymazal)
-- Improved 32-bit support [#35]
-- Fixed MSVC compatibility [#31]
-- Fixed and improved half-float encoding [#5] [#11]
+- Fixed Linux installation directory depending on architecture [[Fixes #34]](https://github.com/PJK/libcbor/issues/34) (by jvymazal)
+- Improved 32-bit support [[Fixes #35]](https://github.com/PJK/libcbor/issues/35)
+- Fixed MSVC compatibility [[Fixes #31]](https://github.com/PJK/libcbor/issues/31)
+- Fixed and improved half-float encoding [[Fixes #5](https://github.com/PJK/libcbor/issues/5), [#11](https://github.com/PJK/libcbor/issues/11)]
 
 0.4.0 (2015-12-25)
 ---------------------
