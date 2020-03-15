@@ -50,5 +50,7 @@ script:
       exit 1
     fi;
 
+# TODO: Set up https://codecov.io/
+
 notifications:
   email: false
