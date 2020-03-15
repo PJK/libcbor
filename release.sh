@@ -70,15 +70,5 @@ echo "Release ready in $OUTDIR"
 echo "Add the release to GitHub at https://github.com/PJK/libcbor/releases/new *now*"
 prompt "Have you added the release to https://github.com/PJK/libcbor/releases/tag/$TAG_NAME?"
 
-set -x
-
-pushd docs
-erb index.html.erb > index.html
-git add index.html
-git commit -m "[Release] Update website to $TAG_NAME"
-git push
-
-set +x
-
 echo "Update the Hombrew formula (https://github.com/Homebrew/homebrew-core/blob/master/Formula/libcbor.rb) *now*"
 prompt "Have you updated the formula?"
