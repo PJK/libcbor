@@ -29,7 +29,7 @@ before_install:
   - cd cmocka && mkdir build && cd build
   - cmake .. && make -j2 && sudo make install
   - cd ../..
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update -qq; sudo apt-get install -y clang-format-8 cppcheck swig; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update -qq; sudo apt-get install -y clang-format-8 cppcheck; fi
 
 script:
   - cppcheck . --error-exitcode=1 --force
@@ -45,9 +45,10 @@ script:
   - make VERBOSE=1
   - ctest -VV
   - ctest -T memcheck | tee memcheck.out
-  - if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
+  - >
+    if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
       exit 1
-    fi
+    fi;
 
 notifications:
   email: false
