@@ -1,4 +1,4 @@
-Next
+0.6.0 (2020-03-15)
 -------
 - Correctly set .so version [#52]. Warning: All previous releases will be identified as 0.0 by the linker.
 - Fix & prevent heap overflow error in example code [#74] [#76] (by @nevun)
@@ -15,6 +15,7 @@ Next
 - Fix possibly misaligned reads and writes when endian.h is uses or when
   running on a big-endian machine [#99, #100]
 - Improve CI setup with Travis-native arm64 support [#116]
+- Docs migrated to Sphinx 2.4 and Python3 [#117]
 
 0.5.0 (2017-02-06)
 ---------------------
