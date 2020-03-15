@@ -35,7 +35,7 @@ before_install:
 script:
   - cppcheck . --error-exitcode=1 --force
   # Fail if re-formatting creates diffs (implying bad formatting)
-  - ./clang-format.sh
+  - ./clang-format.sh --verbose
   - git diff-index --quiet HEAD
   - mkdir build && cd build
   - cmake -DWITH_TESTS=ON
