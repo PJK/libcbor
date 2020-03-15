@@ -14,6 +14,7 @@ Next
   cbor_(byte)string_add_chunk calls with intermittently failing realloc calls
 - Fix possibly misaligned reads and writes when endian.h is uses or when
   running on a big-endian machine [#99, #100]
+- Improve CI setup with Travis-native arm64 support [#116]
 
 0.5.0 (2017-02-06)
 ---------------------
