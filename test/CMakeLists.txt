@@ -11,7 +11,12 @@ foreach (TEST ${TESTS})
     target_link_libraries(${NAME} ${CMOCKA_LIBRARIES})
     target_link_libraries(${NAME} cbor)
     target_include_directories(${NAME} PUBLIC ${CMOCKA_INCLUDE_DIR})
-    add_test(${NAME} ${NAME})
+    # See https://stackoverflow.com/a/10824578/499521
+    ADD_TEST(ctest_build_test_${NAME}
+            "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target ${NAME})
+    ADD_TEST(ctest_run_${NAME} ${NAME})
+    SET_TESTS_PROPERTIES(ctest_run_${NAME}
+            PROPERTIES DEPENDS ctest_build_test_${NAME})
     add_dependencies(coverage ${NAME})
 endforeach (TEST)
 
