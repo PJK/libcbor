@@ -25,10 +25,11 @@ matrix:
     # TODO: Add OSX support (might require some brew tweaking)
 
 before_install:
+  - pushd ${HOME}
   - git clone git://git.cryptomilk.org/projects/cmocka.git
   - cd cmocka && mkdir build && cd build
   - cmake .. && make -j2 && sudo make install
-  - cd ../..
+  - cd .. && popd
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update -qq; sudo apt-get install -y clang-format-8 cppcheck; fi
 
 script:
