@@ -1,5 +1,8 @@
+Next
+---------------------
+
 0.6.0 (2020-03-15)
--------
+---------------------
 - Correctly set .so version [[Fixes #52]](https://github.com/PJK/libcbor/issues/52). 
     - **Warning**: All previous releases will be identified as 0.0 by the linker.
 - Fix & prevent heap overflow error in example code [[#74]](https://github.com/PJK/libcbor/pull/74) [[#76]](https://github.com/PJK/libcbor/pull/76) (by @nevun)
@@ -7,8 +10,7 @@
 - [Fix misplaced 0xFF bytes in maps possibly causing memory corruption](https://github.com/PJK/libcbor/pull/82)
 - BREAKING: Fix handling & cleanup of failed memory allocation in constructor
   and builder helper functions [[Fixes #84]](https://github.com/PJK/libcbor/issues/84)
-  - All cbor_new_ and cbor_build_ functions will now explicitly return NULL
-    when memory allocation fails
+  - All cbor_new_* and cbor_build_* functions will now explicitly return NULL when memory allocation fails
   - It is up to the client to handle such cases
 - Globally enforced code style [[Fixes #83]](https://github.com/PJK/libcbor/issues/83)
 - Fix issue possible memory corruption bug on repeated 
