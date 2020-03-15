@@ -2,6 +2,8 @@ file(GLOB TESTS "*_test.c")
 
 find_package(CMocka REQUIRED)
 
+message(STATUS "CMocka vars: ${CMOCKA_LIBRARIES} ${CMOCKA_INCLUDE_DIR}")
+
 foreach (TEST ${TESTS})
     string(REGEX REPLACE ".*/([^/]+).c" "\\1" NAME ${TEST})
     message("Adding test ${NAME}")

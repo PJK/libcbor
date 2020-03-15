@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(libcbor)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
 include(CTest)
 
 SET(CBOR_VERSION_MAJOR "0")
@@ -72,8 +73,8 @@ else()
 
     if(SANITIZE)
         set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} \
-            -fsanitize-trap=undefined -fsanitize=address \
-            -fsanitize-trap=bounds -fsanitize=alignment")
+            -fsanitize=undefined -fsanitize=address \
+            -fsanitize=bounds -fsanitize=alignment")
     endif()
 endif()
 
