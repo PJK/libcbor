@@ -42,11 +42,11 @@ import subprocess, os
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 if on_rtd:
-    print subprocess.check_output('cd ../..; mkdir doc/build; doxygen', shell=True)
+    print(subprocess.check_output('cd ../..; mkdir doc/build; doxygen', shell=True))
 
 
-print os.getcwd()
-print os.getcwd() + '/../build/doxygen/xml'
+print(os.getcwd())
+print(os.getcwd() + '/../build/doxygen/xml')
 
 breathe_projects = {
     'libcbor': '../build/doxygen/xml'
@@ -67,8 +67,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'libcbor'
-copyright = u'2014 - 2019, Pavel Kalvoda'
+project = 'libcbor'
+copyright = '2014 - 2019, Pavel Kalvoda'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -156,7 +156,7 @@ html_theme = 'default'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = []
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -225,8 +225,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'libcbor.tex', u'libcbor Documentation',
-   u'Pavel Kalvoda', 'manual'),
+  ('index', 'libcbor.tex', 'libcbor Documentation',
+   'Pavel Kalvoda', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -255,8 +255,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'libcbor', u'libcbor Documentation',
-     [u'Pavel Kalvoda'], 1)
+    ('index', 'libcbor', 'libcbor Documentation',
+     ['Pavel Kalvoda'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -269,8 +269,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'libcbor', u'libcbor Documentation',
-   u'Pavel Kalvoda', 'libcbor', 'C library for parsing and generating CBOR.',
+  ('index', 'libcbor', 'libcbor Documentation',
+   'Pavel Kalvoda', 'libcbor', 'C library for parsing and generating CBOR.',
    'Miscellaneous'),
 ]
 

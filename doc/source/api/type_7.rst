@@ -65,8 +65,7 @@ Manipulating existing items
 Half floats
 ~~~~~~~~~~~~
 CBOR supports two `bytes wide ("half-precision") <https://en.wikipedia.org/wiki/Half-precision_floating-point_format>`_
-floats which are not supported by the C language. *libcbor* represents them using :type:`float`
-values throughout the API, which has important implications when manipulating these values.
+floats which are not supported by the C language. *libcbor* represents them using `float <https://en.cppreference.com/w/c/language/type>` values throughout the API, which has important implications when manipulating these values.
 
 In particular, if a user uses some of the manipulation APIs
 (e.g. :func:`cbor_set_float2`, :func:`cbor_new_float2`)
