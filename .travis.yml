@@ -4,57 +4,34 @@ sudo: true
 
 matrix:
   include:
-  - compiler: clang
-    addons:
-      apt:
-        sources:
-        - ubuntu-toolchain-r-test
-        - llvm-toolchain-precise-3.6
-        - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
-        - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-8 main'
-          key_url: https://apt.llvm.org/llvm-snapshot.gpg.key
-        packages:
-        - clang-3.6
-        - libjansson-dev
-        - valgrind
-        - cppcheck
-        - lcov
-        - cmake
-        - cmake-data
-        - clang-format-8
-  - compiler: gcc-6
-    addons:
-      apt:
-        sources:
-        - ubuntu-toolchain-r-test
-        - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
-        - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-8 main'
-          key_url: https://apt.llvm.org/llvm-snapshot.gpg.key
-        packages:
-        - gcc-6
-        - g++-6
-        - libjansson-dev
-        - valgrind
-        - cppcheck
-        - lcov
-        - cmake
-        - cmake-data
-        - clang-format-8
-# Temporarily disabled due to slow performance and problems with Raspbian
-# chroot (https://travis-ci.org/PJK/libcbor/jobs/281748138)
-#  - env: ARCH=arm
-#    addons:
-#      apt:
-#        sources:
-#        - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
-#        packages:
-#        - gcc-arm-linux-gnueabihf
-#        - libc6-dev-armhf-cross
-#        - cmake
-#        - cmake-data
+    - arch: amd64
+      os: linux
+      dist: bionic
+      sudo: required
+      compiler: clang
+      env: TRAVIS_ARCH="amd64"
+    - arch: amd64
+      os: linux
+      dist: bionic
+      sudo: required
+      compiler: gcc
+      env: TRAVIS_ARCH="amd64"
+
+#script:
+#  - "bash -ex .travis-qemu.sh"
+
+before_install:
+  - git clone git://git.cryptomilk.org/projects/cmocka.git
+  - cd cmocka && mkdir build && cd build
+  - cmake .. && make -j2 && sudo make install
+  - cd ../..
 
 script:
-  - "bash -ex .travis-qemu.sh"
+  - mkdir build && cd build
+  - cmake -DWITH_TESTS=ON -DCBOR_CUSTOM_ALLOC=ON -DCMAKE_BUILD_TYPE=Debug ..
+  - make VERBOSE=1
+  - ctest -VV
+
 
 notifications:
   email: false
