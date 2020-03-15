@@ -49,20 +49,19 @@ cp -r html libcbor_docs_html
 tar -zcf libcbor_docs.tar.gz libcbor_docs_html
 
 cp -r doxygen/html libcbor_api_docs_html
-cp -r doxygen/html $DIR/docs/doxygen
 tar -zcf libcbor_api_docs.tar.gz libcbor_api_docs_html
 
 mv libcbor_docs.tar.gz libcbor_api_docs.tar.gz $OUTDIR
 
-cd $OUTDIR
-
+pushd $OUTDIR
 cmake $DIR -DCMAKE_BUILD_TYPE=Release -DWITH_TESTS=ON
 make
 ctest
+popd
 
 prompt "Will proceed to tag the release with $TAG_NAME."
 git tag $TAG_NAME
-git push origin
+git push --tags
 
 set +x
 
