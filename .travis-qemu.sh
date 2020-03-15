@@ -123,7 +123,6 @@ else
 		-DCMAKE_BUILD_TYPE=Debug \
 		-DSANITIZE=OFF \
 		-DWITH_TESTS=ON \
-		-DCMAKE_PREFIX_PATH=${HOME}/usr/local \
 		.
 	make VERBOSE=1
 
