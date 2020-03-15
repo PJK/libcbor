@@ -28,6 +28,8 @@ before_install:
   - cd cmocka && mkdir build && cd build
   - cmake .. && make -j2 && sudo make install
   - cd ../..
+  - clang-format -version
+  - clang-format-8 -version
 
 script:
   - cppcheck . --error-exitcode=1 --force
