@@ -30,11 +30,22 @@ before_install:
   - cd ../..
 
 script:
+  - cppcheck . --error-exitcode=1 --force
+  # Fail if re-formatting creates diffs (implying bad formatting)
+  - ./clang-format.sh
+  - git diff-index --quiet HEAD
   - mkdir build && cd build
-  - cmake -DWITH_TESTS=ON -DCBOR_CUSTOM_ALLOC=ON -DCMAKE_BUILD_TYPE=Debug ..
+  - cmake -DWITH_TESTS=ON \
+          -DCBOR_CUSTOM_ALLOC=ON \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -DSANITIZE=OFF \
+          ..
   - make VERBOSE=1
   - ctest -VV
-
+  - ctest -T memcheck | tee memcheck.out
+  - if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
+      exit 1
+    fi
 
 notifications:
   email: false
