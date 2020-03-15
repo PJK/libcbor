@@ -15,7 +15,7 @@ cd ..
 
 # Run clang-format and add modified files
 MODIFIED_UNSTAGED=$(git -C . diff --name-only)
-MODIFIED_STAGED=$(git -C . diff --name-only --cached)
+MODIFIED_STAGED=$(git -C . diff --name-only --cached --diff-filter=d)
 
 ./clang-format.sh
 
