@@ -73,8 +73,8 @@ else()
 
     if(SANITIZE)
         set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} \
-            -fsanitize-trap=undefined -fsanitize=address \
-            -fsanitize-trap=bounds -fsanitize=alignment")
+            -fsanitize=undefined -fsanitize=address \
+            -fsanitize=bounds -fsanitize=alignment")
     endif()
 endif()
 
