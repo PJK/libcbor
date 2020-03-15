@@ -40,6 +40,7 @@ import subprocess, os
 
 # on_rtd is whether we are on readthedocs.org, this line of code grabbed from docs.readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+print(subprocess.check_output('cd ../..; mkdir doc/build; doxygen', shell=True))
 
 if on_rtd:
     print(subprocess.check_output('cd ../..; mkdir doc/build; doxygen', shell=True))
