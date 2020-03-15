@@ -111,7 +111,7 @@ else
 	popd
 
 	echo "Running tests"
-	cppcheck . --error-exitcode=1 --suppressions cppcheck_suppressions.txt --force
+	cppcheck . --error-exitcode=1 --force
 
 	clang-format -version
 	clang-format-8 -version
