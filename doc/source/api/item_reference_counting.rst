@@ -10,7 +10,7 @@ Using custom allocator
 
 *libcbor* gives you with the ability to provide your own implementations of ``malloc``, ``realloc``, and ``free``. This can be useful if you are using a custom allocator throughout your application, or if you want to implement custom policies (e.g. tighter restrictions on the amount of allocated memory).
 
-In order to use this feature, *libcbor* has to be compiled with the :doc:`appropriate flags <getting_started>`. You can verify the configuration using the ``CBOR_CUSTOM_ALLOC`` macro. A simple usage might be as follows:
+In order to use this feature, *libcbor* has to be compiled with the :doc:`appropriate flags </getting_started>`. You can verify the configuration using the ``CBOR_CUSTOM_ALLOC`` macro. A simple usage might be as follows:
 
 .. code-block:: c
 

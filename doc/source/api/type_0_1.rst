@@ -30,7 +30,7 @@ Type 0 & 1
 -------------
 Due to their largely similar semantics, the following functions can be used for both Type 0 and Type 1 items. One can convert between them freely using `the conversion functions <#dealing-with-signedness>`_.
 
-Actual Type of the integer can be checked using :ref:`item types API <item-types>`.
+Actual Type of the integer can be checked using :doc:`item types API <item_types>`.
 
 
 
