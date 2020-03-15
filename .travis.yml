@@ -16,9 +16,12 @@ matrix:
       sudo: required
       compiler: gcc
       env: TRAVIS_ARCH="amd64"
-
-#script:
-#  - "bash -ex .travis-qemu.sh"
+    - arch: arm64
+      os: linux
+      dist: bionic
+      sudo: required
+      compiler: gcc
+      env: TRAVIS_ARCH="arm64"
 
 before_install:
   - git clone git://git.cryptomilk.org/projects/cmocka.git
