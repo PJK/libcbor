@@ -22,6 +22,12 @@ matrix:
       sudo: required
       compiler: gcc
       env: TRAVIS_ARCH="arm64"
+    - arch: ppc64le
+      os: linux
+      dist: bionic
+      sudo: required
+      compiler: gcc
+      env: TRAVIS_ARCH="ppc64le"
     - arch: amd64
       os: osx
       compiler: gcc
