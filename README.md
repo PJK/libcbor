@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/PJK/libcbor.svg?branch=master)](https://travis-ci.org/PJK/libcbor)
 [![Build status](https://ci.appveyor.com/api/projects/status/8kkmvmefelsxp5u2?svg=true)](https://ci.appveyor.com/project/PJK/libcbor)
 [![Documentation Status](https://readthedocs.org/projects/libcbor/badge/?version=latest)](https://readthedocs.org/projects/libcbor/?badge=latest)
+[![latest packaged version(s)](https://repology.org/badge/latest-versions/libcbor.svg)](https://repology.org/project/libcbor/versions)
 
 **libcbor** is a C library for parsing and generating [CBOR](http://tools.ietf.org/html/rfc7049), the general-purpose schema-less binary data format.
 
@@ -31,7 +32,6 @@ make install
 ### Homebrew
 
 ```bash
-brew tap pjk/libcbor
 brew install libcbor
 ```
 
@@ -47,6 +47,14 @@ sudo apt-get install libcbor-dev
 ```bash
 yum install libcbor-devel
 ```
+
+### Others 
+
+<details>
+  <summary>Packaged libcbor is available from 15+ major repositories. Click here for more detail</summary>
+  
+  [![Packaging status](https://repology.org/badge/vertical-allrepos/libcbor.svg)](https://repology.org/project/libcbor/versions)
+</details>
 
 ## Usage example
 
