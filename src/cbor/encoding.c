@@ -135,7 +135,7 @@ size_t cbor_encode_half(float value, unsigned char *buffer,
       val & 0x7FFFFF; /* 0b0000_0000_0111_1111_1111_1111_1111_1111 */
   if (exp == 0xFF) {  /* Infinity or NaNs */
     if (value != value) {
-      res = (uint16_t)0x00e700; /* Not IEEE semantics - required by CBOR
+      res = (uint16_t)0x007e00; /* Not IEEE semantics - required by CBOR
                                    [s. 3.9] */
     } else {
       res =

@@ -1,5 +1,7 @@
 Next
 ---------------------
+- Fix bad encoding of NaN half-floats [[Fixes #53]](https://github.com/PJK/libcbor/issues/53) (discovered by @BSipos-RKF)
+    - **Warning**: Previous versions encoded NaNs as `0xf9e700` instead of `0xf97e00`; if you rely on the broken behavior, this will be a breaking change
 
 0.6.0 (2020-03-15)
 ---------------------

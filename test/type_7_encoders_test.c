@@ -79,7 +79,7 @@ static void test_half(void **state) {
 
 static void test_half_special(void **state) {
   assert_int_equal(3, cbor_encode_half(NAN, buffer, 512));
-  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0xE7, 0x00}), 3);
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x00}), 3);
 }
 
 static void test_float(void **state) {
