@@ -22,7 +22,16 @@ matrix:
       sudo: required
       compiler: gcc
       env: TRAVIS_ARCH="arm64"
-    # TODO: Add OSX support (might require some brew tweaking)
+    - arch: ppc64le
+      os: linux
+      dist: bionic
+      sudo: required
+      compiler: gcc
+      env: TRAVIS_ARCH="ppc64le"
+    - arch: amd64
+      os: osx
+      compiler: gcc
+      env: TRAVIS_ARCH="amd64"
 
 before_install:
   - pushd ${HOME}
@@ -33,10 +42,13 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update -qq; sudo apt-get install -y clang-format-8 cppcheck; fi
 
 script:
-  - cppcheck . --error-exitcode=1 --force
-  # Fail if re-formatting creates diffs (implying bad formatting)
-  - ./clang-format.sh --verbose
-  - git diff-index --quiet HEAD
+  - >
+    if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      cppcheck . --error-exitcode=1
+      # Fail if re-formatting creates diffs (implying bad formatting)
+      /clang-format.sh --verbose
+      git diff-index --quiet HEAD
+    fi;
   - mkdir build && cd build
   - cmake -DWITH_TESTS=ON
           -DCBOR_CUSTOM_ALLOC=ON
