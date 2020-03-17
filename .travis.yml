@@ -66,7 +66,7 @@ script:
 
 
 after_success:
-  - if [ "$TRAVIS_OS_NAME" = "linux" -a "$CC" = "gcc" -a "$TRAVIS_ARCH" = "amd64" -a "$TRAVIS_BRANCH" = "master" ]; then codecov; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" -a "$CC" = "gcc" -a "$TRAVIS_ARCH" = "amd64" ]; then codecov; fi
 
 notifications:
   email: false
