@@ -73,6 +73,9 @@ static void test_half(void **state) {
   assert_int_equal(3, cbor_encode_half(1.1920928955078125e-7, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x00, 0x02}), 3);
 
+  assert_int_equal(3, cbor_encode_half(-1.1920928955078124e-7, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x80, 0x02}), 3);
+
   assert_int_equal(3, cbor_encode_half(INFINITY, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7C, 0x00}), 3);
 }

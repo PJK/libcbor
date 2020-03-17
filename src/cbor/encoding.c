@@ -157,7 +157,7 @@ size_t cbor_encode_half(float value, unsigned char *buffer,
       /* Offset the remaining decimal places by shifting the significand, the
          value is lost. This is an implementation decision that works around the
          absence of standard half-float in the language. */
-      res = (uint16_t)(val & 0x80000000u) >> 16u |
+      res = (uint16_t)((val & 0x80000000u) >> 16u) |  // Extract sign bit
             (uint16_t)(1u << (24u + logical_exp));
     } else {
       res = (uint16_t)((val & 0x80000000u) >> 16u |
