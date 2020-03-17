@@ -237,7 +237,7 @@ static void test_serialize_half(void **state) {
   cbor_set_float2(item, NAN);
 
   assert_int_equal(3, cbor_serialize(item, buffer, 512));
-  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0xE7, 0x00}), 3);
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x00}), 3);
   cbor_decref(&item);
 }
 
