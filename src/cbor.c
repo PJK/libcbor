@@ -323,8 +323,7 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent) {
       fprintf(out, "%*s[CBOR_TYPE_FLOAT_CTRL] ", indent, " ");
       if (cbor_float_ctrl_is_ctrl(item)) {
         if (cbor_is_bool(item))
-          fprintf(out, "Bool: %s\n",
-                  cbor_ctrl_is_bool(item) ? "true" : "false");
+          fprintf(out, "Bool: %s\n", cbor_get_bool(item) ? "true" : "false");
         else if (cbor_is_undef(item))
           fprintf(out, "Undefined\n");
         else if (cbor_is_null(item))

@@ -86,14 +86,18 @@ static void test_bool(void **state) {
   float_ctrl = cbor_load(bool_data, 1, &res);
   assert_true(cbor_isa_float_ctrl(float_ctrl));
   assert_true(cbor_is_bool(float_ctrl));
-  assert_false(cbor_ctrl_is_bool(float_ctrl));
+  assert_false(cbor_get_bool(float_ctrl));
+  cbor_set_bool(float_ctrl, true);
+  assert_true(cbor_get_bool(float_ctrl));
   cbor_decref(&float_ctrl);
   assert_null(float_ctrl);
 
   float_ctrl = cbor_load(bool_data + 1, 1, &res);
   assert_true(cbor_isa_float_ctrl(float_ctrl));
   assert_true(cbor_is_bool(float_ctrl));
-  assert_true(cbor_ctrl_is_bool(float_ctrl));
+  assert_true(cbor_get_bool(float_ctrl));
+  cbor_set_bool(float_ctrl, false);
+  assert_false(cbor_get_bool(float_ctrl));
   cbor_decref(&float_ctrl);
   assert_null(float_ctrl);
 }
