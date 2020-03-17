@@ -3,7 +3,7 @@ Next
 - Fix bad encoding of NaN half-floats [[Fixes #53]](https://github.com/PJK/libcbor/issues/53) (discovered by [BSipos-RKF](https://github.com/BSipos-RKF))
     - **Warning**: Previous versions encoded NaNs as `0xf9e700` instead of `0xf97e00`; if you rely on the broken behavior, this will be a breaking change
 - Fix potentially bad encoding of negative half-float with exponent < -14 [[Fixes #112]](https://github.com/PJK/libcbor/issues/112) (discovered by [yami36](https://github.com/yami36))
-- BREAKING: Improved bool support
+- BREAKING: Improved bool support [[Fixes #63]](https://github.com/PJK/libcbor/issues/63)
     - Rename `cbor_ctrl_is_bool` to `cbor_get_bool` and fix the behavior
     - Add `cbor_set_bool`
 
