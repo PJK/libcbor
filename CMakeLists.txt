@@ -59,7 +59,7 @@ if(MINGW)
     # https://github.com/PJK/libcbor/issues/13
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
 elseif(NOT MSVC)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -pedantic")
 endif()
 
 if(MSVC)
@@ -68,8 +68,8 @@ if(MSVC)
 else()
     set(CBOR_RESTRICT_SPECIFIER "restrict")
 
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -pedantic -g -ggdb -DDEBUG=true")
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto -Wall -pedantic -DNDEBUG")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -g -ggdb -DDEBUG=true")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto -Wall -DNDEBUG")
 
     if(SANITIZE)
         set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} \

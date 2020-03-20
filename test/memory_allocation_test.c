@@ -255,7 +255,6 @@ static void test_map_add(void **state) {
 }
 
 int main(void) {
-#if CBOR_CUSTOM_ALLOC
   cbor_set_allocs(instrumented_malloc, instrumented_realloc, free);
 
   // TODO: string chunks realloc test
@@ -273,10 +272,6 @@ int main(void) {
       cmocka_unit_test(test_array_push),
       cmocka_unit_test(test_map_add),
   };
-#else
-  // Can't do anything without a custom allocator
-  const struct CMUnitTest tests[] = {};
-#endif
 
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
