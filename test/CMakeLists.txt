@@ -1,5 +1,10 @@
 file(GLOB TESTS "*_test.c")
 
+if(NOT CBOR_CUSTOM_ALLOC)
+    # Memory allocation test requires custom allocator support to instrument it.
+    list(REMOVE_ITEM TESTS ${CMAKE_CURRENT_SOURCE_DIR}/memory_allocation_test.c)
+endif(NOT CBOR_CUSTOM_ALLOC)
+
 find_package(CMocka REQUIRED)
 
 message(STATUS "CMocka vars: ${CMOCKA_LIBRARIES} ${CMOCKA_INCLUDE_DIR}")
