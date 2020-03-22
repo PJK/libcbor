@@ -7,6 +7,7 @@ Next
     - Rename `cbor_ctrl_is_bool` to `cbor_get_bool` and fix the behavior
     - Add `cbor_set_bool`
 - Fix memory_allocation_test breaking the build without CBOR_CUSTOM_ALLOC [[Fixes #128]](https://github.com/PJK/libcbor/issues/128) (by [panlinux](https://github.com/panlinux))
+- [Fix a potential build issue where cJSON includes may be misconfigured](https://github.com/PJK/libcbor/pull/132)  
 
 0.6.0 (2020-03-15)
 ---------------------
