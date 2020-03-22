@@ -14,12 +14,20 @@ endif()
 add_library(cbor STATIC ${SOURCES})
 add_library(cbor_shared SHARED ${SOURCES})
 
-set_target_properties(cbor_shared PROPERTIES OUTPUT_NAME cbor VERSION ${CBOR_VERSION} SOVERSION ${CBOR_VERSION})
+
+if (NOT ${CBOR_VERSION_MAJOR} EQUAL 0)
+	MESSAGE(FATAL_ERROR "Change the shared library version scheme to reflect https://github.com/PJK/libcbor/issues/52.")
+endif()
+
+set_target_properties(cbor_shared PROPERTIES
+		OUTPUT_NAME cbor
+		VERSION ${CBOR_VERSION}
+		MACHO_COMPATIBILITY_VERSION ${CBOR_VERSION_MAJOR}.${CBOR_VERSION_MINOR}.0
+		SOVERSION ${CBOR_VERSION_MAJOR}.${CBOR_VERSION_MINOR})
 
 configure_file(libcbor.pc.in libcbor.pc @ONLY)
 
-#http://www.cmake.org/Wiki/CMake:Install_Commands
-
+# http://www.cmake.org/Wiki/CMake:Install_Commands
 install(TARGETS cbor_shared
 	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
