@@ -1,31 +1,25 @@
 language: c
 
-sudo: true
-
 matrix:
   include:
     - arch: amd64
       os: linux
       dist: bionic
-      sudo: required
       compiler: clang
       env: TRAVIS_ARCH="amd64"
     - arch: amd64
       os: linux
       dist: bionic
-      sudo: required
       compiler: gcc
       env: TRAVIS_ARCH="amd64"
     - arch: arm64
       os: linux
       dist: bionic
-      sudo: required
       compiler: gcc
       env: TRAVIS_ARCH="arm64"
     - arch: ppc64le
       os: linux
       dist: bionic
-      sudo: required
       compiler: gcc
       env: TRAVIS_ARCH="ppc64le"
     - arch: amd64
