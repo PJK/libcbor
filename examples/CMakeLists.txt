@@ -13,11 +13,12 @@ target_link_libraries(sort cbor)
 add_executable(hello hello.c)
 target_link_libraries(hello cbor)
 
-find_package(cJSON)
+find_package(CJSON)
 
-if(cJSON_FOUND)
+if(CJSON_FOUND)
     add_executable(cjson2cbor cjson2cbor.c)
-    target_link_libraries(cjson2cbor cbor cjson)
+    target_include_directories(cjson2cbor PUBLIC ${CJSON_INCLUDE_DIRS})
+    target_link_libraries(cjson2cbor cbor ${CJSON_LIBRARY})
 endif()
 
 file(COPY data DESTINATION .)
