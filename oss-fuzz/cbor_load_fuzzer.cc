@@ -1,20 +1,43 @@
 #include <cstdint>
 #include <cstdio>
+#include <unordered_map>
 
 #include "cbor.h"
 
+static size_t allocated_mem = 0;
+static std::unordered_map<void*, size_t> allocated_len_map;
+
 void *limited_malloc(size_t size) {
-    if (size > 1 << 24) {
+    if (size + allocated_mem > 1 << 24) {
         return nullptr;
     }
-    return malloc(size);
+    void* m = malloc(size);
+    if (m != nullptr) {
+      allocated_mem += size;
+      allocated_len_map[m] = size;
+    }
+    return m;
+}
+
+void limited_free(void *ptr) {
+  if (allocated_len_map.find(ptr) == allocated_len_map.end()) {
+    return;
+  }
+  free(ptr);
+  allocated_mem -= allocated_len_map[ptr];
+  allocated_len_map.erase(ptr);
+}
+
+void *limited_realloc(void *ptr, size_t size) {
+  limited_free(ptr);
+  return limited_malloc(size);
 }
 
 struct State {
     FILE* fout;
 
     State() : fout(fopen("/dev/null", "r")) {
-        cbor_set_allocs(limited_malloc, realloc, free);
+        cbor_set_allocs(limited_malloc, limited_realloc, limited_free);
     }
 };
 
