@@ -123,6 +123,16 @@ libcbor also comes with `pkg-config <https://wiki.freedesktop.org/www/Software/p
     cc $(pkg-config --cflags libcbor) hello_cbor.c $(pkg-config --libs libcbor) -o hello_cbor
 
 
+**A note on linkage**
+
+libcbor is primarily intended to be linked statically. The shared library versioning scheme generally follows `SemVer <https://semver.org/>`_, but is irregular for the 0.X.Y development branch for historical reasons. The following version identifiers are used as a part of the SONAME (Linux) or the dylib `"Compatibility version" <https://developer.apple.com/library/archive/documentation/DeveloperTools/Conceptual/DynamicLibraries/100-Articles/CreatingDynamicLibraries.html>`_ (OS X):
+
+  - 0.Y for the 0.Y.Z branch. Patches are backwards compatible, minor releases are generally not and require re-compilation of any dependent code.
+  - X for the X.Y.Z stable versions starting 1.X.Y. All minor release of the major version are backwards compatible.
+
+.. warning:: Please note that releases up to and including v0.6.0 `may export misleading .so/.dylib version number <https://github.com/PJK/libcbor/issues/52>`_.
+
+
 MinGW build instructions
 ---------------------------
 Prerequisites:
