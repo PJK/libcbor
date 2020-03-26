@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <unordered_map>
 
 #include "cbor.h"
@@ -21,7 +22,7 @@ void *limited_malloc(size_t size) {
 
 void limited_free(void *ptr) {
   if (allocated_len_map.find(ptr) == allocated_len_map.end()) {
-    return;
+    abort();
   }
   free(ptr);
   allocated_mem -= allocated_len_map[ptr];
