@@ -7,9 +7,10 @@
 
 static size_t allocated_mem = 0;
 static std::unordered_map<void*, size_t> allocated_len_map;
+static constexpr size_t kMemoryLimit = 1 << 30;
 
 void *limited_malloc(size_t size) {
-    if (size + allocated_mem > 1 << 30) {
+    if (size + allocated_mem > kMemoryLimit) {
         return nullptr;
     }
     void* m = malloc(size);
@@ -30,8 +31,22 @@ void limited_free(void *ptr) {
 }
 
 void *limited_realloc(void *ptr, size_t size) {
-  limited_free(ptr);
-  return limited_malloc(size);
+  if (allocated_len_map.find(ptr) == allocated_len_map.end()) {
+    abort();
+  }
+  long delta = (long) size - allocated_len_map[ptr];
+  if (delta + allocated_mem > kMemoryLimit) {
+    return nullptr;
+  }
+  void* new_ptr = realloc(ptr, size);
+  if (new_ptr == nullptr) {
+    return nullptr;
+  }
+  allocated_mem += delta;
+  allocated_len_map.erase(ptr);
+  allocated_len_map[new_ptr] = size;
+
+  return new_ptr;
 }
 
 struct State {
