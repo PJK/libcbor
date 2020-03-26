@@ -9,7 +9,7 @@ static size_t allocated_mem = 0;
 static std::unordered_map<void*, size_t> allocated_len_map;
 
 void *limited_malloc(size_t size) {
-    if (size + allocated_mem > 1 << 24) {
+    if (size + allocated_mem > 1 << 30) {
         return nullptr;
     }
     void* m = malloc(size);
