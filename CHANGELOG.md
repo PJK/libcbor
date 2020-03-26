@@ -1,5 +1,15 @@
 Next
 ---------------------
+- Fix bad encoding of NaN half-floats [[Fixes #53]](https://github.com/PJK/libcbor/issues/53) (discovered by [BSipos-RKF](https://github.com/BSipos-RKF))
+    - **Warning**: Previous versions encoded NaNs as `0xf9e700` instead of `0xf97e00`; if you rely on the broken behavior, this will be a breaking change
+- Fix potentially bad encoding of negative half-float with exponent < -14 [[Fixes #112]](https://github.com/PJK/libcbor/issues/112) (discovered by [yami36](https://github.com/yami36))
+- BREAKING: Improved bool support [[Fixes #63]](https://github.com/PJK/libcbor/issues/63)
+    - Rename `cbor_ctrl_is_bool` to `cbor_get_bool` and fix the behavior
+    - Add `cbor_set_bool`
+- Fix memory_allocation_test breaking the build without CBOR_CUSTOM_ALLOC [[Fixes #128]](https://github.com/PJK/libcbor/issues/128) (by [panlinux](https://github.com/panlinux))
+- [Fix a potential build issue where cJSON includes may be misconfigured](https://github.com/PJK/libcbor/pull/132)  
+- [Fix bad shared library version number](https://github.com/PJK/libcbor/pull/131)
+    - **Warning**: Shared library built from the 0.6.0 release is erroneously marked as version "0.6.0", which makes it incompatible with future releases *including the v0.6.X line* even though they may be compatible API/ABI-wise. Refer to the documentation for the new SO versioning scheme.
 
 0.6.0 (2020-03-15)
 ---------------------
