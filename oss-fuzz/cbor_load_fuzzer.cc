@@ -22,12 +22,14 @@ void *limited_malloc(size_t size) {
 }
 
 void limited_free(void *ptr) {
-  if (allocated_len_map.find(ptr) == allocated_len_map.end()) {
+  if (ptr != NULL && allocated_len_map.find(ptr) == allocated_len_map.end()) {
     abort();
   }
   free(ptr);
-  allocated_mem -= allocated_len_map[ptr];
-  allocated_len_map.erase(ptr);
+  if (ptr != NULL) {
+    allocated_mem -= allocated_len_map[ptr];
+    allocated_len_map.erase(ptr);
+  }
 }
 
 void *limited_realloc(void *ptr, size_t size) {
