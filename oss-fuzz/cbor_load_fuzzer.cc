@@ -13,42 +13,49 @@ void *limited_malloc(size_t size) {
     if (size + allocated_mem > kMemoryLimit) {
         return nullptr;
     }
+    if (size == 0) {
+        return nullptr;
+    }
     void* m = malloc(size);
     if (m != nullptr) {
-      allocated_mem += size;
-      allocated_len_map[m] = size;
+        allocated_mem += size;
+        allocated_len_map[m] = size;
     }
     return m;
 }
 
 void limited_free(void *ptr) {
-  if (ptr != NULL && allocated_len_map.find(ptr) == allocated_len_map.end()) {
-    abort();
-  }
-  free(ptr);
-  if (ptr != NULL) {
-    allocated_mem -= allocated_len_map[ptr];
-    allocated_len_map.erase(ptr);
-  }
+    if (ptr != NULL && allocated_len_map.find(ptr) == allocated_len_map.end()) {
+        abort();
+    }
+    free(ptr);
+    if (ptr != NULL) {
+        allocated_mem -= allocated_len_map[ptr];
+        allocated_len_map.erase(ptr);
+    }
 }
 
 void *limited_realloc(void *ptr, size_t size) {
-  if (allocated_len_map.find(ptr) == allocated_len_map.end()) {
-    abort();
-  }
-  long delta = (long) size - allocated_len_map[ptr];
-  if (delta + allocated_mem > kMemoryLimit) {
-    return nullptr;
-  }
-  void* new_ptr = realloc(ptr, size);
-  if (new_ptr == nullptr) {
-    return nullptr;
-  }
-  allocated_mem += delta;
-  allocated_len_map.erase(ptr);
-  allocated_len_map[new_ptr] = size;
-
-  return new_ptr;
+    if (ptr != NULL && allocated_len_map.find(ptr) == allocated_len_map.end()) {
+        abort();
+    }
+    if (ptr == NULL) {
+        return limited_malloc(size);
+    }
+    long delta = (long) size - allocated_len_map[ptr];
+    if (delta + allocated_mem > kMemoryLimit) {
+        return nullptr;
+    }
+    void* new_ptr = realloc(ptr, size);
+    if (size > 0 && new_ptr == nullptr) {
+        return nullptr;
+    }
+    allocated_mem += delta;
+    allocated_len_map.erase(ptr);
+    if (size > 0) {
+        allocated_len_map[new_ptr] = size;
+    }
+    return new_ptr;
 }
 
 struct State {
