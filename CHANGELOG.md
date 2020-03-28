@@ -9,10 +9,11 @@ Next
 - Fix memory_allocation_test breaking the build without CBOR_CUSTOM_ALLOC [[Fixes #128]](https://github.com/PJK/libcbor/issues/128) (by [panlinux](https://github.com/panlinux))
 - [Fix a potential build issue where cJSON includes may be misconfigured](https://github.com/PJK/libcbor/pull/132)
 
-0.6.1 (2020-03-26)
+0.6.1 (2020-03-28)
 ---------------------
 - [Fix bad shared library version number](https://github.com/PJK/libcbor/pull/131)
     - **Warning**: Shared library built from the 0.6.0 release is erroneously marked as version "0.6.0", which makes it incompatible with future releases *including the v0.6.X line* even though they may be compatible API/ABI-wise. Refer to the documentation for the new SO versioning scheme.
+    - **Warning**: This release has been originally attached to the wrong commit (https://github.com/PJK/libcbor/commit/09ef47fae8912f1f51bbb920f779014d454329fc) 
 
 0.6.0 (2020-03-15)
 ---------------------
