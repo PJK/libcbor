@@ -228,6 +228,11 @@ void cbor_builder_string_callback(void *context, cbor_data data,
 
   memcpy(new_handle, data, length);
   cbor_item_t *res = cbor_new_definite_string();
+  if (res == NULL) {
+    _CBOR_FREE(new_handle);
+    ctx->creation_failed = true;
+    return;
+  }
   cbor_string_set_handle(res, new_handle, length);
   res->metadata.string_metadata.codepoint_count = codepoint_count;
 
