@@ -87,8 +87,7 @@ void _cbor_builder_append(cbor_item_t *item,
   }
 }
 
-// TODO: refactor this to take the parameter name, this is way too magical
-#define CHECK_RES                  \
+#define CHECK_RES(ctx, res)        \
   do {                             \
     if (res == NULL) {             \
       ctx->creation_failed = true; \
@@ -99,7 +98,7 @@ void _cbor_builder_append(cbor_item_t *item,
 void cbor_builder_uint8_callback(void *context, uint8_t value) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_int8();
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   cbor_mark_uint(res);
   cbor_set_uint8(res, value);
   _cbor_builder_append(res, ctx);
@@ -108,7 +107,7 @@ void cbor_builder_uint8_callback(void *context, uint8_t value) {
 void cbor_builder_uint16_callback(void *context, uint16_t value) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_int16();
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   cbor_mark_uint(res);
   cbor_set_uint16(res, value);
   _cbor_builder_append(res, ctx);
@@ -117,7 +116,7 @@ void cbor_builder_uint16_callback(void *context, uint16_t value) {
 void cbor_builder_uint32_callback(void *context, uint32_t value) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_int32();
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   cbor_mark_uint(res);
   cbor_set_uint32(res, value);
   _cbor_builder_append(res, ctx);
@@ -126,7 +125,7 @@ void cbor_builder_uint32_callback(void *context, uint32_t value) {
 void cbor_builder_uint64_callback(void *context, uint64_t value) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_int64();
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   cbor_mark_uint(res);
   cbor_set_uint64(res, value);
   _cbor_builder_append(res, ctx);
@@ -135,7 +134,7 @@ void cbor_builder_uint64_callback(void *context, uint64_t value) {
 void cbor_builder_negint8_callback(void *context, uint8_t value) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_int8();
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   cbor_mark_negint(res);
   cbor_set_uint8(res, value);
   _cbor_builder_append(res, ctx);
@@ -152,7 +151,7 @@ void cbor_builder_negint16_callback(void *context, uint16_t value) {
 void cbor_builder_negint32_callback(void *context, uint32_t value) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_int32();
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   cbor_mark_negint(res);
   cbor_set_uint32(res, value);
   _cbor_builder_append(res, ctx);
@@ -161,7 +160,7 @@ void cbor_builder_negint32_callback(void *context, uint32_t value) {
 void cbor_builder_negint64_callback(void *context, uint64_t value) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_int64();
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   cbor_mark_negint(res);
   cbor_set_uint64(res, value);
   _cbor_builder_append(res, ctx);
@@ -202,7 +201,7 @@ void cbor_builder_byte_string_callback(void *context, cbor_data data,
 void cbor_builder_byte_string_start_callback(void *context) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_indefinite_bytestring();
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   if (_cbor_stack_push(ctx->stack, res, 0) == NULL) {
     cbor_decref(&res);
     ctx->creation_failed = true;
@@ -250,7 +249,7 @@ void cbor_builder_string_callback(void *context, cbor_data data,
 void cbor_builder_string_start_callback(void *context) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_indefinite_string();
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   if (_cbor_stack_push(ctx->stack, res, 0) == NULL) {
     cbor_decref(&res);
     ctx->creation_failed = true;
@@ -260,7 +259,7 @@ void cbor_builder_string_start_callback(void *context) {
 void cbor_builder_array_start_callback(void *context, size_t size) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_definite_array(size);
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   if (size > 0) {
     if (_cbor_stack_push(ctx->stack, res, size) == NULL) {
       cbor_decref(&res);
@@ -274,7 +273,7 @@ void cbor_builder_array_start_callback(void *context, size_t size) {
 void cbor_builder_indef_array_start_callback(void *context) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_indefinite_array();
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   if (_cbor_stack_push(ctx->stack, res, 0) == NULL) {
     cbor_decref(&res);
     ctx->creation_failed = true;
@@ -284,7 +283,7 @@ void cbor_builder_indef_array_start_callback(void *context) {
 void cbor_builder_indef_map_start_callback(void *context) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_indefinite_map();
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   if (_cbor_stack_push(ctx->stack, res, 0) == NULL) {
     cbor_decref(&res);
     ctx->creation_failed = true;
@@ -294,7 +293,7 @@ void cbor_builder_indef_map_start_callback(void *context) {
 void cbor_builder_map_start_callback(void *context, size_t size) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_definite_map(size);
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   if (size > 0) {
     if (_cbor_stack_push(ctx->stack, res, size * 2) == NULL) {
       cbor_decref(&res);
@@ -353,7 +352,7 @@ void cbor_builder_float2_callback(void *context, float value) {
 void cbor_builder_float4_callback(void *context, float value) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_float4();
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   cbor_set_float4(res, value);
   _cbor_builder_append(res, ctx);
 }
@@ -361,7 +360,7 @@ void cbor_builder_float4_callback(void *context, float value) {
 void cbor_builder_float8_callback(void *context, double value) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_float8();
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   cbor_set_float8(res, value);
   _cbor_builder_append(res, ctx);
 }
@@ -369,28 +368,28 @@ void cbor_builder_float8_callback(void *context, double value) {
 void cbor_builder_null_callback(void *context) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_null();
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   _cbor_builder_append(res, ctx);
 }
 
 void cbor_builder_undefined_callback(void *context) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_undef();
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   _cbor_builder_append(res, ctx);
 }
 
 void cbor_builder_boolean_callback(void *context, bool value) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_build_bool(value);
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   _cbor_builder_append(res, ctx);
 }
 
 void cbor_builder_tag_callback(void *context, uint64_t value) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_tag(value);
-  CHECK_RES;
+  CHECK_RES(ctx, res);
   if (_cbor_stack_push(ctx->stack, res, 1) == NULL) {
     cbor_decref(&res);
     ctx->creation_failed = true;
