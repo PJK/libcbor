@@ -95,6 +95,14 @@ void _cbor_builder_append(cbor_item_t *item,
     }                              \
   } while (0)
 
+#define PUSH_CTX_STACK(ctx, res, subitems)                     \
+  do {                                                         \
+    if (_cbor_stack_push(ctx->stack, res, subitems) == NULL) { \
+      cbor_decref(&res);                                       \
+      ctx->creation_failed = true;                             \
+    }                                                          \
+  } while (0)
+
 void cbor_builder_uint8_callback(void *context, uint8_t value) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_int8();
@@ -202,10 +210,7 @@ void cbor_builder_byte_string_start_callback(void *context) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_indefinite_bytestring();
   CHECK_RES(ctx, res);
-  if (_cbor_stack_push(ctx->stack, res, 0) == NULL) {
-    cbor_decref(&res);
-    ctx->creation_failed = true;
-  }
+  PUSH_CTX_STACK(ctx, res, 0);
 }
 
 void cbor_builder_string_callback(void *context, cbor_data data,
@@ -250,10 +255,7 @@ void cbor_builder_string_start_callback(void *context) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_indefinite_string();
   CHECK_RES(ctx, res);
-  if (_cbor_stack_push(ctx->stack, res, 0) == NULL) {
-    cbor_decref(&res);
-    ctx->creation_failed = true;
-  }
+  PUSH_CTX_STACK(ctx, res, 0);
 }
 
 void cbor_builder_array_start_callback(void *context, size_t size) {
@@ -261,10 +263,7 @@ void cbor_builder_array_start_callback(void *context, size_t size) {
   cbor_item_t *res = cbor_new_definite_array(size);
   CHECK_RES(ctx, res);
   if (size > 0) {
-    if (_cbor_stack_push(ctx->stack, res, size) == NULL) {
-      cbor_decref(&res);
-      ctx->creation_failed = true;
-    }
+    PUSH_CTX_STACK(ctx, res, size);
   } else {
     _cbor_builder_append(res, ctx);
   }
@@ -274,20 +273,14 @@ void cbor_builder_indef_array_start_callback(void *context) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_indefinite_array();
   CHECK_RES(ctx, res);
-  if (_cbor_stack_push(ctx->stack, res, 0) == NULL) {
-    cbor_decref(&res);
-    ctx->creation_failed = true;
-  }
+  PUSH_CTX_STACK(ctx, res, 0);
 }
 
 void cbor_builder_indef_map_start_callback(void *context) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_indefinite_map();
   CHECK_RES(ctx, res);
-  if (_cbor_stack_push(ctx->stack, res, 0) == NULL) {
-    cbor_decref(&res);
-    ctx->creation_failed = true;
-  }
+  PUSH_CTX_STACK(ctx, res, 0);
 }
 
 void cbor_builder_map_start_callback(void *context, size_t size) {
@@ -295,10 +288,7 @@ void cbor_builder_map_start_callback(void *context, size_t size) {
   cbor_item_t *res = cbor_new_definite_map(size);
   CHECK_RES(ctx, res);
   if (size > 0) {
-    if (_cbor_stack_push(ctx->stack, res, size * 2) == NULL) {
-      cbor_decref(&res);
-      ctx->creation_failed = true;
-    }
+    PUSH_CTX_STACK(ctx, res, size * 2);
   } else {
     _cbor_builder_append(res, ctx);
   }
@@ -390,8 +380,5 @@ void cbor_builder_tag_callback(void *context, uint64_t value) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_tag(value);
   CHECK_RES(ctx, res);
-  if (_cbor_stack_push(ctx->stack, res, 1) == NULL) {
-    cbor_decref(&res);
-    ctx->creation_failed = true;
-  }
+  PUSH_CTX_STACK(ctx, res, 1);
 }
