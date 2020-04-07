@@ -22,7 +22,7 @@ option(CBOR_PRETTY_PRINTER "Include a pretty-printing routine" ON)
 set(CBOR_BUFFER_GROWTH "2" CACHE STRING "Factor for buffer growth & shrinking")
 set(CBOR_MAX_STACK_SIZE "2048" CACHE STRING "maximum size for decoding context stack")
 
-option(WITH_TESTS "[TEST] Build unit tests (requires CMocka" OFF)
+option(WITH_TESTS "[TEST] Build unit tests (requires CMocka)" OFF)
 if(WITH_TESTS)
     add_definitions(-DWITH_TESTS)
 endif(WITH_TESTS)
