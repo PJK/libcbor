@@ -10,12 +10,12 @@
 
 static size_t generate_overflow_data(unsigned char **overflow_data) {
   int i;
-  *overflow_data = (unsigned char*)malloc(CBOR_MAX_STACK_SIZE + 3);
+  *overflow_data = (unsigned char *)malloc(CBOR_MAX_STACK_SIZE + 3);
   for (i = 0; i < CBOR_MAX_STACK_SIZE + 1; i++) {
-    (*overflow_data)[i] = 0xC2; // tag of positive bignum
+    (*overflow_data)[i] = 0xC2;  // tag of positive bignum
   }
-  (*overflow_data)[CBOR_MAX_STACK_SIZE + 1] = 0x41; // bytestring of length 1
-  (*overflow_data)[CBOR_MAX_STACK_SIZE + 2] = 0x01; // a bignum of value 1
+  (*overflow_data)[CBOR_MAX_STACK_SIZE + 1] = 0x41;  // bytestring of length 1
+  (*overflow_data)[CBOR_MAX_STACK_SIZE + 2] = 0x01;  // a bignum of value 1
   return CBOR_MAX_STACK_SIZE + 3;
 }
 

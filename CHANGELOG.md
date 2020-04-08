@@ -8,6 +8,8 @@ Next
     - Add `cbor_set_bool`
 - Fix memory_allocation_test breaking the build without CBOR_CUSTOM_ALLOC [[Fixes #128]](https://github.com/PJK/libcbor/issues/128) (by [panlinux](https://github.com/panlinux))
 - [Fix a potential build issue where cJSON includes may be misconfigured](https://github.com/PJK/libcbor/pull/132)
+- Breaking: [Add a limit on the size of the decoding context stack](https://github.com/PJK/libcbor/pull/138) (by [James-ZHANG](https://github.com/James-ZHANG))
+    - If your usecase requires parsing very deeply nested structures, you might need to increase the default 2k limit via `CBOR_MAX_STACK_SIZE` 
 
 0.6.1 (2020-03-26)
 ---------------------
