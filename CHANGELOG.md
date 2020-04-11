@@ -10,6 +10,8 @@ Next
 - [Fix a potential build issue where cJSON includes may be misconfigured](https://github.com/PJK/libcbor/pull/132)
 - Breaking: [Add a limit on the size of the decoding context stack](https://github.com/PJK/libcbor/pull/138) (by [James-ZHANG](https://github.com/James-ZHANG))
     - If your usecase requires parsing very deeply nested structures, you might need to increase the default 2k limit via `CBOR_MAX_STACK_SIZE` 
+- Enable LTO/IPO based on [CheckIPOSupported](https://cmake.org/cmake/help/latest/module/CheckIPOSupported.html#module:CheckIPOSupported) [[#143]](https://github.com/PJK/libcbor/pull/143) (by [xanderlent](https://github.com/xanderlent))
+    - If you rely on LTO being enabled and use CMake version older than 3.9, you will need to re-enable it manually or upgrade your CMake 
 
 0.6.1 (2020-03-26)
 ---------------------
