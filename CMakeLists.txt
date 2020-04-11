@@ -70,7 +70,7 @@ else()
     set(CBOR_RESTRICT_SPECIFIER "restrict")
 
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -g -ggdb -DDEBUG=true")
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto -Wall -DNDEBUG")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -Wall -DNDEBUG")
 
     if(SANITIZE)
         set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} \
@@ -80,7 +80,6 @@ else()
 endif()
 
 set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-g")
-set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-flto")
 
 
 include(CheckTypeSize)
@@ -124,12 +123,37 @@ install(FILES ${PROJECT_BINARY_DIR}/cbor/configuration.h DESTINATION include/cbo
 # Make the header visible at compile time
 include_directories(${PROJECT_BINARY_DIR})
 
+# CMake >= 3.9.0 enables LTO for GCC and Clang with INTERPROCEDURAL_OPTIMIZATION
+# Policy CMP0069 enables this behavior when we set the minimum CMake version < 3.9.0
+# Checking for LTO support before setting INTERPROCEDURAL_OPTIMIZATION is mandatory with CMP0069 set to NEW.
+set(use_lto FALSE)
+if(${CMAKE_VERSION} VERSION_GREATER "3.9.0" OR ${CMAKE_VERSION} VERSION_EQUAL "3.9.0")
+    cmake_policy(SET CMP0069 NEW)
+    # Require LTO support to build libcbor with newer CMake versions
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT use_lto)
+endif(${CMAKE_VERSION} VERSION_GREATER "3.9.0" OR ${CMAKE_VERSION} VERSION_EQUAL "3.9.0")
+if(use_lto)
+    message(STATUS "LTO is enabled")
+else()
+    message(STATUS "LTO is not enabled")
+endif(use_lto)
+
 subdirs(src)
+if(use_lto)
+    set_property(DIRECTORY src PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif(use_lto)
 
 if (WITH_TESTS)
     subdirs(test)
+    if(use_lto)
+        set_property(DIRECTORY test PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+    endif(use_lto)
 endif (WITH_TESTS)
 
 if (WITH_EXAMPLES)
-     subdirs(examples)
+    subdirs(examples)
+    if(use_lto)
+        set_property(DIRECTORY examples PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+    endif(use_lto)
 endif (WITH_EXAMPLES)
