@@ -70,4 +70,5 @@ echo "Add the release to GitHub at https://github.com/PJK/libcbor/releases/new *
 prompt "Have you added the release to https://github.com/PJK/libcbor/releases/tag/$TAG_NAME?"
 
 echo "Update the Hombrew formula (https://github.com/Homebrew/homebrew-core/blob/master/Formula/libcbor.rb) *now*"
+echo "HOWTO: https://github.com/Linuxbrew/brew/blob/master/docs/How-To-Open-a-Homebrew-Pull-Request.md"
 prompt "Have you updated the formula?"
