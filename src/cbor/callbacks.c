@@ -69,7 +69,7 @@ void cbor_null_uint8_callback(void *_ctx, uint8_t _val) CBOR_DUMMY_CALLBACK
 
     void cbor_null_indef_break_callback(void *_ctx) CBOR_DUMMY_CALLBACK
 
-    const struct cbor_callbacks cbor_empty_callbacks = {
+    CBOR_EXPORT const struct cbor_callbacks cbor_empty_callbacks = {
         /* Type 0 - Unsigned integers */
         .uint8 = cbor_null_uint8_callback,
         .uint16 = cbor_null_uint16_callback,

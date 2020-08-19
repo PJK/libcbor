@@ -11,16 +11,19 @@ if (NOT DEFINED CMAKE_MACOSX_RPATH)
 	set(CMAKE_MACOSX_RPATH 0)
 endif()
 
-add_library(cbor STATIC ${SOURCES})
-add_library(cbor_shared SHARED ${SOURCES})
+add_library(cbor ${SOURCES})
+target_include_directories(cbor PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+include(GenerateExportHeader)
+generate_export_header(cbor EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/cbor/cbor_export.h)
+target_include_directories(cbor PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cbor/cbor_export.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cbor)
 
 if (NOT ${CBOR_VERSION_MAJOR} EQUAL 0)
 	MESSAGE(FATAL_ERROR "Change the shared library version scheme to reflect https://github.com/PJK/libcbor/issues/52.")
 endif()
 
-set_target_properties(cbor_shared PROPERTIES
-		OUTPUT_NAME cbor
+set_target_properties(cbor PROPERTIES
 		VERSION ${CBOR_VERSION}
 		MACHO_COMPATIBILITY_VERSION ${CBOR_VERSION_MAJOR}.${CBOR_VERSION_MINOR}.0
 		SOVERSION ${CBOR_VERSION_MAJOR}.${CBOR_VERSION_MINOR})
@@ -28,15 +31,15 @@ set_target_properties(cbor_shared PROPERTIES
 configure_file(libcbor.pc.in libcbor.pc @ONLY)
 
 # http://www.cmake.org/Wiki/CMake:Install_Commands
-install(TARGETS cbor_shared
+install(TARGETS cbor
 	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	RUNTIME DESTINATION bin)
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-install(DIRECTORY cbor DESTINATION include
+install(DIRECTORY cbor DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
                 FILES_MATCHING PATTERN "*.h")
 
-install(FILES cbor.h DESTINATION include)
+install(FILES cbor.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libcbor.pc"
 	DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/pkgconfig")
