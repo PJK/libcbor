@@ -9,6 +9,7 @@
 #define LIBCBOR_INTS_H
 
 #include "cbor/common.h"
+#include "cbor/cbor_export.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,35 +26,35 @@ extern "C" {
  * @param item[borrow] positive or negative integer
  * @return the value
  */
-uint8_t cbor_get_uint8(const cbor_item_t *item);
+CBOR_EXPORT uint8_t cbor_get_uint8(const cbor_item_t *item);
 
 /** Extracts the integer value
  *
  * @param item[borrow] positive or negative integer
  * @return the value
  */
-uint16_t cbor_get_uint16(const cbor_item_t *item);
+CBOR_EXPORT uint16_t cbor_get_uint16(const cbor_item_t *item);
 
 /** Extracts the integer value
  *
  * @param item[borrow] positive or negative integer
  * @return the value
  */
-uint32_t cbor_get_uint32(const cbor_item_t *item);
+CBOR_EXPORT uint32_t cbor_get_uint32(const cbor_item_t *item);
 
 /** Extracts the integer value
  *
  * @param item[borrow] positive or negative integer
  * @return the value
  */
-uint64_t cbor_get_uint64(const cbor_item_t *item);
+CBOR_EXPORT uint64_t cbor_get_uint64(const cbor_item_t *item);
 
 /** Extracts the integer value
  *
  * @param item[borrow] positive or negative integer
  * @return the value, extended to `uint64_t`
  */
-uint64_t cbor_get_int(const cbor_item_t *item);
+CBOR_EXPORT uint64_t cbor_get_int(const cbor_item_t *item);
 
 /** Assigns the integer value
  *
@@ -61,7 +62,7 @@ uint64_t cbor_get_int(const cbor_item_t *item);
  * @param value the value to assign. For negative integer, the logical value is
  * `-value - 1`
  */
-void cbor_set_uint8(cbor_item_t *item, uint8_t value);
+CBOR_EXPORT void cbor_set_uint8(cbor_item_t *item, uint8_t value);
 
 /** Assigns the integer value
  *
@@ -69,7 +70,7 @@ void cbor_set_uint8(cbor_item_t *item, uint8_t value);
  * @param value the value to assign. For negative integer, the logical value is
  * `-value - 1`
  */
-void cbor_set_uint16(cbor_item_t *item, uint16_t value);
+CBOR_EXPORT void cbor_set_uint16(cbor_item_t *item, uint16_t value);
 
 /** Assigns the integer value
  *
@@ -77,7 +78,7 @@ void cbor_set_uint16(cbor_item_t *item, uint16_t value);
  * @param value the value to assign. For negative integer, the logical value is
  * `-value - 1`
  */
-void cbor_set_uint32(cbor_item_t *item, uint32_t value);
+CBOR_EXPORT void cbor_set_uint32(cbor_item_t *item, uint32_t value);
 
 /** Assigns the integer value
  *
@@ -85,14 +86,14 @@ void cbor_set_uint32(cbor_item_t *item, uint32_t value);
  * @param value the value to assign. For negative integer, the logical value is
  * `-value - 1`
  */
-void cbor_set_uint64(cbor_item_t *item, uint64_t value);
+CBOR_EXPORT void cbor_set_uint64(cbor_item_t *item, uint64_t value);
 
 /** Queries the integer width
  *
  *  @param item[borrow] positive or negative integer item
  *  @return the width
  */
-cbor_int_width cbor_int_get_width(const cbor_item_t *item);
+CBOR_EXPORT cbor_int_width cbor_int_get_width(const cbor_item_t *item);
 
 /** Marks the integer item as a positive integer
  *
@@ -100,7 +101,7 @@ cbor_int_width cbor_int_get_width(const cbor_item_t *item);
  *
  * @param item[borrow] positive or negative integer item
  */
-void cbor_mark_uint(cbor_item_t *item);
+CBOR_EXPORT void cbor_mark_uint(cbor_item_t *item);
 
 /** Marks the integer item as a negative integer
  *
@@ -108,7 +109,7 @@ void cbor_mark_uint(cbor_item_t *item);
  *
  * @param item[borrow] positive or negative integer item
  */
-void cbor_mark_negint(cbor_item_t *item);
+CBOR_EXPORT void cbor_mark_negint(cbor_item_t *item);
 
 /** Allocates new integer with 1B width
  *
@@ -117,7 +118,7 @@ void cbor_mark_negint(cbor_item_t *item);
  * @return **new** positive integer or `NULL` on memory allocation failure. The
  * value is not initialized
  */
-cbor_item_t *cbor_new_int8();
+CBOR_EXPORT cbor_item_t *cbor_new_int8();
 
 /** Allocates new integer with 2B width
  *
@@ -126,7 +127,7 @@ cbor_item_t *cbor_new_int8();
  * @return **new** positive integer or `NULL` on memory allocation failure. The
  * value is not initialized
  */
-cbor_item_t *cbor_new_int16();
+CBOR_EXPORT cbor_item_t *cbor_new_int16();
 
 /** Allocates new integer with 4B width
  *
@@ -135,7 +136,7 @@ cbor_item_t *cbor_new_int16();
  * @return **new** positive integer or `NULL` on memory allocation failure. The
  * value is not initialized
  */
-cbor_item_t *cbor_new_int32();
+CBOR_EXPORT cbor_item_t *cbor_new_int32();
 
 /** Allocates new integer with 8B width
  *
@@ -144,63 +145,63 @@ cbor_item_t *cbor_new_int32();
  * @return **new** positive integer or `NULL` on memory allocation failure. The
  * value is not initialized
  */
-cbor_item_t *cbor_new_int64();
+CBOR_EXPORT cbor_item_t *cbor_new_int64();
 
 /** Constructs a new positive integer
  *
  * @param value the value to use
  * @return **new** positive integer or `NULL` on memory allocation failure
  */
-cbor_item_t *cbor_build_uint8(uint8_t value);
+CBOR_EXPORT cbor_item_t *cbor_build_uint8(uint8_t value);
 
 /** Constructs a new positive integer
  *
  * @param value the value to use
  * @return **new** positive integer or `NULL` on memory allocation failure
  */
-cbor_item_t *cbor_build_uint16(uint16_t value);
+CBOR_EXPORT cbor_item_t *cbor_build_uint16(uint16_t value);
 
 /** Constructs a new positive integer
  *
  * @param value the value to use
  * @return **new** positive integer or `NULL` on memory allocation failure
  */
-cbor_item_t *cbor_build_uint32(uint32_t value);
+CBOR_EXPORT cbor_item_t *cbor_build_uint32(uint32_t value);
 
 /** Constructs a new positive integer
  *
  * @param value the value to use
  * @return **new** positive integer or `NULL` on memory allocation failure
  */
-cbor_item_t *cbor_build_uint64(uint64_t value);
+CBOR_EXPORT cbor_item_t *cbor_build_uint64(uint64_t value);
 
 /** Constructs a new negative integer
  *
  * @param value the value to use
  * @return **new** negative integer or `NULL` on memory allocation failure
  */
-cbor_item_t *cbor_build_negint8(uint8_t value);
+CBOR_EXPORT cbor_item_t *cbor_build_negint8(uint8_t value);
 
 /** Constructs a new negative integer
  *
  * @param value the value to use
  * @return **new** negative integer or `NULL` on memory allocation failure
  */
-cbor_item_t *cbor_build_negint16(uint16_t value);
+CBOR_EXPORT cbor_item_t *cbor_build_negint16(uint16_t value);
 
 /** Constructs a new negative integer
  *
  * @param value the value to use
  * @return **new** negative integer or `NULL` on memory allocation failure
  */
-cbor_item_t *cbor_build_negint32(uint32_t value);
+CBOR_EXPORT cbor_item_t *cbor_build_negint32(uint32_t value);
 
 /** Constructs a new negative integer
  *
  * @param value the value to use
  * @return **new** negative integer or `NULL` on memory allocation failure
  */
-cbor_item_t *cbor_build_negint64(uint64_t value);
+CBOR_EXPORT cbor_item_t *cbor_build_negint64(uint64_t value);
 
 #ifdef __cplusplus
 }

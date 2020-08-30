@@ -9,6 +9,7 @@
 #define LIBCBOR_BYTESTRINGS_H
 
 #include "cbor/common.h"
+#include "cbor/cbor_export.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,21 +28,21 @@ extern "C" {
  * @param item[borrow] a definite bytestring
  * @return length of the binary data. Zero if no chunk has been attached yet
  */
-size_t cbor_bytestring_length(const cbor_item_t *item);
+CBOR_EXPORT size_t cbor_bytestring_length(const cbor_item_t *item);
 
 /** Is the byte string definite?
  *
  * @param item[borrow] a byte string
  * @return Is the byte string definite?
  */
-bool cbor_bytestring_is_definite(const cbor_item_t *item);
+CBOR_EXPORT bool cbor_bytestring_is_definite(const cbor_item_t *item);
 
 /** Is the byte string indefinite?
  *
  * @param item[borrow] a byte string
  * @return Is the byte string indefinite?
  */
-bool cbor_bytestring_is_indefinite(const cbor_item_t *item);
+CBOR_EXPORT bool cbor_bytestring_is_indefinite(const cbor_item_t *item);
 
 /** Get the handle to the binary data
  *
@@ -52,7 +53,7 @@ bool cbor_bytestring_is_indefinite(const cbor_item_t *item);
  * @return The address of the binary data. `NULL` if no data have been assigned
  * yet.
  */
-cbor_mutable_data cbor_bytestring_handle(const cbor_item_t *item);
+CBOR_EXPORT cbor_mutable_data cbor_bytestring_handle(const cbor_item_t *item);
 
 /** Set the handle to the binary data
  *
@@ -61,9 +62,9 @@ cbor_mutable_data cbor_bytestring_handle(const cbor_item_t *item);
  * libcbor will deallocate it when appropriate using its free function
  * @param length Length of the data block
  */
-void cbor_bytestring_set_handle(cbor_item_t *item,
-                                cbor_mutable_data CBOR_RESTRICT_POINTER data,
-                                size_t length);
+CBOR_EXPORT void cbor_bytestring_set_handle(cbor_item_t *item,
+                                            cbor_mutable_data CBOR_RESTRICT_POINTER data,
+                                            size_t length);
 
 /** Get the handle to the array of chunks
  *
@@ -73,14 +74,15 @@ void cbor_bytestring_set_handle(cbor_item_t *item,
  * @param item[borrow] A indefinite byte string
  * @return array of #cbor_bytestring_chunk_count definite bytestrings
  */
-cbor_item_t **cbor_bytestring_chunks_handle(const cbor_item_t *item);
+CBOR_EXPORT cbor_item_t **cbor_bytestring_chunks_handle(
+    const cbor_item_t *item);
 
 /** Get the number of chunks this string consist of
  *
  * @param item[borrow] A indefinite bytestring
  * @return The chunk count. 0 for freshly created items.
  */
-size_t cbor_bytestring_chunk_count(const cbor_item_t *item);
+CBOR_EXPORT size_t cbor_bytestring_chunk_count(const cbor_item_t *item);
 
 /** Appends a chunk to the bytestring
  *
@@ -93,7 +95,8 @@ size_t cbor_bytestring_chunk_count(const cbor_item_t *item);
  * @return true on success, false on realloc failure. In that case, the refcount
  * of `chunk` is not increased and the `item` is left intact.
  */
-bool cbor_bytestring_add_chunk(cbor_item_t *item, cbor_item_t *chunk);
+CBOR_EXPORT bool cbor_bytestring_add_chunk(cbor_item_t *item,
+                                           cbor_item_t *chunk);
 
 /** Creates a new definite byte string
  *
@@ -101,7 +104,7 @@ bool cbor_bytestring_add_chunk(cbor_item_t *item, cbor_item_t *chunk);
  *
  * @return **new** definite bytestring. `NULL` on malloc failure.
  */
-cbor_item_t *cbor_new_definite_bytestring();
+CBOR_EXPORT cbor_item_t *cbor_new_definite_bytestring();
 
 /** Creates a new indefinite byte string
  *
@@ -109,7 +112,7 @@ cbor_item_t *cbor_new_definite_bytestring();
  *
  * @return **new** indefinite bytestring. `NULL` on malloc failure.
  */
-cbor_item_t *cbor_new_indefinite_bytestring();
+CBOR_EXPORT cbor_item_t *cbor_new_indefinite_bytestring();
 
 /** Creates a new byte string and initializes it
  *
@@ -120,7 +123,7 @@ cbor_item_t *cbor_new_indefinite_bytestring();
  * @return A **new** byte string with content `handle`. `NULL` on malloc
  * failure.
  */
-cbor_item_t *cbor_build_bytestring(cbor_data handle, size_t length);
+CBOR_EXPORT cbor_item_t *cbor_build_bytestring(cbor_data handle, size_t length);
 
 #ifdef __cplusplus
 }

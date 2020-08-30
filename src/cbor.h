@@ -23,6 +23,7 @@
 #include "cbor/encoding.h"
 #include "cbor/serialization.h"
 #include "cbor/streaming.h"
+#include "cbor/cbor_export.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,8 +43,8 @@ extern "C" {
  * @return **new** CBOR item or `NULL` on failure. In that case, \p result
  * contains location and description of the error.
  */
-cbor_item_t* cbor_load(cbor_data source, size_t source_size,
-                       struct cbor_load_result* result);
+CBOR_EXPORT cbor_item_t* cbor_load(cbor_data source, size_t source_size,
+                                   struct cbor_load_result* result);
 
 /** Deep copy of an item
  *
@@ -52,12 +53,12 @@ cbor_item_t* cbor_load(cbor_data source, size_t source_size,
  * @param item[borrow] item to copy
  * @return **new** CBOR deep copy
  */
-cbor_item_t* cbor_copy(cbor_item_t* item);
+CBOR_EXPORT cbor_item_t* cbor_copy(cbor_item_t* item);
 
 #if CBOR_PRETTY_PRINTER
 #include <stdio.h>
 
-void cbor_describe(cbor_item_t* item, FILE* out);
+CBOR_EXPORT void cbor_describe(cbor_item_t* item, FILE* out);
 #endif
 
 #ifdef __cplusplus

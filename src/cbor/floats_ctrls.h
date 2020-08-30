@@ -9,6 +9,7 @@
 #define LIBCBOR_FLOATS_CTRLS_H
 
 #include "cbor/common.h"
+#include "cbor/cbor_export.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,14 +26,14 @@ extern "C" {
  * @param item[borrow] A float or ctrl item
  * @return Is this a ctrl value?
  */
-bool cbor_float_ctrl_is_ctrl(const cbor_item_t *item);
+CBOR_EXPORT bool cbor_float_ctrl_is_ctrl(const cbor_item_t *item);
 
 /** Get the float width
  *
  * @param item[borrow] A float or ctrl item
  * @return The width.
  */
-cbor_float_width cbor_float_get_width(const cbor_item_t *item);
+CBOR_EXPORT cbor_float_width cbor_float_get_width(const cbor_item_t *item);
 
 /** Get a half precision float
  *
@@ -41,7 +42,7 @@ cbor_float_width cbor_float_get_width(const cbor_item_t *item);
  * @param[borrow] A half precision float
  * @return half precision value
  */
-float cbor_float_get_float2(const cbor_item_t *item);
+CBOR_EXPORT float cbor_float_get_float2(const cbor_item_t *item);
 
 /** Get a single precision float
  *
@@ -50,7 +51,7 @@ float cbor_float_get_float2(const cbor_item_t *item);
  * @param[borrow] A signle precision float
  * @return single precision value
  */
-float cbor_float_get_float4(const cbor_item_t *item);
+CBOR_EXPORT float cbor_float_get_float4(const cbor_item_t *item);
 
 /** Get a double precision float
  *
@@ -59,7 +60,7 @@ float cbor_float_get_float4(const cbor_item_t *item);
  * @param[borrow] A double precision float
  * @return double precision value
  */
-double cbor_float_get_float8(const cbor_item_t *item);
+CBOR_EXPORT double cbor_float_get_float8(const cbor_item_t *item);
 
 /** Get the float value represented as double
  *
@@ -68,14 +69,14 @@ double cbor_float_get_float8(const cbor_item_t *item);
  * @param[borrow] Any float
  * @return double precision value
  */
-double cbor_float_get_float(const cbor_item_t *item);
+CBOR_EXPORT double cbor_float_get_float(const cbor_item_t *item);
 
 /** Get value from a boolean ctrl item
  *
  * @param item[borrow] A ctrl item
  * @return boolean value
  */
-bool cbor_get_bool(const cbor_item_t *item);
+CBOR_EXPORT bool cbor_get_bool(const cbor_item_t *item);
 
 /** Constructs a new ctrl item
  *
@@ -83,7 +84,7 @@ bool cbor_get_bool(const cbor_item_t *item);
  *
  * @return **new** 1B ctrl or `NULL` upon memory allocation failure
  */
-cbor_item_t *cbor_new_ctrl();
+CBOR_EXPORT cbor_item_t *cbor_new_ctrl();
 
 /** Constructs a new float item
  *
@@ -91,7 +92,7 @@ cbor_item_t *cbor_new_ctrl();
  *
  * @return **new** 2B float or `NULL` upon memory allocation failure
  */
-cbor_item_t *cbor_new_float2();
+CBOR_EXPORT cbor_item_t *cbor_new_float2();
 
 /** Constructs a new float item
  *
@@ -99,7 +100,7 @@ cbor_item_t *cbor_new_float2();
  *
  * @return **new** 4B float or `NULL` upon memory allocation failure
  */
-cbor_item_t *cbor_new_float4();
+CBOR_EXPORT cbor_item_t *cbor_new_float4();
 
 /** Constructs a new float item
  *
@@ -107,26 +108,26 @@ cbor_item_t *cbor_new_float4();
  *
  * @return **new** 8B float or `NULL` upon memory allocation failure
  */
-cbor_item_t *cbor_new_float8();
+CBOR_EXPORT cbor_item_t *cbor_new_float8();
 
 /** Constructs new null ctrl item
  *
  * @return **new** null ctrl item or `NULL` upon memory allocation failure
  */
-cbor_item_t *cbor_new_null();
+CBOR_EXPORT cbor_item_t *cbor_new_null();
 
 /** Constructs new undef ctrl item
  *
  * @return **new** undef ctrl item or `NULL` upon memory allocation failure
  */
-cbor_item_t *cbor_new_undef();
+CBOR_EXPORT cbor_item_t *cbor_new_undef();
 
 /** Constructs new boolean ctrl item
  *
  * @param value The value to use
  * @return **new** boolen ctrl item or `NULL` upon memory allocation failure
  */
-cbor_item_t *cbor_build_bool(bool value);
+CBOR_EXPORT cbor_item_t *cbor_build_bool(bool value);
 
 /** Assign a control value
  *
@@ -139,70 +140,70 @@ cbor_item_t *cbor_build_bool(bool value);
  * @param value The simple value to assign. Please consult the standard for
  * 	allowed values
  */
-void cbor_set_ctrl(cbor_item_t *item, uint8_t value);
+CBOR_EXPORT void cbor_set_ctrl(cbor_item_t *item, uint8_t value);
 
 /** Assign a boolean value to a boolean ctrl item
  *
  * @param item[borrow] A ctrl item
  * @param value The simple value to assign.
  */
-void cbor_set_bool(cbor_item_t *item, bool value);
+CBOR_EXPORT void cbor_set_bool(cbor_item_t *item, bool value);
 
 /** Assigns a float value
  *
  * @param item[borrow] A half precision float
  * @param value The value to assign
  */
-void cbor_set_float2(cbor_item_t *item, float value);
+CBOR_EXPORT void cbor_set_float2(cbor_item_t *item, float value);
 
 /** Assigns a float value
  *
  * @param item[borrow] A single precision float
  * @param value The value to assign
  */
-void cbor_set_float4(cbor_item_t *item, float value);
+CBOR_EXPORT void cbor_set_float4(cbor_item_t *item, float value);
 
 /** Assigns a float value
  *
  * @param item[borrow] A double precision float
  * @param value The value to assign
  */
-void cbor_set_float8(cbor_item_t *item, double value);
+CBOR_EXPORT void cbor_set_float8(cbor_item_t *item, double value);
 
 /** Reads the control value
  *
  * @param item[borrow] A ctrl item
  * @return the simple value
  */
-uint8_t cbor_ctrl_value(const cbor_item_t *item);
+CBOR_EXPORT uint8_t cbor_ctrl_value(const cbor_item_t *item);
 
 /** Constructs a new float
  *
  * @param value the value to use
  * @return **new** float
  */
-cbor_item_t *cbor_build_float2(float value);
+CBOR_EXPORT cbor_item_t *cbor_build_float2(float value);
 
 /** Constructs a new float
  *
  * @param value the value to use
  * @return **new** float or `NULL` upon memory allocation failure
  */
-cbor_item_t *cbor_build_float4(float value);
+CBOR_EXPORT cbor_item_t *cbor_build_float4(float value);
 
 /** Constructs a new float
  *
  * @param value the value to use
  * @return **new** float or `NULL` upon memory allocation failure
  */
-cbor_item_t *cbor_build_float8(double value);
+CBOR_EXPORT cbor_item_t *cbor_build_float8(double value);
 
 /** Constructs a ctrl item
  *
  * @param value the value to use
  * @return **new** ctrl item or `NULL` upon memory allocation failure
  */
-cbor_item_t *cbor_build_ctrl(uint8_t value);
+CBOR_EXPORT cbor_item_t *cbor_build_ctrl(uint8_t value);
 
 #ifdef __cplusplus
 }

@@ -12,6 +12,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include "cbor/cbor_export.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -10,6 +10,7 @@
 
 #include "callbacks.h"
 #include "cbor/common.h"
+#include "cbor/cbor_export.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,7 +26,7 @@ extern "C" {
  * @param callbacks The callback bundle
  * @param context An arbitrary pointer to allow for maintaining context.
  */
-struct cbor_decoder_result cbor_stream_decode(
+CBOR_EXPORT struct cbor_decoder_result cbor_stream_decode(
     cbor_data buffer, size_t buffer_size,
     const struct cbor_callbacks* callbacks, void* context);
 
