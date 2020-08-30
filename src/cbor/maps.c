@@ -123,3 +123,20 @@ struct cbor_pair *cbor_map_handle(const cbor_item_t *item) {
   assert(cbor_isa_map(item));
   return (struct cbor_pair *)item->data;
 }
+
+struct cbor_item_t *cbor_map_get(const cbor_item_t *item, const cbor_item_t * key) {
+  size_t i;
+  struct cbor_pair pair;
+  cbor_item_t * value = NULL;
+  assert(cbor_isa_map(item));
+  
+  for (i=0; i<cbor_map_size(item); i++) {
+    pair = cbor_map_handle(item)[i];
+    if (cbor_equal(pair.key, key)) {
+      value = cbor_incref(pair.value);
+      break;
+    }
+  }
+  
+  return value;
+}

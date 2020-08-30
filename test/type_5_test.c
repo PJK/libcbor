@@ -177,6 +177,71 @@ static void test_streamed_streamed_kv_map(void **state) {
   assert_null(map);
 }
 
+static void test_get(void **state) {
+  struct cbor_pair pair;
+  cbor_item_t *key, *value, *control;
+
+  map = cbor_new_definite_map(3);
+
+  pair.key = cbor_build_string("key1");
+  pair.value = cbor_build_string("value1");
+  assert_true(cbor_map_add(map, pair) == true);
+  cbor_decref(&pair.key);
+  cbor_decref(&pair.value);
+
+  pair.key = cbor_build_negint8(10);
+  pair.value = cbor_build_string("value2");
+  assert_true(cbor_map_add(map, pair) == true);
+  cbor_decref(&pair.key);
+  cbor_decref(&pair.value);
+
+  pair.key = cbor_build_uint8(4);
+  pair.value = cbor_build_bytestring("test", 4);
+  assert_true(cbor_map_add(map, pair) == true);
+  cbor_decref(&pair.key);
+  cbor_decref(&pair.value);
+
+  key = cbor_build_string("key1");
+  value = cbor_map_get(map, key);
+  control = cbor_build_string("value1");
+  assert_non_null(value);
+  assert_true(cbor_equal(value, control) == true);
+  cbor_decref(&key);
+  cbor_decref(&value);
+  cbor_decref(&control);
+
+  key = cbor_build_negint8(10);
+  value = cbor_map_get(map, key);
+  control = cbor_build_string("value2");
+  assert_non_null(value);
+  assert_true(cbor_equal(value, control) == true);
+  cbor_decref(&key);
+  cbor_decref(&value);
+  cbor_decref(&control);
+
+  key = cbor_new_null();
+  value = cbor_map_get(map, key);
+  assert_null(value);
+  cbor_decref(&key);
+
+  key = cbor_build_bytestring("test", 4);
+  value = cbor_map_get(map, key);
+  assert_null(value);
+  cbor_decref(&key);
+
+  key = cbor_build_negint8(4);
+  value = cbor_map_get(map, key);
+  assert_null(value);
+  cbor_decref(&key);
+
+  key = cbor_build_string("key");
+  value = cbor_map_get(map, key);
+  assert_null(value);
+  cbor_decref(&key);
+
+  cbor_decref(&map);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_empty_map),
@@ -185,6 +250,7 @@ int main(void) {
       cmocka_unit_test(test_def_nested_map),
       cmocka_unit_test(test_streamed_key_map),
       cmocka_unit_test(test_streamed_kv_map),
-      cmocka_unit_test(test_streamed_streamed_kv_map)};
+      cmocka_unit_test(test_streamed_streamed_kv_map),
+      cmocka_unit_test(test_get)};
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

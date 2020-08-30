@@ -13,6 +13,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdio.h> // TODO REMOVE ME
 #include "cbor/configuration.h"
 #include "data.h"
 #include "cbor/cbor_export.h"
@@ -286,6 +288,16 @@ CBOR_EXPORT size_t cbor_refcount(const cbor_item_t *item);
  * @return the item with reference count decreased by one
  */
 CBOR_EXPORT cbor_item_t *cbor_move(cbor_item_t *item);
+
+/** Compares two items
+ *
+ * Compares the type, metadata and value of item1 and item2
+ *
+ * @param item1[borrow] the first item
+ * @param item2[borrow] the second item
+ * @return the true if item1 and item2 are equal, false otherwise
+ */
+bool cbor_equal(cbor_item_t *item1, cbor_item_t *item2);
 
 #ifdef __cplusplus
 }
