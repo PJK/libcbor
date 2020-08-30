@@ -8,8 +8,8 @@
 #ifndef LIBCBOR_BYTESTRINGS_H
 #define LIBCBOR_BYTESTRINGS_H
 
-#include "cbor/common.h"
 #include "cbor/cbor_export.h"
+#include "cbor/common.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -62,9 +62,9 @@ CBOR_EXPORT cbor_mutable_data cbor_bytestring_handle(const cbor_item_t *item);
  * libcbor will deallocate it when appropriate using its free function
  * @param length Length of the data block
  */
-CBOR_EXPORT void cbor_bytestring_set_handle(cbor_item_t *item,
-                                            cbor_mutable_data CBOR_RESTRICT_POINTER data,
-                                            size_t length);
+CBOR_EXPORT void cbor_bytestring_set_handle(
+    cbor_item_t *item, cbor_mutable_data CBOR_RESTRICT_POINTER data,
+    size_t length);
 
 /** Get the handle to the array of chunks
  *

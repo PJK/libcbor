@@ -20,10 +20,10 @@
 #include "cbor/tags.h"
 
 #include "cbor/callbacks.h"
+#include "cbor/cbor_export.h"
 #include "cbor/encoding.h"
 #include "cbor/serialization.h"
 #include "cbor/streaming.h"
-#include "cbor/cbor_export.h"
 
 #ifdef __cplusplus
 extern "C" {
