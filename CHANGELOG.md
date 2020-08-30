@@ -1,5 +1,6 @@
 Next
 ---------------------
+- BUILD BREAKING: Use BUILD_SHARED_LIBS to determine how to build libraries (fixed Windows linkage) [[#148]](https://github.com/PJK/libcbor/pull/148) (by [intelligide@](https://github.com/intelligide))
 
 0.7.0 (2020-04-25)
 ---------------------
