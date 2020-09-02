@@ -8,8 +8,8 @@
 #ifndef LIBCBOR_SERIALIZATION_H
 #define LIBCBOR_SERIALIZATION_H
 
-#include "cbor/common.h"
 #include "cbor/cbor_export.h"
+#include "cbor/common.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,8 +29,7 @@ extern "C" {
  * @return Length of the result. 0 on failure.
  */
 CBOR_EXPORT size_t cbor_serialize(const cbor_item_t *item,
-                                  cbor_mutable_data buffer,
-                                  size_t buffer_size);
+                                  cbor_mutable_data buffer, size_t buffer_size);
 
 /** Serialize the given item, allocating buffers as needed
  *
@@ -76,8 +75,7 @@ CBOR_EXPORT size_t cbor_serialize_negint(const cbor_item_t *, cbor_mutable_data,
  * @return Length of the result. 0 on failure.
  */
 CBOR_EXPORT size_t cbor_serialize_bytestring(const cbor_item_t *,
-                                             cbor_mutable_data,
-                                 size_t);
+                                             cbor_mutable_data, size_t);
 
 /** Serialize a string
  *
@@ -127,8 +125,7 @@ CBOR_EXPORT size_t cbor_serialize_tag(const cbor_item_t *, cbor_mutable_data,
  * @return Length of the result. 0 on failure.
  */
 CBOR_EXPORT size_t cbor_serialize_float_ctrl(const cbor_item_t *,
-                                             cbor_mutable_data,
-                                             size_t);
+                                             cbor_mutable_data, size_t);
 
 #ifdef __cplusplus
 }

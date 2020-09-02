@@ -8,8 +8,8 @@
 #ifndef LIBCBOR_MAPS_H
 #define LIBCBOR_MAPS_H
 
-#include "cbor/common.h"
 #include "cbor/cbor_export.h"
+#include "cbor/common.h"
 
 #ifdef __cplusplus
 extern "C" {
