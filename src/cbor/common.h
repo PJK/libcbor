@@ -13,9 +13,9 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include "cbor/cbor_export.h"
 #include "cbor/configuration.h"
 #include "data.h"
-#include "cbor/cbor_export.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -110,7 +110,7 @@ CBOR_EXPORT extern _cbor_free_t _cbor_free;
  * @param custom_free free implementation
  */
 CBOR_EXPORT void cbor_set_allocs(_cbor_malloc_t custom_malloc,
-                                 _cbor_realloc_t custom_realloc, 
+                                 _cbor_realloc_t custom_realloc,
                                  _cbor_free_t custom_free);
 
 #define _CBOR_MALLOC _cbor_malloc

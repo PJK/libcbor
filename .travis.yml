@@ -29,7 +29,7 @@ matrix:
 
 before_install:
   - pushd ${HOME}
-  - git clone git://git.cryptomilk.org/projects/cmocka.git
+  - git clone https://gitlab.com/cmocka/cmocka.git
   - cd cmocka && mkdir build && cd build
   - cmake .. && make -j2 && sudo make install
   - cd .. && popd
