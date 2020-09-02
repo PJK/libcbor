@@ -1,6 +1,6 @@
 
 
-This is the development reference of [libcbor](http://libcbor.org/). If you are looking for the user documentation, you should probably head to the [homepage](http://libcbor.org/).
+This is the development reference of [libcbor](https://github.com/PJK/libcbor). Looking for the [user documentation](https://libcbor.readthedocs.io/)?
 
 
 # Where to start
