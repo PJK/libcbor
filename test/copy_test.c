@@ -154,7 +154,7 @@ static void test_indef_map(void **state) {
 static void test_tag(void **state) {
   item = cbor_build_tag(10, cbor_move(cbor_build_uint8(42)));
 
-  assert_uint8(cbor_tag_item(copy = cbor_copy(item)), 42);
+  assert_uint8(cbor_move(cbor_tag_item(copy = cbor_copy(item))), 42);
 
   cbor_decref(&item);
   cbor_decref(&copy);

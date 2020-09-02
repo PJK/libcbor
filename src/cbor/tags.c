@@ -22,7 +22,7 @@ cbor_item_t *cbor_new_tag(uint64_t value) {
 
 cbor_item_t *cbor_tag_item(const cbor_item_t *item) {
   assert(cbor_isa_tag(item));
-  return item->metadata.tag_metadata.tagged_item;
+  return cbor_incref(item->metadata.tag_metadata.tagged_item);
 }
 
 uint64_t cbor_tag_value(const cbor_item_t *item) {
