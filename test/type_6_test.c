@@ -19,12 +19,24 @@ struct cbor_load_result res;
 
 unsigned char embedded_tag_data[] = {0xC0, 0x00};
 
+static void test_refcounting(void **state) {
+  tag = cbor_load(embedded_tag_data, 2, &res);
+  assert_true(cbor_refcount(tag) == 1);
+  cbor_item_t *item = cbor_tag_item(tag);
+  assert_true(cbor_refcount(item) == 2);
+  cbor_decref(&tag);
+  assert_null(tag);
+  assert_true(cbor_refcount(item) == 1);
+  cbor_decref(&item);
+  assert_null(item);
+}
+
 /* Tag 0 + uint 0 */
 static void test_embedded_tag(void **state) {
   tag = cbor_load(embedded_tag_data, 2, &res);
   assert_true(cbor_typeof(tag) == CBOR_TYPE_TAG);
   assert_true(cbor_tag_value(tag) == 0);
-  assert_uint8(cbor_tag_item(tag), 0);
+  assert_uint8(cbor_move(cbor_tag_item(tag)), 0);
   cbor_decref(&tag);
   assert_null(tag);
 }
@@ -36,7 +48,7 @@ static void test_int8_tag(void **state) {
   tag = cbor_load(int8_tag_data, 3, &res);
   assert_true(cbor_typeof(tag) == CBOR_TYPE_TAG);
   assert_true(cbor_tag_value(tag) == 255);
-  assert_uint8(cbor_tag_item(tag), 1);
+  assert_uint8(cbor_move(cbor_tag_item(tag)), 1);
   cbor_decref(&tag);
   assert_null(tag);
 }
@@ -48,7 +60,7 @@ static void test_int16_tag(void **state) {
   tag = cbor_load(int16_tag_data, 4, &res);
   assert_true(cbor_typeof(tag) == CBOR_TYPE_TAG);
   assert_true(cbor_tag_value(tag) == 255 << 8);
-  assert_uint8(cbor_tag_item(tag), 2);
+  assert_uint8(cbor_move(cbor_tag_item(tag)), 2);
   cbor_decref(&tag);
   assert_null(tag);
 }
@@ -60,7 +72,7 @@ static void test_int32_tag(void **state) {
   tag = cbor_load(int32_tag_data, 6, &res);
   assert_true(cbor_typeof(tag) == CBOR_TYPE_TAG);
   assert_true(cbor_tag_value(tag) == 4278190080ULL);
-  assert_uint8(cbor_tag_item(tag), 3);
+  assert_uint8(cbor_move(cbor_tag_item(tag)), 3);
   cbor_decref(&tag);
   assert_null(tag);
 }
@@ -73,7 +85,7 @@ static void test_int64_tag(void **state) {
   tag = cbor_load(int64_tag_data, 10, &res);
   assert_true(cbor_typeof(tag) == CBOR_TYPE_TAG);
   assert_true(cbor_tag_value(tag) == 18374686479671623680ULL);
-  assert_uint8(cbor_tag_item(tag), 4);
+  assert_uint8(cbor_move(cbor_tag_item(tag)), 4);
   cbor_decref(&tag);
   assert_null(tag);
 }
@@ -85,17 +97,21 @@ static void test_nested_tag(void **state) {
   tag = cbor_load(nested_tag_data, 4, &res);
   assert_true(cbor_typeof(tag) == CBOR_TYPE_TAG);
   assert_true(cbor_tag_value(tag) == 0);
-  assert_true(cbor_typeof(cbor_tag_item(tag)) == CBOR_TYPE_TAG);
-  assert_true(cbor_tag_value(cbor_tag_item(tag)) == 1);
-  assert_uint8(cbor_tag_item(cbor_tag_item(tag)), 42);
+  cbor_item_t *nested_tag = cbor_tag_item(tag);
+  assert_true(cbor_typeof(nested_tag) == CBOR_TYPE_TAG);
+  assert_true(cbor_tag_value(nested_tag) == 1);
+  assert_uint8(cbor_move(cbor_tag_item(nested_tag)), 42);
   cbor_decref(&tag);
   assert_null(tag);
+  cbor_decref(&nested_tag);
+  assert_null(nested_tag);
 }
 
 int main(void) {
   const struct CMUnitTest tests[] = {
-      cmocka_unit_test(test_embedded_tag), cmocka_unit_test(test_int8_tag),
-      cmocka_unit_test(test_int16_tag),    cmocka_unit_test(test_int32_tag),
-      cmocka_unit_test(test_int64_tag),    cmocka_unit_test(test_nested_tag)};
+      cmocka_unit_test(test_refcounting), cmocka_unit_test(test_embedded_tag),
+      cmocka_unit_test(test_int8_tag),    cmocka_unit_test(test_int16_tag),
+      cmocka_unit_test(test_int32_tag),   cmocka_unit_test(test_int64_tag),
+      cmocka_unit_test(test_nested_tag)};
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
