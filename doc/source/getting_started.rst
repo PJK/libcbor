@@ -1,13 +1,25 @@
 Getting started
 ==========================
 
-Pre-built Linux packages are distributed from `the libcbor website <http://libcbor.org/>`_. 
+Pre-built Linux packages are available in most mainstream distributions
 
-OS X users can use `Homebrew <http://brew.sh/>`_:
+**Ubuntu, Debian, etc.**:
 
 .. code-block:: bash
 
-    brew tap pjk/libcbor
+    apt-get install libcbor-dev
+
+**Fedora, openSUSE, etc.**:
+
+.. code-block:: bash
+
+    yum install libcbor-devel
+
+
+**OS X** users can use `Homebrew <http://brew.sh/>`_:
+
+.. code-block:: bash
+
     brew install libcbor
 
 For other platforms, you will need to compile it from source.
@@ -22,8 +34,6 @@ Prerequisites:
 
 .. _CMake: http://cmake.org/
 
-.. note:: As of May 2015, not even the 2015 release candidate of Visual Studio supports C99. While CMake will be happy to generate a VS solution that you can play with, libcbor currently cannot be compiled using the MSVC toolchain. `ICC <https://software.intel.com/en-us/c-compilers>`_, GCC under `Cygwin <https://www.cygwin.com/>`_, and `MinGW's <http://www.mingw.org/>`_ GCC will all work. The MinGW build process is described below.
-
 **Configuration options**
 
 A handful of configuration flags can be passed to `cmake`. The following table lists libcbor compile-time directives and several important generic flags.
@@ -33,10 +43,11 @@ Option                    Meaning                                               
 ------------------------  -------------------------------------------------------   ----------------------  ---------------------------------------------------------------------------------------------------------------------
 ``CMAKE_C_COMPILER``      C compiler to use                                         ``cc``                   ``gcc``, ``clang``, ``clang-3.5``, ...
 ``CMAKE_INSTALL_PREFIX``  Installation prefix                                       System-dependent         ``/usr/local/lib``, ...
-``HUGE_FUZZ``             :doc:`Fuzz test </tests>` with 8GB of data                ``OFF``                   ``ON``, ``OFF``
-``SANE_MALLOC``           Assume ``malloc`` will refuse unreasonable allocations    ``OFF``                   ``ON``, ``OFF``
-``COVERAGE``              Generate test coverage instrumentation                    ``OFF``                   ``ON``, ``OFF``
-``WITH_TESTS``            Build unit tests (see :doc:`development`)                 ``OFF``                   ``ON``, ``OFF``
+``BUILD_SHARED_LIBS``     Build as a shared library                                 ``OFF``                  ``ON``, ``OFF``
+``HUGE_FUZZ``             :doc:`Fuzz test </tests>` with 8GB of data                ``OFF``                  ``ON``, ``OFF``
+``SANE_MALLOC``           Assume ``malloc`` will refuse unreasonable allocations    ``OFF``                  ``ON``, ``OFF``
+``COVERAGE``              Generate test coverage instrumentation                    ``OFF``                  ``ON``, ``OFF``
+``WITH_TESTS``            Build unit tests (see :doc:`development`)                 ``OFF``                  ``ON``, ``OFF``
 ========================  =======================================================   ======================  =====================================================================================================================
 
 The following configuration options will also be defined as macros[#]_ in ``<cbor/common.h>`` and can therefore be used in client code:
@@ -63,22 +74,27 @@ execute the build, just use a temporary directory:
 
   cd $(mktemp -d /tmp/cbor_build.XXXX)
 
-Now, assuming you are in the directory where you want to build, execute the following to configure the build and run make
+Now, assuming you are in the directory where you want to build, build libcbor as a **static library**:
 
 .. code-block:: bash
 
   cmake -DCMAKE_BUILD_TYPE=Release path_to_libcbor_dir
-  make cbor cbor_shared
+  make cbor
 
-Both the shared (``libcbor.so``) and the static (``libcbor.a``) libraries should now be in the ``src`` subdirectory.
+... or as a **dynamic library**:
 
-In order to install the libcbor headers and libraries, the usual
+.. code-block:: bash
+
+  cmake -DCMAKE_BUILD_TYPE=Release  -DBUILD_SHARED_LIBS=ON path_to_libcbor_dir
+  make cbor
+
+To install locally:
 
 .. code-block:: bash
 
   make install
 
-is what your're looking for. Root permissions are required on most systems when using the default installation prefix.
+Root permissions are required on most systems when using the default installation prefix.
 
 
 **Portability**
@@ -131,43 +147,6 @@ libcbor is primarily intended to be linked statically. The shared library versio
   - X for the X.Y.Z stable versions starting 1.X.Y. All minor release of the major version are backwards compatible.
 
 .. warning:: Please note that releases up to and including v0.6.0 `may export misleading .so/.dylib version number <https://github.com/PJK/libcbor/issues/52>`_.
-
-
-MinGW build instructions
----------------------------
-Prerequisites:
- - MinGW
- - CMake GUI
-
-First of all, create a folder that will be used for the output. For this demonstration, we will use ``cbor_out``. Start CMake and select the source path and the destination folder.
-
-.. image:: img/win_1.png
-
-Then hit the 'Configure' button. You will be prompted to select the build system:
-
-.. image:: img/win_2.png
-
-Choose MinGW and confirm.
-
-.. note:: If you select Visual Studio at this point, a MSVC project will be generated for you. This is useful if you just want to browse through the source code.
-
-You can then adjust the build options. The defaults will work just fine. Hit 'Generate' when you are done.
-
-.. image:: img/win_3.png
-
-You can then adjust the build options. The defaults will work just fine. Hit 'Generate' when you are done.
-
-Open the shell, navigate to the output directory, and run ``mingw32-make cbor cbor_shared``.
-
-.. image:: img/win_4.png
-
-*libcbor* will be built and your ``.dll`` should be ready at this point
-
-.. image:: img/win_5.png
-
-Feel free to also try building and running some of the examples, e.g. ``mingw32-make sort``
-
-.. image:: img/win_6.png
 
 
 Troubleshooting
