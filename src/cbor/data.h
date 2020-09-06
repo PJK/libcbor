@@ -199,27 +199,52 @@ struct cbor_pair {
 struct cbor_load_result {
   /** Error indicator */
   struct cbor_error error;
-  /** Number of bytes read*/
+  /** Number of bytes read */
   size_t read;
 };
 
 /** Streaming decoder result - status */
 enum cbor_decoder_status {
-  CBOR_DECODER_FINISHED /** OK, finished */
-  ,
-  CBOR_DECODER_NEDATA /** Not enough data - mismatch with MTB */
-  ,
-  CBOR_DECODER_ERROR /** Malformed or reserved MTB/value */
+  /** Decoding finished successfully (a callback has been invoked)
+   *
+   * Note that this does *not* mean that the buffer has been fully decoded;
+   * there may still be unread bytes for which no callback has been involved.
+   */
+  CBOR_DECODER_FINISHED,
+  /** Not enough data to invoke a callback */
+  CBOR_DECODER_NEDATA,
+  /** Bad data (reserved MTB, malformed value, etc.)  */
+  CBOR_DECODER_ERROR
 };
 
 /** Streaming decoder result */
 struct cbor_decoder_result {
-  /** Bytes read */
+  /** Input bytes read/consumed
+   *
+   * If this is less than the size of input buffer, the client will likely
+   * resume parsing starting at the next byte (e.g. `buffer + result.read`).
+   *
+   * Set to 0 if the #status is not #CBOR_DECODER_FINISHED.
+   */
   size_t read;
-  /** The result */
+
+  /** The decoding status */
   enum cbor_decoder_status status;
-  /** When status == CBOR_DECODER_NEDATA,
-   *  the minimum number of bytes required to continue parsing */
+
+  /** Number of bytes in the input buffer needed to resume parsing
+   *
+   * Set to 0 unless the result status is #CBOR_DECODER_NEDATA. If it is, then:
+   *  - If at least one byte was passed, #required will be set to the minimum
+   *    number of bytes needed to invoke a decoded callback on the current
+   *    prefix.
+   *
+   *    For example: Attempting to decode a 1B buffer containing `0x19` will
+   *    set #required to 3 as `0x19` signals a 2B integer item, so we need at
+   *    least 3B to continue (the `0x19` MTB byte and two bytes of data needed
+   *    to invoke #cbor_callbacks.uint16).
+   *
+   *  - If there was no data at all, #read will always be set to 1
+   */
   size_t required;
 };
 
