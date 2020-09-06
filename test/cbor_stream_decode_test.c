@@ -535,63 +535,65 @@ static void test_undef_decoding(void **state) {
   assert_decoder_result(1, CBOR_DECODER_FINISHED, decode(undef_data, 1));
 }
 
+#define stream_test(f) cmocka_unit_test_teardown(f, clear_stream_assertions)
+
 int main(void) {
   set_decoder(&cbor_stream_decode);
   const struct CMUnitTest tests[] = {
-      cmocka_unit_test(test_no_data),
+      stream_test(test_no_data),
 
-      cmocka_unit_test(test_uint8_embedded_decoding),
-      cmocka_unit_test(test_uint8_decoding),
-      cmocka_unit_test(test_uint16_decoding),
-      cmocka_unit_test(test_uint32_decoding),
-      cmocka_unit_test(test_uint64_decoding),
+      stream_test(test_uint8_embedded_decoding),
+      stream_test(test_uint8_decoding),
+      stream_test(test_uint16_decoding),
+      stream_test(test_uint32_decoding),
+      stream_test(test_uint64_decoding),
 
-      cmocka_unit_test(test_negint8_embedded_decoding),
-      cmocka_unit_test(test_negint8_decoding),
-      cmocka_unit_test(test_negint16_decoding),
-      cmocka_unit_test(test_negint32_decoding),
-      cmocka_unit_test(test_negint64_decoding),
+      stream_test(test_negint8_embedded_decoding),
+      stream_test(test_negint8_decoding),
+      stream_test(test_negint16_decoding),
+      stream_test(test_negint32_decoding),
+      stream_test(test_negint64_decoding),
 
-      cmocka_unit_test(test_bstring_embedded_int8_decoding),
-      cmocka_unit_test(test_bstring_int8_decoding),
-      cmocka_unit_test(test_bstring_int16_decoding),
-      cmocka_unit_test(test_bstring_int32_decoding),
+      stream_test(test_bstring_embedded_int8_decoding),
+      stream_test(test_bstring_int8_decoding),
+      stream_test(test_bstring_int16_decoding),
+      stream_test(test_bstring_int32_decoding),
 #ifdef EIGHT_BYTE_SIZE_T
-      cmocka_unit_test(test_bstring_int64_decoding),
+      stream_test(test_bstring_int64_decoding),
 #endif
-      cmocka_unit_test(test_bstring_indef_decoding_1),
-      cmocka_unit_test(test_bstring_indef_decoding_2),
-      cmocka_unit_test(test_bstring_indef_decoding_3),
+      stream_test(test_bstring_indef_decoding_1),
+      stream_test(test_bstring_indef_decoding_2),
+      stream_test(test_bstring_indef_decoding_3),
 
-      cmocka_unit_test(test_array_embedded_int8_decoding),
-      cmocka_unit_test(test_array_int8_decoding),
-      cmocka_unit_test(test_array_int16_decoding),
-      cmocka_unit_test(test_array_int32_decoding),
-      cmocka_unit_test(test_array_int64_decoding),
-      cmocka_unit_test(test_array_of_arrays_decoding),
-      cmocka_unit_test(test_indef_array_decoding_1),
+      stream_test(test_array_embedded_int8_decoding),
+      stream_test(test_array_int8_decoding),
+      stream_test(test_array_int16_decoding),
+      stream_test(test_array_int32_decoding),
+      stream_test(test_array_int64_decoding),
+      stream_test(test_array_of_arrays_decoding),
+      stream_test(test_indef_array_decoding_1),
 
-      cmocka_unit_test(test_map_embedded_int8_decoding),
-      cmocka_unit_test(test_map_int8_decoding),
-      cmocka_unit_test(test_map_int16_decoding),
-      cmocka_unit_test(test_map_int32_decoding),
-      cmocka_unit_test(test_map_int64_decoding),
-      cmocka_unit_test(test_indef_map_decoding_1),
+      stream_test(test_map_embedded_int8_decoding),
+      stream_test(test_map_int8_decoding),
+      stream_test(test_map_int16_decoding),
+      stream_test(test_map_int32_decoding),
+      stream_test(test_map_int64_decoding),
+      stream_test(test_indef_map_decoding_1),
 
-      cmocka_unit_test(test_embedded_tag_decoding),
-      cmocka_unit_test(test_int8_tag_decoding),
-      cmocka_unit_test(test_int16_tag_decoding),
-      cmocka_unit_test(test_int32_tag_decoding),
-      cmocka_unit_test(test_int64_tag_decoding),
-      cmocka_unit_test(test_bad_tag_decoding),
+      stream_test(test_embedded_tag_decoding),
+      stream_test(test_int8_tag_decoding),
+      stream_test(test_int16_tag_decoding),
+      stream_test(test_int32_tag_decoding),
+      stream_test(test_int64_tag_decoding),
+      stream_test(test_bad_tag_decoding),
 
-      cmocka_unit_test(test_float2_decoding),
-      cmocka_unit_test(test_float4_decoding),
-      cmocka_unit_test(test_float8_decoding),
+      stream_test(test_float2_decoding),
+      stream_test(test_float4_decoding),
+      stream_test(test_float8_decoding),
 
-      cmocka_unit_test(test_false_decoding),
-      cmocka_unit_test(test_true_decoding),
-      cmocka_unit_test(test_null_decoding),
-      cmocka_unit_test(test_undef_decoding)};
+      stream_test(test_false_decoding),
+      stream_test(test_true_decoding),
+      stream_test(test_null_decoding),
+      stream_test(test_undef_decoding)};
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

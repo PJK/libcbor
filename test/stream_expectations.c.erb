@@ -1,15 +1,28 @@
 #include "stream_expectations.h"
 
+// TODO: The saved keystrokes are not worth the complexity. Get rid of this
+// file to prevent confusion, the fundamental structure is unlikely to change
+// in the future.
+
 /* Ordered from 0 to queue_size - 1 */
 struct test_assertion assertions_queue[MAX_QUEUE_ITEMS];
-size_t queue_size = 0;
-size_t current_expectation = 0;
+int queue_size = 0;
+int current_expectation = 0;
 decoder_t * decoder;
 
 
 void set_decoder(decoder_t * dec)
 {
 	decoder = dec;
+}
+
+int clear_stream_assertions(void **state) {
+  if (queue_size != current_expectation) {
+    return 1; // We have not matched all expectations correctly
+  }
+  queue_size = current_expectation = 0;
+  free(*state);
+  return 0;
 }
 
 /* Callbacks */
@@ -187,12 +200,12 @@ const struct cbor_callbacks asserting_callbacks = {
 
 struct cbor_decoder_result decode(cbor_data source, size_t source_size)
 {
+        int last_expectation = current_expectation;
 	struct cbor_decoder_result result = decoder(source, source_size, &asserting_callbacks, NULL);
-	/* Check remaining assertions */
-
-	assert_true(current_expectation == queue_size);
-	/* Clean up */
-	current_expectation = queue_size = 0;
+        if (result.status == CBOR_DECODER_FINISHED) {
+          // Check that we have matched an expectation from the queue
+          assert_true(last_expectation + 1 == current_expectation);
+        }
 	return result;
 }
 
