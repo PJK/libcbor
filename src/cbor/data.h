@@ -209,8 +209,6 @@ enum cbor_decoder_status {
   ,
   CBOR_DECODER_NEDATA /** Not enough data - mismatch with MTB */
   ,
-  CBOR_DECODER_EBUFFER /** Buffer manipulation problem */
-  ,
   CBOR_DECODER_ERROR /** Malformed or reserved MTB/value */
 };
 

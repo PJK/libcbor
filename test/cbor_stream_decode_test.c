@@ -15,6 +15,10 @@
 #include "cbor.h"
 #include "stream_expectations.h"
 
+static void test_no_data(void **state) {
+  assert_decoder_result_nedata(1, decode(NULL, 0));
+}
+
 unsigned char embedded_uint8_data[] = {0x00, 0x01, 0x05, 0x17};
 static void test_uint8_embedded_decoding(void **state) {
   assert_uint8_eq(0);
@@ -41,12 +45,17 @@ static void test_uint8_decoding(void **state) {
 
   assert_uint8_eq(0xFF);
   assert_decoder_result(2, CBOR_DECODER_FINISHED, decode(uint8_data + 2, 2));
+
+  assert_decoder_result_nedata(2, decode(uint8_data, 1));
 }
 
 unsigned char uint16_data[] = {0x19, 0x01, 0xf4};
 static void test_uint16_decoding(void **state) {
   assert_uint16_eq(500);
   assert_decoder_result(3, CBOR_DECODER_FINISHED, decode(uint16_data, 3));
+
+  assert_decoder_result_nedata(3, decode(uint16_data, 1));
+  assert_decoder_result_nedata(3, decode(uint16_data, 2));
 }
 
 unsigned char uint32_data[] = {0x1a, 0xa5, 0xf7, 0x02, 0xb3};
@@ -127,6 +136,10 @@ static void test_bstring_int16_decoding(void **state) {
   assert_bstring_mem_eq(bstring_int16_data + 3, 348);
   assert_decoder_result(3 + 348, CBOR_DECODER_FINISHED,
                         decode(bstring_int16_data, 3 + 348));
+
+  assert_decoder_result_nedata(3, decode(bstring_int16_data, 1));
+  assert_decoder_result_nedata(3, decode(bstring_int16_data, 2));
+  assert_decoder_result_nedata(351, decode(bstring_int16_data, 3));
 }
 
 unsigned char bstring_int32_data[] = {0x5A, 0x00, 0x10, 0x10,
@@ -390,15 +403,21 @@ static void test_indef_map_decoding_1(void **state) {
                         decode(indef_map_data_1 + 4, 1));
 }
 
-unsigned char map_nedata[] = {0xBB, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                              0x00, 0x01, 0x19, 0x01, 0xf4, 0x01};
+unsigned char map_nedata[] = {0xBB,  // 8B map
+                              0x00, 0x00, 0x00, 0x00,
+                              0x00, 0x00, 0x00, 0x01,  // 1
+                              0x19, 0x01, 0xf4,        // uint16(500)
+                              0x01};
 static void test_nedata_map_decoding(void **state) {
-  assert_decoder_result_nedata(8, decode(map_nedata, 1));
+  for (int i = 1; i < 9; i++) {
+    assert_decoder_result_nedata(9, decode(map_nedata, i));
+  }
 
   assert_map_start(1);
   assert_decoder_result(9, CBOR_DECODER_FINISHED, decode(map_nedata, 9));
 
-  assert_decoder_result_nedata(2, decode(map_nedata + 9, 1));
+  assert_decoder_result_nedata(3, decode(map_nedata + 9, 1));
+  assert_decoder_result_nedata(3, decode(map_nedata + 9, 2));
 
   assert_uint16_eq(500);
   assert_decoder_result(3, CBOR_DECODER_FINISHED, decode(map_nedata + 9, 3));
@@ -489,6 +508,8 @@ static void test_undef_decoding(void **state) {
 int main(void) {
   set_decoder(&cbor_stream_decode);
   const struct CMUnitTest tests[] = {
+      cmocka_unit_test(test_no_data),
+
       cmocka_unit_test(test_uint8_embedded_decoding),
       cmocka_unit_test(test_uint8_decoding),
       cmocka_unit_test(test_uint16_decoding),
