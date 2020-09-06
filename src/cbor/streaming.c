@@ -8,8 +8,8 @@
 #include "streaming.h"
 #include "internal/loaders.h"
 
-bool static cbor_claim_bytes(size_t required, size_t provided,
-                             struct cbor_decoder_result *result) {
+bool static claim_bytes(size_t required, size_t provided,
+                        struct cbor_decoder_result *result) {
   if (required > (provided - result->read)) {
     result->required = required + result->read;
     result->read = 0;
@@ -27,7 +27,7 @@ struct cbor_decoder_result cbor_stream_decode(
     const struct cbor_callbacks *callbacks, void *context) {
   // Attempt to claim the initial MTB byte
   struct cbor_decoder_result result = {.status = CBOR_DECODER_FINISHED};
-  if (!cbor_claim_bytes(1, source_size, &result)) {
+  if (!claim_bytes(1, source_size, &result)) {
     return result;
   }
 
@@ -64,7 +64,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x18:
       /* One byte unsigned integer */
       {
-        if (cbor_claim_bytes(1, source_size, &result)) {
+        if (claim_bytes(1, source_size, &result)) {
           callbacks->uint8(context, _cbor_load_uint8(source + 1));
         }
         return result;
@@ -72,7 +72,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x19:
       /* Two bytes unsigned integer */
       {
-        if (cbor_claim_bytes(2, source_size, &result)) {
+        if (claim_bytes(2, source_size, &result)) {
           callbacks->uint16(context, _cbor_load_uint16(source + 1));
         }
         return result;
@@ -80,7 +80,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x1A:
       /* Four bytes unsigned integer */
       {
-        if (cbor_claim_bytes(4, source_size, &result)) {
+        if (claim_bytes(4, source_size, &result)) {
           callbacks->uint32(context, _cbor_load_uint32(source + 1));
         }
         return result;
@@ -88,7 +88,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x1B:
       /* Eight bytes unsigned integer */
       {
-        if (cbor_claim_bytes(8, source_size, &result)) {
+        if (claim_bytes(8, source_size, &result)) {
           callbacks->uint64(context, _cbor_load_uint64(source + 1));
         }
         return result;
@@ -132,7 +132,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x38:
       /* One byte negative integer */
       {
-        if (cbor_claim_bytes(1, source_size, &result)) {
+        if (claim_bytes(1, source_size, &result)) {
           callbacks->negint8(context, _cbor_load_uint8(source + 1));
         }
         return result;
@@ -140,7 +140,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x39:
       /* Two bytes negative integer */
       {
-        if (cbor_claim_bytes(2, source_size, &result)) {
+        if (claim_bytes(2, source_size, &result)) {
           callbacks->negint16(context, _cbor_load_uint16(source + 1));
         }
         return result;
@@ -148,7 +148,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x3A:
       /* Four bytes negative integer */
       {
-        if (cbor_claim_bytes(4, source_size, &result)) {
+        if (claim_bytes(4, source_size, &result)) {
           callbacks->negint32(context, _cbor_load_uint32(source + 1));
         }
         return result;
@@ -156,7 +156,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x3B:
       /* Eight bytes negative integer */
       {
-        if (cbor_claim_bytes(8, source_size, &result)) {
+        if (claim_bytes(8, source_size, &result)) {
           callbacks->negint64(context, _cbor_load_uint64(source + 1));
         }
         return result;
@@ -195,7 +195,7 @@ struct cbor_decoder_result cbor_stream_decode(
       {
         size_t length =
             (size_t)_cbor_load_uint8(source) - 0x40; /* 0x40 offset */
-        if (cbor_claim_bytes(length, source_size, &result)) {
+        if (claim_bytes(length, source_size, &result)) {
           callbacks->byte_string(context, source + 1, length);
         }
         return result;
@@ -204,9 +204,9 @@ struct cbor_decoder_result cbor_stream_decode(
       /* One byte length byte string */
       // TODO template this?
       {
-        if (cbor_claim_bytes(1, source_size, &result)) {
+        if (claim_bytes(1, source_size, &result)) {
           size_t length = (size_t)_cbor_load_uint8(source + 1);
-          if (cbor_claim_bytes(length, source_size, &result)) {
+          if (claim_bytes(length, source_size, &result)) {
             callbacks->byte_string(context, source + 1 + 1, length);
           }
         }
@@ -215,9 +215,9 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x59:
       /* Two bytes length byte string */
       {
-        if (cbor_claim_bytes(2, source_size, &result)) {
+        if (claim_bytes(2, source_size, &result)) {
           size_t length = (size_t)_cbor_load_uint16(source + 1);
-          if (cbor_claim_bytes(length, source_size, &result)) {
+          if (claim_bytes(length, source_size, &result)) {
             callbacks->byte_string(context, source + 1 + 2, length);
           }
         }
@@ -226,9 +226,9 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x5A:
       /* Four bytes length byte string */
       {
-        if (cbor_claim_bytes(4, source_size, &result)) {
+        if (claim_bytes(4, source_size, &result)) {
           size_t length = (size_t)_cbor_load_uint32(source + 1);
-          if (cbor_claim_bytes(length, source_size, &result)) {
+          if (claim_bytes(length, source_size, &result)) {
             callbacks->byte_string(context, source + 1 + 4, length);
           }
         }
@@ -237,9 +237,9 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x5B:
       /* Eight bytes length byte string */
       {
-        if (cbor_claim_bytes(8, source_size, &result)) {
+        if (claim_bytes(8, source_size, &result)) {
           size_t length = (size_t)_cbor_load_uint64(source + 1);
-          if (cbor_claim_bytes(length, source_size, &result)) {
+          if (claim_bytes(length, source_size, &result)) {
             callbacks->byte_string(context, source + 1 + 8, length);
           }
         }
@@ -284,7 +284,7 @@ struct cbor_decoder_result cbor_stream_decode(
       {
         size_t length =
             (size_t)_cbor_load_uint8(source) - 0x60; /* 0x60 offset */
-        if (cbor_claim_bytes(length, source_size, &result)) {
+        if (claim_bytes(length, source_size, &result)) {
           callbacks->string(context, source + 1, length);
         }
         return result;
@@ -292,9 +292,9 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x78:
       /* One byte length string */
       {
-        if (cbor_claim_bytes(1, source_size, &result)) {
+        if (claim_bytes(1, source_size, &result)) {
           size_t length = (size_t)_cbor_load_uint8(source + 1);
-          if (cbor_claim_bytes(length, source_size, &result)) {
+          if (claim_bytes(length, source_size, &result)) {
             callbacks->string(context, source + 1 + 1, length);
           }
         }
@@ -303,9 +303,9 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x79:
       /* Two bytes length string */
       {
-        if (cbor_claim_bytes(2, source_size, &result)) {
+        if (claim_bytes(2, source_size, &result)) {
           size_t length = (size_t)_cbor_load_uint16(source + 1);
-          if (cbor_claim_bytes(length, source_size, &result)) {
+          if (claim_bytes(length, source_size, &result)) {
             callbacks->string(context, source + 1 + 2, length);
           }
         }
@@ -314,9 +314,9 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x7A:
       /* Four bytes length string */
       {
-        if (cbor_claim_bytes(4, source_size, &result)) {
+        if (claim_bytes(4, source_size, &result)) {
           size_t length = (size_t)_cbor_load_uint32(source + 1);
-          if (cbor_claim_bytes(length, source_size, &result)) {
+          if (claim_bytes(length, source_size, &result)) {
             callbacks->string(context, source + 1 + 4, length);
           }
         }
@@ -325,9 +325,9 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x7B:
       /* Eight bytes length string */
       {
-        if (cbor_claim_bytes(8, source_size, &result)) {
+        if (claim_bytes(8, source_size, &result)) {
           size_t length = (size_t)_cbor_load_uint64(source + 1);
-          if (cbor_claim_bytes(length, source_size, &result)) {
+          if (claim_bytes(length, source_size, &result)) {
             callbacks->string(context, source + 1 + 8, length);
           }
         }
@@ -377,7 +377,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x98:
       /* One byte length array */
       {
-        if (cbor_claim_bytes(1, source_size, &result)) {
+        if (claim_bytes(1, source_size, &result)) {
           callbacks->array_start(context, (size_t)_cbor_load_uint8(source + 1));
         }
         return result;
@@ -385,7 +385,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x99:
       /* Two bytes length array */
       {
-        if (cbor_claim_bytes(2, source_size, &result)) {
+        if (claim_bytes(2, source_size, &result)) {
           callbacks->array_start(context,
                                  (size_t)_cbor_load_uint16(source + 1));
         }
@@ -394,7 +394,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x9A:
       /* Four bytes length array */
       {
-        if (cbor_claim_bytes(4, source_size, &result)) {
+        if (claim_bytes(4, source_size, &result)) {
           callbacks->array_start(context,
                                  (size_t)_cbor_load_uint32(source + 1));
         }
@@ -403,7 +403,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x9B:
       /* Eight bytes length array */
       {
-        if (cbor_claim_bytes(8, source_size, &result)) {
+        if (claim_bytes(8, source_size, &result)) {
           callbacks->array_start(context,
                                  (size_t)_cbor_load_uint64(source + 1));
         }
@@ -453,7 +453,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xB8:
       /* One byte length map */
       {
-        if (cbor_claim_bytes(1, source_size, &result)) {
+        if (claim_bytes(1, source_size, &result)) {
           callbacks->map_start(context, (size_t)_cbor_load_uint8(source + 1));
         }
         return result;
@@ -461,7 +461,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xB9:
       /* Two bytes length map */
       {
-        if (cbor_claim_bytes(2, source_size, &result)) {
+        if (claim_bytes(2, source_size, &result)) {
           callbacks->map_start(context, (size_t)_cbor_load_uint16(source + 1));
         }
         return result;
@@ -469,7 +469,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xBA:
       /* Four bytes length map */
       {
-        if (cbor_claim_bytes(4, source_size, &result)) {
+        if (claim_bytes(4, source_size, &result)) {
           callbacks->map_start(context, (size_t)_cbor_load_uint32(source + 1));
         }
         return result;
@@ -477,7 +477,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xBB:
       /* Eight bytes length map */
       {
-        if (cbor_claim_bytes(8, source_size, &result)) {
+        if (claim_bytes(8, source_size, &result)) {
           callbacks->map_start(context, (size_t)_cbor_load_uint64(source + 1));
         }
         return result;
@@ -538,28 +538,28 @@ struct cbor_decoder_result cbor_stream_decode(
     }
     case 0xD8: /* 1B tag */
     {
-      if (cbor_claim_bytes(1, source_size, &result)) {
+      if (claim_bytes(1, source_size, &result)) {
         callbacks->tag(context, _cbor_load_uint8(source + 1));
       }
       return result;
     }
     case 0xD9: /* 2B tag */
     {
-      if (cbor_claim_bytes(2, source_size, &result)) {
+      if (claim_bytes(2, source_size, &result)) {
         callbacks->tag(context, _cbor_load_uint16(source + 1));
       }
       return result;
     }
     case 0xDA: /* 4B tag */
     {
-      if (cbor_claim_bytes(4, source_size, &result)) {
+      if (claim_bytes(4, source_size, &result)) {
         callbacks->tag(context, _cbor_load_uint32(source + 1));
       }
       return result;
     }
     case 0xDB: /* 8B tag */
     {
-      if (cbor_claim_bytes(8, source_size, &result)) {
+      if (claim_bytes(8, source_size, &result)) {
         callbacks->tag(context, _cbor_load_uint64(source + 1));
       }
       return result;
@@ -624,7 +624,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xF9:
       /* 2B float */
       {
-        if (cbor_claim_bytes(2, source_size, &result)) {
+        if (claim_bytes(2, source_size, &result)) {
           callbacks->float2(context, _cbor_load_half(source + 1));
         }
         return result;
@@ -632,7 +632,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xFA:
       /* 4B float */
       {
-        if (cbor_claim_bytes(4, source_size, &result)) {
+        if (claim_bytes(4, source_size, &result)) {
           callbacks->float4(context, _cbor_load_float(source + 1));
         }
         return result;
@@ -640,7 +640,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xFB:
       /* 8B float */
       {
-        if (cbor_claim_bytes(8, source_size, &result)) {
+        if (claim_bytes(8, source_size, &result)) {
           callbacks->float8(context, _cbor_load_double(source + 1));
         }
         return result;
