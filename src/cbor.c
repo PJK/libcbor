@@ -82,8 +82,6 @@ cbor_item_t *cbor_load(cbor_data source, size_t source_size,
           result->error.code = CBOR_ERR_NOTENOUGHDATA;
           goto error;
         }
-      case CBOR_DECODER_EBUFFER:
-        /* Fallthrough */
       case CBOR_DECODER_ERROR:
         /* Reserved/malformated item */
         {

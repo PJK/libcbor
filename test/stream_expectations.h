@@ -17,6 +17,8 @@
 #include <stdint.h>
 #include "cbor.h"
 
+// TODO: This setup is overengineered, we currently use one assertion at a time
+// TOOD: We never ensure that the queue is empty
 #define MAX_QUEUE_ITEMS 30
 
 enum test_expectation {
@@ -73,15 +75,17 @@ struct test_assertion {
 };
 
 /* Tested function */
+// TODO: This looks overengineered, we only ever use one (?) in the testsuite
 typedef struct cbor_decoder_result decoder_t(cbor_data, size_t,
                                              const struct cbor_callbacks *,
                                              void *);
-
 void set_decoder(decoder_t *);
 struct cbor_decoder_result decode(cbor_data, size_t);
 
-/* Assertions builders */
+/* Test setup */
+int clear_stream_assertions(void **);
 
+/* Assertions builders */
 void assert_uint8_eq(uint8_t);
 void assert_uint16_eq(uint16_t);
 void assert_uint32_eq(uint32_t);

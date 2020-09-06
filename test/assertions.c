@@ -6,6 +6,7 @@
  */
 
 #include "assertions.h"
+#include "stream_expectations.h"
 
 void assert_uint8(cbor_item_t* item, uint8_t num) {
   assert_true(cbor_isa_uint(item));
@@ -43,4 +44,10 @@ void assert_decoder_result_nedata(size_t required,
   assert_true(0 == result.read);
   assert_true(CBOR_DECODER_NEDATA == result.status);
   assert_int_equal((int)required, (int)result.required);
+}
+
+void assert_minimum_input_size(size_t expected, cbor_data data) {
+  for (size_t available = 1; available < expected; available++) {
+    assert_decoder_result_nedata(expected, decode(data, 1));
+  }
 }
