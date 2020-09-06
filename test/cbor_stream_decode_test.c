@@ -46,7 +46,7 @@ static void test_uint8_decoding(void **state) {
   assert_uint8_eq(0xFF);
   assert_decoder_result(2, CBOR_DECODER_FINISHED, decode(uint8_data + 2, 2));
 
-  assert_decoder_result_nedata(2, decode(uint8_data, 1));
+  assert_minimum_input_size(2, uint8_data);
 }
 
 unsigned char uint16_data[] = {0x19, 0x01, 0xf4};
@@ -54,14 +54,15 @@ static void test_uint16_decoding(void **state) {
   assert_uint16_eq(500);
   assert_decoder_result(3, CBOR_DECODER_FINISHED, decode(uint16_data, 3));
 
-  assert_decoder_result_nedata(3, decode(uint16_data, 1));
-  assert_decoder_result_nedata(3, decode(uint16_data, 2));
+  assert_minimum_input_size(3, uint16_data);
 }
 
 unsigned char uint32_data[] = {0x1a, 0xa5, 0xf7, 0x02, 0xb3};
 static void test_uint32_decoding(void **state) {
   assert_uint32_eq((uint32_t)2784428723UL);
   assert_decoder_result(5, CBOR_DECODER_FINISHED, decode(uint32_data, 5));
+
+  assert_minimum_input_size(5, uint32_data);
 }
 
 unsigned char uint64_data[] = {0x1b, 0xa5, 0xf7, 0x02, 0xb3,
@@ -69,6 +70,8 @@ unsigned char uint64_data[] = {0x1b, 0xa5, 0xf7, 0x02, 0xb3,
 static void test_uint64_decoding(void **state) {
   assert_uint64_eq(11959030306112471731ULL);
   assert_decoder_result(9, CBOR_DECODER_FINISHED, decode(uint64_data, 9));
+
+  assert_minimum_input_size(9, uint64_data);
 }
 
 unsigned char embedded_negint8_data[] = {0x20, 0x21, 0x25, 0x37};
@@ -97,18 +100,24 @@ static void test_negint8_decoding(void **state) {
 
   assert_negint8_eq(0xFF);
   assert_decoder_result(2, CBOR_DECODER_FINISHED, decode(negint8_data + 2, 2));
+
+  assert_minimum_input_size(2, negint8_data);
 }
 
 unsigned char negint16_data[] = {0x39, 0x01, 0xf4};
 static void test_negint16_decoding(void **state) {
   assert_negint16_eq(500);
   assert_decoder_result(3, CBOR_DECODER_FINISHED, decode(negint16_data, 3));
+
+  assert_minimum_input_size(3, negint16_data);
 }
 
 unsigned char negint32_data[] = {0x3a, 0xa5, 0xf7, 0x02, 0xb3};
 static void test_negint32_decoding(void **state) {
   assert_negint32_eq((uint32_t)2784428723UL);
   assert_decoder_result(5, CBOR_DECODER_FINISHED, decode(negint32_data, 5));
+
+  assert_minimum_input_size(5, negint32_data);
 }
 
 unsigned char negint64_data[] = {0x3b, 0xa5, 0xf7, 0x02, 0xb3,
@@ -116,6 +125,8 @@ unsigned char negint64_data[] = {0x3b, 0xa5, 0xf7, 0x02, 0xb3,
 static void test_negint64_decoding(void **state) {
   assert_negint64_eq(11959030306112471731ULL);
   assert_decoder_result(9, CBOR_DECODER_FINISHED, decode(negint64_data, 9));
+
+  assert_minimum_input_size(9, negint64_data);
 }
 
 unsigned char bstring_embedded_int8_data[] = {0x41, 0xFF};
@@ -123,12 +134,18 @@ static void test_bstring_embedded_int8_decoding(void **state) {
   assert_bstring_mem_eq(bstring_embedded_int8_data + 1, 1);
   assert_decoder_result(2, CBOR_DECODER_FINISHED,
                         decode(bstring_embedded_int8_data, 2));
+
+  assert_minimum_input_size(2, bstring_embedded_int8_data);
 }
+
+// TODO: Add tests with actual bstring/string chunks
 
 unsigned char bstring_int8_data[] = {0x58, 0x00};
 static void test_bstring_int8_decoding(void **state) {
   assert_bstring_mem_eq(bstring_int8_data + 2, 0);
   assert_decoder_result(2, CBOR_DECODER_FINISHED, decode(bstring_int8_data, 2));
+
+  assert_minimum_input_size(2, bstring_int8_data);
 }
 
 unsigned char bstring_int16_data[] = {0x59, 0x01, 0x5C /*, [348 bytes] */};
@@ -137,9 +154,8 @@ static void test_bstring_int16_decoding(void **state) {
   assert_decoder_result(3 + 348, CBOR_DECODER_FINISHED,
                         decode(bstring_int16_data, 3 + 348));
 
-  assert_decoder_result_nedata(3, decode(bstring_int16_data, 1));
-  assert_decoder_result_nedata(3, decode(bstring_int16_data, 2));
-  assert_decoder_result_nedata(351, decode(bstring_int16_data, 3));
+  assert_minimum_input_size(3, bstring_int16_data);
+  assert_decoder_result_nedata(3 + 348, decode(bstring_int16_data, 3));
 }
 
 unsigned char bstring_int32_data[] = {0x5A, 0x00, 0x10, 0x10,
@@ -148,6 +164,9 @@ static void test_bstring_int32_decoding(void **state) {
   assert_bstring_mem_eq(bstring_int32_data + 5, 1052688);
   assert_decoder_result(5 + 1052688, CBOR_DECODER_FINISHED,
                         decode(bstring_int32_data, 5 + 1052688));
+
+  assert_minimum_input_size(5, bstring_int32_data);
+  assert_decoder_result_nedata(5 + 1052688, decode(bstring_int32_data, 5));
 }
 
 #ifdef EIGHT_BYTE_SIZE_T
@@ -158,6 +177,9 @@ static void test_bstring_int64_decoding(void **state) {
   assert_bstring_mem_eq(bstring_int64_data + 9, 4294967296);
   assert_decoder_result(9 + 4294967296, CBOR_DECODER_FINISHED,
                         decode(bstring_int64_data, 9 + 4294967296));
+
+  assert_minimum_input_size(9, bstring_int64_data);
+  assert_decoder_result_nedata(9 + 4294967296, decode(bstring_int64_data, 9));
 }
 #endif
 
@@ -188,6 +210,7 @@ static void test_bstring_indef_decoding_2(void **state) {
                         decode(bstring_indef_2_data + 1, 1));
 }
 
+// TODO: Comment formatting seems weird
 unsigned char bstring_indef_3_data[] = {
     0x5F, 0x40 /* Empty byte string */,      0x58,
     0x01, 0xFF /* 1B 1 char bytes string */, 0xFF};
@@ -228,6 +251,8 @@ static void test_array_int8_decoding(void **state) {
   assert_uint8_eq(1);
   assert_decoder_result(1, CBOR_DECODER_FINISHED,
                         decode(array_int8_data + 3, 1));
+
+  assert_minimum_input_size(2, array_int8_data);
 }
 
 unsigned char array_int16_data[] = {0x99, 0x00, 0x02, 0x00, 0x01};
@@ -242,6 +267,8 @@ static void test_array_int16_decoding(void **state) {
   assert_uint8_eq(1);
   assert_decoder_result(1, CBOR_DECODER_FINISHED,
                         decode(array_int16_data + 4, 1));
+
+  assert_minimum_input_size(3, array_int16_data);
 }
 
 unsigned char array_int32_data[] = {0x9A, 0x00, 0x00, 0x00, 0x02, 0x00, 0x01};
@@ -256,6 +283,8 @@ static void test_array_int32_decoding(void **state) {
   assert_uint8_eq(1);
   assert_decoder_result(1, CBOR_DECODER_FINISHED,
                         decode(array_int32_data + 6, 1));
+
+  assert_minimum_input_size(5, array_int32_data);
 }
 
 unsigned char array_int64_data[] = {0x9B, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -271,6 +300,8 @@ static void test_array_int64_decoding(void **state) {
   assert_uint8_eq(1);
   assert_decoder_result(1, CBOR_DECODER_FINISHED,
                         decode(array_int64_data + 10, 1));
+
+  assert_minimum_input_size(9, array_int64_data);
 }
 
 unsigned char array_of_arrays_data[] = {0x82, 0x80, 0x80};
@@ -340,6 +371,8 @@ static void test_map_int8_decoding(void **state) {
 
   assert_uint8_eq(1);
   assert_decoder_result(1, CBOR_DECODER_FINISHED, decode(map_int8_data + 3, 1));
+
+  assert_minimum_input_size(2, map_int8_data);
 }
 
 unsigned char map_int16_data[] = {0xB9, 0x00, 0x01, 0x00, 0x01};
@@ -354,6 +387,8 @@ static void test_map_int16_decoding(void **state) {
   assert_uint8_eq(1);
   assert_decoder_result(1, CBOR_DECODER_FINISHED,
                         decode(map_int16_data + 4, 1));
+
+  assert_minimum_input_size(3, map_int16_data);
 }
 
 unsigned char map_int32_data[] = {0xBA, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01};
@@ -368,6 +403,8 @@ static void test_map_int32_decoding(void **state) {
   assert_uint8_eq(1);
   assert_decoder_result(1, CBOR_DECODER_FINISHED,
                         decode(map_int32_data + 6, 1));
+
+  assert_minimum_input_size(5, map_int32_data);
 }
 
 unsigned char map_int64_data[] = {0xBB, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -383,6 +420,8 @@ static void test_map_int64_decoding(void **state) {
   assert_uint8_eq(1);
   assert_decoder_result(1, CBOR_DECODER_FINISHED,
                         decode(map_int64_data + 10, 1));
+
+  assert_minimum_input_size(9, map_int64_data);
 }
 
 unsigned char indef_map_data_1[] = {0xBF, 0x00, 0x18, 0xFF, 0xFF};
@@ -403,29 +442,6 @@ static void test_indef_map_decoding_1(void **state) {
                         decode(indef_map_data_1 + 4, 1));
 }
 
-unsigned char map_nedata[] = {0xBB,  // 8B map
-                              0x00, 0x00, 0x00, 0x00,
-                              0x00, 0x00, 0x00, 0x01,  // 1
-                              0x19, 0x01, 0xf4,        // uint16(500)
-                              0x01};
-static void test_nedata_map_decoding(void **state) {
-  for (int i = 1; i < 9; i++) {
-    assert_decoder_result_nedata(9, decode(map_nedata, i));
-  }
-
-  assert_map_start(1);
-  assert_decoder_result(9, CBOR_DECODER_FINISHED, decode(map_nedata, 9));
-
-  assert_decoder_result_nedata(3, decode(map_nedata + 9, 1));
-  assert_decoder_result_nedata(3, decode(map_nedata + 9, 2));
-
-  assert_uint16_eq(500);
-  assert_decoder_result(3, CBOR_DECODER_FINISHED, decode(map_nedata + 9, 3));
-
-  assert_uint8_eq(1);
-  assert_decoder_result(1, CBOR_DECODER_FINISHED, decode(map_nedata + 12, 1));
-}
-
 unsigned char embedded_tag_data[] = {0xC1};
 static void test_embedded_tag_decoding(void **state) {
   assert_tag_eq(1);
@@ -436,18 +452,24 @@ unsigned char int8_tag_data[] = {0xD8, 0xFE};
 static void test_int8_tag_decoding(void **state) {
   assert_tag_eq(254);
   assert_decoder_result(2, CBOR_DECODER_FINISHED, decode(int8_tag_data, 2));
+
+  assert_minimum_input_size(2, int8_tag_data);
 }
 
 unsigned char int16_tag_data[] = {0xD9, 0xFE, 0xFD};
 static void test_int16_tag_decoding(void **state) {
   assert_tag_eq(65277);
   assert_decoder_result(3, CBOR_DECODER_FINISHED, decode(int16_tag_data, 3));
+
+  assert_minimum_input_size(3, int16_tag_data);
 }
 
 unsigned char int32_tag_data[] = {0xDA, 0xFE, 0xFD, 0xFC, 0xFB};
 static void test_int32_tag_decoding(void **state) {
   assert_tag_eq(4278058235ULL);
   assert_decoder_result(5, CBOR_DECODER_FINISHED, decode(int32_tag_data, 5));
+
+  assert_minimum_input_size(5, int32_tag_data);
 }
 
 unsigned char int64_tag_data[] = {0xDB, 0xFE, 0xFD, 0xFC, 0xFB,
@@ -455,6 +477,8 @@ unsigned char int64_tag_data[] = {0xDB, 0xFE, 0xFD, 0xFC, 0xFB,
 static void test_int64_tag_decoding(void **state) {
   assert_tag_eq(18374120213919168759ULL);
   assert_decoder_result(9, CBOR_DECODER_FINISHED, decode(int64_tag_data, 9));
+
+  assert_minimum_input_size(9, int64_tag_data);
 }
 
 unsigned char bad_tag_data[] = {0xC6};
@@ -464,14 +488,18 @@ static void test_bad_tag_decoding(void **state) {
 
 unsigned char float2_data[] = {0xF9, 0x7B, 0xFF};
 static void test_float2_decoding(void **state) {
-  assert_half(65504.0);
+  assert_half(65504.0f);
   assert_decoder_result(3, CBOR_DECODER_FINISHED, decode(float2_data, 3));
+
+  assert_minimum_input_size(3, float2_data);
 }
 
 unsigned char float4_data[] = {0xFA, 0x47, 0xC3, 0x50, 0x00};
 static void test_float4_decoding(void **state) {
-  assert_float(100000.0);
+  assert_float(100000.0f);
   assert_decoder_result(5, CBOR_DECODER_FINISHED, decode(float4_data, 5));
+
+  assert_minimum_input_size(5, float4_data);
 }
 
 unsigned char float8_data[] = {0xFB, 0xC0, 0x10, 0x66, 0x66,
@@ -479,6 +507,8 @@ unsigned char float8_data[] = {0xFB, 0xC0, 0x10, 0x66, 0x66,
 static void test_float8_decoding(void **state) {
   assert_double(-4.1);
   assert_decoder_result(9, CBOR_DECODER_FINISHED, decode(float8_data, 9));
+
+  assert_minimum_input_size(0, float8_data);
 }
 
 unsigned char false_data[] = {0xF4};
@@ -547,7 +577,6 @@ int main(void) {
       cmocka_unit_test(test_map_int32_decoding),
       cmocka_unit_test(test_map_int64_decoding),
       cmocka_unit_test(test_indef_map_decoding_1),
-      cmocka_unit_test(test_nedata_map_decoding),
 
       cmocka_unit_test(test_embedded_tag_decoding),
       cmocka_unit_test(test_int8_tag_decoding),
