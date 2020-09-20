@@ -35,7 +35,8 @@ CBOR_EXPORT size_t cbor_serialize(const cbor_item_t *item,
  *
  * \rst
  * .. warning:: It is your responsibility to free the buffer using an
- * appropriate ``free`` implementation. \endrst
+ *  appropriate ``free`` implementation.
+ * \endrst
  *
  * @param item[borrow] A data item
  * @param buffer[out] Buffer containing the result
