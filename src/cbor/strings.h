@@ -70,7 +70,8 @@ CBOR_EXPORT cbor_mutable_data cbor_string_handle(const cbor_item_t *item);
  * \rst
  * .. warning:: Using a pointer to a stack allocated constant is a common
  *  mistake. Lifetime of the string will expire when it goes out of scope and
- * the CBOR item will be left inconsistent. \endrst
+ *  the CBOR item will be left inconsistent.
+ * \endrst
  *
  * @param item[borrow] A definite string
  * @param data The memory block. The caller gives up the ownership of the block.
