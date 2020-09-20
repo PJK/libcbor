@@ -5,3 +5,4 @@ nbproject
 doxygen_docs
 */*.out
 cmake-build-debug
+venv

@@ -1,5 +1,8 @@
 Next
 ---------------------
+
+0.8.0 (2020-09-20)
+---------------------
 - BUILD BREAKING: Use BUILD_SHARED_LIBS to determine how to build libraries (fixed Windows linkage) [[#148]](https://github.com/PJK/libcbor/pull/148) (by [intelligide@](https://github.com/intelligide))
 - BREAKING: Fix `cbor_tag_item` not increasing the reference count on the tagged item reference it returns [[Fixes #109](https://github.com/PJK/libcbor/issues/109)] (discovered bt [JohnGilmour](https://github.com/JohnGilmour))
   - If you have previously relied on the broken behavior, you can use `cbor_move` to emulate as long as the returned handle is an "rvalue"

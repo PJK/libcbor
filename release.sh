@@ -19,9 +19,10 @@ OUTDIR=$(mktemp -d)
 TAG_NAME="v$1"
 
 cd $DIR
+python3 misc/update_version.py "$1"
 
 echo ">>>>> Checking changelog"
-grep -A 5 -F $1 CHANGELOG.md || true
+grep -A 5 -F "$1" CHANGELOG.md || true
 prompt "Is the changelog correct and complete?"
 
 echo ">>>>> Checking Doxyfile"
@@ -51,16 +52,16 @@ tar -zcf libcbor_docs.tar.gz libcbor_docs_html
 cp -r doxygen/html libcbor_api_docs_html
 tar -zcf libcbor_api_docs.tar.gz libcbor_api_docs_html
 
-mv libcbor_docs.tar.gz libcbor_api_docs.tar.gz $OUTDIR
+mv libcbor_docs.tar.gz libcbor_api_docs.tar.gz "$OUTDIR"
 
-pushd $OUTDIR
-cmake $DIR -DCMAKE_BUILD_TYPE=Release -DWITH_TESTS=ON
+pushd "$OUTDIR"
+cmake "$DIR" -DCMAKE_BUILD_TYPE=Release -DWITH_TESTS=ON
 make
 ctest
 popd
 
 prompt "Will proceed to tag the release with $TAG_NAME."
-git tag $TAG_NAME
+git tag "$TAG_NAME"
 git push --tags
 
 set +x
