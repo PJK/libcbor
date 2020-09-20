@@ -98,12 +98,14 @@ CBOR_EXPORT extern _cbor_free_t _cbor_free;
  *
  * \rst
  * .. warning:: This function modifies the global state and should therefore be
- * used accordingly. Changing the memory handlers while allocated items exist
- * will result in a ``free``/``malloc`` mismatch. This function is not thread
- * safe with respect to both itself and all the other *libcbor* functions that
- * work with the heap.
+ *  used accordingly. Changing the memory handlers while allocated items exist
+ *  will result in a ``free``/``malloc`` mismatch. This function is not thread
+ *  safe with respect to both itself and all the other *libcbor* functions that
+ *  work with the heap.
+ *
  * .. note:: `realloc` implementation must correctly support `NULL` reallocation
- * (see e.g. http://en.cppreference.com/w/c/memory/realloc) \endrst
+ *  (see e.g. http://en.cppreference.com/w/c/memory/realloc)
+ * \endrst
  *
  * @param custom_malloc malloc implementation
  * @param custom_realloc realloc implementation
@@ -210,18 +212,24 @@ CBOR_EXPORT bool cbor_is_float(const cbor_item_t *item);
 CBOR_EXPORT bool cbor_is_bool(const cbor_item_t *item);
 
 /** Does this item represent `null`
+ *
  * \rst
  * .. warning:: This is in no way related to the value of the pointer. Passing a
- * null pointer will most likely result in a crash. \endrst
+ *  null pointer will most likely result in a crash.
+ * \endrst
+ *
  * @param item[borrow] the item
  * @return  Is the item (CBOR logical) null?
  */
 CBOR_EXPORT bool cbor_is_null(const cbor_item_t *item);
 
 /** Does this item represent `undefined`
+ *
  * \rst
  * .. warning:: Care must be taken to distinguish nulls and undefined values in
- * C. \endrst
+ *  C.
+ * \endrst
+ *
  * @param item[borrow] the item
  * @return Is the item (CBOR logical) undefined?
  */
@@ -280,7 +288,8 @@ CBOR_EXPORT size_t cbor_refcount(const cbor_item_t *item);
  *
  * \rst
  * .. warning:: If the item is moved without correctly increasing the reference
- * count afterwards, the memory will be leaked. \endrst
+ *  count afterwards, the memory will be leaked.
+ * \endrst
  *
  * @param item[take] the item
  * @return the item with reference count decreased by one

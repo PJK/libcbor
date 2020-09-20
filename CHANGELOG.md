@@ -6,6 +6,7 @@ Next
 - BREAKING: [`CBOR_DECODER_EBUFFER` removed from `cbor_decoder_status`](https://github.com/PJK/libcbor/pull/156)
     - `cbor_stream_decode` will set `CBOR_DECODER_NEDATA` instead if the input buffer is empty
 - [Fix `cbor_stream_decode`](https://github.com/PJK/libcbor/pull/156) to set `cbor_decoder_result.required` to the minimum number of input bytes necessary to receive the next callback (as long as at least one byte was passed) (discovered by [woefulwabbit](https://github.com/woefulwabbit))
+- Fixed several minor manpage issues [[#159]](https://github.com/PJK/libcbor/pull/159) (discovered by [kloczek@](https://github.com/kloczek))
 
 0.7.0 (2020-04-25)
 ---------------------

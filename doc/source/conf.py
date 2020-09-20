@@ -257,7 +257,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'libcbor', 'libcbor Documentation',
-     ['Pavel Kalvoda'], 1)
+     ['Pavel Kalvoda'], 3)
 ]
 
 # If true, show URL addresses after external links.
