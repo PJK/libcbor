@@ -12,6 +12,7 @@
 #include <cmocka.h>
 
 #include <string.h>
+#include "assertions.h"
 #include "cbor.h"
 
 cbor_item_t *map;
@@ -19,7 +20,7 @@ struct cbor_load_result res;
 
 unsigned char empty_map[] = {0xA0};
 
-static void test_empty_map(void **_CBOR_UNUSED(state)) {
+static void test_empty_map(void **_CBOR_UNUSED(_state)) {
   map = cbor_load(empty_map, 1, &res);
   assert_non_null(map);
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
@@ -34,7 +35,7 @@ static void test_empty_map(void **_CBOR_UNUSED(state)) {
 unsigned char simple_map[] = {0xA2, 0x01, 0x02, 0x03, 0x04};
 
 /* {1: 2, 3: 4} */
-static void test_simple_map(void **_CBOR_UNUSED(state)) {
+static void test_simple_map(void **_CBOR_UNUSED(_state)) {
   map = cbor_load(simple_map, 5, &res);
   assert_non_null(map);
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
@@ -54,7 +55,7 @@ static void test_simple_map(void **_CBOR_UNUSED(state)) {
 unsigned char simple_indef_map[] = {0xBF, 0x01, 0x02, 0x03, 0x04, 0xFF};
 
 /* {_ 1: 2, 3: 4} */
-static void test_indef_simple_map(void **_CBOR_UNUSED(state)) {
+static void test_indef_simple_map(void **_CBOR_UNUSED(_state)) {
   map = cbor_load(simple_indef_map, 6, &res);
   assert_non_null(map);
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
@@ -81,7 +82,7 @@ unsigned char def_nested_map[] = {
     0x74, 0x69, 0x74, 0x6C, 0x65, 0x70, 0x65, 0x78, 0x61, 0x6D, 0x70, 0x6C,
     0x65, 0x20, 0x67, 0x6C, 0x6F, 0x73, 0x73, 0x61, 0x72, 0x79};
 
-static void test_def_nested_map(void **_CBOR_UNUSED(state)) {
+static void test_def_nested_map(void **_CBOR_UNUSED(_state)) {
   map = cbor_load(def_nested_map, 34, &res);
   assert_non_null(map);
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
@@ -105,7 +106,7 @@ unsigned char streamed_key_map[] = {0xA1, 0x7F, 0x61, 0x61,
                                     0x61, 0x62, 0xFF, 0xA0};
 
 /* '{ (_"a" "b"): {}}' */
-static void test_streamed_key_map(void **_CBOR_UNUSED(state)) {
+static void test_streamed_key_map(void **_CBOR_UNUSED(_state)) {
   map = cbor_load(streamed_key_map, 8, &res);
   assert_non_null(map);
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
@@ -127,7 +128,7 @@ unsigned char streamed_kv_map[] = {0xA1, 0x7F, 0x61, 0x61, 0x61, 0x62, 0xFF,
                                    0x7F, 0x61, 0x63, 0x61, 0x64, 0xFF};
 
 /* '{ (_"a" "b"): (_"c", "d")}' */
-static void test_streamed_kv_map(void **_CBOR_UNUSED(state)) {
+static void test_streamed_kv_map(void **_CBOR_UNUSED(_state)) {
   map = cbor_load(streamed_kv_map, 13, &res);
   assert_non_null(map);
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
@@ -154,7 +155,7 @@ unsigned char streamed_streamed_kv_map[] = {0xBF, 0x7F, 0x61, 0x61, 0x61,
                                             0x61, 0x64, 0xFF, 0xFF};
 
 /* '{_ (_"a" "b"): (_"c", "d")}' */
-static void test_streamed_streamed_kv_map(void **_CBOR_UNUSED(state)) {
+static void test_streamed_streamed_kv_map(void **_CBOR_UNUSED(_state)) {
   map = cbor_load(streamed_streamed_kv_map, 14, &res);
   assert_non_null(map);
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);

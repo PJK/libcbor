@@ -11,6 +11,7 @@
 
 #include <cmocka.h>
 
+#include "assertions.h"
 #include "cbor.h"
 
 cbor_item_t *arr;
@@ -18,7 +19,7 @@ struct cbor_load_result res;
 
 unsigned char data1[] = {0x80, 0xFF};
 
-static void test_empty_array(void **_CBOR_UNUSED(state)) {
+static void test_empty_array(void **_CBOR_UNUSED(_state)) {
   arr = cbor_load(data1, 2, &res);
   assert_non_null(arr);
   assert_true(cbor_typeof(arr) == CBOR_TYPE_ARRAY);
@@ -31,7 +32,7 @@ static void test_empty_array(void **_CBOR_UNUSED(state)) {
 
 unsigned char data2[] = {0x81, 0x01, 0xFF};
 
-static void test_simple_array(void **_CBOR_UNUSED(state)) {
+static void test_simple_array(void **_CBOR_UNUSED(_state)) {
   arr = cbor_load(data2, 3, &res);
   assert_non_null(arr);
   assert_true(cbor_typeof(arr) == CBOR_TYPE_ARRAY);
@@ -57,7 +58,7 @@ static void test_simple_array(void **_CBOR_UNUSED(state)) {
 
 unsigned char data3[] = {0x82, 0x01, 0x81, 0x01, 0xFF};
 
-static void test_nested_arrays(void **_CBOR_UNUSED(state)) {
+static void test_nested_arrays(void **_CBOR_UNUSED(_state)) {
   arr = cbor_load(data3, 5, &res);
   assert_non_null(arr);
   assert_true(cbor_typeof(arr) == CBOR_TYPE_ARRAY);
@@ -78,7 +79,7 @@ static void test_nested_arrays(void **_CBOR_UNUSED(state)) {
 
 unsigned char test_indef_arrays_data[] = {0x9f, 0x01, 0x02, 0xFF};
 
-static void test_indef_arrays(void **_CBOR_UNUSED(state)) {
+static void test_indef_arrays(void **_CBOR_UNUSED(_state)) {
   arr = cbor_load(test_indef_arrays_data, 4, &res);
   assert_non_null(arr);
   assert_true(cbor_typeof(arr) == CBOR_TYPE_ARRAY);
@@ -98,7 +99,7 @@ static void test_indef_arrays(void **_CBOR_UNUSED(state)) {
 unsigned char test_nested_indef_arrays_data[] = {0x9f, 0x01, 0x9f, 0x02,
                                                  0xFF, 0x03, 0xFF};
 
-static void test_nested_indef_arrays(void **_CBOR_UNUSED(state)) {
+static void test_nested_indef_arrays(void **_CBOR_UNUSED(_state)) {
   arr = cbor_load(test_nested_indef_arrays_data, 7, &res);
   assert_non_null(arr);
   assert_true(cbor_typeof(arr) == CBOR_TYPE_ARRAY);
