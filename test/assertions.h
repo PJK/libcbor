@@ -9,6 +9,12 @@
 #ifndef ASSERTIONS_H_
 #define ASSERTIONS_H_
 
+#ifdef __GNUC__
+#define UNUSED(x) __attribute__((__unused__)) x
+#else
+#define UNUSED(x) x
+#endif
+
 void assert_uint8(cbor_item_t* item, uint8_t num);
 void assert_uint16(cbor_item_t* item, uint16_t num);
 void assert_uint32(cbor_item_t* item, uint32_t num);

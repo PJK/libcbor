@@ -1,8 +1,5 @@
 #include "stream_expectations.h"
-
-// TODO: The saved keystrokes are not worth the complexity. Get rid of this
-// file to prevent confusion, the fundamental structure is unlikely to change
-// in the future.
+#include "assertions.h"
 
 /* Ordered from 0 to queue_size - 1 */
 struct test_assertion assertions_queue[MAX_QUEUE_ITEMS];
@@ -12,7 +9,7 @@ decoder_t *decoder;
 
 void set_decoder(decoder_t *dec) { decoder = dec; }
 
-int clear_stream_assertions(void **state) {
+int clear_stream_assertions(void **UNUSED(state)) {
   if (queue_size != current_expectation) {
     return 1;  // We have not matched all expectations correctly
   }
@@ -33,7 +30,7 @@ void assert_uint8_eq(uint8_t actual) {
       UINT8_EQ, (union test_expectation_data){.int8 = actual}};
 }
 
-void uint8_callback(void *context, uint8_t actual) {
+void uint8_callback(void *UNUSED(context), uint8_t actual) {
   assert_true(current().expectation == UINT8_EQ);
   assert_true(current().data.int8 == actual);
   current_expectation++;
@@ -44,7 +41,7 @@ void assert_uint16_eq(uint16_t actual) {
       UINT16_EQ, (union test_expectation_data){.int16 = actual}};
 }
 
-void uint16_callback(void *context, uint16_t actual) {
+void uint16_callback(void *UNUSED(context), uint16_t actual) {
   assert_true(current().expectation == UINT16_EQ);
   assert_true(current().data.int16 == actual);
   current_expectation++;
@@ -55,7 +52,7 @@ void assert_uint32_eq(uint32_t actual) {
       UINT32_EQ, (union test_expectation_data){.int32 = actual}};
 }
 
-void uint32_callback(void *context, uint32_t actual) {
+void uint32_callback(void *UNUSED(context), uint32_t actual) {
   assert_true(current().expectation == UINT32_EQ);
   assert_true(current().data.int32 == actual);
   current_expectation++;
@@ -66,7 +63,7 @@ void assert_uint64_eq(uint64_t actual) {
       UINT64_EQ, (union test_expectation_data){.int64 = actual}};
 }
 
-void uint64_callback(void *context, uint64_t actual) {
+void uint64_callback(void *UNUSED(context), uint64_t actual) {
   assert_true(current().expectation == UINT64_EQ);
   assert_true(current().data.int64 == actual);
   current_expectation++;
@@ -77,7 +74,7 @@ void assert_negint8_eq(uint8_t actual) {
       NEGINT8_EQ, (union test_expectation_data){.int8 = actual}};
 }
 
-void negint8_callback(void *context, uint8_t actual) {
+void negint8_callback(void *UNUSED(context), uint8_t actual) {
   assert_true(current().expectation == NEGINT8_EQ);
   assert_true(current().data.int8 == actual);
   current_expectation++;
@@ -88,7 +85,7 @@ void assert_negint16_eq(uint16_t actual) {
       NEGINT16_EQ, (union test_expectation_data){.int16 = actual}};
 }
 
-void negint16_callback(void *context, uint16_t actual) {
+void negint16_callback(void *UNUSED(context), uint16_t actual) {
   assert_true(current().expectation == NEGINT16_EQ);
   assert_true(current().data.int16 == actual);
   current_expectation++;
@@ -99,7 +96,7 @@ void assert_negint32_eq(uint32_t actual) {
       NEGINT32_EQ, (union test_expectation_data){.int32 = actual}};
 }
 
-void negint32_callback(void *context, uint32_t actual) {
+void negint32_callback(void *UNUSED(context), uint32_t actual) {
   assert_true(current().expectation == NEGINT32_EQ);
   assert_true(current().data.int32 == actual);
   current_expectation++;
@@ -110,7 +107,7 @@ void assert_negint64_eq(uint64_t actual) {
       NEGINT64_EQ, (union test_expectation_data){.int64 = actual}};
 }
 
-void negint64_callback(void *context, uint64_t actual) {
+void negint64_callback(void *UNUSED(context), uint64_t actual) {
   assert_true(current().expectation == NEGINT64_EQ);
   assert_true(current().data.int64 == actual);
   current_expectation++;
@@ -122,7 +119,8 @@ void assert_bstring_mem_eq(cbor_data address, size_t length) {
       (union test_expectation_data){.string = {address, length}}};
 }
 
-void byte_string_callback(void *context, cbor_data address, size_t length) {
+void byte_string_callback(void *UNUSED(context), cbor_data address,
+                          size_t length) {
   assert_true(current().expectation == BSTRING_MEM_EQ);
   assert_true(current().data.string.address == address);
   assert_true(current().data.string.length == length);
@@ -134,7 +132,7 @@ void assert_bstring_indef_start() {
       (struct test_assertion){.expectation = BSTRING_INDEF_START};
 }
 
-void byte_string_start_callback(void *context) {
+void byte_string_start_callback(void *UNUSED(context)) {
   assert_true(current().expectation == BSTRING_INDEF_START);
   current_expectation++;
 }
@@ -144,7 +142,7 @@ void assert_indef_break() {
       (struct test_assertion){.expectation = INDEF_BREAK};
 }
 
-void indef_break_callback(void *context) {
+void indef_break_callback(void *UNUSED(context)) {
   assert_true(current().expectation == INDEF_BREAK);
   current_expectation++;
 }
@@ -154,7 +152,7 @@ void assert_array_start(size_t length) {
       (struct test_assertion){ARRAY_START, {.length = length}};
 }
 
-void array_start_callback(void *context, size_t length) {
+void array_start_callback(void *UNUSED(context), size_t length) {
   assert_true(current().expectation == ARRAY_START);
   assert_true(current().data.length == length);
   current_expectation++;
@@ -165,7 +163,7 @@ void assert_indef_array_start() {
       (struct test_assertion){.expectation = ARRAY_INDEF_START};
 }
 
-void indef_array_start_callback(void *context) {
+void indef_array_start_callback(void *UNUSED(context)) {
   assert_true(current().expectation == ARRAY_INDEF_START);
   current_expectation++;
 }
@@ -175,7 +173,7 @@ void assert_map_start(size_t length) {
       (struct test_assertion){MAP_START, {.length = length}};
 }
 
-void map_start_callback(void *context, size_t length) {
+void map_start_callback(void *UNUSED(context), size_t length) {
   assert_true(current().expectation == MAP_START);
   assert_true(current().data.length == length);
   current_expectation++;
@@ -186,7 +184,7 @@ void assert_indef_map_start() {
       (struct test_assertion){.expectation = MAP_INDEF_START};
 }
 
-void indef_map_start_callback(void *context) {
+void indef_map_start_callback(void *UNUSED(context)) {
   assert_true(current().expectation == MAP_INDEF_START);
   current_expectation++;
 }
@@ -196,7 +194,7 @@ void assert_tag_eq(uint64_t value) {
       (struct test_assertion){TAG_EQ, {.int64 = value}};
 }
 
-void tag_callback(void *context, uint64_t value) {
+void tag_callback(void *UNUSED(context), uint64_t value) {
   assert_true(current().expectation == TAG_EQ);
   assert_true(current().data.int64 == value);
   current_expectation++;
@@ -207,7 +205,7 @@ void assert_half(float value) {
       (struct test_assertion){HALF_EQ, {.float2 = value}};
 }
 
-void half_callback(void *context, float actual) {
+void half_callback(void *UNUSED(context), float actual) {
   assert_true(current().expectation == HALF_EQ);
   assert_true(current().data.float2 == actual);
   current_expectation++;
@@ -218,7 +216,7 @@ void assert_float(float value) {
       (struct test_assertion){FLOAT_EQ, {.float4 = value}};
 }
 
-void float_callback(void *context, float actual) {
+void float_callback(void *UNUSED(context), float actual) {
   assert_true(current().expectation == FLOAT_EQ);
   assert_true(current().data.float4 == actual);
   current_expectation++;
@@ -229,7 +227,7 @@ void assert_double(double value) {
       (struct test_assertion){DOUBLE_EQ, {.float8 = value}};
 }
 
-void double_callback(void *context, double actual) {
+void double_callback(void *UNUSED(context), double actual) {
   assert_true(current().expectation == DOUBLE_EQ);
   assert_true(current().data.float8 == actual);
   current_expectation++;
@@ -249,18 +247,18 @@ void assert_undef() {
       (struct test_assertion){.expectation = UNDEF};
 }
 
-void bool_callback(void *context, bool actual) {
+void bool_callback(void *UNUSED(context), bool actual) {
   assert_true(current().expectation == BOOL_EQ);
   assert_true(current().data.boolean == actual);
   current_expectation++;
 }
 
-void null_callback(void *context) {
+void null_callback(void *UNUSED(context)) {
   assert_true(current().expectation == NIL);
   current_expectation++;
 }
 
-void undef_callback(void *context) {
+void undef_callback(void *UNUSED(context)) {
   assert_true(current().expectation == UNDEF);
   current_expectation++;
 }

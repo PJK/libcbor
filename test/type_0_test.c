@@ -11,6 +11,7 @@
 
 #include <cmocka.h>
 
+#include "assertions.h"
 #include "cbor.h"
 
 cbor_item_t *number;
@@ -23,7 +24,7 @@ unsigned char data4[] = {0x1a, 0xa5, 0xf7, 0x02, 0xb3, 0xFF};
 unsigned char data5[] = {0x1b, 0xa5, 0xf7, 0x02, 0xb3,
                          0xa5, 0xf7, 0x02, 0xb3, 0xFF};
 
-static void test_very_short_int(void **state) {
+static void test_very_short_int(void **UNUSED(state)) {
   number = cbor_load(data1, 2, &res);
   assert_true(cbor_typeof(number) == CBOR_TYPE_UINT);
   assert_true(cbor_int_get_width(number) == CBOR_INT_8);
@@ -37,13 +38,13 @@ static void test_very_short_int(void **state) {
   assert_null(number);
 }
 
-static void test_incomplete_data(void **state) {
+static void test_incomplete_data(void **UNUSED(state)) {
   number = cbor_load(data2, 1, &res);
   assert_null(number);
   assert_true(res.error.code == CBOR_ERR_NOTENOUGHDATA);
 }
 
-static void test_short_int(void **state) {
+static void test_short_int(void **UNUSED(state)) {
   number = cbor_load(data2, 3, &res);
   assert_true(cbor_typeof(number) == CBOR_TYPE_UINT);
   assert_true(cbor_int_get_width(number) == CBOR_INT_8);
@@ -57,7 +58,7 @@ static void test_short_int(void **state) {
   assert_null(number);
 }
 
-static void test_half_int(void **state) {
+static void test_half_int(void **UNUSED(state)) {
   number = cbor_load(data3, 5, &res);
   assert_true(cbor_typeof(number) == CBOR_TYPE_UINT);
   assert_true(cbor_int_get_width(number) == CBOR_INT_16);
@@ -71,7 +72,7 @@ static void test_half_int(void **state) {
   assert_null(number);
 }
 
-static void test_int(void **state) {
+static void test_int(void **UNUSED(state)) {
   number = cbor_load(data4, 6, &res);
   assert_true(cbor_typeof(number) == CBOR_TYPE_UINT);
   assert_true(cbor_int_get_width(number) == CBOR_INT_32);
@@ -85,7 +86,7 @@ static void test_int(void **state) {
   assert_null(number);
 }
 
-static void test_long_int(void **state) {
+static void test_long_int(void **UNUSED(state)) {
   number = cbor_load(data5, 10, &res);
   assert_true(cbor_typeof(number) == CBOR_TYPE_UINT);
   assert_true(cbor_int_get_width(number) == CBOR_INT_64);
@@ -99,7 +100,7 @@ static void test_long_int(void **state) {
   assert_null(number);
 }
 
-static void test_refcounting(void **state) {
+static void test_refcounting(void **UNUSED(state)) {
   number = cbor_load(data5, 10, &res);
   cbor_incref(number);
   assert_true(number->refcount == 2);
@@ -109,13 +110,13 @@ static void test_refcounting(void **state) {
   assert_null(number);
 }
 
-static void test_empty_input(void **state) {
+static void test_empty_input(void **UNUSED(state)) {
   number = cbor_load(data5, 0, &res);
   assert_null(number);
   assert_true(res.error.code == CBOR_ERR_NODATA);
 }
 
-static void test_inline_creation(void **state) {
+static void test_inline_creation(void **UNUSED(state)) {
   number = cbor_build_uint8(10);
   assert_true(cbor_get_int(number) == 10);
   cbor_decref(&number);

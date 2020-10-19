@@ -11,6 +11,7 @@
 
 #include <cmocka.h>
 
+#include "assertions.h"
 #include "cbor.h"
 
 unsigned char data[] = {
@@ -23,7 +24,7 @@ unsigned char data[] = {
     0x88, 0x00, 0x75, 0x9C, 0xF6, 0xF7, 0xF5};
 
 /* Exercise the default callbacks */
-static void test_default_callbacks(void **state) {
+static void test_default_callbacks(void **UNUSED(state)) {
   size_t read = 0;
   while (read < 79) {
     struct cbor_decoder_result result =

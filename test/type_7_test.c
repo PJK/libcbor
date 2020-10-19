@@ -22,7 +22,7 @@ static const float eps = 0.00001f;
 
 unsigned char float2_data[] = {0xF9, 0x7B, 0xFF};
 
-static void test_float2(void **state) {
+static void test_float2(void **UNUSED(state)) {
   float_ctrl = cbor_load(float2_data, 3, &res);
   assert_true(cbor_isa_float_ctrl(float_ctrl));
   assert_true(cbor_is_float(float_ctrl));
@@ -35,7 +35,7 @@ static void test_float2(void **state) {
 
 unsigned char float4_data[] = {0xFA, 0x47, 0xC3, 0x50, 0x00};
 
-static void test_float4(void **state) {
+static void test_float4(void **UNUSED(state)) {
   float_ctrl = cbor_load(float4_data, 5, &res);
   assert_true(cbor_isa_float_ctrl(float_ctrl));
   assert_true(cbor_is_float(float_ctrl));
@@ -49,7 +49,7 @@ static void test_float4(void **state) {
 unsigned char float8_data[] = {0xFB, 0x7E, 0x37, 0xE4, 0x3C,
                                0x88, 0x00, 0x75, 0x9C};
 
-static void test_float8(void **state) {
+static void test_float8(void **UNUSED(state)) {
   float_ctrl = cbor_load(float8_data, 9, &res);
   assert_true(cbor_isa_float_ctrl(float_ctrl));
   assert_true(cbor_is_float(float_ctrl));
@@ -62,7 +62,7 @@ static void test_float8(void **state) {
 
 unsigned char null_data[] = {0xF6};
 
-static void test_null(void **state) {
+static void test_null(void **UNUSED(state)) {
   float_ctrl = cbor_load(null_data, 1, &res);
   assert_true(cbor_isa_float_ctrl(float_ctrl));
   assert_true(cbor_is_null(float_ctrl));
@@ -72,7 +72,7 @@ static void test_null(void **state) {
 
 unsigned char undef_data[] = {0xF7};
 
-static void test_undef(void **state) {
+static void test_undef(void **UNUSED(state)) {
   float_ctrl = cbor_load(undef_data, 1, &res);
   assert_true(cbor_isa_float_ctrl(float_ctrl));
   assert_true(cbor_is_undef(float_ctrl));
@@ -82,7 +82,7 @@ static void test_undef(void **state) {
 
 unsigned char bool_data[] = {0xF4, 0xF5};
 
-static void test_bool(void **state) {
+static void test_bool(void **UNUSED(state)) {
   float_ctrl = cbor_load(bool_data, 1, &res);
   assert_true(cbor_isa_float_ctrl(float_ctrl));
   assert_true(cbor_is_bool(float_ctrl));
