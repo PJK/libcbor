@@ -16,7 +16,7 @@
 
 cbor_item_t *item, *copy, *tmp;
 
-static void test_uints(void **state) {
+static void test_uints(void **_CBOR_UNUSED(_state)) {
   item = cbor_build_uint8(10);
   assert_uint8(copy = cbor_copy(item), 10);
   cbor_decref(&item);
@@ -38,7 +38,7 @@ static void test_uints(void **state) {
   cbor_decref(&copy);
 }
 
-static void test_negints(void **state) {
+static void test_negints(void **_CBOR_UNUSED(_state)) {
   item = cbor_build_negint8(10);
   assert_true(cbor_get_uint8(copy = cbor_copy(item)) == 10);
   cbor_decref(&item);
@@ -60,7 +60,7 @@ static void test_negints(void **state) {
   cbor_decref(&copy);
 }
 
-static void test_def_bytestring(void **state) {
+static void test_def_bytestring(void **_CBOR_UNUSED(_state)) {
   item = cbor_build_bytestring((cbor_data) "abc", 3);
   assert_memory_equal(cbor_bytestring_handle(copy = cbor_copy(item)),
                       cbor_bytestring_handle(item), 3);
@@ -68,7 +68,7 @@ static void test_def_bytestring(void **state) {
   cbor_decref(&copy);
 }
 
-static void test_indef_bytestring(void **state) {
+static void test_indef_bytestring(void **_CBOR_UNUSED(_state)) {
   item = cbor_new_indefinite_bytestring();
   cbor_bytestring_add_chunk(
       item, cbor_move(cbor_build_bytestring((cbor_data) "abc", 3)));
@@ -83,7 +83,7 @@ static void test_indef_bytestring(void **state) {
   cbor_decref(&copy);
 }
 
-static void test_def_string(void **state) {
+static void test_def_string(void **_CBOR_UNUSED(_state)) {
   item = cbor_build_string("abc");
   assert_memory_equal(cbor_string_handle(copy = cbor_copy(item)),
                       cbor_string_handle(item), 3);
@@ -91,7 +91,7 @@ static void test_def_string(void **state) {
   cbor_decref(&copy);
 }
 
-static void test_indef_string(void **state) {
+static void test_indef_string(void **_CBOR_UNUSED(_state)) {
   item = cbor_new_indefinite_string();
   cbor_string_add_chunk(item, cbor_move(cbor_build_string("abc")));
   copy = cbor_copy(item);
@@ -105,7 +105,7 @@ static void test_indef_string(void **state) {
   cbor_decref(&copy);
 }
 
-static void test_def_array(void **state) {
+static void test_def_array(void **_CBOR_UNUSED(_state)) {
   item = cbor_new_definite_array(1);
   cbor_array_push(item, cbor_move(cbor_build_uint8(42)));
 
@@ -115,7 +115,7 @@ static void test_def_array(void **state) {
   cbor_decref(&tmp);
 }
 
-static void test_indef_array(void **state) {
+static void test_indef_array(void **_CBOR_UNUSED(_state)) {
   item = cbor_new_indefinite_array();
   cbor_array_push(item, cbor_move(cbor_build_uint8(42)));
 
@@ -125,7 +125,7 @@ static void test_indef_array(void **state) {
   cbor_decref(&tmp);
 }
 
-static void test_def_map(void **state) {
+static void test_def_map(void **_CBOR_UNUSED(_state)) {
   item = cbor_new_definite_map(1);
   cbor_map_add(item, (struct cbor_pair){
                          .key = cbor_move(cbor_build_uint8(42)),
@@ -138,7 +138,7 @@ static void test_def_map(void **state) {
   cbor_decref(&copy);
 }
 
-static void test_indef_map(void **state) {
+static void test_indef_map(void **_CBOR_UNUSED(_state)) {
   item = cbor_new_indefinite_map(1);
   cbor_map_add(item, (struct cbor_pair){
                          .key = cbor_move(cbor_build_uint8(42)),
@@ -151,7 +151,7 @@ static void test_indef_map(void **state) {
   cbor_decref(&copy);
 }
 
-static void test_tag(void **state) {
+static void test_tag(void **_CBOR_UNUSED(_state)) {
   item = cbor_build_tag(10, cbor_move(cbor_build_uint8(42)));
 
   assert_uint8(cbor_move(cbor_tag_item(copy = cbor_copy(item))), 42);
@@ -160,14 +160,14 @@ static void test_tag(void **state) {
   cbor_decref(&copy);
 }
 
-static void test_ctrls(void **state) {
+static void test_ctrls(void **_CBOR_UNUSED(_state)) {
   item = cbor_new_null();
   assert_true(cbor_is_null(copy = cbor_copy(item)));
   cbor_decref(&item);
   cbor_decref(&copy);
 }
 
-static void test_floats(void **state) {
+static void test_floats(void **_CBOR_UNUSED(_state)) {
   item = cbor_build_float2(3.14f);
   assert_true(cbor_float_get_float2(copy = cbor_copy(item)) ==
               cbor_float_get_float2(item));
@@ -188,20 +188,18 @@ static void test_floats(void **state) {
 }
 
 int main(void) {
-  const struct CMUnitTest tests[] = {
-
-      cmocka_unit_test(test_uints),
-      cmocka_unit_test(test_negints),
-      cmocka_unit_test(test_def_bytestring),
-      cmocka_unit_test(test_indef_bytestring),
-      cmocka_unit_test(test_def_string),
-      cmocka_unit_test(test_indef_string),
-      cmocka_unit_test(test_def_array),
-      cmocka_unit_test(test_indef_array),
-      cmocka_unit_test(test_def_map),
-      cmocka_unit_test(test_indef_map),
-      cmocka_unit_test(test_tag),
-      cmocka_unit_test(test_ctrls),
-      cmocka_unit_test(test_floats)};
+  const struct CMUnitTest tests[] = {cmocka_unit_test(test_uints),
+                                     cmocka_unit_test(test_negints),
+                                     cmocka_unit_test(test_def_bytestring),
+                                     cmocka_unit_test(test_indef_bytestring),
+                                     cmocka_unit_test(test_def_string),
+                                     cmocka_unit_test(test_indef_string),
+                                     cmocka_unit_test(test_def_array),
+                                     cmocka_unit_test(test_indef_array),
+                                     cmocka_unit_test(test_def_map),
+                                     cmocka_unit_test(test_indef_map),
+                                     cmocka_unit_test(test_tag),
+                                     cmocka_unit_test(test_ctrls),
+                                     cmocka_unit_test(test_floats)};
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

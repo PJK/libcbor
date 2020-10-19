@@ -40,9 +40,9 @@ static const uint8_t cbor_major_version = CBOR_MAJOR_VERSION;
 static const uint8_t cbor_minor_version = CBOR_MINOR_VERSION;
 static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
 
-#define CBOR_VERSION         \
-  TO_STR(CBOR_MAJOR_VERSION) \
-  "." TO_STR(CBOR_MINOR_VERSION) "." TO_STR(CBOR_PATCH_VERSION)
+#define CBOR_VERSION               \
+  _CBOR_TO_STR(CBOR_MAJOR_VERSION) \
+  "." _CBOR_TO_STR(CBOR_MINOR_VERSION) "." _CBOR_TO_STR(CBOR_PATCH_VERSION)
 #define CBOR_HEX_VERSION \
   ((CBOR_MAJOR_VERSION << 16) | (CBOR_MINOR_VERSION << 8) | CBOR_PATCH_VERSION)
 
@@ -50,7 +50,7 @@ static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
  */
 #ifdef DEBUG
 #include <stdio.h>
-#define debug_print(fmt, ...)                                           \
+#define _cbor_debug_print(fmt, ...)                                     \
   do {                                                                  \
     if (DEBUG)                                                          \
       fprintf(stderr, "%s:%d:%s(): " fmt, __FILE__, __LINE__, __func__, \
@@ -62,8 +62,14 @@ static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
   } while (0)
 #endif
 
-#define TO_STR_(x) #x
-#define TO_STR(x) TO_STR_(x) /* enables proper double expansion */
+#define _CBOR_TO_STR_(x) #x
+#define _CBOR_TO_STR(x) _CBOR_TO_STR_(x) /* enables proper double expansion */
+
+#ifdef __GNUC__
+#define _CBOR_UNUSED(x) __attribute__((__unused__)) x
+#else
+#define _CBOR_UNUSED(x) x
+#endif
 
 // Macro to short-circuit builder functions when memory allocation fails
 #define _CBOR_NOTNULL(cbor_item) \

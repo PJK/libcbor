@@ -15,12 +15,12 @@
 
 unsigned char buffer[512];
 
-static void test_embedded_tag(void **state) {
+static void test_embedded_tag(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(1, cbor_encode_tag(1, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xC1}), 1);
 }
 
-static void test_tag(void **state) {
+static void test_tag(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(5, cbor_encode_tag(1000000, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xDA, 0x00, 0x0F, 0x42, 0x40}),
                       5);

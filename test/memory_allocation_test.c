@@ -98,7 +98,7 @@ error:
 
 #define WITH_FAILING_MALLOC(block) WITH_MOCK_MALLOC(block, 1, MALLOC_FAIL)
 
-static void test_int_creation(void **state) {
+static void test_int_creation(void **_CBOR_UNUSED(_state)) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_int8()); });
   WITH_FAILING_MALLOC({ assert_null(cbor_new_int16()); });
   WITH_FAILING_MALLOC({ assert_null(cbor_new_int32()); });
@@ -115,7 +115,7 @@ static void test_int_creation(void **state) {
   WITH_FAILING_MALLOC({ assert_null(cbor_build_negint64(0xFF)); });
 }
 
-static void test_bytestring_creation(void **state) {
+static void test_bytestring_creation(void **_CBOR_UNUSED(_state)) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_bytestring()); });
 
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_bytestring()); });
@@ -129,7 +129,7 @@ static void test_bytestring_creation(void **state) {
                    MALLOC_FAIL);
 }
 
-static void test_string_creation(void **state) {
+static void test_string_creation(void **_CBOR_UNUSED(_state)) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_string()); });
 
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_string()); });
@@ -145,7 +145,7 @@ static void test_string_creation(void **state) {
                    MALLOC_FAIL);
 }
 
-static void test_array_creation(void **state) {
+static void test_array_creation(void **_CBOR_UNUSED(_state)) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_array(42)); });
   WITH_MOCK_MALLOC({ assert_null(cbor_new_definite_array(42)); }, 2, MALLOC,
                    MALLOC_FAIL);
@@ -153,7 +153,7 @@ static void test_array_creation(void **state) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_array()); });
 }
 
-static void test_map_creation(void **state) {
+static void test_map_creation(void **_CBOR_UNUSED(_state)) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_map(42)); });
   WITH_MOCK_MALLOC({ assert_null(cbor_new_definite_map(42)); }, 2, MALLOC,
                    MALLOC_FAIL);
@@ -161,11 +161,11 @@ static void test_map_creation(void **state) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_map()); });
 }
 
-static void test_tag_creation(void **state) {
+static void test_tag_creation(void **_CBOR_UNUSED(_state)) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_tag(42)); });
 }
 
-static void test_float_ctrl_creation(void **state) {
+static void test_float_ctrl_creation(void **_CBOR_UNUSED(_state)) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_ctrl()); });
   WITH_FAILING_MALLOC({ assert_null(cbor_new_float2()); });
   WITH_FAILING_MALLOC({ assert_null(cbor_new_float4()); });
@@ -180,7 +180,7 @@ static void test_float_ctrl_creation(void **state) {
   WITH_FAILING_MALLOC({ assert_null(cbor_build_ctrl(0xAF)); });
 }
 
-static void test_bytestring_add_chunk(void **state) {
+static void test_bytestring_add_chunk(void **_CBOR_UNUSED(_state)) {
   unsigned char bytes[] = {0, 0, 0xFF, 0xAB};
   WITH_MOCK_MALLOC(
       {
@@ -200,7 +200,7 @@ static void test_bytestring_add_chunk(void **state) {
       5, MALLOC, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }
 
-static void test_string_add_chunk(void **state) {
+static void test_string_add_chunk(void **_CBOR_UNUSED(_state)) {
   WITH_MOCK_MALLOC(
       {
         cbor_item_t *string = cbor_new_indefinite_string();
@@ -218,7 +218,7 @@ static void test_string_add_chunk(void **state) {
       5, MALLOC, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }
 
-static void test_array_push(void **state) {
+static void test_array_push(void **_CBOR_UNUSED(_state)) {
   WITH_MOCK_MALLOC(
       {
         cbor_item_t *array = cbor_new_indefinite_array();
@@ -235,7 +235,7 @@ static void test_array_push(void **state) {
       4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }
 
-static void test_map_add(void **state) {
+static void test_map_add(void **_CBOR_UNUSED(_state)) {
   WITH_MOCK_MALLOC(
       {
         cbor_item_t *map = cbor_new_indefinite_map();

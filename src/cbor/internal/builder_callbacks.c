@@ -35,9 +35,9 @@ void _cbor_builder_append(cbor_item_t *item,
           cbor_array_push(ctx->stack->top->item, item);
           ctx->stack->top->subitems--;
           if (ctx->stack->top->subitems == 0) {
-            cbor_item_t *item = ctx->stack->top->item;
+            cbor_item_t *stack_item = ctx->stack->top->item;
             _cbor_stack_pop(ctx->stack);
-            _cbor_builder_append(item, ctx);
+            _cbor_builder_append(stack_item, ctx);
           }
           cbor_decref(&item);
         } else {
@@ -60,9 +60,9 @@ void _cbor_builder_append(cbor_item_t *item,
         if (cbor_map_is_definite(ctx->stack->top->item)) {
           ctx->stack->top->subitems--;
           if (ctx->stack->top->subitems == 0) {
-            cbor_item_t *item = ctx->stack->top->item;
+            cbor_item_t *map_entry = ctx->stack->top->item;
             _cbor_stack_pop(ctx->stack);
-            _cbor_builder_append(item, ctx);
+            _cbor_builder_append(map_entry, ctx);
           }
         } else {
           ctx->stack->top->subitems ^=
@@ -74,9 +74,9 @@ void _cbor_builder_append(cbor_item_t *item,
         assert(ctx->stack->top->subitems == 1);
         cbor_tag_set_item(ctx->stack->top->item, item);
         cbor_decref(&item); /* Give up on our reference */
-        cbor_item_t *item = ctx->stack->top->item;
+        cbor_item_t *tagged_item = ctx->stack->top->item;
         _cbor_stack_pop(ctx->stack);
-        _cbor_builder_append(item, ctx);
+        _cbor_builder_append(tagged_item, ctx);
         break;
       }
       default: {

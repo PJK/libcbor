@@ -62,7 +62,7 @@ static void run_round() {
   free(data);
 }
 
-static void fuzz(void **state) {
+static void fuzz(void **_CBOR_UNUSED(_state)) {
 #if CBOR_CUSTOM_ALLOC
   cbor_set_allocs(mock_malloc, realloc, free);
 #endif

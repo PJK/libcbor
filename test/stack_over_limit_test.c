@@ -4,9 +4,7 @@
 
 #include <cmocka.h>
 
-#include "assertions.h"
 #include "cbor.h"
-#include "stream_expectations.h"
 
 static size_t generate_overflow_data(unsigned char **overflow_data) {
   int i;
@@ -19,7 +17,7 @@ static size_t generate_overflow_data(unsigned char **overflow_data) {
   return CBOR_MAX_STACK_SIZE + 3;
 }
 
-static void test_stack_over_limit(void **state) {
+static void test_stack_over_limit(void **_CBOR_UNUSED(_state)) {
   unsigned char *overflow_data;
   size_t overflow_data_len;
   struct cbor_load_result res;

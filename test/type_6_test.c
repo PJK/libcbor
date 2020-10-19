@@ -19,7 +19,7 @@ struct cbor_load_result res;
 
 unsigned char embedded_tag_data[] = {0xC0, 0x00};
 
-static void test_refcounting(void **state) {
+static void test_refcounting(void **_CBOR_UNUSED(_state)) {
   tag = cbor_load(embedded_tag_data, 2, &res);
   assert_true(cbor_refcount(tag) == 1);
   cbor_item_t *item = cbor_tag_item(tag);
@@ -32,7 +32,7 @@ static void test_refcounting(void **state) {
 }
 
 /* Tag 0 + uint 0 */
-static void test_embedded_tag(void **state) {
+static void test_embedded_tag(void **_CBOR_UNUSED(_state)) {
   tag = cbor_load(embedded_tag_data, 2, &res);
   assert_true(cbor_typeof(tag) == CBOR_TYPE_TAG);
   assert_true(cbor_tag_value(tag) == 0);
@@ -44,7 +44,7 @@ static void test_embedded_tag(void **state) {
 unsigned char int8_tag_data[] = {0xD8, 0xFF, 0x01};
 
 /* Tag 255 + uint 1 */
-static void test_int8_tag(void **state) {
+static void test_int8_tag(void **_CBOR_UNUSED(_state)) {
   tag = cbor_load(int8_tag_data, 3, &res);
   assert_true(cbor_typeof(tag) == CBOR_TYPE_TAG);
   assert_true(cbor_tag_value(tag) == 255);
@@ -56,7 +56,7 @@ static void test_int8_tag(void **state) {
 unsigned char int16_tag_data[] = {0xD9, 0xFF, 0x00, 0x02};
 
 /* Tag 255 << 8 + uint 2 */
-static void test_int16_tag(void **state) {
+static void test_int16_tag(void **_CBOR_UNUSED(_state)) {
   tag = cbor_load(int16_tag_data, 4, &res);
   assert_true(cbor_typeof(tag) == CBOR_TYPE_TAG);
   assert_true(cbor_tag_value(tag) == 255 << 8);
@@ -68,7 +68,7 @@ static void test_int16_tag(void **state) {
 unsigned char int32_tag_data[] = {0xDA, 0xFF, 0x00, 0x00, 0x00, 0x03};
 
 /* uint 3 */
-static void test_int32_tag(void **state) {
+static void test_int32_tag(void **_CBOR_UNUSED(_state)) {
   tag = cbor_load(int32_tag_data, 6, &res);
   assert_true(cbor_typeof(tag) == CBOR_TYPE_TAG);
   assert_true(cbor_tag_value(tag) == 4278190080ULL);
@@ -81,7 +81,7 @@ unsigned char int64_tag_data[] = {0xDB, 0xFF, 0x00, 0x00, 0x00,
                                   0x00, 0x00, 0x00, 0x00, 0x04};
 
 /* uint 4 */
-static void test_int64_tag(void **state) {
+static void test_int64_tag(void **_CBOR_UNUSED(_state)) {
   tag = cbor_load(int64_tag_data, 10, &res);
   assert_true(cbor_typeof(tag) == CBOR_TYPE_TAG);
   assert_true(cbor_tag_value(tag) == 18374686479671623680ULL);
@@ -93,7 +93,7 @@ static void test_int64_tag(void **state) {
 unsigned char nested_tag_data[] = {0xC0, 0xC1, 0x18, 0x2A};
 
 /* Tag 0, tag 1 + uint 0 */
-static void test_nested_tag(void **state) {
+static void test_nested_tag(void **_CBOR_UNUSED(_state)) {
   tag = cbor_load(nested_tag_data, 4, &res);
   assert_true(cbor_typeof(tag) == CBOR_TYPE_TAG);
   assert_true(cbor_tag_value(tag) == 0);

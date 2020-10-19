@@ -19,7 +19,7 @@ struct cbor_load_result res;
 
 unsigned char empty_string_data[] = {0x60};
 
-static void test_empty_string(void **state) {
+static void test_empty_string(void **_CBOR_UNUSED(_state)) {
   string = cbor_load(empty_string_data, 1, &res);
   assert_non_null(string);
   assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
@@ -35,7 +35,7 @@ unsigned char short_string_data[] = {0x6C, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20,
                                      0x77, 0x6F, 0x72, 0x6C, 0x64, 0x21};
 
 /*                              0x60 + 12 | Hello world! */
-static void test_short_string(void **state) {
+static void test_short_string(void **_CBOR_UNUSED(_state)) {
   string = cbor_load(short_string_data, 13, &res);
   assert_non_null(string);
   assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
@@ -53,7 +53,7 @@ unsigned char short_multibyte_string_data[] = {
     0xC3, 0x9F, 0x76, 0xC4, 0x9B, 0x74, 0x65, 0x21};
 
 /*                              0x60 + 15 | Čaues ßvěte! */
-static void test_short_multibyte_string(void **state) {
+static void test_short_multibyte_string(void **_CBOR_UNUSED(_state)) {
   string = cbor_load(short_multibyte_string_data, 16, &res);
   assert_non_null(string);
   assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
@@ -82,7 +82,7 @@ unsigned char int8_string_data[] = {
     0x70, 0x6F, 0x73, 0x75, 0x65, 0x72, 0x65, 0x2E};
 
 /*                                          150 | Lorem ....*/
-static void test_int8_string(void **state) {
+static void test_int8_string(void **_CBOR_UNUSED(_state)) {
   string = cbor_load(int8_string_data, 152, &res);
   assert_non_null(string);
   assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
@@ -116,7 +116,7 @@ unsigned char int16_string_data[] = {
 /*                                          150 | Lorem ....*/
 /* This valid but not realistic - length 150 could be encoded in a single
  * uint8_t (but we need to keep the test files reasonably compact) */
-static void test_int16_string(void **state) {
+static void test_int16_string(void **_CBOR_UNUSED(_state)) {
   string = cbor_load(int16_string_data, 153, &res);
   assert_non_null(string);
   assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
@@ -149,7 +149,7 @@ unsigned char int32_string_data[] = {
     0x74, 0x6F, 0x20, 0x70, 0x6F, 0x73, 0x75, 0x65, 0x72, 0x65, 0x2E};
 
 /*                                          150 | Lorem ....*/
-static void test_int32_string(void **state) {
+static void test_int32_string(void **_CBOR_UNUSED(_state)) {
   string = cbor_load(int32_string_data, 155, &res);
   assert_non_null(string);
   assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
@@ -183,7 +183,7 @@ unsigned char int64_string_data[] = {
     0x72, 0x65, 0x2E};
 
 /*                                          150 | Lorem ....*/
-static void test_int64_string(void **state) {
+static void test_int64_string(void **_CBOR_UNUSED(_state)) {
   string = cbor_load(int64_string_data, 159, &res);
   assert_non_null(string);
   assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
@@ -205,7 +205,7 @@ unsigned char short_indef_string_data[] = {0x7F, 0x78, 0x01, 0x65, 0xFF, 0xFF};
 /*                                         start |   string      | break| extra
  */
 
-static void test_short_indef_string(void **state) {
+static void test_short_indef_string(void **_CBOR_UNUSED(_state)) {
   string = cbor_load(short_indef_string_data, 6, &res);
   assert_non_null(string);
   assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
@@ -221,7 +221,7 @@ static void test_short_indef_string(void **state) {
   assert_null(string);
 }
 
-static void test_inline_creation(void **state) {
+static void test_inline_creation(void **_CBOR_UNUSED(_state)) {
   string = cbor_build_string("Hello!");
   assert_memory_equal(cbor_string_handle(string), "Hello!", strlen("Hello!"));
   cbor_decref(&string);
