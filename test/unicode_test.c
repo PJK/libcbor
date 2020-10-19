@@ -12,14 +12,12 @@
 #include <cmocka.h>
 
 #include "../src/cbor/internal/unicode.h"
-#include "assertions.h"
-
 struct _cbor_unicode_status status;
 
 unsigned char missing_bytes_data[] = {0xC4, 0x8C};
 
 /* Capital accented C */
-static void test_missing_bytes(void **UNUSED(state)) {
+static void test_missing_bytes(void **_CBOR_UNUSED(state)) {
   _cbor_unicode_codepoint_count(missing_bytes_data, 1, &status);
   assert_true(status.status == _CBOR_UNICODE_BADCP);
   _cbor_unicode_codepoint_count(missing_bytes_data, 2, &status);
@@ -29,7 +27,7 @@ static void test_missing_bytes(void **UNUSED(state)) {
 unsigned char invalid_sequence_data[] = {0x65, 0xC4, 0x00};
 
 /* e, invalid seq */
-static void test_invalid_sequence(void **UNUSED(state)) {
+static void test_invalid_sequence(void **_CBOR_UNUSED(state)) {
   _cbor_unicode_codepoint_count(invalid_sequence_data, 3, &status);
   assert_true(status.status == _CBOR_UNICODE_BADCP);
   assert_true(status.location == 2);

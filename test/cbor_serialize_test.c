@@ -15,12 +15,11 @@
 #include <stdarg.h>
 #include <string.h>
 #include <strings.h>
-#include "assertions.h"
 #include "cbor.h"
 
 unsigned char buffer[512];
 
-static void test_serialize_uint8(void **UNUSED(state)) {
+static void test_serialize_uint8(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_int8();
   cbor_set_uint8(item, 0);
   assert_int_equal(1, cbor_serialize(item, buffer, 512));
@@ -28,7 +27,7 @@ static void test_serialize_uint8(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_uint16(void **UNUSED(state)) {
+static void test_serialize_uint16(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_int16();
   cbor_set_uint16(item, 1000);
   assert_int_equal(3, cbor_serialize(item, buffer, 512));
@@ -36,7 +35,7 @@ static void test_serialize_uint16(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_uint32(void **UNUSED(state)) {
+static void test_serialize_uint32(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_int32();
   cbor_set_uint32(item, 1000000);
   assert_int_equal(5, cbor_serialize(item, buffer, 512));
@@ -45,7 +44,7 @@ static void test_serialize_uint32(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_uint64(void **UNUSED(state)) {
+static void test_serialize_uint64(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_int64();
   cbor_set_uint64(item, 1000000000000);
   assert_int_equal(9, cbor_serialize(item, buffer, 512));
@@ -56,7 +55,7 @@ static void test_serialize_uint64(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_negint8(void **UNUSED(state)) {
+static void test_serialize_negint8(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_int8();
   cbor_set_uint8(item, 0);
   cbor_mark_negint(item);
@@ -65,7 +64,7 @@ static void test_serialize_negint8(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_negint16(void **UNUSED(state)) {
+static void test_serialize_negint16(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_int16();
   cbor_set_uint16(item, 1000);
   cbor_mark_negint(item);
@@ -74,7 +73,7 @@ static void test_serialize_negint16(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_negint32(void **UNUSED(state)) {
+static void test_serialize_negint32(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_int32();
   cbor_set_uint32(item, 1000000);
   cbor_mark_negint(item);
@@ -84,7 +83,7 @@ static void test_serialize_negint32(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_negint64(void **UNUSED(state)) {
+static void test_serialize_negint64(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_int64();
   cbor_set_uint64(item, 1000000000000);
   cbor_mark_negint(item);
@@ -96,7 +95,7 @@ static void test_serialize_negint64(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_definite_bytestring(void **UNUSED(state)) {
+static void test_serialize_definite_bytestring(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_definite_bytestring();
   unsigned char *data = malloc(256);
   bzero(data, 256); /* Prevent undefined behavior in comparison */
@@ -107,7 +106,7 @@ static void test_serialize_definite_bytestring(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_indefinite_bytestring(void **UNUSED(state)) {
+static void test_serialize_indefinite_bytestring(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_indefinite_bytestring();
 
   cbor_item_t *chunk = cbor_new_definite_bytestring();
@@ -125,7 +124,7 @@ static void test_serialize_indefinite_bytestring(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_definite_string(void **UNUSED(state)) {
+static void test_serialize_definite_string(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_definite_string();
   unsigned char *data = malloc(12);
   strncpy((char *)data, "Hello world!", 12);
@@ -139,7 +138,7 @@ static void test_serialize_definite_string(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_indefinite_string(void **UNUSED(state)) {
+static void test_serialize_indefinite_string(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_indefinite_string();
   cbor_item_t *chunk = cbor_new_definite_string();
 
@@ -159,7 +158,7 @@ static void test_serialize_indefinite_string(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_definite_array(void **UNUSED(state)) {
+static void test_serialize_definite_array(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_definite_array(2);
   cbor_item_t *one = cbor_build_uint8(1);
   cbor_item_t *two = cbor_build_uint8(2);
@@ -175,7 +174,7 @@ static void test_serialize_definite_array(void **UNUSED(state)) {
   cbor_decref(&two);
 }
 
-static void test_serialize_indefinite_array(void **UNUSED(state)) {
+static void test_serialize_indefinite_array(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_indefinite_array();
   cbor_item_t *one = cbor_build_uint8(1);
   cbor_item_t *two = cbor_build_uint8(2);
@@ -190,7 +189,7 @@ static void test_serialize_indefinite_array(void **UNUSED(state)) {
   cbor_decref(&two);
 }
 
-static void test_serialize_definite_map(void **UNUSED(state)) {
+static void test_serialize_definite_map(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_definite_map(2);
   cbor_item_t *one = cbor_build_uint8(1);
   cbor_item_t *two = cbor_build_uint8(2);
@@ -206,7 +205,7 @@ static void test_serialize_definite_map(void **UNUSED(state)) {
   cbor_decref(&two);
 }
 
-static void test_serialize_indefinite_map(void **UNUSED(state)) {
+static void test_serialize_indefinite_map(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_indefinite_map(2);
   cbor_item_t *one = cbor_build_uint8(1);
   cbor_item_t *two = cbor_build_uint8(2);
@@ -222,7 +221,7 @@ static void test_serialize_indefinite_map(void **UNUSED(state)) {
   cbor_decref(&two);
 }
 
-static void test_serialize_tags(void **UNUSED(state)) {
+static void test_serialize_tags(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_tag(21);
   cbor_item_t *one = cbor_build_uint8(1);
   cbor_tag_set_item(item, one);
@@ -233,7 +232,7 @@ static void test_serialize_tags(void **UNUSED(state)) {
   cbor_decref(&one);
 }
 
-static void test_serialize_half(void **UNUSED(state)) {
+static void test_serialize_half(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_float2();
   cbor_set_float2(item, NAN);
 
@@ -242,7 +241,7 @@ static void test_serialize_half(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_single(void **UNUSED(state)) {
+static void test_serialize_single(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_float4();
   cbor_set_float4(item, 100000.0f);
 
@@ -252,7 +251,7 @@ static void test_serialize_single(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_double(void **UNUSED(state)) {
+static void test_serialize_double(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_float8();
   cbor_set_float8(item, -4.1);
 
@@ -264,7 +263,7 @@ static void test_serialize_double(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_ctrl(void **UNUSED(state)) {
+static void test_serialize_ctrl(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_undef();
 
   assert_int_equal(1, cbor_serialize(item, buffer, 512));
@@ -272,7 +271,7 @@ static void test_serialize_ctrl(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_long_ctrl(void **UNUSED(state)) {
+static void test_serialize_long_ctrl(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_ctrl();
   cbor_set_ctrl(item, 254);
 
@@ -281,7 +280,7 @@ static void test_serialize_long_ctrl(void **UNUSED(state)) {
   cbor_decref(&item);
 }
 
-static void test_auto_serialize(void **UNUSED(state)) {
+static void test_auto_serialize(void **_CBOR_UNUSED(state)) {
   cbor_item_t *item = cbor_new_definite_array(4);
   for (size_t i = 0; i < 4; i++)
     cbor_array_push(item, cbor_move(cbor_build_uint64(0)));

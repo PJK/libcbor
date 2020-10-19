@@ -12,7 +12,6 @@
 #include <cmocka.h>
 
 #include <time.h>
-#include "assertions.h"
 #include "cbor.h"
 
 #ifdef HUGE_FUZZ
@@ -63,7 +62,7 @@ static void run_round() {
   free(data);
 }
 
-static void fuzz(void **UNUSED(state)) {
+static void fuzz(void **_CBOR_UNUSED(state)) {
 #if CBOR_CUSTOM_ALLOC
   cbor_set_allocs(mock_malloc, realloc, free);
 #endif

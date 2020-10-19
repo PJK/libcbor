@@ -12,34 +12,33 @@
 #include <cmocka.h>
 
 #include <math.h>
-#include "assertions.h"
 #include "cbor.h"
 
 unsigned char buffer[512];
 
-static void test_bools(void **UNUSED(state)) {
+static void test_bools(void **_CBOR_UNUSED(state)) {
   assert_int_equal(1, cbor_encode_bool(false, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF4}), 1);
   assert_int_equal(1, cbor_encode_bool(true, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF5}), 1);
 }
 
-static void test_null(void **UNUSED(state)) {
+static void test_null(void **_CBOR_UNUSED(state)) {
   assert_int_equal(1, cbor_encode_null(buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF6}), 1);
 }
 
-static void test_undef(void **UNUSED(state)) {
+static void test_undef(void **_CBOR_UNUSED(state)) {
   assert_int_equal(1, cbor_encode_undef(buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF7}), 1);
 }
 
-static void test_break(void **UNUSED(state)) {
+static void test_break(void **_CBOR_UNUSED(state)) {
   assert_int_equal(1, cbor_encode_break(buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xFF}), 1);
 }
 
-static void test_half(void **UNUSED(state)) {
+static void test_half(void **_CBOR_UNUSED(state)) {
   assert_int_equal(3, cbor_encode_half(1.5f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x3E, 0x00}), 3);
 
@@ -81,18 +80,18 @@ static void test_half(void **UNUSED(state)) {
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7C, 0x00}), 3);
 }
 
-static void test_half_special(void **UNUSED(state)) {
+static void test_half_special(void **_CBOR_UNUSED(state)) {
   assert_int_equal(3, cbor_encode_half(NAN, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x00}), 3);
 }
 
-static void test_float(void **UNUSED(state)) {
+static void test_float(void **_CBOR_UNUSED(state)) {
   assert_int_equal(5, cbor_encode_single(3.4028234663852886e+38, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xFA, 0x7F, 0x7F, 0xFF, 0xFF}),
                       5);
 }
 
-static void test_double(void **UNUSED(state)) {
+static void test_double(void **_CBOR_UNUSED(state)) {
   assert_int_equal(9, cbor_encode_double(1.0e+300, buffer, 512));
   assert_memory_equal(
       buffer,

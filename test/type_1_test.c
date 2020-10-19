@@ -11,7 +11,6 @@
 
 #include <cmocka.h>
 
-#include "assertions.h"
 #include "cbor.h"
 
 cbor_item_t *number;
@@ -24,7 +23,7 @@ unsigned char data4[] = {0x3a, 0xa5, 0xf7, 0x02, 0xb3, 0xFF};
 unsigned char data5[] = {0x3b, 0xa5, 0xf7, 0x02, 0xb3,
                          0xa5, 0xf7, 0x02, 0xb3, 0xFF};
 
-static void test_very_short_int(void **UNUSED(state)) {
+static void test_very_short_int(void **_CBOR_UNUSED(state)) {
   number = cbor_load(data1, 2, &res);
   assert_true(cbor_typeof(number) == CBOR_TYPE_NEGINT);
   assert_true(cbor_int_get_width(number) == CBOR_INT_8);
@@ -38,7 +37,7 @@ static void test_very_short_int(void **UNUSED(state)) {
   assert_null(number);
 }
 
-static void test_short_int(void **UNUSED(state)) {
+static void test_short_int(void **_CBOR_UNUSED(state)) {
   number = cbor_load(data2, 3, &res);
   assert_true(cbor_typeof(number) == CBOR_TYPE_NEGINT);
   assert_true(cbor_int_get_width(number) == CBOR_INT_8);
@@ -52,7 +51,7 @@ static void test_short_int(void **UNUSED(state)) {
   assert_null(number);
 }
 
-static void test_half_int(void **UNUSED(state)) {
+static void test_half_int(void **_CBOR_UNUSED(state)) {
   number = cbor_load(data3, 5, &res);
   assert_true(cbor_typeof(number) == CBOR_TYPE_NEGINT);
   assert_true(cbor_int_get_width(number) == CBOR_INT_16);
@@ -66,7 +65,7 @@ static void test_half_int(void **UNUSED(state)) {
   assert_null(number);
 }
 
-static void test_int(void **UNUSED(state)) {
+static void test_int(void **_CBOR_UNUSED(state)) {
   number = cbor_load(data4, 6, &res);
   assert_true(cbor_typeof(number) == CBOR_TYPE_NEGINT);
   assert_true(cbor_int_get_width(number) == CBOR_INT_32);
@@ -80,7 +79,7 @@ static void test_int(void **UNUSED(state)) {
   assert_null(number);
 }
 
-static void test_long_int(void **UNUSED(state)) {
+static void test_long_int(void **_CBOR_UNUSED(state)) {
   number = cbor_load(data5, 10, &res);
   assert_true(cbor_typeof(number) == CBOR_TYPE_NEGINT);
   assert_true(cbor_int_get_width(number) == CBOR_INT_64);
