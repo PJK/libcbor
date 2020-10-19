@@ -287,10 +287,10 @@ static void test_auto_serialize(void **_CBOR_UNUSED(_state)) {
     cbor_array_push(item, cbor_move(cbor_build_uint64(0)));
 
   unsigned char *output;
-  size_t buffer_size;
-  assert_int_equal(37, cbor_serialize_alloc(item, &output, &buffer_size));
-  assert_int_equal(64, buffer_size);
-  assert_memory_equal(buffer, ((unsigned char[]){0x84, 0x1B}), 2);
+  size_t output_size;
+  assert_int_equal(37, cbor_serialize_alloc(item, &output, &output_size));
+  assert_int_equal(64, output_size);
+  assert_memory_equal(output, ((unsigned char[]){0x84, 0x1B}), 2);
   cbor_decref(&item);
   _CBOR_FREE(output);
 }
