@@ -30,7 +30,9 @@ matrix:
 before_install:
   - pushd ${HOME}
   - git clone https://gitlab.com/cmocka/cmocka.git
-  - cd cmocka && mkdir build && cd build
+  - cd cmocka
+  - git checkout tags/cmocka-1.1.5
+  - mkdir build && cd build
   - cmake .. && make -j2 && sudo make install
   - cd .. && popd
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update -qq; sudo apt-get install -y clang-format-8 cppcheck; fi
@@ -46,10 +48,10 @@ script:
     fi;
   - mkdir build && cd build
   - cmake -DWITH_TESTS=ON
-          -DCBOR_CUSTOM_ALLOC=ON
-          -DCMAKE_BUILD_TYPE=Debug
-          -DSANITIZE=OFF
-          ..
+    -DCBOR_CUSTOM_ALLOC=ON
+    -DCMAKE_BUILD_TYPE=Debug
+    -DSANITIZE=OFF
+    ..
   - make VERBOSE=1
   - ctest -VV
   - ctest -T memcheck | tee memcheck.out
