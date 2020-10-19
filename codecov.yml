@@ -1,2 +1,3 @@
 ignore:
   - "test/stream_expectations.c"  # Function pointers are not resolved correctly
+  - "examples"
