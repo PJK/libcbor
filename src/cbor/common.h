@@ -67,6 +67,8 @@ static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
 
 #ifdef __GNUC__
 #define _CBOR_UNUSED(x) __attribute__((__unused__)) x
+#elif defined(_MSC_VER)
+#define _CBOR_UNUSED(x) __pragma(warning(suppress : 4100 4101)) x
 #else
 #define _CBOR_UNUSED(x) x
 #endif
