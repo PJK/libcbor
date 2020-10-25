@@ -1,5 +1,6 @@
 Next
 ---------------------
+- Improved pkg-config paths handling [[#164]](https://github.com/PJK/libcbor/pull/164) (by [jtojnar@](https://github.com/jtojnar))
 
 0.8.0 (2020-09-20)
 ---------------------
