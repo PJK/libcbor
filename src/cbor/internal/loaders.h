@@ -23,7 +23,7 @@ uint32_t _cbor_load_uint32(const unsigned char *source);
 
 uint64_t _cbor_load_uint64(const unsigned char *source);
 
-double _cbor_load_half(cbor_data source);
+float _cbor_load_half(cbor_data source);
 
 float _cbor_load_float(cbor_data source);
 
