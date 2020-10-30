@@ -8,7 +8,7 @@
 #include "streaming.h"
 #include "internal/loaders.h"
 
-bool static claim_bytes(size_t required, size_t provided,
+static bool claim_bytes(size_t required, size_t provided,
                         struct cbor_decoder_result *result) {
   if (required > (provided - result->read)) {
     result->required = required + result->read;
