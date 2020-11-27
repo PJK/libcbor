@@ -1,6 +1,7 @@
 Next
 ---------------------
 - Improved pkg-config paths handling [[#164]](https://github.com/PJK/libcbor/pull/164) (by [jtojnar@](https://github.com/jtojnar))
+- Use explicit math.h linkage [[#170]](https://github.com/PJK/libcbor/pull/170)
 
 0.8.0 (2020-09-20)
 ---------------------
