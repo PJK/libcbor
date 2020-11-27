@@ -14,6 +14,7 @@ endif()
 
 add_library(cbor ${SOURCES})
 target_include_directories(cbor PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(cbor m)
 
 include(GenerateExportHeader)
 generate_export_header(cbor EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/cbor/cbor_export.h)
