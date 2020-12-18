@@ -151,6 +151,7 @@ void cbor_builder_negint8_callback(void *context, uint8_t value) {
 void cbor_builder_negint16_callback(void *context, uint16_t value) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_int16();
+  CHECK_RES(ctx, res);
   cbor_mark_negint(res);
   cbor_set_uint16(res, value);
   _cbor_builder_append(res, ctx);
@@ -340,6 +341,7 @@ void cbor_builder_indef_break_callback(void *context) {
 void cbor_builder_float2_callback(void *context, float value) {
   struct _cbor_decoder_context *ctx = context;
   cbor_item_t *res = cbor_new_float2();
+  CHECK_RES(ctx, res);
   cbor_set_float2(res, value);
   _cbor_builder_append(res, ctx);
 }
