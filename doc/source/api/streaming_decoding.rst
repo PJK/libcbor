@@ -1,11 +1,12 @@
-Decoding
+Streaming Decoding
 =============================
 
-Another way to decode data using libcbor is to specify a callbacks that will be invoked when upon finding certain items in the input. This API is provided by
+*libcbor* exposes a stateless decoder that reads a stream of input bytes from a buffer and invokes user-provided callbacks as it decodes the input:
 
 .. doxygenfunction:: cbor_stream_decode
 
-Usage example: https://github.com/PJK/libcbor/blob/master/examples/streaming_parser.c
+For example, when :func:`cbor_stream_decode` encounters a 1B unsigned integer, it will invoke the function pointer stored in ``cbor_callbacks.uint8``.
+Complete usage example: `examples/streaming_parser.c <https://github.com/PJK/libcbor/blob/master/examples/streaming_parser.c>`_
 
 The callbacks are defined by
 
@@ -15,13 +16,6 @@ The callbacks are defined by
 When building custom sets of callbacks, feel free to start from
 
 .. doxygenvariable:: cbor_empty_callbacks
-
-Related structures
-~~~~~~~~~~~~~~~~~~~~~
-
-.. doxygenenum:: cbor_decoder_status
-.. doxygenstruct:: cbor_decoder_result
-    :members:
 
 
 Callback types definition
