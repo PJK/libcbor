@@ -16,9 +16,15 @@ extern "C" {
 #endif
 
 /*
- * ============================================================================
- * Primitives encoding
- * ============================================================================
+ * All cbor_encode_* methods take 2 or 3 arguments:
+ * - a logical `value` to encode (except for trivial items such as NULLs)
+ * - an output `buffer` pointer
+ * - a `buffer_size` specification
+ *
+ * They serialize the `value` into one or more bytes and write the bytes to the
+ * output `buffer` and return either the number of bytes written, or 0 if the
+ * `buffer_size` was too small to small to fit the serialized value (in which
+ * case it is not modified).
  */
 
 CBOR_EXPORT size_t cbor_encode_uint8(uint8_t, unsigned char *, size_t);
@@ -86,11 +92,6 @@ CBOR_EXPORT size_t cbor_encode_undef(unsigned char *, size_t);
  * lost.
  *   - In all other cases, the sign bit, the exponent, and 10 most significant
  * bits of the significand are kept
- *
- * @param value
- * @param buffer Target buffer
- * @param buffer_size Available space in the buffer
- * @return number of bytes written
  */
 CBOR_EXPORT size_t cbor_encode_half(float, unsigned char *, size_t);
 
