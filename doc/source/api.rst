@@ -28,6 +28,8 @@ The API is designed to allow both very tight control & flexibility and general c
    api/item_reference_counting
    api/decoding
    api/encoding
+   api/streaming_decoding
+   api/streaming_encoding
    api/type_0_1
    api/type_2
    api/type_3
