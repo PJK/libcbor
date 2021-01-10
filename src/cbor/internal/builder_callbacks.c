@@ -250,6 +250,7 @@ void cbor_builder_string_callback(void *context, cbor_data data,
       cbor_string_add_chunk(ctx->stack->top->item, cbor_move(res));
     } else {
       cbor_decref(&res);
+      _CBOR_FREE(res);
       ctx->syntax_error = true;
     }
   } else {
