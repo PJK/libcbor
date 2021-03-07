@@ -1,7 +1,7 @@
 Memory management and reference counting
 ===============================================
 
-Due to the nature of its domain, *libcbor* will need to work with heap memory. The stateless decoder and encoder don't allocate any memory.
+Due to the nature of its domain, *libcbor* will need to work with heap memory. The stateless decoder and encoder doesn't allocate any memory.
 
 If you have specific requirements, you should consider rolling your own driver for the stateless API.
 
