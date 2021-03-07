@@ -1,7 +1,7 @@
 Memory management and reference counting
 ===============================================
 
-Due to the nature of its domain, *libcbor* will need to work with heap memory. The stateless decoder and encoder don't allocate any memory.
+Due to the nature of its domain, *libcbor* will need to work with heap memory. The stateless decoder and encoder doesn't allocate any memory.
 
 If you have specific requirements, you should consider rolling your own driver for the stateless API.
 
@@ -26,11 +26,11 @@ In order to use this feature, *libcbor* has to be compiled with the :doc:`approp
 Reference counting
 ^^^^^^^^^^^^^^^^^^^^^
 
-As CBOR items may require complex cleanups at the end of their lifetime, there is a reference counting mechanism in place. This also enables very simple GC when integrating *libcbor* into managed environment. Every item starts its life (by either explicit creation, or as a result of parsing) with reference count set to 1. When the refcount reaches zero, it will be destroyed.
+As CBOR items may require complex cleanups at the end of their lifetime, there is a reference counting mechanism in place. This also enables a very simple GC when integrating *libcbor* into a managed environment. Every item starts its life (by either explicit creation, or as a result of parsing) with reference count set to 1. When the refcount reaches zero, it will be destroyed.
 
-Items containing nested items will be destroyed recursively - refcount of every nested item will be decreased by one.
+Items containing nested items will be destroyed recursively - the refcount of every nested item will be decreased by one.
 
-The destruction is synchronous and renders any pointers to items with refcount zero invalid immediately after calling the :func:`cbor_decref`.
+The destruction is synchronous and renders any pointers to items with refcount zero invalid immediately after calling :func:`cbor_decref`.
 
 
 .. doxygenfunction:: cbor_incref
