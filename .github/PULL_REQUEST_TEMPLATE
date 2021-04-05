@@ -1,0 +1,16 @@
+# PR: Short description of change
+
+## Description
+
+A clear and concise description of what the PR does and why.
+
+## Checklist
+
+- [ ] I have read followed [CONTRIBUTING.md](https://github.com/PJK/libcbor/blob/master/CONTRIBUTING.md)
+	- [ ] I have added tests
+	- [ ] I have updated the documentation
+	- [ ] I have updated the CHANGELOG
+- [ ] Are there any breaking changes? If so, are they documented?
+- [ ] Does this PR introduce any platform specific code? If so, is this captured in the description?
+- [ ] Security: Does this PR potentially affect security? If so, is this captured in the description?
+- [ ] Performance: Does this PR potentially affect performance? If so, is this captured in the description?
