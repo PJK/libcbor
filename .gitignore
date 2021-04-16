@@ -6,3 +6,4 @@ doxygen_docs
 */*.out
 cmake-build-debug
 venv
+**.DS_Store
