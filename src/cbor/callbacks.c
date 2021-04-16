@@ -33,23 +33,23 @@ void cbor_null_negint64_callback(void *_CBOR_UNUSED(_ctx),
 
 void cbor_null_string_callback(void *_CBOR_UNUSED(_ctx),
                                cbor_data _CBOR_UNUSED(_val),
-                               size_t _CBOR_UNUSED(_val2)) {}
+                               uint64_t _CBOR_UNUSED(_val2)) {}
 
 void cbor_null_string_start_callback(void *_CBOR_UNUSED(_ctx)) {}
 
 void cbor_null_byte_string_callback(void *_CBOR_UNUSED(_ctx),
                                     cbor_data _CBOR_UNUSED(_val),
-                                    size_t _CBOR_UNUSED(_val2)) {}
+                                    uint64_t _CBOR_UNUSED(_val2)) {}
 
 void cbor_null_byte_string_start_callback(void *_CBOR_UNUSED(_ctx)) {}
 
 void cbor_null_array_start_callback(void *_CBOR_UNUSED(_ctx),
-                                    size_t _CBOR_UNUSED(_val)) {}
+                                    uint64_t _CBOR_UNUSED(_val)) {}
 
 void cbor_null_indef_array_start_callback(void *_CBOR_UNUSED(_ctx)) {}
 
 void cbor_null_map_start_callback(void *_CBOR_UNUSED(_ctx),
-                                  size_t _CBOR_UNUSED(_val)) {}
+                                  uint64_t _CBOR_UNUSED(_val)) {}
 
 void cbor_null_indef_map_start_callback(void *_CBOR_UNUSED(_ctx)) {}
 
