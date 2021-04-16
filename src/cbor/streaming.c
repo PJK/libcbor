@@ -264,57 +264,22 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x77:
       /* Embedded one byte length string */
       {
-        size_t length =
-            (size_t)_cbor_load_uint8(source) - 0x60; /* 0x60 offset */
-        if (claim_bytes(length, source_size, &result)) {
-          callbacks->string(context, source + 1, length);
-        }
+        uint64_t length = _cbor_load_uint8(source) - 0x60; /* 0x60 offset */
+        CLAIM_BYTES_AND_INVOKE(string, length, 0);
         return result;
       }
     case 0x78:
       /* One byte length string */
-      {
-        if (claim_bytes(1, source_size, &result)) {
-          size_t length = (size_t)_cbor_load_uint8(source + 1);
-          if (claim_bytes(length, source_size, &result)) {
-            callbacks->string(context, source + 1 + 1, length);
-          }
-        }
-        return result;
-      }
+      READ_CLAIM_INVOKE(string, _cbor_load_uint8, 1);
     case 0x79:
       /* Two bytes length string */
-      {
-        if (claim_bytes(2, source_size, &result)) {
-          size_t length = (size_t)_cbor_load_uint16(source + 1);
-          if (claim_bytes(length, source_size, &result)) {
-            callbacks->string(context, source + 1 + 2, length);
-          }
-        }
-        return result;
-      }
+      READ_CLAIM_INVOKE(string, _cbor_load_uint16, 2);
     case 0x7A:
       /* Four bytes length string */
-      {
-        if (claim_bytes(4, source_size, &result)) {
-          size_t length = (size_t)_cbor_load_uint32(source + 1);
-          if (claim_bytes(length, source_size, &result)) {
-            callbacks->string(context, source + 1 + 4, length);
-          }
-        }
-        return result;
-      }
+      READ_CLAIM_INVOKE(string, _cbor_load_uint32, 4);
     case 0x7B:
       /* Eight bytes length string */
-      {
-        if (claim_bytes(8, source_size, &result)) {
-          size_t length = (size_t)_cbor_load_uint64(source + 1);
-          if (claim_bytes(length, source_size, &result)) {
-            callbacks->string(context, source + 1 + 8, length);
-          }
-        }
-        return result;
-      }
+      READ_CLAIM_INVOKE(string, _cbor_load_uint64, 8);
     case 0x7C: /* Fallthrough */
     case 0x7D: /* Fallthrough */
     case 0x7E:
@@ -353,14 +318,14 @@ struct cbor_decoder_result cbor_stream_decode(
       /* Embedded one byte length array */
       {
         callbacks->array_start(
-            context, (size_t)_cbor_load_uint8(source) - 0x80); /* 0x40 offset */
+            context, _cbor_load_uint8(source) - 0x80); /* 0x40 offset */
         return result;
       }
     case 0x98:
       /* One byte length array */
       {
         if (claim_bytes(1, source_size, &result)) {
-          callbacks->array_start(context, (size_t)_cbor_load_uint8(source + 1));
+          callbacks->array_start(context, _cbor_load_uint8(source + 1));
         }
         return result;
       }
@@ -368,8 +333,7 @@ struct cbor_decoder_result cbor_stream_decode(
       /* Two bytes length array */
       {
         if (claim_bytes(2, source_size, &result)) {
-          callbacks->array_start(context,
-                                 (size_t)_cbor_load_uint16(source + 1));
+          callbacks->array_start(context, _cbor_load_uint16(source + 1));
         }
         return result;
       }
@@ -377,8 +341,7 @@ struct cbor_decoder_result cbor_stream_decode(
       /* Four bytes length array */
       {
         if (claim_bytes(4, source_size, &result)) {
-          callbacks->array_start(context,
-                                 (size_t)_cbor_load_uint32(source + 1));
+          callbacks->array_start(context, _cbor_load_uint32(source + 1));
         }
         return result;
       }
@@ -386,8 +349,7 @@ struct cbor_decoder_result cbor_stream_decode(
       /* Eight bytes length array */
       {
         if (claim_bytes(8, source_size, &result)) {
-          callbacks->array_start(context,
-                                 (size_t)_cbor_load_uint64(source + 1));
+          callbacks->array_start(context, _cbor_load_uint64(source + 1));
         }
         return result;
       }
@@ -428,15 +390,15 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xB7:
       /* Embedded one byte length map */
       {
-        callbacks->map_start(
-            context, (size_t)_cbor_load_uint8(source) - 0xA0); /* 0xA0 offset */
+        callbacks->map_start(context,
+                             _cbor_load_uint8(source) - 0xA0); /* 0xA0 offset */
         return result;
       }
     case 0xB8:
       /* One byte length map */
       {
         if (claim_bytes(1, source_size, &result)) {
-          callbacks->map_start(context, (size_t)_cbor_load_uint8(source + 1));
+          callbacks->map_start(context, _cbor_load_uint8(source + 1));
         }
         return result;
       }
@@ -444,7 +406,7 @@ struct cbor_decoder_result cbor_stream_decode(
       /* Two bytes length map */
       {
         if (claim_bytes(2, source_size, &result)) {
-          callbacks->map_start(context, (size_t)_cbor_load_uint16(source + 1));
+          callbacks->map_start(context, _cbor_load_uint16(source + 1));
         }
         return result;
       }
@@ -452,7 +414,7 @@ struct cbor_decoder_result cbor_stream_decode(
       /* Four bytes length map */
       {
         if (claim_bytes(4, source_size, &result)) {
-          callbacks->map_start(context, (size_t)_cbor_load_uint32(source + 1));
+          callbacks->map_start(context, _cbor_load_uint32(source + 1));
         }
         return result;
       }
@@ -460,7 +422,7 @@ struct cbor_decoder_result cbor_stream_decode(
       /* Eight bytes length map */
       {
         if (claim_bytes(8, source_size, &result)) {
-          callbacks->map_start(context, (size_t)_cbor_load_uint64(source + 1));
+          callbacks->map_start(context, _cbor_load_uint64(source + 1));
         }
         return result;
       }
