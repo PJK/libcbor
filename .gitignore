@@ -7,3 +7,5 @@ doxygen_docs
 cmake-build-debug
 venv
 **.DS_Store
+.vscode
+requirements.txt
