@@ -1,0 +1,20 @@
+- job: 'amd64_linux_gcc'
+  pool:
+    vmImage: 'ubuntu-20.04'
+  steps:
+  - script: sudo apt install -y make gcc
+  - script: gcc --version
+  - script: |
+      pushd ${HOME}
+      git clone https://gitlab.com/cmocka/cmocka.git
+      cd cmocka
+      git checkout tags/cmocka-1.1.5
+      mkdir build && cd build
+      cmake .. && make -j2 && sudo make install
+      popd
+  - script: mkdir build && cd build
+  - script: |
+      cmake -DWITH_TESTS=ON -DCBOR_CUSTOM_ALLOC=ON \
+        -DCMAKE_BUILD_TYPE=Debug -DSANITIZE=OFF ..
+  - script: make VERBOSE=1
+  - script: ctest -VV
