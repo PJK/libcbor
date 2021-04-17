@@ -118,7 +118,7 @@ void assert_bstring_mem_eq(cbor_data address, size_t length) {
 }
 
 void byte_string_callback(void *_CBOR_UNUSED(_context), cbor_data address,
-                          size_t length) {
+                          uint64_t length) {
   assert_true(current().expectation == BSTRING_MEM_EQ);
   assert_true(current().data.string.address == address);
   assert_true(current().data.string.length == length);
@@ -150,7 +150,7 @@ void assert_array_start(size_t length) {
       (struct test_assertion){ARRAY_START, {.length = length}};
 }
 
-void array_start_callback(void *_CBOR_UNUSED(_context), size_t length) {
+void array_start_callback(void *_CBOR_UNUSED(_context), uint64_t length) {
   assert_true(current().expectation == ARRAY_START);
   assert_true(current().data.length == length);
   current_expectation++;
@@ -171,7 +171,7 @@ void assert_map_start(size_t length) {
       (struct test_assertion){MAP_START, {.length = length}};
 }
 
-void map_start_callback(void *_CBOR_UNUSED(_context), size_t length) {
+void map_start_callback(void *_CBOR_UNUSED(_context), uint64_t length) {
   assert_true(current().expectation == MAP_START);
   assert_true(current().data.length == length);
   current_expectation++;
