@@ -4,7 +4,8 @@ To use libcbor in your
 [Baze](https://bazel.build/)
 project, first add the following section to your project's `WORKSPACE` file.
 Note the location of the `third_party/libcbor.BUILD` file - you may use a
-different location if you wish, but you must expose the file in a filegroup.
+different location if you wish, but you the file must be make available to
+`WORKSPACE`.
 
 ## WORKSPACE
 
@@ -72,4 +73,28 @@ file:
 exports_files(["libcbor.BUILD"]))
 ```
 
-#
+## Your BUILD File
+
+Add libcbor dependency to your package's `BUILD` file like so:
+
+```shell
+cc_library(
+    name = "...",
+    srcs = [ ... ],
+    hdrs = [ ... ],
+    deps = [
+        ...
+        "@libcbor//:cbor",
+    ],
+)
+```
+
+## Your C File
+
+Now you may simply include `cbor.h`:
+
+```c
+#include "cbor.h"
+
+static const uint8_t version = cbor_major_version;
+```
