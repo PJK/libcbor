@@ -12,7 +12,7 @@ different location if you wish, but you the file must be make available to
 Note, this imports version `0.8.0` - you may need to update the version and
 the sha256 hash.
 
-```shell
+```python
 # libcbor
 http_archive(
     name = "libcbor",
@@ -32,7 +32,7 @@ is used in two passes: to create the Makefiles, and then to invoke Make to build
 the `libcbor.a` static library. `libcbor.a` and the `.h` files are then made
 available for other packages to use.
 
-```shell
+```python
 genrule(
   name = "cbor_cmake",
   srcs = glob(["**"]),
@@ -69,7 +69,7 @@ cc_import(
 The `libcbor.BUILD` file must be make available to the top-level `WORKSPACE`
 file:
 
-```shell
+```python
 exports_files(["libcbor.BUILD"]))
 ```
 
@@ -77,7 +77,7 @@ exports_files(["libcbor.BUILD"]))
 
 Add libcbor dependency to your package's `BUILD` file like so:
 
-```shell
+```python
 cc_library(
     name = "...",
     srcs = [ ... ],
