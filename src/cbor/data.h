@@ -88,6 +88,11 @@ typedef enum {
   CBOR_CTRL_UNDEF = 23
 } _cbor_ctrl;
 
+// Metadata items use size_t (instead of uint64_t) because items in memory take
+// up at least 1B per entry or string byte, so if size_t is narrower than
+// uint64_t, we wouldn't be able to create them in the first place and can save
+// some space.
+
 /** Integers specific metadata */
 struct _cbor_int_metadata {
   cbor_int_width width;

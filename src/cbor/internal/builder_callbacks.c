@@ -95,6 +95,16 @@ void _cbor_builder_append(cbor_item_t *item,
     }                              \
   } while (0)
 
+// Check that the length fits into size_t. If not, we cannot possibly allocate
+// the required memory and should fail fast.
+#define CHECK_LENGTH(ctx, length)  \
+  do {                             \
+    if (length > SIZE_MAX) {       \
+      ctx->creation_failed = true; \
+      return;                      \
+    }                              \
+  } while (0)
+
 #define PUSH_CTX_STACK(ctx, res, subitems)                     \
   do {                                                         \
     if (_cbor_stack_push(ctx->stack, res, subitems) == NULL) { \
@@ -176,8 +186,9 @@ void cbor_builder_negint64_callback(void *context, uint64_t value) {
 }
 
 void cbor_builder_byte_string_callback(void *context, cbor_data data,
-                                       size_t length) {
+                                       uint64_t length) {
   struct _cbor_decoder_context *ctx = context;
+  CHECK_LENGTH(ctx, length);
   unsigned char *new_handle = _CBOR_MALLOC(length);
   if (new_handle == NULL) {
     ctx->creation_failed = true;
@@ -215,17 +226,18 @@ void cbor_builder_byte_string_start_callback(void *context) {
 }
 
 void cbor_builder_string_callback(void *context, cbor_data data,
-                                  size_t length) {
+                                  uint64_t length) {
   struct _cbor_decoder_context *ctx = context;
+  CHECK_LENGTH(ctx, length);
   struct _cbor_unicode_status unicode_status;
-
-  size_t codepoint_count =
+  uint64_t codepoint_count =
       _cbor_unicode_codepoint_count(data, length, &unicode_status);
 
   if (unicode_status.status != _CBOR_UNICODE_OK) {
     ctx->syntax_error = true;
     return;
   }
+  assert(codepoint_count <= length);
 
   unsigned char *new_handle = _CBOR_MALLOC(length);
 
@@ -264,8 +276,9 @@ void cbor_builder_string_start_callback(void *context) {
   PUSH_CTX_STACK(ctx, res, 0);
 }
 
-void cbor_builder_array_start_callback(void *context, size_t size) {
+void cbor_builder_array_start_callback(void *context, uint64_t size) {
   struct _cbor_decoder_context *ctx = context;
+  CHECK_LENGTH(ctx, size);
   cbor_item_t *res = cbor_new_definite_array(size);
   CHECK_RES(ctx, res);
   if (size > 0) {
@@ -289,8 +302,9 @@ void cbor_builder_indef_map_start_callback(void *context) {
   PUSH_CTX_STACK(ctx, res, 0);
 }
 
-void cbor_builder_map_start_callback(void *context, size_t size) {
+void cbor_builder_map_start_callback(void *context, uint64_t size) {
   struct _cbor_decoder_context *ctx = context;
+  CHECK_LENGTH(ctx, size);
   cbor_item_t *res = cbor_new_definite_map(size);
   CHECK_RES(ctx, res);
   if (size > 0) {

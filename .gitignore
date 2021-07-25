@@ -7,5 +7,6 @@ doxygen_docs
 cmake-build-debug
 venv
 **.DS_Store
+.vscode
 # No top-level requirements, see doc/source
 requirements.txt

@@ -128,13 +128,13 @@ void negint16_callback(void *, uint16_t);
 void negint32_callback(void *, uint32_t);
 void negint64_callback(void *, uint64_t);
 
-void byte_string_callback(void *, cbor_data, size_t);
+void byte_string_callback(void *, cbor_data, uint64_t);
 void byte_string_start_callback(void *);
 
-void array_start_callback(void *, size_t);
+void array_start_callback(void *, uint64_t);
 void indef_array_start_callback(void *);
 
-void map_start_callback(void *, size_t);
+void map_start_callback(void *, uint64_t);
 void indef_map_start_callback(void *);
 
 void tag_callback(void *, uint64_t);
