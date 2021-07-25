@@ -6,6 +6,7 @@
  */
 
 #include "unicode.h"
+#include <stdint.h>
 
 #define UTF8_ACCEPT 0
 #define UTF8_REJECT 1
@@ -90,5 +91,5 @@ size_t _cbor_unicode_codepoint_count(cbor_data source, size_t source_length,
 error:
   *status = (struct _cbor_unicode_status){.location = pos,
                                           .status = _CBOR_UNICODE_BADCP};
-  return -1;
+  return SIZE_MAX;
 }

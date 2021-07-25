@@ -506,8 +506,8 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xC5:
       /* Big float */
       {
-        callbacks->tag(context,
-                       _cbor_load_uint8(source) - 0xC0); /* 0xC0 offset */
+        callbacks->tag(context, (uint64_t)(_cbor_load_uint8(source) -
+                                           0xC0)); /* 0xC0 offset */
         return result;
       }
     case 0xC6: /* Fallthrough */
@@ -532,8 +532,8 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xD6: /* Expected b64 conversion tag - fallthrough */
     case 0xD7: /* Expected b16 conversion tag */
     {
-      callbacks->tag(context,
-                     _cbor_load_uint8(source) - 0xC0); /* 0xC0 offset */
+      callbacks->tag(context, (uint64_t)(_cbor_load_uint8(source) -
+                                         0xC0)); /* 0xC0 offset */
       return result;
     }
     case 0xD8: /* 1B tag */
