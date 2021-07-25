@@ -21,7 +21,7 @@
 extern "C" {
 
 /**
- * C++ is not a subset of C99 -- 'restrict' qualifier is not a part of the
+ * C99 is not a subset of C++ -- 'restrict' qualifier is not a part of the
  * language. This is a workaround to keep it in C headers -- compilers allow
  * linking non-restrict signatures with restrict implementations.
  *
