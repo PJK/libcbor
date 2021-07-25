@@ -45,6 +45,8 @@ typedef enum {
   CBOR_ERR_NONE,
   CBOR_ERR_NOTENOUGHDATA,
   CBOR_ERR_NODATA,
+  // TODO: Should be "malformed" or at least "malformatted". Retained for
+  // backwards compatibility.
   CBOR_ERR_MALFORMATED,
   CBOR_ERR_MEMERROR /** Memory error - item allocation failed. Is it too big for
                        your allocator? */
@@ -184,7 +186,7 @@ struct cbor_indefinite_string_data {
 
 /** High-level decoding error */
 struct cbor_error {
-  /** Aproximate position */
+  /** Approximate position */
   size_t position;
   /** Description */
   cbor_error_code code;
@@ -212,6 +214,8 @@ enum cbor_decoder_status {
    */
   CBOR_DECODER_FINISHED,
   /** Not enough data to invoke a callback */
+  // TODO: The name is inconsistent with CBOR_ERR_NOTENOUGHDATA. Retained for
+  // backwards compatibility.
   CBOR_DECODER_NEDATA,
   /** Bad data (reserved MTB, malformed value, etc.)  */
   CBOR_DECODER_ERROR

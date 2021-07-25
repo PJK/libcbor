@@ -83,7 +83,7 @@ cbor_item_t *cbor_load(cbor_data source, size_t source_size,
           goto error;
         }
       case CBOR_DECODER_ERROR:
-        /* Reserved/malformated item */
+        /* Reserved/malformed item */
         {
           result->error.code = CBOR_ERR_MALFORMATED;
           goto error;

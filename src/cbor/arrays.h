@@ -101,7 +101,7 @@ CBOR_EXPORT cbor_item_t* cbor_new_indefinite_array();
 
 /** Append to the end
  *
- * For indefinite items, storage may be realloacted. For definite items, only
+ * For indefinite items, storage may be reallocated. For definite items, only
  * the preallocated capacity is available.
  *
  * @param array[borrow] An array

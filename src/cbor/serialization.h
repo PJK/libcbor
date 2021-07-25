@@ -60,7 +60,7 @@ CBOR_EXPORT size_t cbor_serialize_uint(const cbor_item_t *, cbor_mutable_data,
 
 /** Serialize a negint
  *
- * @param item[borrow] A neging
+ * @param item[borrow] A negint
  * @param buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
  * @return Length of the result. 0 on failure.

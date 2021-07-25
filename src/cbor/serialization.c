@@ -51,7 +51,7 @@ size_t cbor_serialize_alloc(const cbor_item_t *item, unsigned char **buffer,
 
   size_t written;
 
-  /* This is waaay too optimistic - figure out something smarter (eventually) */
+  // TODO: Would it be possible to tell the size upfront?
   while ((written = cbor_serialize(item, bfr, bfr_size)) == 0) {
     if (!_cbor_safe_to_multiply(CBOR_BUFFER_GROWTH, bfr_size)) {
       _CBOR_FREE(bfr);

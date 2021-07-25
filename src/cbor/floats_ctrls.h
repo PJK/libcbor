@@ -48,7 +48,7 @@ CBOR_EXPORT float cbor_float_get_float2(const cbor_item_t *item);
  *
  * The item must have the corresponding width
  *
- * @param[borrow] A signle precision float
+ * @param[borrow] A single precision float
  * @return single precision value
  */
 CBOR_EXPORT float cbor_float_get_float4(const cbor_item_t *item);
@@ -125,7 +125,7 @@ CBOR_EXPORT cbor_item_t *cbor_new_undef();
 /** Constructs new boolean ctrl item
  *
  * @param value The value to use
- * @return **new** boolen ctrl item or `NULL` upon memory allocation failure
+ * @return **new** boolean ctrl item or `NULL` upon memory allocation failure
  */
 CBOR_EXPORT cbor_item_t *cbor_build_bool(bool value);
 
