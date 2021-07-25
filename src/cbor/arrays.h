@@ -39,7 +39,8 @@ CBOR_EXPORT cbor_item_t* cbor_array_get(const cbor_item_t* item, size_t index);
 
 /** Set item by index
  *
- * Creating arrays with holes is not possible
+ * If the index is out of bounds, the array is not modified and false is
+ * returned. Creating arrays with holes is not possible.
  *
  * @param item[borrow] An array
  * @param value[incref] The item to assign

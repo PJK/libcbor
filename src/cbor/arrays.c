@@ -31,9 +31,6 @@ bool cbor_array_set(cbor_item_t *item, size_t index, cbor_item_t *value) {
   } else {
     return false;
   }
-  // TODO: This is unreachable and the index checking logic above seems
-  // suspicious -- out of bounds index is a caller error. Figure out & fix.
-  return true;
 }
 
 bool cbor_array_replace(cbor_item_t *item, size_t index, cbor_item_t *value) {
