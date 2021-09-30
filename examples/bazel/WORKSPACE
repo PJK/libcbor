@@ -1,0 +1,21 @@
+workspace(name = "libcbor_bazel_example")
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+# Google Test
+http_archive(
+    name = "gtest",
+    sha256 = "94c634d499558a76fa649edb13721dce6e98fb1e7018dfaeba3cd7a083945e91",
+    strip_prefix = "googletest-release-1.10.0",
+    url = "https://github.com/google/googletest/archive/release-1.10.0.zip",
+)
+
+# libcbor
+http_archive(
+    name = "libcbor",
+    build_file = "//third_party:libcbor.BUILD",
+    sha256 = "dd04ea1a7df484217058d389e027e7a0143a4f245aa18a9f89a5dd3e1a4fcc9a",
+    strip_prefix = "libcbor-0.8.0",
+    urls = ["https://github.com/PJK/libcbor/archive/refs/tags/v0.8.0.zip"],
+)
+
