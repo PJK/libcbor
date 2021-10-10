@@ -37,12 +37,22 @@ before_install:
   - cd .. && popd
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update -qq; sudo apt-get install -y clang-format-8 cppcheck; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" -a "$CC" = "gcc" -a "$TRAVIS_ARCH" = "amd64" ]; then pip install --user codecov; export CFLAGS="-coverage"; fi
+  # https://docs.bazel.build/versions/main/install-ubuntu.html
+  - >
+    if [ "$TRAVIS_OS_NAME" = "linux" -a "$TRAVIS_ARCH" = "amd64" ]; then
+      sudo apt install apt-transport-https curl gnupg
+      curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
+      sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
+      echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+      sudo apt update && sudo apt install bazel
+      bazel --version
+    fi;
 
 script:
+  # Fail if re-formatting creates diffs (implying bad formatting)
   - >
     if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       cppcheck . --error-exitcode=1
-      # Fail if re-formatting creates diffs (implying bad formatting)
       /clang-format.sh --verbose
       git diff-index --quiet HEAD
     fi;
