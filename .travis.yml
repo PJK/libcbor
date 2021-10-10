@@ -39,7 +39,7 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" -a "$CC" = "gcc" -a "$TRAVIS_ARCH" = "amd64" ]; then pip install --user codecov; export CFLAGS="-coverage"; fi
   # https://docs.bazel.build/versions/main/install-ubuntu.html
   - >
-    if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+    if [ "$TRAVIS_OS_NAME" = "linux" -a "$TRAVIS_ARCH" = "amd64" ]; then
       sudo apt install apt-transport-https curl gnupg
       curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
       sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
