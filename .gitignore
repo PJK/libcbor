@@ -10,3 +10,7 @@ venv
 .vscode
 # No top-level requirements, see doc/source
 requirements.txt
+examples/bazel/bazel-bazel
+examples/bazel/bazel-bin
+examples/bazel/bazel-out
+examples/bazel/bazel-testlogs
