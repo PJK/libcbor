@@ -69,7 +69,12 @@ script:
     if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
       exit 1
     fi;
-
+  - >
+    if [ "$TRAVIS_OS_NAME" = "linux" -a "$TRAVIS_ARCH" = "amd64" ]; then
+      pushd examples/bazel
+      bazel run -s src:hello
+      popd
+    fi;
 
 after_success:
   - if [ "$TRAVIS_OS_NAME" = "linux" -a "$CC" = "gcc" -a "$TRAVIS_ARCH" = "amd64" ]; then codecov; fi
