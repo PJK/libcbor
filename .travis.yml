@@ -56,7 +56,7 @@ script:
       /clang-format.sh --verbose
       git diff-index --quiet HEAD
     fi;
-  - mkdir build && cd build
+  - mkdir build && pushd build
   - cmake -DWITH_TESTS=ON
     -DCBOR_CUSTOM_ALLOC=ON
     -DCMAKE_BUILD_TYPE=Debug
@@ -69,7 +69,14 @@ script:
     if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
       exit 1
     fi;
-
+  # Go back to repo root
+  - popd
+  - >
+    if [ "$TRAVIS_OS_NAME" = "linux" -a "$TRAVIS_ARCH" = "amd64" ]; then
+      pushd examples/bazel
+      bazel run -s src:hello
+      popd
+    fi;
 
 after_success:
   - if [ "$TRAVIS_OS_NAME" = "linux" -a "$CC" = "gcc" -a "$TRAVIS_ARCH" = "amd64" ]; then codecov; fi

@@ -6,6 +6,7 @@ Next
     - Callbacks for bytestrings, strings, arrays, and maps use uint64_t instead of size_t to allow handling of large items that exceed size_t even if size_t < uint64_t
     - cbor_decode explicitly checks size to avoid overflows (previously broken, potentially resulting in erroneous decoding on affected systems)
     - The change should be a noop for 64b systems 
+- Added a [Bazel](https://bazel.build/) build example [[#196]](https://github.com/PJK/libcbor/pull/196) (by [andyjgf@](https://github.com/andyjgf))
 
 0.8.0 (2020-09-20)
 ---------------------

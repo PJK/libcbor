@@ -9,3 +9,7 @@ venv
 **.DS_Store
 .vscode
 requirements.txt
+examples/bazel/bazel-bazel
+examples/bazel/bazel-bin
+examples/bazel/bazel-out
+examples/bazel/bazel-testlogs
