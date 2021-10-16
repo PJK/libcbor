@@ -8,6 +8,7 @@ cmake-build-debug
 venv
 **.DS_Store
 .vscode
+# No top-level requirements, see doc/source
 requirements.txt
 examples/bazel/bazel-bazel
 examples/bazel/bazel-bin

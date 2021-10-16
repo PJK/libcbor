@@ -57,7 +57,7 @@ CBOR_EXPORT cbor_item_t *cbor_new_indefinite_map();
  * @param item[borrow] A map
  * @param pair[incref] The key-value pair to add (incref is member-wise)
  * @return `true` on success, `false` if either reallocation failed or the
- * preallcoated storage is full
+ * preallocated storage is full
  */
 CBOR_EXPORT bool cbor_map_add(cbor_item_t *item, struct cbor_pair pair);
 
@@ -68,7 +68,7 @@ CBOR_EXPORT bool cbor_map_add(cbor_item_t *item, struct cbor_pair pair);
  * @param item[borrow] A map
  * @param key[incref] The key
  * @return `true` on success, `false` if either reallocation failed or the
- * preallcoated storage is full
+ * preallocated storage is full
  */
 CBOR_EXPORT bool _cbor_map_add_key(cbor_item_t *item, cbor_item_t *key);
 
@@ -79,7 +79,7 @@ CBOR_EXPORT bool _cbor_map_add_key(cbor_item_t *item, cbor_item_t *key);
  * @param item[borrow] A map
  * @param key[incref] The value
  * @return `true` on success, `false` if either reallocation failed or the
- * preallcoated storage is full
+ * preallocated storage is full
  */
 CBOR_EXPORT bool _cbor_map_add_value(cbor_item_t *item, cbor_item_t *value);
 

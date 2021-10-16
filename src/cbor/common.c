@@ -132,7 +132,7 @@ void cbor_decref(cbor_item_t **item_ref) {
         }
         _CBOR_FREE(item->data);
         break;
-      };
+      }
       case CBOR_TYPE_TAG: {
         if (item->metadata.tag_metadata.tagged_item != NULL)
           cbor_decref(&item->metadata.tag_metadata.tagged_item);
@@ -145,7 +145,6 @@ void cbor_decref(cbor_item_t **item_ref) {
       }
     }
     _CBOR_FREE(item);
-    // TODO
     *item_ref = NULL;
   }
 }

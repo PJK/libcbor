@@ -83,7 +83,7 @@ cbor_item_t *cbor_load(cbor_data source, size_t source_size,
           goto error;
         }
       case CBOR_DECODER_ERROR:
-        /* Reserved/malformated item */
+        /* Reserved/malformed item */
         {
           result->error.code = CBOR_ERR_MALFORMATED;
           goto error;
@@ -245,13 +245,13 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent) {
       fprintf(out, "Width: %dB, ", _pow(2, cbor_int_get_width(item)));
       fprintf(out, "Value: %" PRIu64 "\n", cbor_get_int(item));
       break;
-    };
+    }
     case CBOR_TYPE_NEGINT: {
       fprintf(out, "%*s[CBOR_TYPE_NEGINT] ", indent, " ");
       fprintf(out, "Width: %dB, ", _pow(2, cbor_int_get_width(item)));
       fprintf(out, "Value: -%" PRIu64 " -1\n", cbor_get_int(item));
       break;
-    };
+    }
     case CBOR_TYPE_BYTESTRING: {
       fprintf(out, "%*s[CBOR_TYPE_BYTESTRING] ", indent, " ");
       if (cbor_bytestring_is_indefinite(item)) {
@@ -264,7 +264,7 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent) {
         fprintf(out, "Definite, length %zuB\n", cbor_bytestring_length(item));
       }
       break;
-    };
+    }
     case CBOR_TYPE_STRING: {
       fprintf(out, "%*s[CBOR_TYPE_STRING] ", indent, " ");
       if (cbor_string_is_indefinite(item)) {
@@ -285,7 +285,7 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent) {
         fprintf(out, "\n");
       }
       break;
-    };
+    }
     case CBOR_TYPE_ARRAY: {
       fprintf(out, "%*s[CBOR_TYPE_ARRAY] ", indent, " ");
       if (cbor_array_is_definite(item)) {
@@ -297,7 +297,7 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent) {
       for (size_t i = 0; i < cbor_array_size(item); i++)
         _cbor_nested_describe(cbor_array_handle(item)[i], out, indent + 4);
       break;
-    };
+    }
     case CBOR_TYPE_MAP: {
       fprintf(out, "%*s[CBOR_TYPE_MAP] ", indent, " ");
       if (cbor_map_is_definite(item)) {
@@ -311,13 +311,13 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent) {
         _cbor_nested_describe(cbor_map_handle(item)[i].value, out, indent + 4);
       }
       break;
-    };
+    }
     case CBOR_TYPE_TAG: {
       fprintf(out, "%*s[CBOR_TYPE_TAG] ", indent, " ");
       fprintf(out, "Value: %" PRIu64 "\n", cbor_tag_value(item));
       _cbor_nested_describe(cbor_move(cbor_tag_item(item)), out, indent + 4);
       break;
-    };
+    }
     case CBOR_TYPE_FLOAT_CTRL: {
       fprintf(out, "%*s[CBOR_TYPE_FLOAT_CTRL] ", indent, " ");
       if (cbor_float_ctrl_is_ctrl(item)) {
@@ -334,7 +334,7 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent) {
         fprintf(out, "value: %lf\n", cbor_float_get_float(item));
       }
       break;
-    };
+    }
   }
 }
 

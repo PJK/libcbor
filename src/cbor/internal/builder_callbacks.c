@@ -233,7 +233,7 @@ void cbor_builder_string_callback(void *context, cbor_data data,
   uint64_t codepoint_count =
       _cbor_unicode_codepoint_count(data, length, &unicode_status);
 
-  if (unicode_status.status == _CBOR_UNICODE_BADCP) {
+  if (unicode_status.status != _CBOR_UNICODE_OK) {
     ctx->syntax_error = true;
     return;
   }

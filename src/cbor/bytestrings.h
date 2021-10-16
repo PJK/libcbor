@@ -108,7 +108,7 @@ CBOR_EXPORT cbor_item_t *cbor_new_definite_bytestring();
 
 /** Creates a new indefinite byte string
  *
- * The chunks array is initialized to `NULL` and chunkcount to 0
+ * The chunks array is initialized to `NULL` and chunk count to 0
  *
  * @return **new** indefinite bytestring. `NULL` on malloc failure.
  */
