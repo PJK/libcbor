@@ -1,5 +1,8 @@
 Next
 ---------------------
+
+0.9.0 (2021-11-14)
+---------------------
 - Improved pkg-config paths handling [[#164]](https://github.com/PJK/libcbor/pull/164) (by [jtojnar@](https://github.com/jtojnar))
 - Use explicit math.h linkage [[#170]](https://github.com/PJK/libcbor/pull/170)
 - BREAKING: Fixed handling of items that exceed the host size_t range [[#186]](https://github.com/PJK/libcbor/pull/186hg)  
