@@ -65,7 +65,9 @@ ctest
 popd
 
 prompt "Will proceed to tag the release with $TAG_NAME."
+git commit -a -m "Release $TAG_NAME"
 git tag "$TAG_NAME"
+git push
 git push --tags
 
 set +x
