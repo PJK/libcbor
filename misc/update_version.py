@@ -7,6 +7,9 @@ logging.basicConfig(level=logging.INFO)
 # Update version label in all configuration files
 # Usage: python3 misc/update_version.py X.Y.Z
 
+# When testing, reset local state using:
+# git checkout -- CHANGELOG.md Doxyfile CMakeLists.txt doc/source/conf.py examples/bazel/third_party/libcbor/cbor/configuration.h
+
 version = sys.argv[1]
 release_date = date.today().strftime('%Y-%m-%d')
 major, minor, patch = version.split('.')
