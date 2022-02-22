@@ -1,6 +1,8 @@
 Next
 ---------------------
 
+- Minimum CMake version is 3.16 [[#201]](https://github.com/PJK/libcbor/pull/201) (by [thewtex@](https://github.com/thewtex))
+
 0.9.0 (2021-11-14)
 ---------------------
 - Improved pkg-config paths handling [[#164]](https://github.com/PJK/libcbor/pull/164) (by [jtojnar@](https://github.com/jtojnar))
