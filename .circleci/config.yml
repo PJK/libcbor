@@ -12,6 +12,7 @@ jobs:
       - run: cppcheck . --error-exitcode=1
       # Fail if reformatting is not a noop
       - run: bash clang-format.sh --verbose && git diff-index --quiet HEAD
+      - run: cd project
       - run: mkdir build && pushd build
       - run: >
           cmake -DWITH_TESTS=ON \
@@ -21,7 +22,10 @@ jobs:
               ..
       - run: make VERBOSE=1
       - run: ctest -VV
-        # TODO: Reenable, currently fails on libjson leak
+        # TODO: Reenable, currently fails on libjson leak (package out of date)
+        # The issue actually seems to be in the instrumentation code, not
+        # libcbor (we don't use libjsoncpp)
+        # https://github.com/open-source-parsers/jsoncpp/issues/507
 #      - run: >
 #          ctest --output-on-failure -T memcheck | tee memcheck.out
 #          if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
