@@ -44,8 +44,7 @@ CBOR_EXPORT cbor_item_t *cbor_new_definite_map(size_t size);
 
 /** Create a new indefinite map
  *
- * @param size The number of slots to preallocate
- * @return **new** definite map. `NULL` on malloc failure.
+ * @return **new** indefinite map. `NULL` on malloc failure.
  */
 CBOR_EXPORT cbor_item_t *cbor_new_indefinite_map();
 
