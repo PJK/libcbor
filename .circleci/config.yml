@@ -6,8 +6,27 @@ jobs:
       image: ubuntu-2004:202010-01
     steps:
       - checkout
-      - run: apt-get update
-      - run: sudo apt-get install -y gcc g++ cmake clang-format-8 cppcheck
+      - run: sudo apt-get update
+      - run: sudo apt-get install -y gcc g++ cmake clang-format-8 cppcheck valgrind
+      - run: sudo apt install libcmocka-dev
+      - run: cppcheck . --error-exitcode=1
+      # Fail if reformatting is not a noop
+      - run: bash clang-format.sh --verbose && git diff-index --quiet HEAD
+      - run: mkdir build && pushd build
+      - run: >
+          cmake -DWITH_TESTS=ON \
+              -DCBOR_CUSTOM_ALLOC=ON \
+              -DCMAKE_BUILD_TYPE=Debug \
+              -DSANITIZE=OFF \
+              ..
+      - run: make VERBOSE=1
+      - run: ctest -VV
+        # TODO: Reenable, currently fails on libjson leak
+#      - run: >
+#          ctest --output-on-failure -T memcheck | tee memcheck.out
+#          if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
+#            exit 1
+#          fi;
 
 workflows:
   build-and-test:
