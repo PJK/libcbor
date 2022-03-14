@@ -67,7 +67,8 @@ size_t cbor_serialize_alloc(const cbor_item_t *item, unsigned char **buffer,
     bfr = tmp_bfr;
   }
   *buffer = bfr;
-  *buffer_size = bfr_size;
+  if (buffer_size != NULL)
+    *buffer_size = bfr_size;
   return written;
 }
 

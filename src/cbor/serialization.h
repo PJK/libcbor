@@ -40,7 +40,7 @@ CBOR_EXPORT size_t cbor_serialize(const cbor_item_t *item,
  *
  * @param item[borrow] A data item
  * @param buffer[out] Buffer containing the result
- * @param buffer_size[out] Size of the \p buffer
+ * @param buffer_size[out] Size of the \p buffer, or ``NULL``
  * @return Length of the result. 0 on failure, in which case \p buffer is
  * ``NULL``.
  */

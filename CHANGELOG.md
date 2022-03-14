@@ -1,5 +1,6 @@
 Next
 ---------------------
+- Make the buffer_size optional in `cbor_serialize_alloc` [[#205]](https://github.com/PJK/libcbor/pull/205) (by [hughsie@](https://github.com/hughsie))
 
 0.9.0 (2021-11-14)
 ---------------------
