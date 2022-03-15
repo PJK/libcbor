@@ -103,7 +103,7 @@ add_custom_target(coverage
 include_directories(src)
 
 
-option(COVERAGE "Enable code coverage instrumentation" OFF)
+option(c "Enable code coverage instrumentation" OFF)
 if (COVERAGE)
     message("Configuring code coverage instrumentation")
     if(NOT CMAKE_C_COMPILER MATCHES "gcc")
