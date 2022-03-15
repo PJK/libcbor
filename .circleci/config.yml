@@ -14,6 +14,8 @@ build-test: &build-test >
   make VERBOSE=1 &&
   ctest -VV
 
+orbs:
+  codecov: codecov/codecov@3.2.2
 jobs:
   static-test:
     machine:
