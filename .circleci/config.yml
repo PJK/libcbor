@@ -41,7 +41,6 @@ jobs:
       #            exit 1
       #          fi;
       # TODO: Migrate codecov support from Travis
-      # TODO: Migrate Bazel build test from Travis
       # TODO: Set up OSX
 
   build-and-test-clang:
@@ -64,6 +63,21 @@ jobs:
       - run: *linux-setup
       - run: *build-test
 
+  build-bazel:
+    machine:
+      image: ubuntu-2004:202101-01
+    steps:
+      - checkout
+      - run: *linux-setup
+      - run: sudo apt install apt-transport-https curl gnupg
+      - run: curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
+      - run: sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
+      - run: echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+      - run: sudo apt update && sudo apt install bazel
+      - run: bazel --version
+      - run: >
+          pushd examples/bazel
+          bazel run -s src:hello
 
 workflows:
   build-and-test:
@@ -72,3 +86,4 @@ workflows:
       - build-and-test
       - build-and-test-clang
       - build-and-test-arm
+      - build-bazel
