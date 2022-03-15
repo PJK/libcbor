@@ -76,7 +76,7 @@ jobs:
       - run: sudo apt update && sudo apt install bazel
       - run: bazel --version
       - run: >
-          pushd examples/bazel
+          pushd examples/bazel &&
           bazel run -s src:hello
 
   build-and-test-osx:
@@ -84,13 +84,12 @@ jobs:
       xcode: 12.5.1
     steps:
       - checkout
-      - run: >
-        git clone https://gitlab.com/cmocka/cmocka.git &&
-        pushd cmocka &&
-        git checkout tags/cmocka-1.1.5 &&
-        mkdir build && pushd build &&
-        cmake .. && make -j2 && sudo make install &&
-        popd && popd
+      - run: git clone https://gitlab.com/cmocka/cmocka.git
+      - run: pushd cmocka
+      - run: git checkout tags/cmocka-1.1.5
+      - run: mkdir build && pushd build
+      - run: cmake .. && make -j2 && sudo make install
+      - run: popd && popd
 
 workflows:
   build-and-test:
