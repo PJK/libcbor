@@ -42,7 +42,7 @@ jobs:
       #          fi;
       # TODO: Migrate codecov support from Travis
       # TODO: Migrate Bazel build test from Travis
-      # TODO: Set up ARM and OSX
+      # TODO: Set up OSX
 
   build-and-test-clang:
     machine:
@@ -57,8 +57,8 @@ jobs:
 
   build-and-test-arm:
     machine:
-      image: ubuntu-2004:202010-01
-      resource_class: arm.medium
+      image: ubuntu-2004:202101-01
+    resource_class: arm.medium
     steps:
       - checkout
       - run: *linux-setup
