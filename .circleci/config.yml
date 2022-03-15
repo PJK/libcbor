@@ -33,6 +33,7 @@ jobs:
       - checkout
       - run: *linux-setup
       - run: *build-test
+      - codecov/upload
         # TODO: Reenable, currently fails on libjson leak (package out of date)
         # The issue actually seems to be in the instrumentation code, not
         # libcbor (we don't use libjsoncpp)
