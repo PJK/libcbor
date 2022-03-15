@@ -79,6 +79,19 @@ jobs:
           pushd examples/bazel
           bazel run -s src:hello
 
+  build-and-test-osx:
+    macos:
+      xcode: 12.5.1
+    steps:
+      - checkout
+      - run: >
+        git clone https://gitlab.com/cmocka/cmocka.git &&
+        pushd cmocka &&
+        git checkout tags/cmocka-1.1.5 &&
+        mkdir build && pushd build &&
+        cmake .. && make -j2 && sudo make install &&
+        popd && popd
+
 workflows:
   build-and-test:
     jobs:
@@ -86,4 +99,5 @@ workflows:
       - build-and-test
       - build-and-test-clang
       - build-and-test-arm
+      - build-and-test-osx
       - build-bazel
