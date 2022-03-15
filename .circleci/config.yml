@@ -32,7 +32,16 @@ jobs:
     steps:
       - checkout
       - run: *linux-setup
-      - run: *build-test
+      - run: >
+          cmake -DWITH_TESTS=ON \
+              -DCBOR_CUSTOM_ALLOC=ON \
+              -DCMAKE_BUILD_TYPE=Debug \
+              -DSANITIZE=OFF \
+              -DCOVERAGE=ON \
+              .
+      - run: make VERBOSE=1
+      - run: ctest -VV
+      - run: ctest -T Coverage
       - codecov/upload
         # TODO: Reenable, currently fails on libjson leak (package out of date)
         # The issue actually seems to be in the instrumentation code, not
@@ -43,7 +52,6 @@ jobs:
       #          if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
       #            exit 1
       #          fi;
-      # TODO: Migrate codecov support from Travis
 
   build-and-test-clang:
     machine:
