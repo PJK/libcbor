@@ -1,24 +1,37 @@
 version: 2.1
 
+
+linux-setup: &linux-setup
+  - run: sudo apt-get update
+  - run: sudo apt-get install -y gcc clang g++ cmake clang-format-8 cppcheck valgrind
+  - run: sudo apt install libcmocka-dev
+
+build-test: &build-test
+  - run: >
+      cmake -DWITH_TESTS=ON \
+          -DCBOR_CUSTOM_ALLOC=ON \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -DSANITIZE=OFF \
+          .
+  - run: make VERBOSE=1
+  - run: ctest -VV
+
 jobs:
+  static-test:
+    machine:
+      image: ubuntu-2004:202010-01
+    steps:
+      - checkout
+      - run: cppcheck . --error-exitcode=1
+      - run: bash clang-format.sh --verbose && git diff-index --quiet HEAD
+
   build-and-test:
     machine:
       image: ubuntu-2004:202010-01
     steps:
       - checkout
-      - run: sudo apt-get update
-      - run: sudo apt-get install -y gcc g++ cmake clang-format-8 cppcheck valgrind
-      - run: sudo apt install libcmocka-dev
-      - run: cppcheck . --error-exitcode=1
-      - run: bash clang-format.sh --verbose && git diff-index --quiet HEAD
-      - run: >
-          cmake -DWITH_TESTS=ON \
-              -DCBOR_CUSTOM_ALLOC=ON \
-              -DCMAKE_BUILD_TYPE=Debug \
-              -DSANITIZE=OFF \
-              .
-      - run: make VERBOSE=1
-      - run: ctest -VV
+      <<: *linux-setup
+      <<: *build-test
         # TODO: Reenable, currently fails on libjson leak (package out of date)
         # The issue actually seems to be in the instrumentation code, not
         # libcbor (we don't use libjsoncpp)
@@ -31,9 +44,23 @@ jobs:
       # TODO: Migrate codecov support from Travis
       # TODO: Migrate Bazel build test from Travis
       # TODO: Set up ARM and OSX
-      # TODO: Set up other toolchains
+
+  build-and-test-clang:
+    machine:
+      image: ubuntu-2004:202010-01
+    steps:
+      - checkout
+      <<: *linux-setup
+      - run: >
+          export CC=/usr/bin/clang
+          export CXX=/usr/bin/clang++
+      <<: *build-test
+
+
 
 workflows:
   build-and-test:
     jobs:
+      - static-test
       - build-and-test
+      - build-and-test-clang
