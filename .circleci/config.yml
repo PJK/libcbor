@@ -10,10 +10,7 @@ jobs:
       - run: sudo apt-get install -y gcc g++ cmake clang-format-8 cppcheck valgrind
       - run: sudo apt install libcmocka-dev
       - run: cppcheck . --error-exitcode=1
-      # Fail if reformatting is not a noop
       - run: bash clang-format.sh --verbose && git diff-index --quiet HEAD
-      - run: cd project
-      - run: mkdir build && pushd build
       - run: >
           cmake -DWITH_TESTS=ON \
               -DCBOR_CUSTOM_ALLOC=ON \
@@ -26,11 +23,15 @@ jobs:
         # The issue actually seems to be in the instrumentation code, not
         # libcbor (we don't use libjsoncpp)
         # https://github.com/open-source-parsers/jsoncpp/issues/507
-#      - run: >
-#          ctest --output-on-failure -T memcheck | tee memcheck.out
-#          if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
-#            exit 1
-#          fi;
+      #      - run: >
+      #          ctest --output-on-failure -T memcheck | tee memcheck.out
+      #          if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
+      #            exit 1
+      #          fi;
+      # TODO: Migrate codecov support from Travis
+      # TODO: Migrate Bazel build test from Travis
+      # TODO: Set up ARM and OSX
+      # TODO: Set up other toolchains
 
 workflows:
   build-and-test:
