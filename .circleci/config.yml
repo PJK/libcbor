@@ -41,7 +41,6 @@ jobs:
       #            exit 1
       #          fi;
       # TODO: Migrate codecov support from Travis
-      # TODO: Set up OSX
 
   build-and-test-clang:
     machine:
@@ -84,12 +83,9 @@ jobs:
       xcode: 12.5.1
     steps:
       - checkout
-      - run: git clone https://gitlab.com/cmocka/cmocka.git
-      - run: pushd cmocka
-      - run: git checkout tags/cmocka-1.1.5
-      - run: mkdir build && pushd build
-      - run: cmake .. && make -j2 && sudo make install
-      - run: popd && popd
+      - run: bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      - run: brew install cmocka cmake
+      - run: *build-test
 
 workflows:
   build-and-test:
