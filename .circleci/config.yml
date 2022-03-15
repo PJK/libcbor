@@ -20,6 +20,7 @@ jobs:
       image: ubuntu-2004:202010-01
     steps:
       - checkout
+      - run: *linux-setup
       - run: cppcheck . --error-exitcode=1
       - run: bash clang-format.sh --verbose && git diff-index --quiet HEAD
 
@@ -54,6 +55,14 @@ jobs:
           export CXX=/usr/bin/clang++
       - run: *build-test
 
+  build-and-test-arm:
+    machine:
+      image: ubuntu-2004:202010-01
+      resource_class: arm.medium
+    steps:
+      - checkout
+      - run: *linux-setup
+      - run: *build-test
 
 
 workflows:
@@ -62,3 +71,4 @@ workflows:
       - static-test
       - build-and-test
       - build-and-test-clang
+      - build-and-test-arm
