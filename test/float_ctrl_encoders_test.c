@@ -65,6 +65,15 @@ static void test_half(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(3, cbor_encode_half(5.960464477539062e-8f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x00, 0x01}), 3);
 
+  assert_int_equal(3, cbor_encode_half(4.172325134277344e-7f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x00, 0x07}), 3);
+
+  assert_int_equal(3, cbor_encode_half(6.097555160522461e-5f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x03, 0xff}), 3);
+
+  assert_int_equal(3, cbor_encode_half(6.100535392761231e-5f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x04, 0x00}), 3);
+
   /* Smaller than the smallest and even the magnitude cannot be represented,
      round off to zero */
   assert_int_equal(3, cbor_encode_half(1e-25f, buffer, 512));

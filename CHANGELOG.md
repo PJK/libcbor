@@ -1,5 +1,6 @@
 Next
 ---------------------
+- Improved half-float encoding for denormalized numbers.
 
 0.9.0 (2021-11-14)
 ---------------------
