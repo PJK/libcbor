@@ -295,6 +295,16 @@ static void test_auto_serialize(void **_CBOR_UNUSED(_state)) {
   _CBOR_FREE(output);
 }
 
+static void test_auto_serialize_no_size(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_build_uint8(1);
+
+  unsigned char *output;
+  assert_int_equal(1, cbor_serialize_alloc(item, &output, NULL));
+  assert_memory_equal(output, ((unsigned char[]){0x01}), 1);
+  cbor_decref(&item);
+  _CBOR_FREE(output);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_serialize_uint8),
@@ -319,6 +329,7 @@ int main(void) {
       cmocka_unit_test(test_serialize_double),
       cmocka_unit_test(test_serialize_ctrl),
       cmocka_unit_test(test_serialize_long_ctrl),
-      cmocka_unit_test(test_auto_serialize)};
+      cmocka_unit_test(test_auto_serialize),
+      cmocka_unit_test(test_auto_serialize_no_size)};
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

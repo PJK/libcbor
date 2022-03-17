@@ -1,5 +1,6 @@
 Next
 ---------------------
+- Make the buffer_size optional in `cbor_serialize_alloc` [[#205]](https://github.com/PJK/libcbor/pull/205) (by [hughsie@](https://github.com/hughsie))
 - Minimum CMake version is 3.0 [[#201]](https://github.com/PJK/libcbor/pull/201) (by [thewtex@](https://github.com/thewtex))
   - See https://repology.org/project/cmake/versions for support; the vast majority of users should not be affected.
 
