@@ -106,4 +106,10 @@ workflows:
       - build-and-test-clang
       - build-and-test-arm
       - build-and-test-osx
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                - master
       - build-bazel
