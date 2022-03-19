@@ -25,6 +25,10 @@ jobs:
       - run: *linux-setup
       - run: cppcheck . --error-exitcode=1
       - run: bash clang-format.sh --verbose && git diff-index --quiet HEAD
+      - run: >
+          cd doc
+          pip install -r source/requirements.txt
+          make html
 
   build-and-test:
     machine:
