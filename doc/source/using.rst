@@ -34,10 +34,10 @@ feel free to use just some of the ``cbor/*.h`` headers:
 
  - ``cbor/arrays.h`` - :doc:`api/type_4`
  - ``cbor/bytestrings.h`` - :doc:`api/type_2`
- - ``cbor/callbacks.h`` - Callbacks used for :doc:`streaming/decoding`
+ - ``cbor/callbacks.h`` - Callbacks used for :doc:`api/streaming_decoding`
  - ``cbor/common.h`` - Common utilities - always transitively included
  - ``cbor/data.h`` - Data types definitions - always transitively included
- - ``cbor/encoding.h`` - Streaming encoders for :doc:`streaming/encoding`
+ - ``cbor/encoding.h`` - Streaming encoders for :doc:`api/streaming_encoding`
  - ``cbor/floats_ctrls.h`` - :doc:`api/type_7`
  - ``cbor/ints.h`` - :doc:`api/type_0_1`
  - ``cbor/maps.h`` - :doc:`api/type_5`

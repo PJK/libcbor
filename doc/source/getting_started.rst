@@ -50,7 +50,7 @@ Option                    Meaning                                               
 ``WITH_TESTS``            Build unit tests (see :doc:`development`)                 ``OFF``                  ``ON``, ``OFF``
 ========================  =======================================================   ======================  =====================================================================================================================
 
-The following configuration options will also be defined as macros[#]_ in ``<cbor/common.h>`` and can therefore be used in client code:
+The following configuration options will also be defined as macros [#]_ in ``<cbor/common.h>`` and can therefore be used in client code:
 
 ========================  =======================================================   ======================  =====================================================================================================================
 Option                    Meaning                                                   Default                 Possible values
