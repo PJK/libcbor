@@ -38,60 +38,94 @@ static void test_break(void **_CBOR_UNUSED(_state)) {
   assert_memory_equal(buffer, ((unsigned char[]){0xFF}), 1);
 }
 
+/* Check that encode(decode(buffer)) = buffer for a valid half-float in the
+ * buffer.*/
+static void assert_half_float_codec_identity() {
+  unsigned char secondary_buffer[3];
+  struct cbor_load_result res;
+  // Load and check data in buffer
+  cbor_item_t *half_float = cbor_load(buffer, 3, &res);
+  assert_int_equal(res.error.code, CBOR_ERR_NONE);
+  assert_true(cbor_isa_float_ctrl(half_float));
+  assert_true(cbor_is_float(half_float));
+  assert_int_equal(cbor_float_get_width(half_float), CBOR_FLOAT_16);
+  // Encode again and check equality
+  assert_int_equal(3, cbor_encode_half(cbor_float_get_float2(half_float),
+                                       secondary_buffer, 3));
+  assert_memory_equal(buffer, secondary_buffer, 3);
+  cbor_decref(&half_float);
+}
+
 static void test_half(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(3, cbor_encode_half(1.5f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x3E, 0x00}), 3);
+  assert_half_float_codec_identity();
 
   assert_int_equal(3, cbor_encode_half(-0.0f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x80, 0x00}), 3);
+  assert_half_float_codec_identity();
 
   assert_int_equal(3, cbor_encode_half(0.0f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x00, 0x00}), 3);
+  assert_half_float_codec_identity();
 
   assert_int_equal(3, cbor_encode_half(65504.0f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7B, 0xFF}), 3);
+  assert_half_float_codec_identity();
 
   assert_int_equal(3, cbor_encode_half(0.00006103515625f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x04, 0x00}), 3);
+  assert_half_float_codec_identity();
 
   assert_int_equal(3, cbor_encode_half(-4.0f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0xC4, 0x00}), 3);
+  assert_half_float_codec_identity();
 
   /* Smallest representable value */
   assert_int_equal(3, cbor_encode_half(5.960464477539063e-8f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x00, 0x01}), 3);
+  assert_half_float_codec_identity();
 
   /* Smaller than the smallest, approximate magnitude representation */
   assert_int_equal(3, cbor_encode_half(5.960464477539062e-8f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x00, 0x01}), 3);
+  assert_half_float_codec_identity();
 
   assert_int_equal(3, cbor_encode_half(4.172325134277344e-7f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x00, 0x07}), 3);
+  assert_half_float_codec_identity();
 
   assert_int_equal(3, cbor_encode_half(6.097555160522461e-5f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x03, 0xff}), 3);
+  assert_half_float_codec_identity();
 
   assert_int_equal(3, cbor_encode_half(6.100535392761231e-5f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x04, 0x00}), 3);
+  assert_half_float_codec_identity();
 
   /* Smaller than the smallest and even the magnitude cannot be represented,
      round off to zero */
   assert_int_equal(3, cbor_encode_half(1e-25f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x00, 0x00}), 3);
+  assert_half_float_codec_identity();
 
   assert_int_equal(3, cbor_encode_half(1.1920928955078125e-7, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x00, 0x02}), 3);
+  assert_half_float_codec_identity();
 
   assert_int_equal(3, cbor_encode_half(-1.1920928955078124e-7, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x80, 0x02}), 3);
+  assert_half_float_codec_identity();
 
   assert_int_equal(3, cbor_encode_half(INFINITY, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7C, 0x00}), 3);
+  assert_half_float_codec_identity();
 }
 
 static void test_half_special(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(3, cbor_encode_half(NAN, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x00}), 3);
+  assert_half_float_codec_identity();
 }
 
 static void test_float(void **_CBOR_UNUSED(_state)) {
