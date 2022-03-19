@@ -4,6 +4,8 @@ Next
 - BREAKING: Improved half-float encoding for denormalized numbers. [[#208]](https://github.com/PJK/libcbor/pull/208) (by [ranvis](https://github.com/ranvis))
   - Denormalized half-floats will now preserve data in the mantissa
   - Note: Half-float NaNs still lose data (https://github.com/PJK/libcbor/issues/215)
+- BUILD BREAKING: Minimum CMake version is 3.0 [[#201]](https://github.com/PJK/libcbor/pull/201) (by [thewtex@](https://github.com/thewtex))
+  - See https://repology.org/project/cmake/versions for support; the vast majority of users should not be affected.
 
 0.9.0 (2021-11-14)
 ---------------------
