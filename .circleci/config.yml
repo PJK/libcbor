@@ -2,7 +2,7 @@ version: 2.1
 
 linux-setup: &linux-setup >
   sudo apt-get update &&
-  sudo apt-get install -y gcc clang g++ cmake clang-format-8 cppcheck valgrind &&
+  sudo apt-get install -y gcc clang g++ cmake clang-format-8 cppcheck valgrind doxygen &&
   sudo apt install libcmocka-dev
 
 build-test: &build-test >
@@ -25,6 +25,10 @@ jobs:
       - run: *linux-setup
       - run: cppcheck . --error-exitcode=1
       - run: bash clang-format.sh --verbose && git diff-index --quiet HEAD
+      - run: >
+          cd doc &&
+          pip3 install -r source/requirements.txt &&
+          make html
 
   build-and-test:
     machine:
