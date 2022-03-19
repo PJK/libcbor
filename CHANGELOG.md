@@ -1,6 +1,8 @@
 Next
 ---------------------
-- Improved half-float encoding for denormalized numbers.
+- BREAKING: Improved half-float encoding for denormalized numbers. [[#208]](https://github.com/PJK/libcbor/pull/208) (by [ranvis](https://github.com/ranvis))
+  - Denormalized half-floats will now preserve data in the mantissa
+  - Note: Half-float NaNs still lose data (https://github.com/PJK/libcbor/issues/215)
 
 0.9.0 (2021-11-14)
 ---------------------
