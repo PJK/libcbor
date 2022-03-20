@@ -15,7 +15,7 @@ jobs:
       uses: google/oss-fuzz/infra/cifuzz/actions/run_fuzzers@master
       with:
         oss-fuzz-project-name: 'libcbor'
-        fuzz-seconds: 21600 # 6 hours
+        fuzz-seconds: 14400 # 4 hours
         dry-run: false
     - name: Upload Crash
       uses: actions/upload-artifact@v1
