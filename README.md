@@ -6,7 +6,7 @@
 [![latest packaged version(s)](https://repology.org/badge/latest-versions/libcbor.svg)](https://repology.org/project/libcbor/versions)
 [![codecov](https://codecov.io/gh/PJK/libcbor/branch/master/graph/badge.svg)](https://codecov.io/gh/PJK/libcbor)
 
-**libcbor** is a C library for parsing and generating [CBOR](http://tools.ietf.org/html/rfc7049), the general-purpose schema-less binary data format.
+**libcbor** is a C library for parsing and generating [CBOR](https://tools.ietf.org/html/rfc7049), the general-purpose schema-less binary data format.
 
 ## Main features
  - Complete RFC conformance
