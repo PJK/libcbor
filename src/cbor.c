@@ -100,9 +100,7 @@ cbor_item_t *cbor_load(cbor_data source, size_t source_size,
     }
   } while (stack.size > 0);
 
-  /* Move the result before free */
-  cbor_item_t *result_item = context.root;
-  return result_item;
+  return context.root;
 
 error:
   result->error.position = result->read;
