@@ -9,6 +9,7 @@
 #include <string.h>
 #include "../arrays.h"
 #include "../bytestrings.h"
+#include "../common.h"
 #include "../floats_ctrls.h"
 #include "../ints.h"
 #include "../maps.h"
@@ -32,17 +33,26 @@ void _cbor_builder_append(cbor_item_t *item,
            * syntax error when decoded.
            */
           assert(ctx->stack->top->subitems > 0);
-          cbor_array_push(ctx->stack->top->item, item);
-          ctx->stack->top->subitems--;
-          if (ctx->stack->top->subitems == 0) {
-            cbor_item_t *stack_item = ctx->stack->top->item;
-            _cbor_stack_pop(ctx->stack);
-            _cbor_builder_append(stack_item, ctx);
+          if (!cbor_array_push(ctx->stack->top->item, item)) {
+            ctx->creation_failed = true;
+            cbor_decref(&item);
+            break;
+          } else {
+            ctx->stack->top->subitems--;
+            if (ctx->stack->top->subitems == 0) {
+              cbor_item_t *stack_item = ctx->stack->top->item;
+              _cbor_stack_pop(ctx->stack);
+              _cbor_builder_append(stack_item, ctx);
+            }
           }
           cbor_decref(&item);
         } else {
           /* Indefinite array, don't bother with subitems */
-          cbor_array_push(ctx->stack->top->item, item);
+          if (!cbor_array_push(ctx->stack->top->item, item)) {
+            ctx->creation_failed = true;
+            cbor_decref(&item);
+            break;
+          }
           cbor_decref(&item);
         }
         break;
@@ -52,11 +62,20 @@ void _cbor_builder_append(cbor_item_t *item,
          * indefinite items */
         if (ctx->stack->top->subitems % 2) {
           /* Odd record, this is a value */
-          _cbor_map_add_value(ctx->stack->top->item, cbor_move(item));
+          if (!_cbor_map_add_value(ctx->stack->top->item, item)) {
+            ctx->creation_failed = true;
+            cbor_decref(&item);
+            break;
+          }
         } else {
           /* Even record, this is a key */
-          _cbor_map_add_key(ctx->stack->top->item, cbor_move(item));
+          if (!_cbor_map_add_key(ctx->stack->top->item, item)) {
+            ctx->creation_failed = true;
+            cbor_decref(&item);
+            break;
+          }
         }
+        cbor_decref(&item);
         if (cbor_map_is_definite(ctx->stack->top->item)) {
           ctx->stack->top->subitems--;
           if (ctx->stack->top->subitems == 0) {

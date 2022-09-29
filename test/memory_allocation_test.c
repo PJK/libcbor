@@ -14,7 +14,7 @@
 #include "cbor.h"
 
 // This test simulates cases when malloc unexpectedly fails and leaves a
-// possibly partially constructed object behind. It this is especially useful
+// possibly partially constructed object behind. It is especially useful
 // in conjunction with the memory correctness check.
 //
 // WARNING: The test only works with CBOR_CUSTOM_ALLOC
@@ -235,6 +235,20 @@ static void test_array_push(void **_CBOR_UNUSED(_state)) {
       4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }
 
+static unsigned char simple_indef_array[] = {0x9F, 0x01, 0x02, 0xFF};
+static void test_indef_array_decode(void **_CBOR_UNUSED(_state)) {
+  WITH_MOCK_MALLOC(
+      {
+        cbor_item_t *array;
+        struct cbor_load_result res;
+        array = cbor_load(simple_indef_array, 4, &res);
+
+        assert_null(array);
+        assert_int_equal(res.error.code, CBOR_ERR_MEMERROR);
+      },
+      4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
+}
+
 static void test_map_add(void **_CBOR_UNUSED(_state)) {
   WITH_MOCK_MALLOC(
       {
@@ -250,6 +264,20 @@ static void test_map_add(void **_CBOR_UNUSED(_state)) {
         cbor_decref(&map);
         cbor_decref(&key);
         cbor_decref(&value);
+      },
+      4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
+}
+
+static unsigned char simple_indef_map[] = {0xBF, 0x01, 0x02, 0x03, 0x04, 0xFF};
+static void test_indef_map_decode(void **_CBOR_UNUSED(_state)) {
+  WITH_MOCK_MALLOC(
+      {
+        cbor_item_t *map;
+        struct cbor_load_result res;
+        map = cbor_load(simple_indef_map, 6, &res);
+
+        assert_null(map);
+        assert_int_equal(res.error.code, CBOR_ERR_MEMERROR);
       },
       4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }
@@ -270,7 +298,9 @@ int main(void) {
       cmocka_unit_test(test_bytestring_add_chunk),
       cmocka_unit_test(test_string_add_chunk),
       cmocka_unit_test(test_array_push),
+      cmocka_unit_test(test_indef_array_decode),
       cmocka_unit_test(test_map_add),
+      cmocka_unit_test(test_indef_map_decode),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
