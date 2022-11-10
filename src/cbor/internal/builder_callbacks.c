@@ -17,6 +17,8 @@
 #include "../tags.h"
 #include "unicode.h"
 
+// This function maintains the invariant that no memory reachable by ctx->stack
+// and item would be leaked.
 void _cbor_builder_append(cbor_item_t *item,
                           struct _cbor_decoder_context *ctx) {
   if (ctx->stack->size == 0) {
