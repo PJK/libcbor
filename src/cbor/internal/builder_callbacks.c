@@ -22,86 +22,83 @@ void _cbor_builder_append(cbor_item_t *item,
   if (ctx->stack->size == 0) {
     /* Top level item */
     ctx->root = item;
-  } else {
-    /* Part of a bigger structure */
-    switch (ctx->stack->top->item->type) {
-      case CBOR_TYPE_ARRAY: {
-        if (cbor_array_is_definite(ctx->stack->top->item)) {
-          /*
-           * We don't need an explicit check for whether the item still belongs
-           * into this array because if there are extra items, they will cause a
-           * syntax error when decoded.
-           */
-          assert(ctx->stack->top->subitems > 0);
-          if (!cbor_array_push(ctx->stack->top->item, item)) {
-            ctx->creation_failed = true;
-            cbor_decref(&item);
-            break;
-          } else {
-            ctx->stack->top->subitems--;
-            if (ctx->stack->top->subitems == 0) {
-              cbor_item_t *stack_item = ctx->stack->top->item;
-              _cbor_stack_pop(ctx->stack);
-              _cbor_builder_append(stack_item, ctx);
-            }
-          }
+    return;
+  }
+  /* Part of a bigger structure */
+  switch (ctx->stack->top->item->type) {
+    case CBOR_TYPE_ARRAY: {
+      if (cbor_array_is_definite(ctx->stack->top->item)) {
+        /*
+         * We don't need an explicit check for whether the item still belongs
+         * into this array because if there are extra items, they will cause a
+         * syntax error when decoded.
+         */
+        assert(ctx->stack->top->subitems > 0);
+        if (!cbor_array_push(ctx->stack->top->item, item)) {
+          ctx->creation_failed = true;
           cbor_decref(&item);
-        } else {
-          /* Indefinite array, don't bother with subitems */
-          if (!cbor_array_push(ctx->stack->top->item, item)) {
-            ctx->creation_failed = true;
-            cbor_decref(&item);
-            break;
-          }
-          cbor_decref(&item);
-        }
-        break;
-      }
-      case CBOR_TYPE_MAP: {
-        /* We use 0 and 1 subitems to distinguish between keys and values in
-         * indefinite items */
-        if (ctx->stack->top->subitems % 2) {
-          /* Odd record, this is a value */
-          if (!_cbor_map_add_value(ctx->stack->top->item, item)) {
-            ctx->creation_failed = true;
-            cbor_decref(&item);
-            break;
-          }
-        } else {
-          /* Even record, this is a key */
-          if (!_cbor_map_add_key(ctx->stack->top->item, item)) {
-            ctx->creation_failed = true;
-            cbor_decref(&item);
-            break;
-          }
+          break;
         }
         cbor_decref(&item);
-        if (cbor_map_is_definite(ctx->stack->top->item)) {
-          ctx->stack->top->subitems--;
-          if (ctx->stack->top->subitems == 0) {
-            cbor_item_t *map_entry = ctx->stack->top->item;
-            _cbor_stack_pop(ctx->stack);
-            _cbor_builder_append(map_entry, ctx);
-          }
-        } else {
-          ctx->stack->top->subitems ^=
-              1; /* Flip the indicator for indefinite items */
+        ctx->stack->top->subitems--;
+        if (ctx->stack->top->subitems == 0) {
+          cbor_item_t *stack_item = ctx->stack->top->item;
+          _cbor_stack_pop(ctx->stack);
+          _cbor_builder_append(stack_item, ctx);
         }
-        break;
-      }
-      case CBOR_TYPE_TAG: {
-        assert(ctx->stack->top->subitems == 1);
-        cbor_tag_set_item(ctx->stack->top->item, item);
-        cbor_decref(&item); /* Give up on our reference */
-        cbor_item_t *tagged_item = ctx->stack->top->item;
-        _cbor_stack_pop(ctx->stack);
-        _cbor_builder_append(tagged_item, ctx);
-        break;
-      }
-      default: {
+      } else {
+        /* Indefinite array, don't bother with subitems */
+        if (!cbor_array_push(ctx->stack->top->item, item)) {
+          ctx->creation_failed = true;
+        }
         cbor_decref(&item);
-        ctx->syntax_error = true;
       }
+      break;
+    }
+    case CBOR_TYPE_MAP: {
+      /* We use 0 and 1 subitems to distinguish between keys and values in
+       * indefinite items */
+      if (ctx->stack->top->subitems % 2) {
+        /* Odd record, this is a value */
+        if (!_cbor_map_add_value(ctx->stack->top->item, item)) {
+          ctx->creation_failed = true;
+          cbor_decref(&item);
+          break;
+        }
+      } else {
+        /* Even record, this is a key */
+        if (!_cbor_map_add_key(ctx->stack->top->item, item)) {
+          ctx->creation_failed = true;
+          cbor_decref(&item);
+          break;
+        }
+      }
+      cbor_decref(&item);
+      if (cbor_map_is_definite(ctx->stack->top->item)) {
+        ctx->stack->top->subitems--;
+        if (ctx->stack->top->subitems == 0) {
+          cbor_item_t *map_entry = ctx->stack->top->item;
+          _cbor_stack_pop(ctx->stack);
+          _cbor_builder_append(map_entry, ctx);
+        }
+      } else {
+        ctx->stack->top->subitems ^=
+            1; /* Flip the indicator for indefinite items */
+      }
+      break;
+    }
+    case CBOR_TYPE_TAG: {
+      assert(ctx->stack->top->subitems == 1);
+      cbor_tag_set_item(ctx->stack->top->item, item);
+      cbor_decref(&item); /* Give up on our reference */
+      cbor_item_t *tagged_item = ctx->stack->top->item;
+      _cbor_stack_pop(ctx->stack);
+      _cbor_builder_append(tagged_item, ctx);
+      break;
+    }
+    default: {
+      cbor_decref(&item);
+      ctx->syntax_error = true;
     }
   }
 }
