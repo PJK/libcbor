@@ -116,7 +116,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x1E: /* Fallthrough */
     case 0x1F:
       /* Reserved */
-      { return (struct cbor_decoder_result){0, CBOR_DECODER_ERROR}; }
+      { return (struct cbor_decoder_result){.status = CBOR_DECODER_ERROR}; }
     case 0x20: /* Fallthrough */
     case 0x21: /* Fallthrough */
     case 0x22: /* Fallthrough */
@@ -184,7 +184,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x3E: /* Fallthrough */
     case 0x3F:
       /* Reserved */
-      { return (struct cbor_decoder_result){0, CBOR_DECODER_ERROR}; }
+      { return (struct cbor_decoder_result){.status = CBOR_DECODER_ERROR}; }
     case 0x40: /* Fallthrough */
     case 0x41: /* Fallthrough */
     case 0x42: /* Fallthrough */
@@ -231,7 +231,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x5D: /* Fallthrough */
     case 0x5E:
       /* Reserved */
-      { return (struct cbor_decoder_result){0, CBOR_DECODER_ERROR}; }
+      { return (struct cbor_decoder_result){.status = CBOR_DECODER_ERROR}; }
     case 0x5F:
       /* Indefinite byte string */
       {
@@ -284,7 +284,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x7D: /* Fallthrough */
     case 0x7E:
       /* Reserved */
-      { return (struct cbor_decoder_result){0, CBOR_DECODER_ERROR}; }
+      { return (struct cbor_decoder_result){.status = CBOR_DECODER_ERROR}; }
     case 0x7F:
       /* Indefinite length string */
       {
@@ -357,7 +357,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0x9D: /* Fallthrough */
     case 0x9E:
       /* Reserved */
-      { return (struct cbor_decoder_result){0, CBOR_DECODER_ERROR}; }
+      { return (struct cbor_decoder_result){.status = CBOR_DECODER_ERROR}; }
     case 0x9F:
       /* Indefinite length array */
       {
@@ -430,7 +430,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xBD: /* Fallthrough */
     case 0xBE:
       /* Reserved */
-      { return (struct cbor_decoder_result){0, CBOR_DECODER_ERROR}; }
+      { return (struct cbor_decoder_result){.status = CBOR_DECODER_ERROR}; }
     case 0xBF:
       /* Indefinite length map */
       {
@@ -470,7 +470,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xD3: /* Fallthrough */
     case 0xD4: /* Unassigned tag value */
     {
-      return (struct cbor_decoder_result){0, CBOR_DECODER_ERROR};
+      return (struct cbor_decoder_result){.status = CBOR_DECODER_ERROR};
     }
     case 0xD5: /* Expected b64url conversion tag - fallthrough */
     case 0xD6: /* Expected b64 conversion tag - fallthrough */
@@ -513,7 +513,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xDE: /* Fallthrough */
     case 0xDF: /* Reserved */
     {
-      return (struct cbor_decoder_result){0, CBOR_DECODER_ERROR};
+      return (struct cbor_decoder_result){.status = CBOR_DECODER_ERROR};
     }
     case 0xE0: /* Fallthrough */
     case 0xE1: /* Fallthrough */
@@ -536,7 +536,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xF2: /* Fallthrough */
     case 0xF3: /* Simple value - unassigned */
     {
-      return (struct cbor_decoder_result){0, CBOR_DECODER_ERROR};
+      return (struct cbor_decoder_result){.status = CBOR_DECODER_ERROR};
     }
     case 0xF4:
       /* False */
@@ -564,7 +564,7 @@ struct cbor_decoder_result cbor_stream_decode(
       }
     case 0xF8:
       /* 1B simple value, unassigned */
-      { return (struct cbor_decoder_result){0, CBOR_DECODER_ERROR}; }
+      { return (struct cbor_decoder_result){.status = CBOR_DECODER_ERROR}; }
     case 0xF9:
       /* 2B float */
       {
@@ -593,7 +593,7 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xFD: /* Fallthrough */
     case 0xFE:
       /* Reserved */
-      { return (struct cbor_decoder_result){0, CBOR_DECODER_ERROR}; }
+      { return (struct cbor_decoder_result){.status = CBOR_DECODER_ERROR}; }
     case 0xFF:
       /* Break */
       {
