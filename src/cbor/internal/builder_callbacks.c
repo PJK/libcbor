@@ -226,7 +226,9 @@ void cbor_builder_byte_string_callback(void *context, cbor_data data,
 
   if (ctx->stack->size > 0 && cbor_isa_bytestring(ctx->stack->top->item)) {
     if (cbor_bytestring_is_indefinite(ctx->stack->top->item)) {
-      cbor_bytestring_add_chunk(ctx->stack->top->item, cbor_move(res));
+      if (!cbor_bytestring_add_chunk(ctx->stack->top->item, cbor_move(res))) {
+        ctx->creation_failed = true;
+      }
     } else {
       cbor_decref(&res);
       ctx->syntax_error = true;

@@ -92,11 +92,15 @@ size_t cbor_bytestring_chunk_count(const cbor_item_t *item) {
 bool cbor_bytestring_add_chunk(cbor_item_t *item, cbor_item_t *chunk) {
   assert(cbor_isa_bytestring(item));
   assert(cbor_bytestring_is_indefinite(item));
+  assert(cbor_isa_bytestring(chunk));
+  assert(cbor_bytestring_is_definite(chunk));
   struct cbor_indefinite_string_data *data =
       (struct cbor_indefinite_string_data *)item->data;
   if (data->chunk_count == data->chunk_capacity) {
     // TODO: Add a test for this
     if (!_cbor_safe_to_multiply(CBOR_BUFFER_GROWTH, data->chunk_capacity)) {
+      _CBOR_FREE(chunk->data);
+      _CBOR_FREE(chunk);
       return false;
     }
 
@@ -108,6 +112,8 @@ bool cbor_bytestring_add_chunk(cbor_item_t *item, cbor_item_t *chunk) {
         data->chunks, sizeof(cbor_item_t *), new_chunk_capacity);
 
     if (new_chunks_data == NULL) {
+      _CBOR_FREE(chunk->data);
+      _CBOR_FREE(chunk);
       return false;
     }
     data->chunk_capacity = new_chunk_capacity;
