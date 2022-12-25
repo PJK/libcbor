@@ -34,7 +34,7 @@ cbor_item_t *cbor_new_definite_map(size_t size) {
   return item;
 }
 
-cbor_item_t *cbor_new_indefinite_map() {
+cbor_item_t *cbor_new_indefinite_map(void) {
   cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
 

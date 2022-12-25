@@ -97,13 +97,13 @@ void assert_negint32_eq(uint32_t);
 void assert_negint64_eq(uint64_t);
 
 void assert_bstring_mem_eq(cbor_data, size_t);
-void assert_bstring_indef_start();
+void assert_bstring_indef_start(void);
 
 void assert_array_start(size_t);
-void assert_indef_array_start();
+void assert_indef_array_start(void);
 
 void assert_map_start(size_t);
-void assert_indef_map_start();
+void assert_indef_map_start(void);
 
 void assert_tag_eq(uint64_t);
 
@@ -112,10 +112,10 @@ void assert_float(float);
 void assert_double(double);
 
 void assert_bool(bool);
-void assert_nil(); /* assert_null already exists */
-void assert_undef();
+void assert_nil(void); /* assert_null already exists */
+void assert_undef(void);
 
-void assert_indef_break();
+void assert_indef_break(void);
 
 /* Assertions verifying callbacks */
 void uint8_callback(void *, uint8_t);

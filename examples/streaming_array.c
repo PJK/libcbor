@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include "cbor.h"
 
-void usage() {
+void usage(void) {
   printf("Usage: streaming_array <N>\n");
   printf("Prints out serialized array [0, ..., N-1]\n");
   exit(1);

@@ -139,7 +139,7 @@ static void test_def_map(void **_CBOR_UNUSED(_state)) {
 }
 
 static void test_indef_map(void **_CBOR_UNUSED(_state)) {
-  item = cbor_new_indefinite_map(1);
+  item = cbor_new_indefinite_map();
   cbor_map_add(item, (struct cbor_pair){
                          .key = cbor_move(cbor_build_uint8(42)),
                          .value = cbor_move(cbor_build_uint8(43)),

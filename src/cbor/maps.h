@@ -46,7 +46,7 @@ CBOR_EXPORT cbor_item_t *cbor_new_definite_map(size_t size);
  *
  * @return **new** indefinite map. `NULL` on malloc failure.
  */
-CBOR_EXPORT cbor_item_t *cbor_new_indefinite_map();
+CBOR_EXPORT cbor_item_t *cbor_new_indefinite_map(void);
 
 /** Add a pair to the map
  *

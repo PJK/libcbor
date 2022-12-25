@@ -40,7 +40,7 @@ void *mock_malloc(size_t size) {
 }
 #endif
 
-static void run_round() {
+static void run_round(void) {
   cbor_item_t *item;
   struct cbor_load_result res;
 

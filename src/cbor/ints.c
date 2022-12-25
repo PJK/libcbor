@@ -86,7 +86,7 @@ void cbor_mark_negint(cbor_item_t *item) {
   item->type = CBOR_TYPE_NEGINT;
 }
 
-cbor_item_t *cbor_new_int8() {
+cbor_item_t *cbor_new_int8(void) {
   cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 1);
   _CBOR_NOTNULL(item);
   *item = (cbor_item_t){.data = (unsigned char *)item + sizeof(cbor_item_t),
@@ -96,7 +96,7 @@ cbor_item_t *cbor_new_int8() {
   return item;
 }
 
-cbor_item_t *cbor_new_int16() {
+cbor_item_t *cbor_new_int16(void) {
   cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 2);
   _CBOR_NOTNULL(item);
   *item = (cbor_item_t){.data = (unsigned char *)item + sizeof(cbor_item_t),
@@ -106,7 +106,7 @@ cbor_item_t *cbor_new_int16() {
   return item;
 }
 
-cbor_item_t *cbor_new_int32() {
+cbor_item_t *cbor_new_int32(void) {
   cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
   _CBOR_NOTNULL(item);
   *item = (cbor_item_t){.data = (unsigned char *)item + sizeof(cbor_item_t),
@@ -116,7 +116,7 @@ cbor_item_t *cbor_new_int32() {
   return item;
 }
 
-cbor_item_t *cbor_new_int64() {
+cbor_item_t *cbor_new_int64(void) {
   cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 8);
   _CBOR_NOTNULL(item);
   *item = (cbor_item_t){.data = (unsigned char *)item + sizeof(cbor_item_t),

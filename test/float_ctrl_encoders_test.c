@@ -40,7 +40,7 @@ static void test_break(void **_CBOR_UNUSED(_state)) {
 
 /* Check that encode(decode(buffer)) = buffer for a valid half-float in the
  * buffer.*/
-static void assert_half_float_codec_identity() {
+static void assert_half_float_codec_identity(void) {
   unsigned char secondary_buffer[3];
   struct cbor_load_result res;
   // Load and check data in buffer

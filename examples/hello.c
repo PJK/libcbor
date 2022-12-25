@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "cbor.h"
 
-int main() {
+int main(void) {
   printf("Hello from libcbor %s\n", CBOR_VERSION);
   printf("Custom allocation support: %s\n", CBOR_CUSTOM_ALLOC ? "yes" : "no");
   printf("Pretty-printer support: %s\n", CBOR_PRETTY_PRINTER ? "yes" : "no");

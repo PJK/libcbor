@@ -207,7 +207,7 @@ static void test_serialize_definite_map(void **_CBOR_UNUSED(_state)) {
 }
 
 static void test_serialize_indefinite_map(void **_CBOR_UNUSED(_state)) {
-  cbor_item_t *item = cbor_new_indefinite_map(2);
+  cbor_item_t *item = cbor_new_indefinite_map();
   cbor_item_t *one = cbor_build_uint8(1);
   cbor_item_t *two = cbor_build_uint8(2);
 

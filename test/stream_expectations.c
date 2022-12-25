@@ -17,7 +17,7 @@ int clear_stream_assertions(void **state) {
 }
 
 /* Callbacks */
-struct test_assertion current() {
+struct test_assertion current(void) {
   return assertions_queue[current_expectation];
 }
 
@@ -125,7 +125,7 @@ void byte_string_callback(void *_CBOR_UNUSED(_context), cbor_data address,
   current_expectation++;
 }
 
-void assert_bstring_indef_start() {
+void assert_bstring_indef_start(void) {
   assertions_queue[queue_size++] =
       (struct test_assertion){.expectation = BSTRING_INDEF_START};
 }
@@ -135,7 +135,7 @@ void byte_string_start_callback(void *_CBOR_UNUSED(_context)) {
   current_expectation++;
 }
 
-void assert_indef_break() {
+void assert_indef_break(void) {
   assertions_queue[queue_size++] =
       (struct test_assertion){.expectation = INDEF_BREAK};
 }
@@ -156,7 +156,7 @@ void array_start_callback(void *_CBOR_UNUSED(_context), uint64_t length) {
   current_expectation++;
 }
 
-void assert_indef_array_start() {
+void assert_indef_array_start(void) {
   assertions_queue[queue_size++] =
       (struct test_assertion){.expectation = ARRAY_INDEF_START};
 }
@@ -177,7 +177,7 @@ void map_start_callback(void *_CBOR_UNUSED(_context), uint64_t length) {
   current_expectation++;
 }
 
-void assert_indef_map_start() {
+void assert_indef_map_start(void) {
   assertions_queue[queue_size++] =
       (struct test_assertion){.expectation = MAP_INDEF_START};
 }
@@ -236,11 +236,11 @@ void assert_bool(bool value) {
       (struct test_assertion){BOOL_EQ, {.boolean = value}};
 }
 
-void assert_nil() {
+void assert_nil(void) {
   assertions_queue[queue_size++] = (struct test_assertion){.expectation = NIL};
 }
 
-void assert_undef() {
+void assert_undef(void) {
   assertions_queue[queue_size++] =
       (struct test_assertion){.expectation = UNDEF};
 }

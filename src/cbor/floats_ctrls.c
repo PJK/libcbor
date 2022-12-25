@@ -93,7 +93,7 @@ void cbor_set_bool(cbor_item_t *item, bool value) {
       value ? CBOR_CTRL_TRUE : CBOR_CTRL_FALSE;
 }
 
-cbor_item_t *cbor_new_ctrl() {
+cbor_item_t *cbor_new_ctrl(void) {
   cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
 
@@ -106,7 +106,7 @@ cbor_item_t *cbor_new_ctrl() {
   return item;
 }
 
-cbor_item_t *cbor_new_float2() {
+cbor_item_t *cbor_new_float2(void) {
   cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
   _CBOR_NOTNULL(item);
 
@@ -118,7 +118,7 @@ cbor_item_t *cbor_new_float2() {
   return item;
 }
 
-cbor_item_t *cbor_new_float4() {
+cbor_item_t *cbor_new_float4(void) {
   cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
   _CBOR_NOTNULL(item);
 
@@ -130,7 +130,7 @@ cbor_item_t *cbor_new_float4() {
   return item;
 }
 
-cbor_item_t *cbor_new_float8() {
+cbor_item_t *cbor_new_float8(void) {
   cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 8);
   _CBOR_NOTNULL(item);
 
@@ -142,14 +142,14 @@ cbor_item_t *cbor_new_float8() {
   return item;
 }
 
-cbor_item_t *cbor_new_null() {
+cbor_item_t *cbor_new_null(void) {
   cbor_item_t *item = cbor_new_ctrl();
   _CBOR_NOTNULL(item);
   cbor_set_ctrl(item, CBOR_CTRL_NULL);
   return item;
 }
 
-cbor_item_t *cbor_new_undef() {
+cbor_item_t *cbor_new_undef(void) {
   cbor_item_t *item = cbor_new_ctrl();
   _CBOR_NOTNULL(item);
   cbor_set_ctrl(item, CBOR_CTRL_UNDEF);

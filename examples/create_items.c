@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "cbor.h"
 
-int main() {
+int main(void) {
   /* Preallocate the map structure */
   cbor_item_t* root = cbor_new_definite_map(2);
   /* Add the content */

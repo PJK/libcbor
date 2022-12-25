@@ -28,7 +28,7 @@ bool cbor_bytestring_is_indefinite(const cbor_item_t *item) {
   return !cbor_bytestring_is_definite(item);
 }
 
-cbor_item_t *cbor_new_definite_bytestring() {
+cbor_item_t *cbor_new_definite_bytestring(void) {
   cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
   *item = (cbor_item_t){
@@ -39,7 +39,7 @@ cbor_item_t *cbor_new_definite_bytestring() {
   return item;
 }
 
-cbor_item_t *cbor_new_indefinite_bytestring() {
+cbor_item_t *cbor_new_indefinite_bytestring(void) {
   cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
   *item = (cbor_item_t){

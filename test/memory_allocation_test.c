@@ -46,7 +46,7 @@ void set_mock_malloc(int calls, ...) {
   va_end(args);
 }
 
-void finalize_mock_malloc() {
+void finalize_mock_malloc(void) {
   assert_int_equal(alloc_calls, alloc_calls_expected);
   free(expectations);
 }

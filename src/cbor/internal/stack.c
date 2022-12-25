@@ -7,7 +7,7 @@
 
 #include "stack.h"
 
-struct _cbor_stack _cbor_stack_init() {
+struct _cbor_stack _cbor_stack_init(void) {
   return (struct _cbor_stack){.top = NULL, .size = 0};
 }
 

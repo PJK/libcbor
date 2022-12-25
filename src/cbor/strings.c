@@ -9,7 +9,7 @@
 #include <string.h>
 #include "internal/memory_utils.h"
 
-cbor_item_t *cbor_new_definite_string() {
+cbor_item_t *cbor_new_definite_string(void) {
   cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
   *item = (cbor_item_t){
@@ -19,7 +19,7 @@ cbor_item_t *cbor_new_definite_string() {
   return item;
 }
 
-cbor_item_t *cbor_new_indefinite_string() {
+cbor_item_t *cbor_new_indefinite_string(void) {
   cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
   *item = (cbor_item_t){
