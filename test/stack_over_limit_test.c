@@ -27,7 +27,7 @@ static void test_stack_over_limit(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(res.error.code, CBOR_ERR_MEMERROR);
 }
 
-int main() {
+int main(void) {
   const struct CMUnitTest tests[] = {cmocka_unit_test(test_stack_over_limit)};
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

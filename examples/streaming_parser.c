@@ -15,7 +15,7 @@
 #define UNUSED(x) x
 #endif
 
-void usage() {
+void usage(void) {
   printf("Usage: streaming_parser [input file]\n");
   exit(1);
 }

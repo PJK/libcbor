@@ -116,7 +116,7 @@ cbor_item_t *cbor_new_definite_array(size_t size) {
   return item;
 }
 
-cbor_item_t *cbor_new_indefinite_array() {
+cbor_item_t *cbor_new_indefinite_array(void) {
   cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
 

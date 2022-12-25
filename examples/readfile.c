@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "cbor.h"
 
-void usage() {
+void usage(void) {
   printf("Usage: readfile [input file]\n");
   exit(1);
 }
