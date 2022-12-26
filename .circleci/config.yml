@@ -5,7 +5,7 @@ commands:
     steps:
     - run: sudo apt-get update
     - run: sudo apt-get install -y cmake clang-format-8 valgrind doxygen
-    - run: sudo apt-get install -y 
+    - run: sudo apt-get install -y "${TOOLCHAIN_PACKAGE}""
     - run: sudo apt install libcmocka-dev
   build-test:
     steps:
@@ -24,12 +24,14 @@ jobs:
   static-test:
     machine:
       image: ubuntu-2004:202010-01
+    environment:
+      TOOLCHAIN_PACKAGE: g++
     steps:
       - checkout
       - linux-setup
       # TODO update clang-format version
       # Use a pinned clang-format version to avoid inconsistencies
-      - run: sudo apt-get install -y clang-format-8 doxygen
+      - run: sudo apt-get install -y clang-format-8 doxygen cppcheck
       - run: cppcheck . --error-exitcode=1
       - run: bash clang-format.sh --verbose
       - run: >
@@ -47,6 +49,8 @@ jobs:
   build-and-test:
     machine:
       image: ubuntu-2004:202010-01
+    environment:
+      TOOLCHAIN_PACKAGE: g++
     steps:
       - checkout
       - linux-setup
@@ -74,6 +78,8 @@ jobs:
   build-and-test-clang:
     machine:
       image: ubuntu-2004:202010-01
+    environment:
+      TOOLCHAIN_PACKAGE: clang
     steps:
       - checkout
       - run: >
@@ -85,6 +91,8 @@ jobs:
   build-and-test-arm:
     machine:
       image: ubuntu-2004:202101-01
+    environment:
+      TOOLCHAIN_PACKAGE: g++
     resource_class: arm.medium
     steps:
       - checkout
@@ -94,6 +102,8 @@ jobs:
   build-bazel:
     machine:
       image: ubuntu-2004:202101-01
+    environment:
+      TOOLCHAIN_PACKAGE: g++
     steps:
       - checkout
       - linux-setup
