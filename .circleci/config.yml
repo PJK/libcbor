@@ -54,6 +54,7 @@ jobs:
     steps:
       - checkout
       - linux-setup
+      - run: sudo apt-get install -y valgrind
       - build-test
       - run: ctest -T Coverage
       - codecov/upload
