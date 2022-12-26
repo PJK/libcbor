@@ -1,18 +1,22 @@
 version: 2.1
 
-linux-setup: &linux-setup >
-  sudo apt-get update &&
-  sudo apt-get install -y gcc clang g++ cmake clang-format-8 cppcheck valgrind doxygen &&
-  sudo apt install libcmocka-dev
-
-build-test: &build-test >
-  cmake -DWITH_TESTS=ON \
-      -DCBOR_CUSTOM_ALLOC=ON \
-      -DCMAKE_BUILD_TYPE=Debug \
-      -DSANITIZE=OFF \
-      . &&
-  make VERBOSE=1 &&
-  ctest -VV
+commands:
+  linux-setup:
+    steps:
+    - run: sudo apt-get update
+    - run: sudo apt-get install -y cmake clang-format-8 valgrind doxygen
+    - run: sudo apt-get install -y 
+    - run: sudo apt install libcmocka-dev
+  build-test:
+    steps:
+    - run: >
+        cmake -DWITH_TESTS=ON \
+          -DCBOR_CUSTOM_ALLOC=ON \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -DSANITIZE=OFF \
+          .
+    - run: make VERBOSE=1
+    - run: ctest -VV
 
 orbs:
   codecov: codecov/codecov@3.2.2
@@ -22,7 +26,10 @@ jobs:
       image: ubuntu-2004:202010-01
     steps:
       - checkout
-      - run: *linux-setup
+      - linux-setup
+      # TODO update clang-format version
+      # Use a pinned clang-format version to avoid inconsistencies
+      - run: sudo apt-get install -y clang-format-8 doxygen
       - run: cppcheck . --error-exitcode=1
       - run: bash clang-format.sh --verbose
       - run: >
@@ -42,7 +49,7 @@ jobs:
       image: ubuntu-2004:202010-01
     steps:
       - checkout
-      - run: *linux-setup
+      - linux-setup
       - run: >
           cmake -DWITH_TESTS=ON \
               -DCBOR_CUSTOM_ALLOC=ON \
@@ -72,8 +79,8 @@ jobs:
       - run: >
           echo 'export CC=/usr/bin/clang' >> "$BASH_ENV"
           echo 'export CXX=/usr/bin/clang++' >> "$BASH_ENV"
-      - run: *linux-setup
-      - run: *build-test
+      - linux-setup
+      - build-test
 
   build-and-test-arm:
     machine:
@@ -81,15 +88,15 @@ jobs:
     resource_class: arm.medium
     steps:
       - checkout
-      - run: *linux-setup
-      - run: *build-test
+      - linux-setup
+      - build-test
 
   build-bazel:
     machine:
       image: ubuntu-2004:202101-01
     steps:
       - checkout
-      - run: *linux-setup
+      - linux-setup
       - run: sudo apt install apt-transport-https curl gnupg
       - run: curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
       - run: sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
@@ -107,7 +114,7 @@ jobs:
       - checkout
       - run: bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       - run: brew install cmocka cmake
-      - run: *build-test
+      - build-test
 
 workflows:
   build-and-test:
