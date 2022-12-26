@@ -292,7 +292,7 @@ static void test_auto_serialize(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(64, output_size);
   assert_memory_equal(output, ((unsigned char[]){0x84, 0x1B}), 2);
   cbor_decref(&item);
-  _CBOR_FREE(output);
+  _cbor_free(output);
 }
 
 static void test_auto_serialize_no_size(void **_CBOR_UNUSED(_state)) {
@@ -302,7 +302,7 @@ static void test_auto_serialize_no_size(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(1, cbor_serialize_alloc(item, &output, NULL));
   assert_memory_equal(output, ((unsigned char[]){0x01}), 1);
   cbor_decref(&item);
-  _CBOR_FREE(output);
+  _cbor_free(output);
 }
 
 int main(void) {

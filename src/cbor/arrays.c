@@ -96,7 +96,7 @@ cbor_item_t **cbor_array_handle(const cbor_item_t *item) {
 }
 
 cbor_item_t *cbor_new_definite_array(size_t size) {
-  cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+  cbor_item_t *item = _cbor_malloc(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
   cbor_item_t **data = _cbor_alloc_multiple(sizeof(cbor_item_t *), size);
   _CBOR_DEPENDENT_NOTNULL(item, data);
@@ -117,7 +117,7 @@ cbor_item_t *cbor_new_definite_array(size_t size) {
 }
 
 cbor_item_t *cbor_new_indefinite_array(void) {
-  cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+  cbor_item_t *item = _cbor_malloc(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
 
   *item = (cbor_item_t){
