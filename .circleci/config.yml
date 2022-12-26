@@ -24,7 +24,7 @@ orbs:
 jobs:
   static-test:
     machine:
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2204:2022.10.2
     environment:
       TOOLCHAIN_PACKAGE: g++
     steps:
@@ -49,7 +49,7 @@ jobs:
 
   build-and-test:
     machine:
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2204:2022.10.2
     environment:
       TOOLCHAIN_PACKAGE: g++
       CMAKE_COVERAGE: ON
@@ -71,7 +71,7 @@ jobs:
 
   build-and-test-clang:
     machine:
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2204:2022.10.2
     environment:
       TOOLCHAIN_PACKAGE: clang
       CC: clang
@@ -81,24 +81,9 @@ jobs:
       - linux-setup
       - build-test
 
-
-  # Latest clang release from https://releases.llvm.org/
-  build-and-test-clang-latest:
-    machine:
-      image: ubuntu-2204:2022.10.2
-    environment:
-      TOOLCHAIN_PACKAGE: clang-15
-      CC: clang-15
-      CXX: clang++-15
-    steps:
-      - checkout
-      - run: sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
-      - linux-setup
-      - build-test
-
   build-and-test-arm:
     machine:
-      image: ubuntu-2004:202101-01
+      image: ubuntu-2204:2022.10.2
     environment:
       TOOLCHAIN_PACKAGE: g++
     resource_class: arm.medium
@@ -109,7 +94,7 @@ jobs:
 
   build-bazel:
     machine:
-      image: ubuntu-2004:202101-01
+      image: ubuntu-2204:2022.10.2
     environment:
       TOOLCHAIN_PACKAGE: g++
     steps:
@@ -141,7 +126,6 @@ workflows:
       - static-test
       - build-and-test
       - build-and-test-clang
-      - build-and-test-clang-latest
       - build-and-test-arm
       - build-and-test-osx:
           requires:
