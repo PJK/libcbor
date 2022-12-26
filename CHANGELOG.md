@@ -1,3 +1,6 @@
+Template:
+- [Fix issue X in feature Y](https://github.com/PJK/libcbor/pull/XXX) (by [YYY](https://github.com/YYY))
+
 Next
 ---------------------
 - Make the buffer_size optional in `cbor_serialize_alloc` [[#205]](https://github.com/PJK/libcbor/pull/205) (by [hughsie](https://github.com/hughsie))
@@ -7,7 +10,7 @@ Next
 - BUILD BREAKING: Minimum CMake version is 3.0 [[#201]](https://github.com/PJK/libcbor/pull/201) (by [thewtex@](https://github.com/thewtex))
   - See https://repology.org/project/cmake/versions for support; the vast majority of users should not be affected.
 - Fix a potential memory leak when the allocator fails during array or map decoding [[#224]](https://github.com/PJK/libcbor/pull/224) (by [James-ZHANG](https://github.com/James-ZHANG))
-- Fix a memory leak when the allocator fails when adding chunks to indefinite strings.
+- [Fix a memory leak when the allocator fails when adding chunks to indefinite strings.](https://github.com/PJK/libcbor/pull/228) (by [James-ZHANG](https://github.com/James-ZHANG))
 
 0.9.0 (2021-11-14)
 ---------------------
