@@ -11,6 +11,10 @@ Next
   - See https://repology.org/project/cmake/versions for support; the vast majority of users should not be affected.
 - Fix a potential memory leak when the allocator fails during array or map decoding [[#224]](https://github.com/PJK/libcbor/pull/224) (by [James-ZHANG](https://github.com/James-ZHANG))
 - [Fix a memory leak when the allocator fails when adding chunks to indefinite strings.](https://github.com/PJK/libcbor/pull/228) (by [James-ZHANG](https://github.com/James-ZHANG))
+- Fix a memory leak when the allocator fails when adding chunks to indefinite strings.
+- BUILD BREAKING: [Deprecate CBOR_CUSTOM_ALLOC](https://github.com/PJK/libcbor/pull/237)
+  - `cbor_set_allocs` will always be enabled 
+  - Note: The flag will be kept as a no-op for one version and then remove completely
 
 0.9.0 (2021-11-14)
 ---------------------
