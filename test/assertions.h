@@ -15,7 +15,7 @@ void assert_uint32(cbor_item_t* item, uint32_t num);
 void assert_uint64(cbor_item_t* item, uint64_t num);
 
 /** Verify the `actual_result.status` and `actual_result.status`. */
-void assert_decoder_result(size_t expected_read,
+void assert_decoder_result(size_t expected_bytes_read,
                            enum cbor_decoder_status expected_status,
                            struct cbor_decoder_result actual_result);
 
@@ -23,7 +23,7 @@ void assert_decoder_result(size_t expected_read,
  * Assert that the result is set to CBOR_DECODER_NEDATA with the given
  * `cbor_decoder_result.required` value.
  */
-void assert_decoder_result_nedata(size_t expected_required,
+void assert_decoder_result_nedata(size_t expected_bytes_required,
                                   struct cbor_decoder_result actual_result);
 
 /**
