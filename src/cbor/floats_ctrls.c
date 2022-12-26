@@ -94,7 +94,7 @@ void cbor_set_bool(cbor_item_t *item, bool value) {
 }
 
 cbor_item_t *cbor_new_ctrl(void) {
-  cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+  cbor_item_t *item = _cbor_malloc(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
 
   *item = (cbor_item_t){
@@ -107,7 +107,7 @@ cbor_item_t *cbor_new_ctrl(void) {
 }
 
 cbor_item_t *cbor_new_float2(void) {
-  cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
+  cbor_item_t *item = _cbor_malloc(sizeof(cbor_item_t) + 4);
   _CBOR_NOTNULL(item);
 
   *item = (cbor_item_t){
@@ -119,7 +119,7 @@ cbor_item_t *cbor_new_float2(void) {
 }
 
 cbor_item_t *cbor_new_float4(void) {
-  cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 4);
+  cbor_item_t *item = _cbor_malloc(sizeof(cbor_item_t) + 4);
   _CBOR_NOTNULL(item);
 
   *item = (cbor_item_t){
@@ -131,7 +131,7 @@ cbor_item_t *cbor_new_float4(void) {
 }
 
 cbor_item_t *cbor_new_float8(void) {
-  cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t) + 8);
+  cbor_item_t *item = _cbor_malloc(sizeof(cbor_item_t) + 8);
   _CBOR_NOTNULL(item);
 
   *item = (cbor_item_t){
