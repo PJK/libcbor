@@ -11,8 +11,9 @@ cc_library(
       "cbor.h",
     ],
     includes = [
-      ".", 
-      "internal",
+      "src", 
+      "src/cbor",
+      "src/cbor/internal",
     ],
     visibility = ["//visibility:public"],
 )
