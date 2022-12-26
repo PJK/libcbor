@@ -64,7 +64,8 @@ Option                    Meaning                                               
 If you want to pass other custom configuration options, please refer to `<http://www.cmake.org/Wiki/CMake_Useful_Variables>`_.
 
 .. warning::
-    ``CBOR_CUSTOM_ALLOC`` has been `removed <TODO>`_. Custom allocators (historically a controlled by a build flag) are always enabled.
+    ``CBOR_CUSTOM_ALLOC`` has been `removed <https://github.com/PJK/libcbor/pull/237>`_. 
+    Custom allocators (historically a controlled by a build flag) are always enabled.
 
 **Building using make**
 
