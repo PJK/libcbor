@@ -535,7 +535,7 @@ static void test_undef_decoding(void **_CBOR_UNUSED(_state)) {
   assert_decoder_result(1, CBOR_DECODER_FINISHED, decode(undef_data, 1));
 }
 
-#define stream_test(f) cmocka_unit_test_teardown(f, clear_stream_assertions)
+#define stream_test(f) cmocka_unit_test_teardown(f, clean_up_stream_assertions)
 
 int main(void) {
   const struct CMUnitTest tests[] = {

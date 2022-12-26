@@ -4,7 +4,7 @@ struct test_assertion assertions_queue[MAX_QUEUE_ITEMS];
 int queue_size = 0;
 int current_expectation = 0;
 
-int clear_stream_assertions(void **state) {
+int clean_up_stream_assertions(void **state) {
   if (queue_size != current_expectation) {
     return 1;  // We have not matched all expectations correctly
   }
