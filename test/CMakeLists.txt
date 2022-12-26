@@ -15,6 +15,7 @@ foreach (TEST ${TESTS})
     add_executable(${NAME} "${NAME}.c" assertions.c stream_expectations.c)
     target_link_libraries(${NAME} ${CMOCKA_LIBRARIES})
     target_link_libraries(${NAME} cbor)
+    target_link_libraries(${name} PRIVATE m)
     target_include_directories(${NAME} PUBLIC ${CMOCKA_INCLUDE_DIR})
     # See https://stackoverflow.com/a/10824578/499521
     ADD_TEST(ctest_build_test_${NAME}
