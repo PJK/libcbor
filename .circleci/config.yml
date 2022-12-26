@@ -69,11 +69,10 @@ jobs:
       image: ubuntu-2004:202010-01
     steps:
       - checkout
-      - run: 
-          command: *linux-setup
-          environment: 
-            CC: /usr/bin/clang
-            CXX: /usr/bin/clang++
+      - run: >
+          echo 'export CC=/usr/bin/clang' >> "$BASH_ENV"
+          echo 'export CXX=/usr/bin/clang++' >> "$BASH_ENV"
+      - run: *linux-setup
       - run: *build-test
 
   build-and-test-arm:
