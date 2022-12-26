@@ -90,8 +90,6 @@ static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
     }                                               \
   } while (0)
 
-#if CBOR_CUSTOM_ALLOC
-
 typedef void *(*_cbor_malloc_t)(size_t);
 typedef void *(*_cbor_realloc_t)(void *, size_t);
 typedef void (*_cbor_free_t)(void *);
@@ -101,8 +99,6 @@ CBOR_EXPORT extern _cbor_realloc_t _cbor_realloc;
 CBOR_EXPORT extern _cbor_free_t _cbor_free;
 
 /** Sets the memory management routines to use.
- *
- * Only available when `CBOR_CUSTOM_ALLOC` is truthy
  *
  * \rst
  * .. warning:: This function modifies the global state and should therefore be
@@ -126,14 +122,6 @@ CBOR_EXPORT void cbor_set_allocs(_cbor_malloc_t custom_malloc,
 #define _CBOR_MALLOC _cbor_malloc
 #define _CBOR_REALLOC _cbor_realloc
 #define _CBOR_FREE _cbor_free
-
-#else
-
-#define _CBOR_MALLOC malloc
-#define _CBOR_REALLOC realloc
-#define _CBOR_FREE free
-
-#endif
 
 /*
  * ============================================================================
