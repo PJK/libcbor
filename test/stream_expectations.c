@@ -1,5 +1,5 @@
 #include "stream_expectations.h"
-/* Ordered from 0 to queue_size - 1 */
+
 struct test_assertion assertions_queue[MAX_QUEUE_ITEMS];
 int queue_size = 0;
 int current_expectation = 0;

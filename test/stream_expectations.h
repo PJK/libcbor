@@ -17,9 +17,9 @@
 #include <stdint.h>
 #include "cbor.h"
 
-// TODO: This setup is overengineered, we currently use one assertion at a time
-// TOOD: We never ensure that the queue is empty
 #define MAX_QUEUE_ITEMS 30
+
+// How this
 
 enum test_expectation {
   UINT8_EQ,
