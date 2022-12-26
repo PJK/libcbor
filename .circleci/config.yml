@@ -30,9 +30,7 @@ jobs:
     steps:
       - checkout
       - linux-setup
-      # TODO update clang-format version
-      # Use a pinned clang-format version to avoid inconsistencies
-      - run: sudo apt-get install -y clang-format-8 doxygen cppcheck
+      - run: sudo apt-get install -y clang-format doxygen cppcheck
       - run: cppcheck . --error-exitcode=1
       - run: bash clang-format.sh --verbose
       - run: >
