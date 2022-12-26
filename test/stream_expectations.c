@@ -134,13 +134,13 @@ void byte_string_start_callback(void *_CBOR_UNUSED(_context)) {
 
 void assert_string_mem_eq(cbor_data address, size_t length) {
   assertions_queue[queue_size++] = (struct test_assertion){
-      BSTRING_MEM_EQ,
+      STRING_MEM_EQ,
       (union test_expectation_data){.string = {address, length}}};
 }
 
 void string_callback(void *_CBOR_UNUSED(_context), cbor_data address,
                      uint64_t length) {
-  assert_true(current().expectation == BSTRING_MEM_EQ);
+  assert_true(current().expectation == STRING_MEM_EQ);
   assert_true(current().data.string.address == address);
   assert_true(current().data.string.length == length);
   current_expectation++;
@@ -148,11 +148,11 @@ void string_callback(void *_CBOR_UNUSED(_context), cbor_data address,
 
 void assert_string_indef_start(void) {
   assertions_queue[queue_size++] =
-      (struct test_assertion){.expectation = BSTRING_INDEF_START};
+      (struct test_assertion){.expectation = STRING_INDEF_START};
 }
 
 void string_start_callback(void *_CBOR_UNUSED(_context)) {
-  assert_true(current().expectation == BSTRING_INDEF_START);
+  assert_true(current().expectation == STRING_INDEF_START);
   current_expectation++;
 }
 
@@ -295,6 +295,9 @@ const struct cbor_callbacks asserting_callbacks = {
 
     .byte_string = &byte_string_callback,
     .byte_string_start = &byte_string_start_callback,
+
+    .string = &string_callback,
+    .string_start = &string_start_callback,
 
     .array_start = &array_start_callback,
     .indef_array_start = &indef_array_start_callback,

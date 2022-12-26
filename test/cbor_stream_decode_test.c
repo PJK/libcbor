@@ -227,9 +227,9 @@ static void test_bstring_indef_decoding_2(void **_CBOR_UNUSED(_state)) {
 
 unsigned char bstring_indef_3_data[] = {0x5F,
                                         // Empty byte string
-                                        0x40, 0x58,
+                                        0x40,
                                         // 1B, 1 character byte string
-                                        0x01, 0xFF,
+                                        0x58, 0x01, 0x00,
                                         // Break
                                         0xFF};
 static void test_bstring_indef_decoding_3(void **_CBOR_UNUSED(_state)) {
@@ -248,6 +248,126 @@ static void test_bstring_indef_decoding_3(void **_CBOR_UNUSED(_state)) {
   assert_indef_break();
   assert_decoder_result(1, CBOR_DECODER_FINISHED,
                         decode(bstring_indef_3_data + 5, 1));
+}
+
+unsigned char string_embedded_int8_data[] = {0x61, 0xFF};
+static void test_string_embedded_int8_decoding(void **_CBOR_UNUSED(_state)) {
+  assert_string_mem_eq(string_embedded_int8_data + 1, 1);
+  assert_decoder_result(2, CBOR_DECODER_FINISHED,
+                        decode(string_embedded_int8_data, 2));
+
+  assert_minimum_input_size(2, string_embedded_int8_data);
+}
+
+// The callback returns a *pointer* to the the start of the data segment (after
+// the second byte of input); the data is never read, so we never run into
+// memory issues despite not allocating and initializing all the data.
+unsigned char string_int8_data[] = {0x78, 0x02 /*, [2 bytes] */};
+static void test_string_int8_decoding(void **_CBOR_UNUSED(_state)) {
+  assert_string_mem_eq(string_int8_data + 2, 2);
+  assert_decoder_result(4, CBOR_DECODER_FINISHED, decode(string_int8_data, 4));
+
+  assert_minimum_input_size(2, string_int8_data);
+  assert_decoder_result_nedata(/* expected_bytes_required= */ 2 + 2,
+                               decode(string_int8_data, 2));
+}
+
+unsigned char string_int8_empty_data[] = {0x78, 0x00};
+static void test_string_int8_empty_decoding(void **_CBOR_UNUSED(_state)) {
+  assert_string_mem_eq(string_int8_empty_data + 2, 0);
+  assert_decoder_result(2, CBOR_DECODER_FINISHED,
+                        decode(string_int8_empty_data, 2));
+
+  assert_minimum_input_size(2, string_int8_empty_data);
+}
+
+unsigned char string_int16_data[] = {0x79, 0x01, 0x5C /*, [348 bytes] */};
+static void test_string_int16_decoding(void **_CBOR_UNUSED(_state)) {
+  assert_string_mem_eq(string_int16_data + 3, 348);
+  assert_decoder_result(3 + 348, CBOR_DECODER_FINISHED,
+                        decode(string_int16_data, 3 + 348));
+
+  assert_minimum_input_size(3, string_int16_data);
+  assert_decoder_result_nedata(/* expected_bytes_required= */ 3 + 348,
+                               decode(string_int16_data, 3));
+}
+
+unsigned char string_int32_data[] = {0x7A, 0x00, 0x10, 0x10,
+                                     0x10 /*, [1052688 bytes] */};
+static void test_string_int32_decoding(void **_CBOR_UNUSED(_state)) {
+  assert_string_mem_eq(string_int32_data + 5, 1052688);
+  assert_decoder_result(5 + 1052688, CBOR_DECODER_FINISHED,
+                        decode(string_int32_data, 5 + 1052688));
+
+  assert_minimum_input_size(5, string_int32_data);
+  assert_decoder_result_nedata(/* expected_bytes_required= */ 5 + 1052688,
+                               decode(string_int32_data, 5));
+}
+
+#ifdef EIGHT_BYTE_SIZE_T
+unsigned char string_int64_data[] = {
+    0x7B, 0x00, 0x00, 0x00, 0x01,
+    0x00, 0x00, 0x00, 0x00 /*, [4294967296 bytes] */};
+static void test_string_int64_decoding(void **_CBOR_UNUSED(_state)) {
+  assert_string_mem_eq(string_int64_data + 9, 4294967296);
+  assert_decoder_result(9 + 4294967296, CBOR_DECODER_FINISHED,
+                        decode(string_int64_data, 9 + 4294967296));
+
+  assert_minimum_input_size(9, string_int64_data);
+  assert_decoder_result_nedata(/* expected_bytes_required= */ 9 + 4294967296,
+                               decode(string_int64_data, 9));
+}
+#endif
+
+unsigned char string_indef_1_data[] = {0x7F, 0x60 /* Empty string */, 0xFF};
+static void test_string_indef_decoding_1(void **_CBOR_UNUSED(_state)) {
+  assert_string_indef_start();
+  assert_decoder_result(1, CBOR_DECODER_FINISHED,
+                        decode(string_indef_1_data, 3));
+
+  assert_string_mem_eq(string_indef_1_data + 2, 0);
+  assert_decoder_result(1, CBOR_DECODER_FINISHED,
+                        decode(string_indef_1_data + 1, 2));
+
+  assert_indef_break();
+  assert_decoder_result(1, CBOR_DECODER_FINISHED,
+                        decode(string_indef_1_data + 2, 1));
+}
+
+unsigned char string_indef_2_data[] = {0x7F, 0xFF};
+static void test_string_indef_decoding_2(void **_CBOR_UNUSED(_state)) {
+  assert_string_indef_start();
+  assert_decoder_result(1, CBOR_DECODER_FINISHED,
+                        decode(string_indef_2_data, 2));
+
+  assert_indef_break();
+  assert_decoder_result(1, CBOR_DECODER_FINISHED,
+                        decode(string_indef_2_data + 1, 1));
+}
+
+unsigned char string_indef_3_data[] = {0x7F,
+                                       // Empty string
+                                       0x60,
+                                       // 1B, 1 character byte string
+                                       0x78, 0x01, 0x00,
+                                       // Break
+                                       0xFF};
+static void test_string_indef_decoding_3(void **_CBOR_UNUSED(_state)) {
+  assert_string_indef_start();
+  assert_decoder_result(1, CBOR_DECODER_FINISHED,
+                        decode(string_indef_3_data, 6));
+
+  assert_string_mem_eq(string_indef_3_data + 2, 0);
+  assert_decoder_result(1, CBOR_DECODER_FINISHED,
+                        decode(string_indef_3_data + 1, 5));
+
+  assert_string_mem_eq(string_indef_3_data + 4, 1);
+  assert_decoder_result(3, CBOR_DECODER_FINISHED,
+                        decode(string_indef_3_data + 2, 4));
+
+  assert_indef_break();
+  assert_decoder_result(1, CBOR_DECODER_FINISHED,
+                        decode(string_indef_3_data + 5, 1));
 }
 
 unsigned char array_embedded_int8_data[] = {0x80};
@@ -582,6 +702,18 @@ int main(void) {
       stream_test(test_bstring_indef_decoding_1),
       stream_test(test_bstring_indef_decoding_2),
       stream_test(test_bstring_indef_decoding_3),
+
+      stream_test(test_string_embedded_int8_decoding),
+      stream_test(test_string_int8_decoding),
+      stream_test(test_string_int8_empty_decoding),
+      stream_test(test_string_int16_decoding),
+      stream_test(test_string_int32_decoding),
+#ifdef EIGHT_BYTE_SIZE_T
+      stream_test(test_string_int64_decoding),
+#endif
+      stream_test(test_string_indef_decoding_1),
+      stream_test(test_string_indef_decoding_2),
+      stream_test(test_string_indef_decoding_3),
 
       stream_test(test_array_embedded_int8_decoding),
       stream_test(test_array_int8_decoding),
