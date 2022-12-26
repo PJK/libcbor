@@ -8,22 +8,22 @@
 #ifndef LIBCBOR_H_
 #define LIBCBOR_H_
 
-#include "cbor/common.h"
-#include "cbor/data.h"
+#include "./cbor/common.h"
+#include "./cbor/data.h"
 
-#include "cbor/arrays.h"
-#include "cbor/bytestrings.h"
-#include "cbor/floats_ctrls.h"
-#include "cbor/ints.h"
-#include "cbor/maps.h"
-#include "cbor/strings.h"
-#include "cbor/tags.h"
+#include "./cbor/arrays.h"
+#include "./cbor/bytestrings.h"
+#include "./cbor/floats_ctrls.h"
+#include "./cbor/ints.h"
+#include "./cbor/maps.h"
+#include "./cbor/strings.h"
+#include "./cbor/tags.h"
 
-#include "cbor/callbacks.h"
-#include "cbor/cbor_export.h"
-#include "cbor/encoding.h"
-#include "cbor/serialization.h"
-#include "cbor/streaming.h"
+#include "./cbor/callbacks.h"
+#include "./cbor/cbor_export.h"
+#include "./cbor/encoding.h"
+#include "./cbor/serialization.h"
+#include "./cbor/streaming.h"
 
 #ifdef __cplusplus
 extern "C" {
