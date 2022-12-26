@@ -1,8 +1,6 @@
-# PR: Short description of change
-
 ## Description
 
-A clear and concise description of what the PR does and why.
+What changes and why
 
 ## Checklist
 
@@ -10,7 +8,8 @@ A clear and concise description of what the PR does and why.
 	- [ ] I have added tests
 	- [ ] I have updated the documentation
 	- [ ] I have updated the CHANGELOG
-- [ ] Are there any breaking changes? If so, are they documented?
-- [ ] Does this PR introduce any platform specific code? If so, is this captured in the description?
-- [ ] Security: Does this PR potentially affect security? If so, is this captured in the description?
-- [ ] Performance: Does this PR potentially affect performance? If so, is this captured in the description?
+- [ ] Are there any breaking changes?
+	- [ ] If yes: I have marked them in the CHANGELOG ([example](https://github.com/PJK/libcbor/blob/87e2d48a127968d39f158cbfc2b79d6285bd039d/CHANGELOG.md?plain=1#L16))
+- [ ] Does this PR introduce any platform specific code?
+- [ ] Security: Does this PR potentially affect security?
+- [ ] Performance: Does this PR potentially affect performance?
