@@ -11,11 +11,9 @@ http_archive(
 )
 
 # libcbor
-http_archive(
+new_local_repository(
     name = "libcbor",
     build_file = "//third_party:libcbor.BUILD",
-    sha256 = "dd04ea1a7df484217058d389e027e7a0143a4f245aa18a9f89a5dd3e1a4fcc9a",
-    strip_prefix = "libcbor-0.8.0",
-    urls = ["https://github.com/PJK/libcbor/archive/refs/tags/v0.8.0.zip"],
+    path = "../../src",
 )
 
