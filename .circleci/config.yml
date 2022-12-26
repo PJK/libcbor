@@ -4,8 +4,7 @@ commands:
   linux-setup:
     steps:
     - run: sudo apt-get update
-    - run: sudo apt-get install -y cmake clang-format-8 valgrind doxygen
-    - run: sudo apt-get install -y "${TOOLCHAIN_PACKAGE}"
+    - run: sudo apt-get install -y cmake "${TOOLCHAIN_PACKAGE}"
     - run: sudo apt install libcmocka-dev
   build-test:
     steps:
@@ -14,6 +13,7 @@ commands:
           -DCBOR_CUSTOM_ALLOC=ON \
           -DCMAKE_BUILD_TYPE=Debug \
           -DSANITIZE=OFF \
+          -DCOVERAGE="${CMAKE_COVERAGE:='OFF'}" \
           .
     - run: make VERBOSE=1
     - run: ctest -VV
@@ -51,18 +51,11 @@ jobs:
       image: ubuntu-2004:202010-01
     environment:
       TOOLCHAIN_PACKAGE: g++
+      CMAKE_COVERAGE: ON
     steps:
       - checkout
       - linux-setup
-      - run: >
-          cmake -DWITH_TESTS=ON \
-              -DCBOR_CUSTOM_ALLOC=ON \
-              -DCMAKE_BUILD_TYPE=Debug \
-              -DSANITIZE=OFF \
-              -DCOVERAGE=ON \
-              .
-      - run: make VERBOSE=1
-      - run: ctest -VV
+      - linux-setup
       - run: ctest -T Coverage
       - codecov/upload
         # TODO: Reenable, currently fails on libjson leak (package out of date)
@@ -80,11 +73,10 @@ jobs:
       image: ubuntu-2004:202010-01
     environment:
       TOOLCHAIN_PACKAGE: clang
+      CC: clang
+      CXX: clang++
     steps:
       - checkout
-      - run: >
-          echo 'export CC=/usr/bin/clang' >> "$BASH_ENV"
-          echo 'export CXX=/usr/bin/clang++' >> "$BASH_ENV"
       - linux-setup
       - build-test
 
