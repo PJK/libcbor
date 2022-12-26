@@ -5,7 +5,7 @@ commands:
     steps:
     - run: sudo apt-get update
     - run: sudo apt-get install -y cmake clang-format-8 valgrind doxygen
-    - run: sudo apt-get install -y "${TOOLCHAIN_PACKAGE}""
+    - run: sudo apt-get install -y "${TOOLCHAIN_PACKAGE}"
     - run: sudo apt install libcmocka-dev
   build-test:
     steps:
