@@ -53,18 +53,15 @@ jobs:
     steps:
       - checkout
       - linux-setup
+      - run: sudo apt-get install -y valgrind
       - build-test
       - run: ctest -T Coverage
       - codecov/upload
-        # TODO: Reenable, currently fails on libjson leak (package out of date)
-        # The issue actually seems to be in the instrumentation code, not
-        # libcbor (we don't use libjsoncpp)
-        # https://github.com/open-source-parsers/jsoncpp/issues/507
-      #      - run: >
-      #          ctest --output-on-failure -T memcheck | tee memcheck.out
-      #          if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
-      #            exit 1
-      #          fi;
+      - run: ctest --output-on-failure -T memcheck | tee memcheck.out
+      - run: >
+          if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
+            exit 1
+          fi;
 
   build-and-test-clang:
     machine:

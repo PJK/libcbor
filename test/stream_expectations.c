@@ -1,13 +1,10 @@
 #include "stream_expectations.h"
-/* Ordered from 0 to queue_size - 1 */
+
 struct test_assertion assertions_queue[MAX_QUEUE_ITEMS];
 int queue_size = 0;
 int current_expectation = 0;
-decoder_t *decoder;
 
-void set_decoder(decoder_t *dec) { decoder = dec; }
-
-int clear_stream_assertions(void **state) {
+int clean_up_stream_assertions(void **state) {
   if (queue_size != current_expectation) {
     return 1;  // We have not matched all expectations correctly
   }
@@ -132,6 +129,30 @@ void assert_bstring_indef_start(void) {
 
 void byte_string_start_callback(void *_CBOR_UNUSED(_context)) {
   assert_true(current().expectation == BSTRING_INDEF_START);
+  current_expectation++;
+}
+
+void assert_string_mem_eq(cbor_data address, size_t length) {
+  assertions_queue[queue_size++] = (struct test_assertion){
+      STRING_MEM_EQ,
+      (union test_expectation_data){.string = {address, length}}};
+}
+
+void string_callback(void *_CBOR_UNUSED(_context), cbor_data address,
+                     uint64_t length) {
+  assert_true(current().expectation == STRING_MEM_EQ);
+  assert_true(current().data.string.address == address);
+  assert_true(current().data.string.length == length);
+  current_expectation++;
+}
+
+void assert_string_indef_start(void) {
+  assertions_queue[queue_size++] =
+      (struct test_assertion){.expectation = STRING_INDEF_START};
+}
+
+void string_start_callback(void *_CBOR_UNUSED(_context)) {
+  assert_true(current().expectation == STRING_INDEF_START);
   current_expectation++;
 }
 
@@ -275,6 +296,9 @@ const struct cbor_callbacks asserting_callbacks = {
     .byte_string = &byte_string_callback,
     .byte_string_start = &byte_string_start_callback,
 
+    .string = &string_callback,
+    .string_start = &string_start_callback,
+
     .array_start = &array_start_callback,
     .indef_array_start = &indef_array_start_callback,
 
@@ -295,7 +319,7 @@ const struct cbor_callbacks asserting_callbacks = {
 struct cbor_decoder_result decode(cbor_data source, size_t source_size) {
   int last_expectation = current_expectation;
   struct cbor_decoder_result result =
-      decoder(source, source_size, &asserting_callbacks, NULL);
+      cbor_stream_decode(source, source_size, &asserting_callbacks, NULL);
   if (result.status == CBOR_DECODER_FINISHED) {
     // Check that we have matched an expectation from the queue
     assert_true(last_expectation + 1 == current_expectation);
