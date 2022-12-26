@@ -31,12 +31,14 @@ static void printmem(const unsigned char *ptr, size_t length) {
 
 unsigned seed;
 
+#if CBOR_CUSTOM_ALLOC
 void *mock_malloc(size_t size) {
   if (size > (1 << 19))
     return NULL;
   else
     return malloc(size);
 }
+#endif
 
 static void run_round(void) {
   cbor_item_t *item;
@@ -61,7 +63,9 @@ static void run_round(void) {
 }
 
 static void fuzz(void **_CBOR_UNUSED(_state)) {
+#if CBOR_CUSTOM_ALLOC
   cbor_set_allocs(mock_malloc, realloc, free);
+#endif
   printf("Fuzzing %llu rounds of up to %llu bytes with seed %u\n", ROUNDS,
          MAXLEN, seed);
   srand(seed);

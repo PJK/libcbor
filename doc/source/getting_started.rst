@@ -55,6 +55,7 @@ The following configuration options will also be defined as macros [#]_ in ``<cb
 ========================  =======================================================   ======================  =====================================================================================================================
 Option                    Meaning                                                   Default                 Possible values
 ------------------------  -------------------------------------------------------   ----------------------  ---------------------------------------------------------------------------------------------------------------------
+``CBOR_CUSTOM_ALLOC``     Enable custom allocator support                           ``OFF``                  ``ON``, ``OFF``
 ``CBOR_PRETTY_PRINTER``   Include a pretty-printing routine                         ``ON``                  ``ON``, ``OFF``
 ``CBOR_BUFFER_GROWTH``    Factor for buffer growth & shrinking                       ``2``                    Decimals > 1
 ========================  =======================================================   ======================  =====================================================================================================================
@@ -62,9 +63,6 @@ Option                    Meaning                                               
 .. [#] ``ON`` & ``OFF`` will be translated to ``1`` and ``0`` using `cmakedefine <https://cmake.org/cmake/help/v3.2/command/configure_file.html?highlight=cmakedefine>`_.
 
 If you want to pass other custom configuration options, please refer to `<http://www.cmake.org/Wiki/CMake_Useful_Variables>`_.
-
-.. warning::
-    ``CBOR_CUSTOM_ALLOC`` has been `removed <TODO>`_. Custom allocators (historically a controlled by a build flag) are always enabled.
 
 **Building using make**
 

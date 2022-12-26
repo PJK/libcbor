@@ -16,6 +16,8 @@
 // This test simulates cases when malloc unexpectedly fails and leaves a
 // possibly partially constructed object behind. It is especially useful
 // in conjunction with the memory correctness check.
+//
+// WARNING: The test only works with CBOR_CUSTOM_ALLOC
 
 typedef enum call_expectation {
   MALLOC,
