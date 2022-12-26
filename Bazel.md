@@ -45,7 +45,7 @@ genrule(
     "INITIAL_WD=`pwd`",
     # Build libcbor library.
     "cd `dirname $(location CMakeLists.txt)`",
-    "cmake -DCMAKE_BUILD_TYPE=Release -DCBOR_CUSTOM_ALLOC=ON .",
+    "cmake -DCMAKE_BUILD_TYPE=Release .",
     "cmake --build .",
     # Export the .a and .h files for cbor rule, below.
     "cp src/libcbor.a src/cbor.h $$INITIAL_WD/$(RULEDIR)",

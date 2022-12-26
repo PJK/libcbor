@@ -10,7 +10,6 @@ commands:
     steps:
     - run: >
         cmake -DWITH_TESTS=ON \
-          -DCBOR_CUSTOM_ALLOC=ON \
           -DCMAKE_BUILD_TYPE=Debug \
           -DSANITIZE=OFF \
           -DCOVERAGE="${CMAKE_COVERAGE:='OFF'}" \

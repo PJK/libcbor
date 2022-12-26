@@ -1,13 +1,9 @@
-set(SOURCES cbor.c cbor/streaming.c cbor/internal/encoders.c cbor/internal/builder_callbacks.c cbor/internal/loaders.c cbor/internal/memory_utils.c cbor/internal/stack.c cbor/internal/unicode.c cbor/encoding.c cbor/serialization.c cbor/arrays.c cbor/common.c cbor/floats_ctrls.c cbor/bytestrings.c cbor/callbacks.c cbor/strings.c cbor/maps.c cbor/tags.c cbor/ints.c)
+set(SOURCES cbor.c allocators.c cbor/streaming.c cbor/internal/encoders.c cbor/internal/builder_callbacks.c cbor/internal/loaders.c cbor/internal/memory_utils.c cbor/internal/stack.c cbor/internal/unicode.c cbor/encoding.c cbor/serialization.c cbor/arrays.c cbor/common.c cbor/floats_ctrls.c cbor/bytestrings.c cbor/callbacks.c cbor/strings.c cbor/maps.c cbor/tags.c cbor/ints.c)
 
 include(GNUInstallDirs)
 include(JoinPaths)
 include(CheckFunctionExists)
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
-
-if (CBOR_CUSTOM_ALLOC)
-    LIST(APPEND SOURCES allocators.c)
-endif(CBOR_CUSTOM_ALLOC)
 
 if (NOT DEFINED CMAKE_MACOSX_RPATH)
 	set(CMAKE_MACOSX_RPATH 0)
