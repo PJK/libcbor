@@ -20,6 +20,7 @@ commands:
 
 orbs:
   codecov: codecov/codecov@3.2.2
+
 jobs:
   static-test:
     machine:
@@ -80,6 +81,21 @@ jobs:
       - linux-setup
       - build-test
 
+
+  # Latest clang release from https://releases.llvm.org/
+  build-and-test-clang-latest:
+    machine:
+      image: ubuntu-2204:2022.10.2
+    environment:
+      TOOLCHAIN_PACKAGE: clang-15
+      CC: clang-15
+      CXX: clang++-15
+    steps:
+      - checkout
+      - run: bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+      - linux-setup
+      - build-test
+
   build-and-test-arm:
     machine:
       image: ubuntu-2004:202101-01
@@ -103,10 +119,11 @@ jobs:
       - run: curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
       - run: sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
       - run: echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
-      - run: sudo apt update && sudo apt install bazel
+      - run: sudo apt update
+      - run: sudo apt install bazel
       - run: bazel --version
       - run: >
-          pushd examples/bazel &&
+          pushd examples/bazel
           bazel run -s src:hello
 
   build-and-test-osx:
