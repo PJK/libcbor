@@ -56,7 +56,7 @@ jobs:
     steps:
       - checkout
       - linux-setup
-      - linux-setup
+      - build-test
       - run: ctest -T Coverage
       - codecov/upload
         # TODO: Reenable, currently fails on libjson leak (package out of date)
@@ -92,7 +92,7 @@ jobs:
       CXX: clang++-15
     steps:
       - checkout
-      - run: bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+      - run: sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
       - linux-setup
       - build-test
 
