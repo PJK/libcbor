@@ -35,9 +35,12 @@ enum test_expectation {
   NEGINT32_EQ,
   NEGINT64_EQ,
 
-  BSTRING_MEM_EQ, /* Matches length and memory address for definite byte strings
-                   */
+  // Matches length and memory address for definite strings
+  BSTRING_MEM_EQ,
   BSTRING_INDEF_START,
+
+  STRING_MEM_EQ,
+  STRING_INDEF_START,
 
   ARRAY_START, /* Definite arrays only */
   ARRAY_INDEF_START,
@@ -97,6 +100,9 @@ void assert_negint64_eq(uint64_t);
 void assert_bstring_mem_eq(cbor_data, size_t);
 void assert_bstring_indef_start(void);
 
+void assert_string_mem_eq(cbor_data, size_t);
+void assert_string_indef_start(void);
+
 void assert_array_start(size_t);
 void assert_indef_array_start(void);
 
@@ -128,6 +134,9 @@ void negint64_callback(void *, uint64_t);
 
 void byte_string_callback(void *, cbor_data, uint64_t);
 void byte_string_start_callback(void *);
+
+void string_callback(void *, cbor_data, uint64_t);
+void string_start_callback(void *);
 
 void array_start_callback(void *, uint64_t);
 void indef_array_start_callback(void *);
