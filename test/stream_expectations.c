@@ -3,9 +3,6 @@
 struct test_assertion assertions_queue[MAX_QUEUE_ITEMS];
 int queue_size = 0;
 int current_expectation = 0;
-decoder_t *decoder;
-
-void set_decoder(decoder_t *dec) { decoder = dec; }
 
 int clear_stream_assertions(void **state) {
   if (queue_size != current_expectation) {
@@ -295,7 +292,7 @@ const struct cbor_callbacks asserting_callbacks = {
 struct cbor_decoder_result decode(cbor_data source, size_t source_size) {
   int last_expectation = current_expectation;
   struct cbor_decoder_result result =
-      decoder(source, source_size, &asserting_callbacks, NULL);
+      cbor_stream_decode(source, source_size, &asserting_callbacks, NULL);
   if (result.status == CBOR_DECODER_FINISHED) {
     // Check that we have matched an expectation from the queue
     assert_true(last_expectation + 1 == current_expectation);
