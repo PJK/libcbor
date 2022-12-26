@@ -74,12 +74,7 @@ struct test_assertion {
   union test_expectation_data data;
 };
 
-/* Tested function */
-// TODO: This looks overengineered, we only ever use one (?) in the testsuite
-typedef struct cbor_decoder_result decoder_t(cbor_data, size_t,
-                                             const struct cbor_callbacks *,
-                                             void *);
-void set_decoder(decoder_t *);
+/* Test harness -- calls `cbor_stream_decode` and checks assertions */
 struct cbor_decoder_result decode(cbor_data, size_t);
 
 /* Test setup */
