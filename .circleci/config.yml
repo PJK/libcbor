@@ -70,10 +70,10 @@ jobs:
     steps:
       - checkout
       - run: 
-        command: *linux-setup
-        environment: 
-          CC: /usr/bin/clang
-          CXX: /usr/bin/clang++
+          command: *linux-setup
+          environment: 
+            CC: /usr/bin/clang
+            CXX: /usr/bin/clang++
       - run: *build-test
 
   build-and-test-arm:
