@@ -3,16 +3,16 @@ cc_library(
     srcs = glob([
       "src/**/*.h",
       "src/**/*.c",
-
     ]),
     deps = [
       "@libcbor_bazel_example//third_party/libcbor:config",
     ],
     hdrs = [
-      "src/cbor.h",
+      "cbor.h",
     ],
     includes = [
-        "src",
+      ".", 
+      "internal",
     ],
     visibility = ["//visibility:public"],
 )

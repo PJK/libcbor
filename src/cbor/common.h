@@ -73,6 +73,14 @@ static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
 #define _CBOR_UNUSED(x) x
 #endif
 
+typedef void *(*_cbor_malloc_t)(size_t);
+typedef void *(*_cbor_realloc_t)(void *, size_t);
+typedef void (*_cbor_free_t)(void *);
+
+CBOR_EXPORT extern _cbor_malloc_t _cbor_malloc;
+CBOR_EXPORT extern _cbor_realloc_t _cbor_realloc;
+CBOR_EXPORT extern _cbor_free_t _cbor_free;
+
 // Macro to short-circuit builder functions when memory allocation fails
 #define _CBOR_NOTNULL(cbor_item) \
   do {                           \
@@ -89,14 +97,6 @@ static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
       return NULL;                                  \
     }                                               \
   } while (0)
-
-typedef void *(*_cbor_malloc_t)(size_t);
-typedef void *(*_cbor_realloc_t)(void *, size_t);
-typedef void (*_cbor_free_t)(void *);
-
-CBOR_EXPORT extern _cbor_malloc_t _cbor_malloc;
-CBOR_EXPORT extern _cbor_realloc_t _cbor_realloc;
-CBOR_EXPORT extern _cbor_free_t _cbor_free;
 
 /** Sets the memory management routines to use.
  *
