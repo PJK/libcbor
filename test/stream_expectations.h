@@ -1,25 +1,28 @@
-/*
- * This file provides testing tools for the streaming decoder. The intended
- * usage is as follows: 1) SE API wrapper is initialized 2) Client builds
- * (ordered) series of expectations 3) The decoder is executed 4) SE checks all
- * assertions 5) Go to 2) if desired
- */
-
 #ifndef STREAM_EXPECTATIONS_H_
 #define STREAM_EXPECTATIONS_H_
 
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #include <cmocka.h>
 
-#include <stdint.h>
 #include "cbor.h"
 
 #define MAX_QUEUE_ITEMS 30
 
-// How this
+// Utilities to test `cbor_stream_decode`.  See `cbor_stream_decode_test.cc`.
+//
+// Usage:
+// - The `assert_` helpers build a queue of `test_assertion`s
+//   (`assertions_queue` in the implementation file), specifying
+//  - Which callback is expected (`test_expectation`)
+//  - And what is the expected argument value (if applicable,
+//    `test_expectation_data`)
+// - `decode` will invoke `cbor_stream_decode` (test subject)
+// - `cbor_stream_decode` will invoke one of the `_callback` functions, which
+//   will check the passed data against the `assertions_queue`
 
 enum test_expectation {
   UINT8_EQ,
@@ -77,8 +80,8 @@ struct test_assertion {
 /* Test harness -- calls `cbor_stream_decode` and checks assertions */
 struct cbor_decoder_result decode(cbor_data, size_t);
 
-/* Test setup */
-int clear_stream_assertions(void **);
+/* Verify all assertions were applied and clean up */
+int clean_up_stream_assertions(void **);
 
 /* Assertions builders */
 void assert_uint8_eq(uint8_t);
