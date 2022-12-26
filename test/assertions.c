@@ -32,19 +32,19 @@ void assert_uint64(cbor_item_t* item, uint64_t num) {
   assert_true(cbor_get_uint64(item) == num);
 }
 
-void assert_decoder_result(size_t expected_read,
+void assert_decoder_result(size_t expected_bytes_read,
                            enum cbor_decoder_status expected_status,
                            struct cbor_decoder_result actual_result) {
-  assert_true(actual_result.read == expected_read);
+  assert_true(actual_result.read == expected_bytes_read);
   assert_true(actual_result.status == expected_status);
   assert_true(actual_result.required == 0);
 }
 
-void assert_decoder_result_nedata(size_t expected_required,
+void assert_decoder_result_nedata(size_t expected_bytes_required,
                                   struct cbor_decoder_result actual_result) {
   assert_true(actual_result.read == 0);
   assert_true(actual_result.status == CBOR_DECODER_NEDATA);
-  assert_true(actual_result.required == expected_required);
+  assert_true(actual_result.required == expected_bytes_required);
 }
 
 void assert_minimum_input_size(size_t expected, cbor_data data) {
