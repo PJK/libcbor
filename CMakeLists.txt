@@ -99,19 +99,36 @@ add_custom_target(coverage
                   COMMAND ctest
                   COMMAND lcov --capture --directory . --output-file coverage.info
                   COMMAND genhtml coverage.info --highlight --legend --output-directory coverage_html
-                  COMMAND echo "Coverage report ready: file://${CMAKE_CURRENT_BINARY_DIR}/coverage_html/index.html")
+                  COMMAND echo "Coverage report ready: ${CMAKE_CURRENT_BINARY_DIR}/coverage_html/index.html")
+
+add_custom_target(llvm-coverage
+                    COMMAND make -j 16
+                    COMMAND rm -rf coverage_profiles
+                    COMMAND mkdir coverage_profiles
+                    COMMAND bash -c [[ for TEST in $(ls test/*_test); do LLVM_PROFILE_FILE="coverage_profiles/$(basename -- ${TEST}).profraw" ./${TEST}; done ]]
+                    # VERBATIM makes escaping working, but breaks shell expansions, so we need to explicitly use bash
+                    COMMAND bash -c [[ llvm-profdata merge -sparse $(ls coverage_profiles/*.profraw) -o coverage_profiles/combined.profdata ]]
+                    COMMAND bash -c [[ llvm-cov show -instr-profile=coverage_profiles/combined.profdata test/*_test -format=html > coverage_profiles/report.html ]]
+                    COMMAND bash -c [[ llvm-cov report -instr-profile=coverage_profiles/combined.profdata test/*_test ]]
+                    COMMAND echo "Coverage report ready: ${CMAKE_CURRENT_BINARY_DIR}/coverage_profiles/report.html"
+                    VERBATIM)
+
 include_directories(src)
 
 
 option(c "Enable code coverage instrumentation" OFF)
 if (COVERAGE)
     message("Configuring code coverage instrumentation")
-    if(NOT CMAKE_C_COMPILER MATCHES "gcc")
-        message(WARNING "Gcov instrumentation only works with GCC")
+    if(CMAKE_C_COMPILER_ID MATCHES "GNU")
+        # https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fprofile-arcs -ftest-coverage --coverage")
+        set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -g -fprofile-arcs -ftest-coverage --coverage")
+    elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
+        set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -fprofile-instr-generate")
+    else()
+        message(WARNING "Code coverage build not implemented for compiler ${CMAKE_C_COMPILER_ID}")
     endif()
-    # https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fprofile-arcs -ftest-coverage --coverage")
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -g -fprofile-arcs -ftest-coverage --coverage")
 endif (COVERAGE)
 
 
