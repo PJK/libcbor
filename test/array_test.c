@@ -118,10 +118,48 @@ static void test_nested_indef_arrays(void **_CBOR_UNUSED(_state)) {
   assert_null(arr);
 }
 
+static void test_array_replace(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *array = cbor_new_definite_array(2);
+  assert_int_equal(cbor_array_size(array), 0);
+  cbor_item_t *one = cbor_build_uint8(1);
+  cbor_item_t *three = cbor_build_uint8(3);
+  assert_int_equal(cbor_refcount(one), 1);
+  assert_int_equal(cbor_refcount(three), 1);
+
+  // No item to replace
+  assert_false(cbor_array_replace(array, 0, three));
+  assert_int_equal(cbor_refcount(three), 1);
+
+  // Add items
+  cbor_array_push(array, one);
+  cbor_array_push(array, cbor_move(cbor_build_uint8(2)));
+  assert_int_equal(cbor_refcount(one), 2);
+  assert_int_equal(cbor_array_size(array), 2);
+
+  // Array has only two items
+  assert_false(cbor_array_replace(array, 2, three));
+
+  // Change [1, 2] to [3, 2]
+  assert_true(cbor_array_replace(array, 0, three));
+  assert_int_equal(cbor_refcount(one), 1);
+  assert_int_equal(cbor_refcount(three), 2);
+  assert_uint8(cbor_array_get(array, 0), 3);
+  assert_uint8(cbor_array_get(array, 1), 2);
+
+  cbor_decref(&one);
+  cbor_decref(&three);
+  cbor_decref(&array);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
-      cmocka_unit_test(test_empty_array), cmocka_unit_test(test_simple_array),
-      cmocka_unit_test(test_nested_arrays), cmocka_unit_test(test_indef_arrays),
-      cmocka_unit_test(test_nested_indef_arrays)};
+      cmocka_unit_test(test_empty_array),
+      cmocka_unit_test(test_simple_array),
+      cmocka_unit_test(test_nested_arrays),
+      cmocka_unit_test(test_indef_arrays),
+      cmocka_unit_test(test_nested_indef_arrays),
+      cmocka_unit_test(test_array_replace),
+  };
+
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
