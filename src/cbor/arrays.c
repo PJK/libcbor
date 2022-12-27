@@ -56,7 +56,6 @@ bool cbor_array_push(cbor_item_t *array, cbor_item_t *pushee) {
     /* Exponential realloc */
     if (metadata->end_ptr >= metadata->allocated) {
       // Check for overflows first
-      // TODO: Explicitly test this
       if (!_cbor_safe_to_multiply(CBOR_BUFFER_GROWTH, metadata->allocated)) {
         return false;
       }
