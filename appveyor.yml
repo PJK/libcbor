@@ -11,6 +11,9 @@ platform:
   - x64
   - x86
 
+# Do not build feature branch with open Pull Requests
+# The build is redundant and gets queued behind the other one.
+skip_branch_with_pr: true
 
 # Via https://github.com/apitrace/apitrace/blob/master/appveyor.yml
 
