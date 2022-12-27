@@ -37,10 +37,12 @@ struct _cbor_stack {
   size_t size;
 };
 
+_CBOR_NODISCARD
 struct _cbor_stack _cbor_stack_init(void);
 
 void _cbor_stack_pop(struct _cbor_stack *);
 
+_CBOR_NODISCARD
 struct _cbor_stack_record *_cbor_stack_push(struct _cbor_stack *, cbor_item_t *,
                                             size_t);
 

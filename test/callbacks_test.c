@@ -38,7 +38,8 @@ unsigned char bytestring_data[] = {0x01, 0x02, 0x03};
 static void test_builder_byte_string_callback_append(
     void** _CBOR_UNUSED(_state)) {
   struct _cbor_stack stack = _cbor_stack_init();
-  _cbor_stack_push(&stack, cbor_new_indefinite_bytestring(), 0);
+  assert_non_null(
+      _cbor_stack_push(&stack, cbor_new_indefinite_bytestring(), 0));
   struct _cbor_decoder_context context = {
       .creation_failed = false,
       .syntax_error = false,
@@ -77,7 +78,8 @@ static void test_builder_byte_string_callback_append(
 static void test_builder_byte_string_callback_append_alloc_failure(
     void** _CBOR_UNUSED(_state)) {
   struct _cbor_stack stack = _cbor_stack_init();
-  _cbor_stack_push(&stack, cbor_new_indefinite_bytestring(), 0);
+  assert_non_null(
+      _cbor_stack_push(&stack, cbor_new_indefinite_bytestring(), 0));
   struct _cbor_decoder_context context = {
       .creation_failed = false,
       .syntax_error = false,
@@ -108,7 +110,8 @@ static void test_builder_byte_string_callback_append_alloc_failure(
 static void test_builder_byte_string_callback_append_item_alloc_failure(
     void** _CBOR_UNUSED(_state)) {
   struct _cbor_stack stack = _cbor_stack_init();
-  _cbor_stack_push(&stack, cbor_new_indefinite_bytestring(), 0);
+  assert_non_null(
+      _cbor_stack_push(&stack, cbor_new_indefinite_bytestring(), 0));
   struct _cbor_decoder_context context = {
       .creation_failed = false,
       .syntax_error = false,
@@ -141,7 +144,8 @@ static void test_builder_byte_string_callback_append_item_alloc_failure(
 static void test_builder_byte_string_callback_append_parent_alloc_failure(
     void** _CBOR_UNUSED(_state)) {
   struct _cbor_stack stack = _cbor_stack_init();
-  _cbor_stack_push(&stack, cbor_new_indefinite_bytestring(), 0);
+  assert_non_null(
+      _cbor_stack_push(&stack, cbor_new_indefinite_bytestring(), 0));
   struct _cbor_decoder_context context = {
       .creation_failed = false,
       .syntax_error = false,
@@ -174,7 +178,7 @@ static void test_builder_byte_string_callback_append_parent_alloc_failure(
 unsigned char string_data[] = {0x61, 0x62, 0x63};
 static void test_builder_string_callback_append(void** _CBOR_UNUSED(_state)) {
   struct _cbor_stack stack = _cbor_stack_init();
-  _cbor_stack_push(&stack, cbor_new_indefinite_string(), 0);
+  assert_non_null(_cbor_stack_push(&stack, cbor_new_indefinite_string(), 0));
   struct _cbor_decoder_context context = {
       .creation_failed = false,
       .syntax_error = false,
@@ -211,7 +215,7 @@ static void test_builder_string_callback_append(void** _CBOR_UNUSED(_state)) {
 static void test_builder_string_callback_append_alloc_failure(
     void** _CBOR_UNUSED(_state)) {
   struct _cbor_stack stack = _cbor_stack_init();
-  _cbor_stack_push(&stack, cbor_new_indefinite_string(), 0);
+  assert_non_null(_cbor_stack_push(&stack, cbor_new_indefinite_string(), 0));
   struct _cbor_decoder_context context = {
       .creation_failed = false,
       .syntax_error = false,
@@ -242,7 +246,7 @@ static void test_builder_string_callback_append_alloc_failure(
 static void test_builder_string_callback_append_item_alloc_failure(
     void** _CBOR_UNUSED(_state)) {
   struct _cbor_stack stack = _cbor_stack_init();
-  _cbor_stack_push(&stack, cbor_new_indefinite_string(), 0);
+  assert_non_null(_cbor_stack_push(&stack, cbor_new_indefinite_string(), 0));
   struct _cbor_decoder_context context = {
       .creation_failed = false,
       .syntax_error = false,
@@ -274,7 +278,7 @@ static void test_builder_string_callback_append_item_alloc_failure(
 static void test_builder_string_callback_append_parent_alloc_failure(
     void** _CBOR_UNUSED(_state)) {
   struct _cbor_stack stack = _cbor_stack_init();
-  _cbor_stack_push(&stack, cbor_new_indefinite_string(), 0);
+  assert_non_null(_cbor_stack_push(&stack, cbor_new_indefinite_string(), 0));
   struct _cbor_decoder_context context = {
       .creation_failed = false,
       .syntax_error = false,
