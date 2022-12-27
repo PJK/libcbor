@@ -167,6 +167,10 @@ cbor_item_t *cbor_copy(cbor_item_t *item) {
                                      cbor_bytestring_length(item));
       } else {
         cbor_item_t *res = cbor_new_indefinite_bytestring();
+        if (res == NULL) {
+          return NULL;
+        }
+
         for (size_t i = 0; i < cbor_bytestring_chunk_count(item); i++) {
           cbor_item_t *chunk_copy =
               cbor_copy(cbor_bytestring_chunks_handle(item)[i]);
