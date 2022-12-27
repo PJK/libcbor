@@ -70,8 +70,8 @@ static void test_builder_byte_string_callback_append(
   // Data is copied
   assert_ptr_not_equal(cbor_bytestring_handle(chunk), bytestring_data);
 
-  cbor_decref(bytestring);
-  _cbor_stack_pop(stack);
+  cbor_decref(&bytestring);
+  _cbor_stack_pop(&stack);
 }
 
 int main(void) {
