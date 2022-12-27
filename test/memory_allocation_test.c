@@ -10,7 +10,7 @@
 #include <stddef.h>
 
 #include <cmocka.h>
-#include "test_alllocator.h"
+#include "test_allocator.h"
 
 #include "cbor.h"
 
