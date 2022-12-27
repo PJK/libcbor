@@ -10,93 +10,15 @@
 #include <stddef.h>
 
 #include <cmocka.h>
+#include "test_alllocator.h"
 
 #include "cbor.h"
 
 // This test simulates cases when malloc unexpectedly fails and leaves a
 // possibly partially constructed object behind. It is especially useful
 // in conjunction with the memory correctness check.
-//
-// WARNING: The test only works with CBOR_CUSTOM_ALLOC
 
-typedef enum call_expectation {
-  MALLOC,
-  MALLOC_FAIL,
-  REALLOC,
-  REALLOC_FAIL
-} call_expectation;
-
-// How many alloc calls we expect
-int alloc_calls_expected;
-// How many alloc calls we got
-int alloc_calls;
-// Array of booleans indicating whether to return a block or fail with NULL
-call_expectation *expectations;
-
-void set_mock_malloc(int calls, ...) {
-  va_list args;
-  va_start(args, calls);
-  alloc_calls_expected = calls;
-  alloc_calls = 0;
-  expectations = calloc(calls, sizeof(expectations));
-  for (int i = 0; i < calls; i++) {
-    // Promotable types, baby
-    expectations[i] = va_arg(args, call_expectation);
-  }
-  va_end(args);
-}
-
-void finalize_mock_malloc(void) {
-  assert_int_equal(alloc_calls, alloc_calls_expected);
-  free(expectations);
-}
-
-void *instrumented_malloc(size_t size) {
-  if (alloc_calls >= alloc_calls_expected) {
-    goto error;
-  }
-
-  if (expectations[alloc_calls] == MALLOC) {
-    alloc_calls++;
-    return malloc(size);
-  } else if (expectations[alloc_calls] == MALLOC_FAIL) {
-    alloc_calls++;
-    return NULL;
-  }
-
-error:
-  print_error("Unexpected call to malloc");
-  fail();
-  return NULL;
-}
-
-void *instrumented_realloc(void *ptr, size_t size) {
-  if (alloc_calls >= alloc_calls_expected) {
-    goto error;
-  }
-
-  if (expectations[alloc_calls] == REALLOC) {
-    alloc_calls++;
-    return realloc(ptr, size);
-  } else if (expectations[alloc_calls] == REALLOC_FAIL) {
-    alloc_calls++;
-    return NULL;
-  }
-
-error:
-  print_error("Unexpected call to realloc");
-  fail();
-  return NULL;
-}
-
-#define WITH_MOCK_MALLOC(block, malloc_calls, ...) \
-  do {                                             \
-    set_mock_malloc(malloc_calls, __VA_ARGS__);    \
-    block;                                         \
-    finalize_mock_malloc();                        \
-  } while (0)
-
-#define WITH_FAILING_MALLOC(block) WITH_MOCK_MALLOC(block, 1, MALLOC_FAIL)
+// TODO: Move memory tests to respective functionality-related groups.
 
 static void test_int_creation(void **_CBOR_UNUSED(_state)) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_int8()); });
