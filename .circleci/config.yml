@@ -58,6 +58,7 @@ jobs:
       - linux-setup
       - run: sudo apt-get install -y valgrind
       - build
+      - test
       - run: ctest -T Coverage
       - codecov/upload
       - run: ctest --output-on-failure -T memcheck | tee memcheck.out
