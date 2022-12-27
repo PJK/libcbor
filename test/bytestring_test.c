@@ -309,19 +309,40 @@ static void test_inline_creation(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&bs);
 }
 
+static void test_add_chunk_reallocation_overflow(void **_CBOR_UNUSED(_state)) {
+  bs = cbor_new_indefinite_bytestring();
+  cbor_item_t *chunk = cbor_build_bytestring((cbor_data) "Hello!", 6);
+  struct cbor_indefinite_string_data *metadata =
+      (struct cbor_indefinite_string_data *)bs->data;
+  // Pretend we already have many chunks allocated
+  metadata->chunk_count = SIZE_MAX;
+  metadata->chunk_capacity = SIZE_MAX;
+
+  assert_false(cbor_bytestring_add_chunk(bs, chunk));
+  assert_int_equal(cbor_refcount(chunk), 1);
+
+  metadata->chunk_count = 0;
+  metadata->chunk_capacity = 0;
+  cbor_decref(&chunk);
+  cbor_decref(&bs);
+}
+
 int main(void) {
-  const struct CMUnitTest tests[] = {cmocka_unit_test(test_empty_bs),
-                                     cmocka_unit_test(test_embedded_bs),
-                                     cmocka_unit_test(test_notenough_data),
-                                     cmocka_unit_test(test_short_bs1),
-                                     cmocka_unit_test(test_short_bs2),
-                                     cmocka_unit_test(test_half_bs),
-                                     cmocka_unit_test(test_int_bs),
-                                     cmocka_unit_test(test_long_bs),
-                                     cmocka_unit_test(test_zero_indef),
-                                     cmocka_unit_test(test_short_indef),
-                                     cmocka_unit_test(test_two_indef),
-                                     cmocka_unit_test(test_missing_indef),
-                                     cmocka_unit_test(test_inline_creation)};
+  const struct CMUnitTest tests[] = {
+      cmocka_unit_test(test_empty_bs),
+      cmocka_unit_test(test_embedded_bs),
+      cmocka_unit_test(test_notenough_data),
+      cmocka_unit_test(test_short_bs1),
+      cmocka_unit_test(test_short_bs2),
+      cmocka_unit_test(test_half_bs),
+      cmocka_unit_test(test_int_bs),
+      cmocka_unit_test(test_long_bs),
+      cmocka_unit_test(test_zero_indef),
+      cmocka_unit_test(test_short_indef),
+      cmocka_unit_test(test_two_indef),
+      cmocka_unit_test(test_missing_indef),
+      cmocka_unit_test(test_inline_creation),
+      cmocka_unit_test(test_add_chunk_reallocation_overflow),
+  };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
