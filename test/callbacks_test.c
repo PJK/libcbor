@@ -278,7 +278,11 @@ static void test_builder_string_callback_append_item_alloc_failure(
 static void test_builder_string_callback_append_parent_alloc_failure(
     void** _CBOR_UNUSED(_state)) {
   struct _cbor_stack stack = _cbor_stack_init();
+<<<<<<< HEAD
   assert_non_null(_cbor_stack_push(&stack, cbor_new_indefinite_string(), 0));
+=======
+  _cbor_stack_push(&stack, cbor_new_indefinite_string(), 0);
+>>>>>>> master
   struct _cbor_decoder_context context = {
       .creation_failed = false,
       .syntax_error = false,
