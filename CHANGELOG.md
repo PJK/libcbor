@@ -11,6 +11,8 @@ Next
   - See https://repology.org/project/cmake/versions for support; the vast majority of users should not be affected.
 - Fix a potential memory leak when the allocator fails during array or map decoding [[#224]](https://github.com/PJK/libcbor/pull/224) (by [James-ZHANG](https://github.com/James-ZHANG))
 - [Fix a memory leak when the allocator fails when adding chunks to indefinite bytestrings.](https://github.com/PJK/libcbor/pull/242) ([discovered](https://github.com/PJK/libcbor/pull/228) by [James-ZHANG](https://github.com/James-ZHANG))
+- [Fix a memory leak when the allocator fails when adding chunks to indefinite strings](https://github.com/PJK/libcbor/pull/246)
+
 
 0.9.0 (2021-11-14)
 ---------------------
