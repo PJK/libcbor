@@ -138,6 +138,7 @@ static void test_array_replace(void **_CBOR_UNUSED(_state)) {
 
   // Array has only two items
   assert_false(cbor_array_replace(array, 2, three));
+  assert_int_equal(cbor_refcount(three), 1);
 
   // Change [1, 2] to [3, 2]
   assert_true(cbor_array_replace(array, 0, three));
@@ -151,6 +152,19 @@ static void test_array_replace(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&array);
 }
 
+static void test_array_push_overflow(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *array = cbor_new_indefinite_array();
+  cbor_item_t *one = cbor_build_uint8(1);
+  struct _cbor_array_metadata *metadata =
+      (struct _cbor_array_metadata *)&array->metadata;
+  // Pretend we already have a huge block allocated
+  metadata->allocated = SIZE_MAX;
+  metadata->end_ptr = SIZE_MAX;
+
+  assert_false(cbor_array_push(array, one));
+  assert_int_equal(cbor_refcount(one), 1);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_empty_array),
@@ -159,6 +173,7 @@ int main(void) {
       cmocka_unit_test(test_indef_arrays),
       cmocka_unit_test(test_nested_indef_arrays),
       cmocka_unit_test(test_array_replace),
+      cmocka_unit_test(test_array_push_overflow),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
