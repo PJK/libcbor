@@ -208,6 +208,101 @@ static void test_builder_string_callback_append(void** _CBOR_UNUSED(_state)) {
   _cbor_stack_pop(&stack);
 }
 
+static void test_builder_string_callback_append_alloc_failure(
+    void** _CBOR_UNUSED(_state)) {
+  struct _cbor_stack stack = _cbor_stack_init();
+  _cbor_stack_push(&stack, cbor_new_indefinite_string(), 0);
+  struct _cbor_decoder_context context = {
+      .creation_failed = false,
+      .syntax_error = false,
+      .root = NULL,
+      .stack = &stack,
+  };
+
+  WITH_FAILING_MALLOC(
+      { cbor_builder_string_callback(&context, string_data, 3); });
+
+  assert_true(context.creation_failed);
+  assert_false(context.syntax_error);
+  assert_int_equal(context.stack->size, 1);
+
+  // The stack remains unchanged
+  cbor_item_t* string = stack.top->item;
+  assert_int_equal(cbor_refcount(string), 1);
+  assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
+  assert_true(cbor_isa_string(string));
+  assert_int_equal(cbor_string_length(string), 0);
+  assert_true(cbor_string_is_indefinite(string));
+  assert_int_equal(cbor_string_chunk_count(string), 0);
+
+  cbor_decref(&string);
+  _cbor_stack_pop(&stack);
+}
+
+static void test_builder_string_callback_append_item_alloc_failure(
+    void** _CBOR_UNUSED(_state)) {
+  struct _cbor_stack stack = _cbor_stack_init();
+  _cbor_stack_push(&stack, cbor_new_indefinite_string(), 0);
+  struct _cbor_decoder_context context = {
+      .creation_failed = false,
+      .syntax_error = false,
+      .root = NULL,
+      .stack = &stack,
+  };
+
+  // Allocate new data block, but fail to allocate a new item with it
+  WITH_MOCK_MALLOC({ cbor_builder_string_callback(&context, string_data, 3); },
+                   2, MALLOC, MALLOC_FAIL);
+
+  assert_true(context.creation_failed);
+  assert_false(context.syntax_error);
+  assert_int_equal(context.stack->size, 1);
+
+  // The stack remains unchanged
+  cbor_item_t* string = stack.top->item;
+  assert_int_equal(cbor_refcount(string), 1);
+  assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
+  assert_true(cbor_isa_string(string));
+  assert_int_equal(cbor_string_length(string), 0);
+  assert_true(cbor_string_is_indefinite(string));
+  assert_int_equal(cbor_string_chunk_count(string), 0);
+
+  cbor_decref(&string);
+  _cbor_stack_pop(&stack);
+}
+
+static void test_builder_string_callback_append_parent_alloc_failure(
+    void** _CBOR_UNUSED(_state)) {
+  struct _cbor_stack stack = _cbor_stack_init();
+  _cbor_stack_push(&stack, cbor_new_indefinite_string(), 0);
+  struct _cbor_decoder_context context = {
+      .creation_failed = false,
+      .syntax_error = false,
+      .root = NULL,
+      .stack = &stack,
+  };
+
+  // Allocate new item, but fail to push it into the parent on the stack
+  WITH_MOCK_MALLOC({ cbor_builder_string_callback(&context, string_data, 3); },
+                   3, MALLOC, MALLOC, REALLOC_FAIL);
+
+  assert_true(context.creation_failed);
+  assert_false(context.syntax_error);
+  assert_int_equal(context.stack->size, 1);
+
+  // The stack remains unchanged
+  cbor_item_t* string = stack.top->item;
+  assert_int_equal(cbor_refcount(string), 1);
+  assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
+  assert_true(cbor_isa_string(string));
+  assert_int_equal(cbor_string_length(string), 0);
+  assert_true(cbor_string_is_indefinite(string));
+  assert_int_equal(cbor_string_chunk_count(string), 0);
+
+  cbor_decref(&string);
+  _cbor_stack_pop(&stack);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_default_callbacks),
@@ -218,6 +313,10 @@ int main(void) {
       cmocka_unit_test(
           test_builder_byte_string_callback_append_parent_alloc_failure),
       cmocka_unit_test(test_builder_string_callback_append),
+      cmocka_unit_test(test_builder_string_callback_append_alloc_failure),
+      cmocka_unit_test(test_builder_string_callback_append_item_alloc_failure),
+      cmocka_unit_test(
+          test_builder_string_callback_append_parent_alloc_failure),
   };
 
   cmocka_run_group_tests(tests, NULL, NULL);
