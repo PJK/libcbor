@@ -38,6 +38,7 @@ uint64_t cbor_get_uint64(const cbor_item_t *item) {
 
 uint64_t cbor_get_int(const cbor_item_t *item) {
   assert(cbor_is_int(item));
+  // cppcheck-suppress missingReturn
   switch (cbor_int_get_width(item)) {
     case CBOR_INT_8:
       return cbor_get_uint8(item);

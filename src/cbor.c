@@ -152,6 +152,7 @@ static cbor_item_t *_cbor_copy_float_ctrl(cbor_item_t *item) {
 }
 
 cbor_item_t *cbor_copy(cbor_item_t *item) {
+  // cppcheck-suppress missingReturn
   switch (cbor_typeof(item)) {
     case CBOR_TYPE_UINT:
       return _cbor_copy_int(item, false);

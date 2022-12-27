@@ -33,7 +33,7 @@ jobs:
       - checkout
       - linux-setup
       - run: sudo apt-get install -y clang-format doxygen cppcheck
-      - run: cppcheck . --error-exitcode=1
+      - run: cppcheck --inline-suppr --error-exitcode=1 .
       - run: bash clang-format.sh --verbose
       - run: >
           if ! $(git diff-index --quiet HEAD); then
