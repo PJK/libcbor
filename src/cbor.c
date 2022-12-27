@@ -152,6 +152,9 @@ static cbor_item_t *_cbor_copy_float_ctrl(cbor_item_t *item) {
 }
 
 cbor_item_t *cbor_copy(cbor_item_t *item) {
+  // TODO: Handle memory allocation error -- currently the code will produce
+  // partial or invalid items on failure
+
   // cppcheck-suppress missingReturn
   switch (cbor_typeof(item)) {
     case CBOR_TYPE_UINT:
