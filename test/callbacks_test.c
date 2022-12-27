@@ -5,13 +5,15 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
+#include <cmocka.h>
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
 
-#include <cmocka.h>
-
 #include "cbor.h"
+#include "cbor/internal/builder_callbacks.h"
+#include "cbor/internal/stack.h"
+#include "test_allocator.h"
 
 unsigned char data[] = {
     0x93, 0x01, 0x19, 0x01, 0x01, 0x1A, 0x00, 0x01, 0x05, 0xB8, 0x1B, 0x00,
@@ -32,9 +34,23 @@ static void test_default_callbacks(void **_CBOR_UNUSED(_state)) {
   }
 }
 
+static void test_builder_byte_string_callback_append(
+    void **_CBOR_UNUSED(_state)) {
+  struct _cbor_stack stack = _cbor_stack_init();
+  struct _cbor_decoder_context context = {
+      .creation_failed = false,
+      .syntax_error = false,
+      .root = cbor_new_indefinite_bytestring(),
+      .stack = &stack,
+  };
+  cbor_item_t *chunk = cbor_build_bytestring((cbor_data) "Hello!", 6);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
+      cmocka_unit_test(test_default_callbacks),
+      cmocka_unit_test(test_builder_byte_string_callback_append),
+  };
 
-      cmocka_unit_test(test_default_callbacks)};
-  return cmocka_run_group_tests(tests, NULL, NULL);
+  cmocka_run_group_tests(tests, NULL, NULL);
 }
