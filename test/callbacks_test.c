@@ -138,6 +138,39 @@ static void test_builder_byte_string_callback_append_item_alloc_failure(
   _cbor_stack_pop(&stack);
 }
 
+static void test_builder_byte_string_callback_append_parent_alloc_failure(
+    void** _CBOR_UNUSED(_state)) {
+  struct _cbor_stack stack = _cbor_stack_init();
+  _cbor_stack_push(&stack, cbor_new_indefinite_bytestring(), 0);
+  struct _cbor_decoder_context context = {
+      .creation_failed = false,
+      .syntax_error = false,
+      .root = NULL,
+      .stack = &stack,
+  };
+
+  // Allocate new item, but fail to push it into the parent on the stack
+  WITH_MOCK_MALLOC(
+      { cbor_builder_byte_string_callback(&context, bytestring_data, 3); }, 3,
+      MALLOC, MALLOC, REALLOC_FAIL);
+
+  assert_true(context.creation_failed);
+  assert_false(context.syntax_error);
+  assert_int_equal(context.stack->size, 1);
+
+  // The stack remains unchanged
+  cbor_item_t* bytestring = stack.top->item;
+  assert_int_equal(cbor_refcount(bytestring), 1);
+  assert_true(cbor_typeof(bytestring) == CBOR_TYPE_BYTESTRING);
+  assert_true(cbor_isa_bytestring(bytestring));
+  assert_int_equal(cbor_bytestring_length(bytestring), 0);
+  assert_true(cbor_bytestring_is_indefinite(bytestring));
+  assert_int_equal(cbor_bytestring_chunk_count(bytestring), 0);
+
+  cbor_decref(&bytestring);
+  _cbor_stack_pop(&stack);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_default_callbacks),
@@ -145,6 +178,8 @@ int main(void) {
       cmocka_unit_test(test_builder_byte_string_callback_append_alloc_failure),
       cmocka_unit_test(
           test_builder_byte_string_callback_append_item_alloc_failure),
+      cmocka_unit_test(
+          test_builder_byte_string_callback_append_parent_alloc_failure),
   };
 
   cmocka_run_group_tests(tests, NULL, NULL);
