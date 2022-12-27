@@ -204,8 +204,6 @@ static void test_indef_map_decode(void **_CBOR_UNUSED(_state)) {
 }
 
 int main(void) {
-  cbor_set_allocs(instrumented_malloc, instrumented_realloc, free);
-
   // TODO: string chunks realloc test
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_int_creation),
