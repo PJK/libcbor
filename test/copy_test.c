@@ -13,6 +13,7 @@
 
 #include "assertions.h"
 #include "cbor.h"
+#include "test_allocator.h"
 
 cbor_item_t *item, *copy, *tmp;
 
@@ -187,19 +188,31 @@ static void test_floats(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&copy);
 }
 
+static void test_alloc_failure_simple(void **_CBOR_UNUSED(_state)) {
+  item = cbor_build_uint8(10);
+
+  WITH_FAILING_MALLOC({ assert_null(cbor_copy(item)); });
+  assert_int_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
 int main(void) {
-  const struct CMUnitTest tests[] = {cmocka_unit_test(test_uints),
-                                     cmocka_unit_test(test_negints),
-                                     cmocka_unit_test(test_def_bytestring),
-                                     cmocka_unit_test(test_indef_bytestring),
-                                     cmocka_unit_test(test_def_string),
-                                     cmocka_unit_test(test_indef_string),
-                                     cmocka_unit_test(test_def_array),
-                                     cmocka_unit_test(test_indef_array),
-                                     cmocka_unit_test(test_def_map),
-                                     cmocka_unit_test(test_indef_map),
-                                     cmocka_unit_test(test_tag),
-                                     cmocka_unit_test(test_ctrls),
-                                     cmocka_unit_test(test_floats)};
+  const struct CMUnitTest tests[] = {
+      cmocka_unit_test(test_uints),
+      cmocka_unit_test(test_negints),
+      cmocka_unit_test(test_def_bytestring),
+      cmocka_unit_test(test_indef_bytestring),
+      cmocka_unit_test(test_def_string),
+      cmocka_unit_test(test_indef_string),
+      cmocka_unit_test(test_def_array),
+      cmocka_unit_test(test_indef_array),
+      cmocka_unit_test(test_def_map),
+      cmocka_unit_test(test_indef_map),
+      cmocka_unit_test(test_tag),
+      cmocka_unit_test(test_ctrls),
+      cmocka_unit_test(test_floats),
+      cmocka_unit_test(test_alloc_failure_simple),
+  };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

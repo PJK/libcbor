@@ -167,10 +167,20 @@ cbor_item_t *cbor_copy(cbor_item_t *item) {
                                      cbor_bytestring_length(item));
       } else {
         cbor_item_t *res = cbor_new_indefinite_bytestring();
-        for (size_t i = 0; i < cbor_bytestring_chunk_count(item); i++)
-          cbor_bytestring_add_chunk(
-              res,
-              cbor_move(cbor_copy(cbor_bytestring_chunks_handle(item)[i])));
+        for (size_t i = 0; i < cbor_bytestring_chunk_count(item); i++) {
+          cbor_item_t *chunk_copy =
+              cbor_copy(cbor_bytestring_chunks_handle(item)[i]);
+          if (chunk_copy == NULL) {
+            cbor_decref(&res);
+            return NULL;
+          }
+          if (!cbor_bytestring_add_chunk(res, chunk_copy)) {
+            cbor_decref(&chunk_copy);
+            cbor_decref(&res);
+            return NULL;
+          }
+          cbor_decref(&chunk_copy);
+        }
         return res;
       }
     case CBOR_TYPE_STRING:

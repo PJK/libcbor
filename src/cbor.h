@@ -46,12 +46,12 @@ extern "C" {
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_load(
     cbor_data source, size_t source_size, struct cbor_load_result* result);
 
-/** Deep copy of an item
+/** Take a deep copy of an item
  *
  * All the reference counts in the new structure are set to one.
  *
  * @param item[borrow] item to copy
- * @return **new** CBOR deep copy
+ * @return **new** CBOR deep copy or `NULL` on failure.
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_copy(cbor_item_t* item);
 
