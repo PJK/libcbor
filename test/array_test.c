@@ -144,8 +144,8 @@ static void test_array_replace(void **_CBOR_UNUSED(_state)) {
   assert_true(cbor_array_replace(array, 0, three));
   assert_int_equal(cbor_refcount(one), 1);
   assert_int_equal(cbor_refcount(three), 2);
-  assert_uint8(cbor_array_get(array, 0), 3);
-  assert_uint8(cbor_array_get(array, 1), 2);
+  assert_uint8(cbor_move(cbor_array_get(array, 0)), 3);
+  assert_uint8(cbor_move(cbor_array_get(array, 1)), 2);
 
   cbor_decref(&one);
   cbor_decref(&three);
