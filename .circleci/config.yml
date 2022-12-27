@@ -63,6 +63,7 @@ jobs:
       - run: ctest --output-on-failure -T memcheck | tee memcheck.out
       - run: >
           if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
+            cat Testing/Temporary/MemoryChecker*
             exit 1
           fi;
 

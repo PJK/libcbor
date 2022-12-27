@@ -130,7 +130,7 @@ static void test_array_replace(void **_CBOR_UNUSED(_state)) {
   assert_false(cbor_array_replace(array, 0, three));
   assert_int_equal(cbor_refcount(three), 1);
 
-  // Add items
+  // Add items [1, 2]
   cbor_array_push(array, one);
   cbor_array_push(array, cbor_move(cbor_build_uint8(2)));
   assert_int_equal(cbor_refcount(one), 2);
