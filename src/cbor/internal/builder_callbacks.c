@@ -268,26 +268,28 @@ void cbor_builder_string_callback(void *context, cbor_data data,
   }
 
   memcpy(new_handle, data, length);
-  cbor_item_t *res = cbor_new_definite_string();
-  if (res == NULL) {
+  cbor_item_t *new_chunk = cbor_new_definite_string();
+  if (new_chunk == NULL) {
     _CBOR_FREE(new_handle);
     ctx->creation_failed = true;
     return;
   }
-  cbor_string_set_handle(res, new_handle, length);
-  res->metadata.string_metadata.codepoint_count = codepoint_count;
+  cbor_string_set_handle(new_chunk, new_handle, length);
+  new_chunk->metadata.string_metadata.codepoint_count = codepoint_count;
 
   /* Careful here: order matters */
   if (ctx->stack->size > 0 && cbor_isa_string(ctx->stack->top->item)) {
     if (cbor_string_is_indefinite(ctx->stack->top->item)) {
-      // TODO: This can leak memory when adding the chunk fails
-      cbor_string_add_chunk(ctx->stack->top->item, cbor_move(res));
+      if (!cbor_string_add_chunk(ctx->stack->top->item, new_chunk)) {
+        ctx->creation_failed = true;
+      }
+      cbor_decref(&new_chunk);
     } else {
-      cbor_decref(&res);
+      cbor_decref(&new_chunk);
       ctx->syntax_error = true;
     }
   } else {
-    _cbor_builder_append(res, ctx);
+    _cbor_builder_append(new_chunk, ctx);
   }
 }
 
