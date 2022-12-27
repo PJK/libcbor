@@ -1,5 +1,7 @@
 #include "test_allocator.h"
 
+#include <execinfo.h>
+
 // How many alloc calls we expect
 int alloc_calls_expected;
 // How many alloc calls we got
@@ -25,6 +27,17 @@ void finalize_mock_malloc(void) {
   free(expectations);
 }
 
+void print_backtrace() {
+  void *buffer[128];
+  int frames = backtrace(buffer, 128);
+  char **symbols = backtrace_symbols(buffer, frames);
+  // Skip this function and the caller
+  for (int i = 2; i < frames; ++i) {
+    printf("%s\n", symbols[i]);
+  }
+  free(symbols);
+}
+
 void *instrumented_malloc(size_t size) {
   if (alloc_calls >= alloc_calls_expected) {
     goto error;
@@ -43,6 +56,7 @@ error:
       "Unexpected call to malloc(%zu) at position %d of %d; expected %d\n",
       size, alloc_calls, alloc_calls_expected,
       alloc_calls < alloc_calls_expected ? expectations[alloc_calls] : -1);
+  print_backtrace();
   fail();
   return NULL;
 }
@@ -65,6 +79,7 @@ error:
       "Unexpected call to realloc(%zu) at position %d of %d; expected %d\n",
       size, alloc_calls, alloc_calls_expected,
       alloc_calls < alloc_calls_expected ? expectations[alloc_calls] : -1);
+  print_backtrace();
   fail();
   return NULL;
 }
