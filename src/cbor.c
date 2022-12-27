@@ -129,8 +129,6 @@ static cbor_item_t *_cbor_copy_int(cbor_item_t *item, bool negative) {
     case CBOR_INT_64:
       res = cbor_build_uint64(cbor_get_uint64(item));
       break;
-    default:
-      return NULL;
   }
 
   if (negative) cbor_mark_negint(res);
@@ -215,8 +213,6 @@ cbor_item_t *cbor_copy(cbor_item_t *item) {
     case CBOR_TYPE_FLOAT_CTRL:
       return _cbor_copy_float_ctrl(item);
   }
-
-  return NULL;
 }
 
 #if CBOR_PRETTY_PRINTER

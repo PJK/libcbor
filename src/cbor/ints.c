@@ -48,8 +48,6 @@ uint64_t cbor_get_int(const cbor_item_t *item) {
     case CBOR_INT_64:
       return cbor_get_uint64(item);
   }
-  // TODO: This should be handled in a default branch
-  return 0xDEADBEEF; /* Compiler complaints */
 }
 
 void cbor_set_uint8(cbor_item_t *item, uint8_t value) {
