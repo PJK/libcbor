@@ -171,6 +171,43 @@ static void test_builder_byte_string_callback_append_parent_alloc_failure(
   _cbor_stack_pop(&stack);
 }
 
+unsigned char string_data[] = {0x61, 0x62, 0x63};
+static void test_builder_string_callback_append(void** _CBOR_UNUSED(_state)) {
+  struct _cbor_stack stack = _cbor_stack_init();
+  _cbor_stack_push(&stack, cbor_new_indefinite_string(), 0);
+  struct _cbor_decoder_context context = {
+      .creation_failed = false,
+      .syntax_error = false,
+      .root = NULL,
+      .stack = &stack,
+  };
+
+  cbor_builder_string_callback(&context, string_data, 3);
+
+  assert_false(context.creation_failed);
+  assert_false(context.syntax_error);
+  assert_int_equal(context.stack->size, 1);
+
+  cbor_item_t* string = stack.top->item;
+  assert_int_equal(cbor_refcount(string), 1);
+  assert_true(cbor_isa_string(string));
+  assert_int_equal(cbor_string_length(string), 0);
+  assert_true(cbor_string_is_indefinite(string));
+  assert_int_equal(cbor_string_chunk_count(string), 1);
+
+  cbor_item_t* chunk = cbor_string_chunks_handle(string)[0];
+  assert_int_equal(cbor_refcount(chunk), 1);
+  assert_true(cbor_isa_string(chunk));
+  assert_true(cbor_string_is_definite(chunk));
+  assert_int_equal(cbor_string_length(chunk), 3);
+  assert_memory_equal(cbor_string_handle(chunk), "abc", 3);
+  // Data is copied
+  assert_ptr_not_equal(cbor_string_handle(chunk), string_data);
+
+  cbor_decref(&string);
+  _cbor_stack_pop(&stack);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_default_callbacks),
@@ -180,6 +217,7 @@ int main(void) {
           test_builder_byte_string_callback_append_item_alloc_failure),
       cmocka_unit_test(
           test_builder_byte_string_callback_append_parent_alloc_failure),
+      cmocka_unit_test(test_builder_string_callback_append),
   };
 
   cmocka_run_group_tests(tests, NULL, NULL);
