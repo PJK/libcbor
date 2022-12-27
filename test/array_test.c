@@ -163,6 +163,11 @@ static void test_array_push_overflow(void **_CBOR_UNUSED(_state)) {
 
   assert_false(cbor_array_push(array, one));
   assert_int_equal(cbor_refcount(one), 1);
+
+  cbor_decref(&one);
+  metadata->allocated = 0;
+  metadata->end_ptr = 0;
+  cbor_decref(&array);
 }
 
 int main(void) {
