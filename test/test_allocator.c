@@ -39,7 +39,10 @@ void *instrumented_malloc(size_t size) {
   }
 
 error:
-  print_error("Unexpected call to malloc");
+  print_error(
+      "Unexpected call to malloc(%zu) at position %d of %d; expected %d\n",
+      size, alloc_calls, alloc_calls_expected,
+      alloc_calls < alloc_calls_expected ? expectations[alloc_calls] : -1);
   fail();
   return NULL;
 }
@@ -58,7 +61,10 @@ void *instrumented_realloc(void *ptr, size_t size) {
   }
 
 error:
-  print_error("Unexpected call to realloc");
+  print_error(
+      "Unexpected call to realloc(%zu) at position %d of %d; expected %d\n",
+      size, alloc_calls, alloc_calls_expected,
+      alloc_calls < alloc_calls_expected ? expectations[alloc_calls] : -1);
   fail();
   return NULL;
 }
