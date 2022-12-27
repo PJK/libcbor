@@ -28,8 +28,9 @@ extern "C" {
  * @param buffer_size Size of the \p buffer
  * @return Length of the result. 0 on failure.
  */
-CBOR_EXPORT size_t cbor_serialize(const cbor_item_t *item,
-                                  cbor_mutable_data buffer, size_t buffer_size);
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize(const cbor_item_t *item,
+                                                  cbor_mutable_data buffer,
+                                                  size_t buffer_size);
 
 /** Serialize the given item, allocating buffers as needed
  *
@@ -44,9 +45,8 @@ CBOR_EXPORT size_t cbor_serialize(const cbor_item_t *item,
  * @return Length of the result. 0 on failure, in which case \p buffer is
  * ``NULL``.
  */
-CBOR_EXPORT size_t cbor_serialize_alloc(const cbor_item_t *item,
-                                        cbor_mutable_data *buffer,
-                                        size_t *buffer_size);
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_alloc(
+    const cbor_item_t *item, cbor_mutable_data *buffer, size_t *buffer_size);
 
 /** Serialize an uint
  *
@@ -55,8 +55,9 @@ CBOR_EXPORT size_t cbor_serialize_alloc(const cbor_item_t *item,
  * @param buffer_size Size of the \p buffer
  * @return Length of the result. 0 on failure.
  */
-CBOR_EXPORT size_t cbor_serialize_uint(const cbor_item_t *, cbor_mutable_data,
-                                       size_t);
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_uint(const cbor_item_t *,
+                                                       cbor_mutable_data,
+                                                       size_t);
 
 /** Serialize a negint
  *
@@ -65,8 +66,9 @@ CBOR_EXPORT size_t cbor_serialize_uint(const cbor_item_t *, cbor_mutable_data,
  * @param buffer_size Size of the \p buffer
  * @return Length of the result. 0 on failure.
  */
-CBOR_EXPORT size_t cbor_serialize_negint(const cbor_item_t *, cbor_mutable_data,
-                                         size_t);
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_negint(const cbor_item_t *,
+                                                         cbor_mutable_data,
+                                                         size_t);
 
 /** Serialize a bytestring
  *
@@ -75,8 +77,8 @@ CBOR_EXPORT size_t cbor_serialize_negint(const cbor_item_t *, cbor_mutable_data,
  * @param buffer_size Size of the \p buffer
  * @return Length of the result. 0 on failure.
  */
-CBOR_EXPORT size_t cbor_serialize_bytestring(const cbor_item_t *,
-                                             cbor_mutable_data, size_t);
+_CBOR_NODISCARD CBOR_EXPORT size_t
+cbor_serialize_bytestring(const cbor_item_t *, cbor_mutable_data, size_t);
 
 /** Serialize a string
  *
@@ -85,8 +87,9 @@ CBOR_EXPORT size_t cbor_serialize_bytestring(const cbor_item_t *,
  * @param buffer_size Size of the \p buffer
  * @return Length of the result. 0 on failure.
  */
-CBOR_EXPORT size_t cbor_serialize_string(const cbor_item_t *, cbor_mutable_data,
-                                         size_t);
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_string(const cbor_item_t *,
+                                                         cbor_mutable_data,
+                                                         size_t);
 
 /** Serialize an array
  *
@@ -95,8 +98,9 @@ CBOR_EXPORT size_t cbor_serialize_string(const cbor_item_t *, cbor_mutable_data,
  * @param buffer_size Size of the \p buffer
  * @return Length of the result. 0 on failure.
  */
-CBOR_EXPORT size_t cbor_serialize_array(const cbor_item_t *, cbor_mutable_data,
-                                        size_t);
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_array(const cbor_item_t *,
+                                                        cbor_mutable_data,
+                                                        size_t);
 
 /** Serialize a map
  *
@@ -105,8 +109,9 @@ CBOR_EXPORT size_t cbor_serialize_array(const cbor_item_t *, cbor_mutable_data,
  * @param buffer_size Size of the \p buffer
  * @return Length of the result. 0 on failure.
  */
-CBOR_EXPORT size_t cbor_serialize_map(const cbor_item_t *, cbor_mutable_data,
-                                      size_t);
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_map(const cbor_item_t *,
+                                                      cbor_mutable_data,
+                                                      size_t);
 
 /** Serialize a tag
  *
@@ -115,8 +120,9 @@ CBOR_EXPORT size_t cbor_serialize_map(const cbor_item_t *, cbor_mutable_data,
  * @param buffer_size Size of the \p buffer
  * @return Length of the result. 0 on failure.
  */
-CBOR_EXPORT size_t cbor_serialize_tag(const cbor_item_t *, cbor_mutable_data,
-                                      size_t);
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_tag(const cbor_item_t *,
+                                                      cbor_mutable_data,
+                                                      size_t);
 
 /** Serialize a
  *
@@ -125,8 +131,8 @@ CBOR_EXPORT size_t cbor_serialize_tag(const cbor_item_t *, cbor_mutable_data,
  * @param buffer_size Size of the \p buffer
  * @return Length of the result. 0 on failure.
  */
-CBOR_EXPORT size_t cbor_serialize_float_ctrl(const cbor_item_t *,
-                                             cbor_mutable_data, size_t);
+_CBOR_NODISCARD CBOR_EXPORT size_t
+cbor_serialize_float_ctrl(const cbor_item_t *, cbor_mutable_data, size_t);
 
 #ifdef __cplusplus
 }

@@ -43,8 +43,8 @@ extern "C" {
  * @return **new** CBOR item or `NULL` on failure. In that case, \p result
  * contains location and description of the error.
  */
-CBOR_EXPORT cbor_item_t* cbor_load(cbor_data source, size_t source_size,
-                                   struct cbor_load_result* result);
+_CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_load(
+    cbor_data source, size_t source_size, struct cbor_load_result* result);
 
 /** Deep copy of an item
  *
@@ -53,7 +53,7 @@ CBOR_EXPORT cbor_item_t* cbor_load(cbor_data source, size_t source_size,
  * @param item[borrow] item to copy
  * @return **new** CBOR deep copy
  */
-CBOR_EXPORT cbor_item_t* cbor_copy(cbor_item_t* item);
+_CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_copy(cbor_item_t* item);
 
 #if CBOR_PRETTY_PRINTER
 #include <stdio.h>
