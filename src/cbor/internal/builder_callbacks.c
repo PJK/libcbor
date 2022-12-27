@@ -214,27 +214,28 @@ void cbor_builder_byte_string_callback(void *context, cbor_data data,
   }
 
   memcpy(new_handle, data, length);
-  cbor_item_t *res = cbor_new_definite_bytestring();
+  cbor_item_t *new_chunk = cbor_new_definite_bytestring();
 
-  if (res == NULL) {
+  if (new_chunk == NULL) {
     _CBOR_FREE(new_handle);
     ctx->creation_failed = true;
     return;
   }
 
-  cbor_bytestring_set_handle(res, new_handle, length);
+  cbor_bytestring_set_handle(new_chunk, new_handle, length);
 
   if (ctx->stack->size > 0 && cbor_isa_bytestring(ctx->stack->top->item)) {
     if (cbor_bytestring_is_indefinite(ctx->stack->top->item)) {
-      if (!cbor_bytestring_add_chunk(ctx->stack->top->item, cbor_move(res))) {
+      if (!cbor_bytestring_add_chunk(ctx->stack->top->item,
+                                     cbor_move(new_chunk))) {
         ctx->creation_failed = true;
       }
     } else {
-      cbor_decref(&res);
+      cbor_decref(&new_chunk);
       ctx->syntax_error = true;
     }
   } else {
-    _cbor_builder_append(res, ctx);
+    _cbor_builder_append(new_chunk, ctx);
   }
 }
 
