@@ -12,6 +12,8 @@ Next
 - Fix a potential memory leak when the allocator fails during array or map decoding [[#224]](https://github.com/PJK/libcbor/pull/224) (by [James-ZHANG](https://github.com/James-ZHANG))
 - [Fix a memory leak when the allocator fails when adding chunks to indefinite bytestrings.](https://github.com/PJK/libcbor/pull/242) ([discovered](https://github.com/PJK/libcbor/pull/228) by [James-ZHANG](https://github.com/James-ZHANG))
 - [Fix a memory leak when the allocator fails when adding chunks to indefinite strings](https://github.com/PJK/libcbor/pull/246)
+- Potentially BUILD BREAKING: [Add nodiscard attributes to most functions](https://github.com/PJK/libcbor/pull/248)
+  - **Warning**: This may cause new build warnings and (in rare cases, depending on your configuration) errors
 
 
 0.9.0 (2021-11-14)
