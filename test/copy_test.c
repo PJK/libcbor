@@ -219,6 +219,21 @@ static void test_bytestring_chunk_alloc_failure(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
+static void test_bytestring_deep_chunk_alloc_failure(
+    void **_CBOR_UNUSED(_state)) {
+  item = cbor_new_indefinite_bytestring();
+  assert_true(cbor_bytestring_add_chunk(
+      item, cbor_move(cbor_build_bytestring((cbor_data) "abc", 3))));
+  assert_true(cbor_bytestring_add_chunk(
+      item, cbor_move(cbor_build_bytestring((cbor_data) "def", 3))));
+
+  WITH_MOCK_MALLOC({ assert_null(cbor_copy(item)); }, 4, MALLOC, MALLOC, MALLOC,
+                   MALLOC_FAIL);
+  assert_int_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
 static void test_string_alloc_failure(void **_CBOR_UNUSED(_state)) {
   item = cbor_new_indefinite_string();
   assert_true(cbor_string_add_chunk(item, cbor_move(cbor_build_string("abc"))));
@@ -234,6 +249,18 @@ static void test_string_chunk_alloc_failure(void **_CBOR_UNUSED(_state)) {
   assert_true(cbor_string_add_chunk(item, cbor_move(cbor_build_string("abc"))));
 
   WITH_MOCK_MALLOC({ assert_null(cbor_copy(item)); }, 2, MALLOC, MALLOC_FAIL);
+  assert_int_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
+static void test_string_deep_chunk_alloc_failure(void **_CBOR_UNUSED(_state)) {
+  item = cbor_new_indefinite_string();
+  assert_true(cbor_string_add_chunk(item, cbor_move(cbor_build_string("abc"))));
+  assert_true(cbor_string_add_chunk(item, cbor_move(cbor_build_string("def"))));
+
+  WITH_MOCK_MALLOC({ assert_null(cbor_copy(item)); }, 4, MALLOC, MALLOC, MALLOC,
+                   MALLOC_FAIL);
   assert_int_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
@@ -257,8 +284,10 @@ int main(void) {
       cmocka_unit_test(test_alloc_failure_simple),
       cmocka_unit_test(test_bytestring_alloc_failure),
       cmocka_unit_test(test_bytestring_chunk_alloc_failure),
+      cmocka_unit_test(test_bytestring_deep_chunk_alloc_failure),
       cmocka_unit_test(test_string_alloc_failure),
       cmocka_unit_test(test_string_chunk_alloc_failure),
+      cmocka_unit_test(test_string_deep_chunk_alloc_failure),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
