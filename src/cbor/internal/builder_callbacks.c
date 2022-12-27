@@ -226,10 +226,10 @@ void cbor_builder_byte_string_callback(void *context, cbor_data data,
 
   if (ctx->stack->size > 0 && cbor_isa_bytestring(ctx->stack->top->item)) {
     if (cbor_bytestring_is_indefinite(ctx->stack->top->item)) {
-      if (!cbor_bytestring_add_chunk(ctx->stack->top->item,
-                                     cbor_move(new_chunk))) {
+      if (!cbor_bytestring_add_chunk(ctx->stack->top->item, new_chunk)) {
         ctx->creation_failed = true;
       }
+      cbor_decref(&new_chunk);
     } else {
       cbor_decref(&new_chunk);
       ctx->syntax_error = true;
@@ -280,6 +280,7 @@ void cbor_builder_string_callback(void *context, cbor_data data,
   /* Careful here: order matters */
   if (ctx->stack->size > 0 && cbor_isa_string(ctx->stack->top->item)) {
     if (cbor_string_is_indefinite(ctx->stack->top->item)) {
+      // TODO: This can leak memory when adding the chunk fails
       cbor_string_add_chunk(ctx->stack->top->item, cbor_move(res));
     } else {
       cbor_decref(&res);
