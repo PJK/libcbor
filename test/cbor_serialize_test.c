@@ -9,18 +9,18 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
+#include <math.h>
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <string.h>
+#include <strings.h>
 
 #include <cmocka.h>
 
-#include <math.h>
-#include <stdarg.h>
-#include <string.h>
-#include <strings.h>
 #include "assertions.h"
 #include "cbor.h"
+#include "test_allocator.h"
 
 unsigned char buffer[512];
 
@@ -377,6 +377,39 @@ static void test_auto_serialize_no_size(void **_CBOR_UNUSED(_state)) {
   _CBOR_FREE(output);
 }
 
+static void test_auto_serialize_too_large(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_indefinite_string();
+  cbor_item_t *chunk = cbor_new_definite_string();
+  assert_true(cbor_string_add_chunk(item, chunk));
+
+  // Pretend the chunk is huge
+  chunk->metadata.string_metadata.length = SIZE_MAX;
+  assert_int_equal(cbor_serialized_size(item), 0);
+  unsigned char *output;
+  size_t output_size;
+  assert_int_equal(cbor_serialize_alloc(item, &output, &output_size), 0);
+  assert_int_equal(output_size, 0);
+  assert_null(output);
+
+  chunk->metadata.string_metadata.length = 0;
+  cbor_decref(&chunk);
+  cbor_decref(&item);
+}
+
+static void test_auto_serialize_alloc_fail(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_build_uint8(42);
+
+  WITH_FAILING_MALLOC({
+    unsigned char *output;
+    size_t output_size;
+    assert_int_equal(cbor_serialize_alloc(item, &output, &output_size), 0);
+    assert_int_equal(output_size, 0);
+    assert_null(output);
+  });
+
+  cbor_decref(&item);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_serialize_uint8_embed),
@@ -406,6 +439,9 @@ int main(void) {
       cmocka_unit_test(test_serialize_ctrl),
       cmocka_unit_test(test_serialize_long_ctrl),
       cmocka_unit_test(test_auto_serialize),
-      cmocka_unit_test(test_auto_serialize_no_size)};
+      cmocka_unit_test(test_auto_serialize_no_size),
+      cmocka_unit_test(test_auto_serialize_too_large),
+      cmocka_unit_test(test_auto_serialize_alloc_fail),
+  };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
