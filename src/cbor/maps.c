@@ -66,7 +66,6 @@ bool _cbor_map_add_key(cbor_item_t *item, cbor_item_t *key) {
     if (metadata->end_ptr >= metadata->allocated) {
       /* Exponential realloc */
       // Check for overflows first
-      // TODO: Explicitly test this
       if (!_cbor_safe_to_multiply(CBOR_BUFFER_GROWTH, metadata->allocated)) {
         return false;
       }
