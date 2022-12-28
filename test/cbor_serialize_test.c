@@ -297,6 +297,24 @@ static void test_serialize_definite_array(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&two);
 }
 
+static void test_serialize_array_no_space(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_indefinite_array();
+  cbor_item_t *one = cbor_build_uint8(1);
+  assert_true(cbor_array_push(item, one));
+
+  // Not enough space for the leading byte
+  assert_int_equal(0, cbor_serialize(item, buffer, 0));
+
+  // Not enough space for the item
+  assert_int_equal(0, cbor_serialize(item, buffer, 1));
+
+  // Not enough space for the indef break
+  assert_int_equal(0, cbor_serialize(item, buffer, 2));
+
+  cbor_decref(&item);
+  cbor_decref(&one);
+}
+
 static void test_serialize_indefinite_array(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_new_indefinite_array();
   cbor_item_t *one = cbor_build_uint8(1);
@@ -496,6 +514,7 @@ int main(void) {
       cmocka_unit_test(test_serialize_indefinite_string_no_space),
       cmocka_unit_test(test_serialize_definite_array),
       cmocka_unit_test(test_serialize_indefinite_array),
+      cmocka_unit_test(test_serialize_array_no_space),
       cmocka_unit_test(test_serialize_definite_map),
       cmocka_unit_test(test_serialize_indefinite_map),
       cmocka_unit_test(test_serialize_tags),

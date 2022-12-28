@@ -282,25 +282,25 @@ size_t cbor_serialize_array(const cbor_item_t *item, unsigned char *buffer,
   }
   if (written == 0) return 0;
 
-  size_t item_written;
   for (size_t i = 0; i < size; i++) {
-    item_written =
+    size_t item_written =
         cbor_serialize(*(handle++), buffer + written, buffer_size - written);
-    if (item_written == 0)
+    if (item_written == 0) {
       return 0;
-    else
-      written += item_written;
+    }
+    written += item_written;
   }
 
   if (cbor_array_is_definite(item)) {
     return written;
   } else {
     CBOR_ASSERT(cbor_array_is_indefinite(item));
-    item_written = cbor_encode_break(buffer + written, buffer_size - written);
-    if (item_written == 0)
+    size_t break_written =
+        cbor_encode_break(buffer + written, buffer_size - written);
+    if (break_written == 0) {
       return 0;
-    else
-      return written + 1;
+    }
+    return written + break_written;
   }
 }
 
