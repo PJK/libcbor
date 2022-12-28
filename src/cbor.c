@@ -263,8 +263,15 @@ cbor_item_t *cbor_copy(cbor_item_t *item) {
           cbor_decref(&key_copy);
           return NULL;
         }
-        cbor_map_add(res, (struct cbor_pair){.key = cbor_move(key_copy),
-                                             .value = cbor_move(value_copy)});
+        if (!cbor_map_add(res, (struct cbor_pair){.key = key_copy,
+                                                  .value = value_copy})) {
+          cbor_decref(&res);
+          cbor_decref(&key_copy);
+          cbor_decref(&value_copy);
+          return NULL;
+        }
+        cbor_decref(&key_copy);
+        cbor_decref(&value_copy);
       }
       return res;
     }
