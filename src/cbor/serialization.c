@@ -40,6 +40,42 @@ size_t cbor_serialize(const cbor_item_t *item, unsigned char *buffer,
   }
 }
 
+size_t cbor_serialized_size(const cbor_item_t *item) {
+  switch (cbor_typeof(item)) {
+    case CBOR_TYPE_UINT:
+    case CBOR_TYPE_NEGINT:
+      switch (cbor_int_get_width(item)) {
+        case CBOR_INT_8:
+          if (cbor_get_uint8(item) <= 23) return 1;
+          return 2;
+        case CBOR_INT_16:
+          return 3;
+        case CBOR_INT_32:
+          return 5;
+        case CBOR_INT_64:
+          return 9;
+      }
+    case CBOR_TYPE_BYTESTRING:
+      // TODO
+      return 0;
+    case CBOR_TYPE_STRING:
+      // TODO
+      return 0;
+    case CBOR_TYPE_ARRAY:
+      // TODO
+      return 0;
+    case CBOR_TYPE_MAP:
+      // TODO
+      return 0;
+    case CBOR_TYPE_TAG:
+      // TODO
+      return 0;
+    case CBOR_TYPE_FLOAT_CTRL:
+      // TODO
+      return 0;
+  }
+}
+
 size_t cbor_serialize_alloc(const cbor_item_t *item, unsigned char **buffer,
                             size_t *buffer_size) {
   size_t bfr_size = 32;
