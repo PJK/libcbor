@@ -57,7 +57,7 @@ cbor_serialized_size(const cbor_item_t *item);
  * @return Length of the result. 0 on failure, in which case \p buffer is
  * ``NULL``.
  */
-_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_alloc(
+_CBOR_NODISCARD CBOR_DEPRECATED CBOR_EXPORT size_t cbor_serialize_alloc(
     const cbor_item_t *item, cbor_mutable_data *buffer, size_t *buffer_size);
 
 /** Serialize an uint

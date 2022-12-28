@@ -147,32 +147,15 @@ size_t cbor_serialized_size(const cbor_item_t *item) {
 
 size_t cbor_serialize_alloc(const cbor_item_t *item, unsigned char **buffer,
                             size_t *buffer_size) {
-  size_t bfr_size = 32;
-  unsigned char *bfr = _CBOR_MALLOC(bfr_size), *tmp_bfr;
-  if (bfr == NULL) {
-    return 0;
-  }
+  size_t serialized_size = cbor_serialized_size(item);
+  if (serialized_size == 0) return 0;
+  *buffer = _CBOR_MALLOC(serialized_size);
+  if (*buffer == NULL) return 0;
 
-  size_t written;
-
-  // TODO: Would it be possible to tell the size upfront?
-  while ((written = cbor_serialize(item, bfr, bfr_size)) == 0) {
-    if (!_cbor_safe_to_multiply(CBOR_BUFFER_GROWTH, bfr_size)) {
-      _CBOR_FREE(bfr);
-      return 0;
-    }
-
-    tmp_bfr = _CBOR_REALLOC(bfr, bfr_size *= 2);
-
-    if (tmp_bfr == NULL) {
-      _CBOR_FREE(bfr);
-      return 0;
-    }
-    bfr = tmp_bfr;
-  }
-  *buffer = bfr;
-  if (buffer_size != NULL) *buffer_size = bfr_size;
-  return written;
+  size_t written = cbor_serialize(item, *buffer, serialized_size);
+  assert(written == serialized_size);
+  if (buffer_size != NULL) *buffer_size = serialized_size;
+  return serialized_size;
 }
 
 size_t cbor_serialize_uint(const cbor_item_t *item, unsigned char *buffer,
