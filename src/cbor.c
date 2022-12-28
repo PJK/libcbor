@@ -215,10 +215,14 @@ cbor_item_t *cbor_copy(cbor_item_t *item) {
       }
     case CBOR_TYPE_ARRAY: {
       cbor_item_t *res;
-      if (cbor_array_is_definite(item))
+      if (cbor_array_is_definite(item)) {
         res = cbor_new_definite_array(cbor_array_size(item));
-      else
+      } else {
         res = cbor_new_indefinite_array();
+      }
+      if (res == NULL) {
+        return NULL;
+      }
 
       for (size_t i = 0; i < cbor_array_size(item); i++)
         cbor_array_push(
