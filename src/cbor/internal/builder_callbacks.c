@@ -35,7 +35,7 @@ void _cbor_builder_append(cbor_item_t *item,
          * into this array because if there are extra items, they will cause a
          * syntax error when decoded.
          */
-        assert(ctx->stack->top->subitems > 0);
+        CBOR_ASSERT(ctx->stack->top->subitems > 0);
         if (!cbor_array_push(ctx->stack->top->item, item)) {
           ctx->creation_failed = true;
           cbor_decref(&item);
@@ -90,7 +90,7 @@ void _cbor_builder_append(cbor_item_t *item,
       break;
     }
     case CBOR_TYPE_TAG: {
-      assert(ctx->stack->top->subitems == 1);
+      CBOR_ASSERT(ctx->stack->top->subitems == 1);
       cbor_tag_set_item(ctx->stack->top->item, item);
       cbor_decref(&item); /* Give up on our reference */
       cbor_item_t *tagged_item = ctx->stack->top->item;
@@ -258,7 +258,7 @@ void cbor_builder_string_callback(void *context, cbor_data data,
     ctx->syntax_error = true;
     return;
   }
-  assert(codepoint_count <= length);
+  CBOR_ASSERT(codepoint_count <= length);
 
   unsigned char *new_handle = _CBOR_MALLOC(length);
 
