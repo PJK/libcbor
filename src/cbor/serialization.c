@@ -59,6 +59,7 @@ size_t _cbor_encoded_header_size(uint64_t size) {
 }
 
 size_t cbor_serialized_size(const cbor_item_t *item) {
+  // cppcheck-suppress missingReturn
   switch (cbor_typeof(item)) {
     case CBOR_TYPE_UINT:
     case CBOR_TYPE_NEGINT:

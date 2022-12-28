@@ -17,6 +17,7 @@ Next
 - BREAKING: [Fix `cbor_copy` leaking memory and creating invalid items when the allocator fails](https://github.com/PJK/libcbor/pull/249).
   - Previously, the failures were not handled in the interface. Now, `cbor_copy` may return `NULL` upon failure; clients should check the return value
 - [Fix `cbor_build_tag` illegal memory behavior when the allocator fails](https://github.com/PJK/libcbor/pull/249)
+- [Add a new `cbor_serialized_size` API](https://github.com/PJK/libcbor/pull/250)
 
 
 0.9.0 (2021-11-14)
