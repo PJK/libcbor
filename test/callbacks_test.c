@@ -365,6 +365,17 @@ static void test_append_map_failure(void** _CBOR_UNUSED(_state)) {
   _cbor_stack_pop(&stack);
 }
 
+// Size 1 array start, but we get an indef break
+unsigned char invalid_indef_break_data[] = {0x81, 0xFF};
+static void test_invalid_indef_break(void** _CBOR_UNUSED(_state)) {
+  struct cbor_load_result res;
+  cbor_item_t* item = cbor_load(invalid_indef_break_data, 2, &res);
+
+  assert_null(item);
+  assert_int_equal(res.read, 2);
+  assert_true(res.error.code == CBOR_ERR_SYNTAXERROR);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_default_callbacks),
@@ -381,6 +392,7 @@ int main(void) {
           test_builder_string_callback_append_parent_alloc_failure),
       cmocka_unit_test(test_append_array_failure),
       cmocka_unit_test(test_append_map_failure),
+      cmocka_unit_test(test_invalid_indef_break),
   };
 
   cmocka_run_group_tests(tests, NULL, NULL);

@@ -347,14 +347,13 @@ void cbor_builder_map_start_callback(void *context, uint64_t size) {
 bool _cbor_is_indefinite(cbor_item_t *item) {
   switch (item->type) {
     case CBOR_TYPE_BYTESTRING:
-      return item->metadata.bytestring_metadata.type ==
-             _CBOR_METADATA_INDEFINITE;
+      return cbor_bytestring_is_indefinite(item);
     case CBOR_TYPE_STRING:
-      return item->metadata.string_metadata.type == _CBOR_METADATA_INDEFINITE;
+      return cbor_string_is_indefinite(item);
     case CBOR_TYPE_ARRAY:
-      return item->metadata.array_metadata.type == _CBOR_METADATA_INDEFINITE;
+      return cbor_array_is_indefinite(item);
     case CBOR_TYPE_MAP:
-      return item->metadata.map_metadata.type == _CBOR_METADATA_INDEFINITE;
+      return cbor_map_is_indefinite(item);
     default:
       return false;
   }
