@@ -203,11 +203,11 @@ size_t cbor_serialize_bytestring(const cbor_item_t *item, unsigned char *buffer,
   if (cbor_bytestring_is_definite(item)) {
     size_t length = cbor_bytestring_length(item);
     size_t written = cbor_encode_bytestring_start(length, buffer, buffer_size);
-    if (written && (buffer_size - written >= length)) {
+    if (written > 0 && (buffer_size - written >= length)) {
       memcpy(buffer + written, cbor_bytestring_handle(item), length);
       return written + length;
-    } else
-      return 0;
+    }
+    return 0;
   } else {
     CBOR_ASSERT(cbor_bytestring_is_indefinite(item));
     size_t chunk_count = cbor_bytestring_chunk_count(item);
@@ -219,15 +219,17 @@ size_t cbor_serialize_bytestring(const cbor_item_t *item, unsigned char *buffer,
     for (size_t i = 0; i < chunk_count; i++) {
       size_t chunk_written = cbor_serialize_bytestring(
           chunks[i], buffer + written, buffer_size - written);
-      if (chunk_written == 0)
+      if (chunk_written == 0) {
         return 0;
-      else
-        written += chunk_written;
+      }
+      written += chunk_written;
     }
-    if (cbor_encode_break(buffer + written, buffer_size - written) > 0)
-      return written + 1;
-    else
+    size_t break_written =
+        cbor_encode_break(buffer + written, buffer_size - written);
+    if (break_written == 0) {
       return 0;
+    }
+    return written + break_written;
   }
 }
 
