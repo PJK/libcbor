@@ -137,6 +137,7 @@ static cbor_item_t *_cbor_copy_int(cbor_item_t *item, bool negative) {
 }
 
 static cbor_item_t *_cbor_copy_float_ctrl(cbor_item_t *item) {
+  // cppcheck-suppress missingReturn
   switch (cbor_float_get_width(item)) {
     case CBOR_FLOAT_0:
       return cbor_build_ctrl(cbor_ctrl_value(item));
@@ -147,8 +148,6 @@ static cbor_item_t *_cbor_copy_float_ctrl(cbor_item_t *item) {
     case CBOR_FLOAT_64:
       return cbor_build_float8(cbor_float_get_float8(item));
   }
-
-  return NULL;
 }
 
 cbor_item_t *cbor_copy(cbor_item_t *item) {
