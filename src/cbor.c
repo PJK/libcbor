@@ -241,10 +241,14 @@ cbor_item_t *cbor_copy(cbor_item_t *item) {
     }
     case CBOR_TYPE_MAP: {
       cbor_item_t *res;
-      if (cbor_map_is_definite(item))
+      if (cbor_map_is_definite(item)) {
         res = cbor_new_definite_map(cbor_map_size(item));
-      else
+      } else {
         res = cbor_new_indefinite_map();
+      }
+      if (res == NULL) {
+        return NULL;
+      }
 
       struct cbor_pair *it = cbor_map_handle(item);
       for (size_t i = 0; i < cbor_map_size(item); i++)
