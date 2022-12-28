@@ -32,6 +32,18 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize(const cbor_item_t *item,
                                                   cbor_mutable_data buffer,
                                                   size_t buffer_size);
 
+/** Compute the length (in bytes) of the item when serialized using
+ * `cbor_serialize`.
+ *
+ * Time complexity is proportional to the number of nested items.
+ *
+ * @param item[borrow] A data item
+ * @return Length (>= 1) of the item when serialized. 0 if the length overflows
+ * `size_t`.
+ */
+_CBOR_NODISCARD CBOR_EXPORT size_t
+cbor_serialized_size(const cbor_item_t *item);
+
 /** Serialize the given item, allocating buffers as needed
  *
  * \rst
