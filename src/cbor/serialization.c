@@ -19,6 +19,7 @@
 
 size_t cbor_serialize(const cbor_item_t *item, unsigned char *buffer,
                       size_t buffer_size) {
+  // cppcheck-suppress missingReturn
   switch (cbor_typeof(item)) {
     case CBOR_TYPE_UINT:
       return cbor_serialize_uint(item, buffer, buffer_size);
@@ -36,8 +37,6 @@ size_t cbor_serialize(const cbor_item_t *item, unsigned char *buffer,
       return cbor_serialize_tag(item, buffer, buffer_size);
     case CBOR_TYPE_FLOAT_CTRL:
       return cbor_serialize_float_ctrl(item, buffer, buffer_size);
-    default:
-      return 0;
   }
 }
 
@@ -74,6 +73,7 @@ size_t cbor_serialize_alloc(const cbor_item_t *item, unsigned char **buffer,
 size_t cbor_serialize_uint(const cbor_item_t *item, unsigned char *buffer,
                            size_t buffer_size) {
   assert(cbor_isa_uint(item));
+  // cppcheck-suppress missingReturn
   switch (cbor_int_get_width(item)) {
     case CBOR_INT_8:
       return cbor_encode_uint8(cbor_get_uint8(item), buffer, buffer_size);
@@ -83,14 +83,13 @@ size_t cbor_serialize_uint(const cbor_item_t *item, unsigned char *buffer,
       return cbor_encode_uint32(cbor_get_uint32(item), buffer, buffer_size);
     case CBOR_INT_64:
       return cbor_encode_uint64(cbor_get_uint64(item), buffer, buffer_size);
-    default:
-      return 0;
   }
 }
 
 size_t cbor_serialize_negint(const cbor_item_t *item, unsigned char *buffer,
                              size_t buffer_size) {
   assert(cbor_isa_negint(item));
+  // cppcheck-suppress missingReturn
   switch (cbor_int_get_width(item)) {
     case CBOR_INT_8:
       return cbor_encode_negint8(cbor_get_uint8(item), buffer, buffer_size);
@@ -100,8 +99,6 @@ size_t cbor_serialize_negint(const cbor_item_t *item, unsigned char *buffer,
       return cbor_encode_negint32(cbor_get_uint32(item), buffer, buffer_size);
     case CBOR_INT_64:
       return cbor_encode_negint64(cbor_get_uint64(item), buffer, buffer_size);
-    default:
-      return 0;
   }
 }
 
@@ -267,6 +264,7 @@ size_t cbor_serialize_tag(const cbor_item_t *item, unsigned char *buffer,
 size_t cbor_serialize_float_ctrl(const cbor_item_t *item, unsigned char *buffer,
                                  size_t buffer_size) {
   assert(cbor_isa_float_ctrl(item));
+  // cppcheck-suppress missingReturn
   switch (cbor_float_get_width(item)) {
     case CBOR_FLOAT_0:
       /* CTRL - special treatment */
@@ -280,7 +278,4 @@ size_t cbor_serialize_float_ctrl(const cbor_item_t *item, unsigned char *buffer,
       return cbor_encode_double(cbor_float_get_float8(item), buffer,
                                 buffer_size);
   }
-
-  /* Should never happen - make the compiler happy */
-  return 0;
 }
