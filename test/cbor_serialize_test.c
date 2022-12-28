@@ -131,6 +131,7 @@ static void test_serialize_definite_bytestring(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(256 + 3, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0x59, 0x01, 0x00}), 3);
   assert_memory_equal(buffer + 3, data, 256);
+  assert_int_equal(cbor_serialized_size(item), 259);
   cbor_decref(&item);
 }
 
@@ -149,6 +150,7 @@ static void test_serialize_indefinite_bytestring(void **_CBOR_UNUSED(_state)) {
   assert_memory_equal(buffer, ((unsigned char[]){0x5F, 0x59, 0x01, 0x00}), 4);
   assert_memory_equal(buffer + 4, data, 256);
   assert_memory_equal(buffer + 4 + 256, ((unsigned char[]){0xFF}), 1);
+  assert_int_equal(cbor_serialized_size(item), 261);
   cbor_decref(&item);
 }
 
