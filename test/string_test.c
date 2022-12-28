@@ -275,6 +275,7 @@ int main(void) {
       cmocka_unit_test(test_inline_creation),
       cmocka_unit_test(test_string_creation),
       cmocka_unit_test(test_string_add_chunk),
+      // TODO: string chunks realloc test
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
