@@ -264,6 +264,7 @@ static void test_serialize_tags(void **_CBOR_UNUSED(_state)) {
 
   assert_int_equal(2, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xD5, 0x01}), 2);
+  assert_int_equal(cbor_serialized_size(item), 2);
   cbor_decref(&item);
   cbor_decref(&one);
 }
@@ -274,6 +275,7 @@ static void test_serialize_half(void **_CBOR_UNUSED(_state)) {
 
   assert_int_equal(3, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x00}), 3);
+  assert_int_equal(cbor_serialized_size(item), 3);
   cbor_decref(&item);
 }
 
@@ -284,6 +286,7 @@ static void test_serialize_single(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(5, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xFA, 0x47, 0xC3, 0x50, 0x00}),
                       5);
+  assert_int_equal(cbor_serialized_size(item), 5);
   cbor_decref(&item);
 }
 
@@ -296,6 +299,7 @@ static void test_serialize_double(void **_CBOR_UNUSED(_state)) {
       buffer,
       ((unsigned char[]){0xFB, 0xC0, 0x10, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66}),
       9);
+  assert_int_equal(cbor_serialized_size(item), 9);
   cbor_decref(&item);
 }
 
@@ -304,6 +308,7 @@ static void test_serialize_ctrl(void **_CBOR_UNUSED(_state)) {
 
   assert_int_equal(1, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF7}), 1);
+  assert_int_equal(cbor_serialized_size(item), 1);
   cbor_decref(&item);
 }
 
@@ -313,6 +318,7 @@ static void test_serialize_long_ctrl(void **_CBOR_UNUSED(_state)) {
 
   assert_int_equal(2, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF8, 0xFE}), 2);
+  assert_int_equal(cbor_serialized_size(item), 2);
   cbor_decref(&item);
 }
 
@@ -325,6 +331,7 @@ static void test_auto_serialize(void **_CBOR_UNUSED(_state)) {
   size_t output_size;
   assert_int_equal(37, cbor_serialize_alloc(item, &output, &output_size));
   assert_int_equal(64, output_size);
+  assert_int_equal(cbor_serialized_size(item), 37);
   assert_memory_equal(output, ((unsigned char[]){0x84, 0x1B}), 2);
   cbor_decref(&item);
   _CBOR_FREE(output);
