@@ -17,8 +17,8 @@
 #include "../tags.h"
 #include "unicode.h"
 
-// This function maintains the invariant that no memory reachable by ctx->stack
-// and item would be leaked.
+// `_cbor_builder_append` takes ownership of `item`. If adding the item to
+// parent container fails, `item` will be deallocated to prevent memory.
 void _cbor_builder_append(cbor_item_t *item,
                           struct _cbor_decoder_context *ctx) {
   if (ctx->stack->size == 0) {
@@ -30,12 +30,12 @@ void _cbor_builder_append(cbor_item_t *item,
   switch (ctx->stack->top->item->type) {
     case CBOR_TYPE_ARRAY: {
       if (cbor_array_is_definite(ctx->stack->top->item)) {
-        /*
-         * We don't need an explicit check for whether the item still belongs
-         * into this array because if there are extra items, they will cause a
-         * syntax error when decoded.
-         */
+        // We don't need an explicit check for whether the item still belongs
+        // into this array because if there are extra items, they will cause a
+        // syntax error when decoded.
         CBOR_ASSERT(ctx->stack->top->subitems > 0);
+        // This should never happen since the definite array should be
+        // preallocated for the expected number of items.
         if (!cbor_array_push(ctx->stack->top->item, item)) {
           ctx->creation_failed = true;
           cbor_decref(&item);
