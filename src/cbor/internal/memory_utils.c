@@ -23,7 +23,14 @@ size_t _cbor_highest_bit(size_t number) {
 }
 
 bool _cbor_safe_to_multiply(size_t a, size_t b) {
+  if (a <= 1 || b <= 1) return true;
   return _cbor_highest_bit(a) + _cbor_highest_bit(b) <= sizeof(size_t) * 8;
+}
+
+bool _cbor_safe_to_add(size_t a, size_t b) {
+  // Unsigned integer overflow doesn't constitute UB
+  size_t sum = a + b;
+  return sum >= a && sum >= b;
 }
 
 void* _cbor_alloc_multiple(size_t item_size, size_t item_count) {
