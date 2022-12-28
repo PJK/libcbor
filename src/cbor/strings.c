@@ -86,7 +86,6 @@ bool cbor_string_add_chunk(cbor_item_t *item, cbor_item_t *chunk) {
   struct cbor_indefinite_string_data *data =
       (struct cbor_indefinite_string_data *)item->data;
   if (data->chunk_count == data->chunk_capacity) {
-    // TODO: Add a test for this
     if (!_cbor_safe_to_multiply(CBOR_BUFFER_GROWTH, data->chunk_capacity)) {
       return false;
     }
