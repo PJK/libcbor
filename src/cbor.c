@@ -230,7 +230,12 @@ cbor_item_t *cbor_copy(cbor_item_t *item) {
           cbor_decref(&res);
           return NULL;
         }
-        cbor_array_push(res, cbor_move(entry_copy));
+        if (!cbor_array_push(res, entry_copy)) {
+          cbor_decref(&entry_copy);
+          cbor_decref(&res);
+          return NULL;
+        }
+        cbor_decref(&entry_copy);
       }
       return res;
     }

@@ -323,6 +323,33 @@ static void test_array_item_alloc_failure(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
+static void test_array_push_failure(void **_CBOR_UNUSED(_state)) {
+  item = cbor_new_indefinite_array();
+  assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(42))));
+
+  WITH_MOCK_MALLOC({ assert_null(cbor_copy(item)); }, 3,
+                   // New array, item copy, array reallocation
+                   MALLOC, MALLOC, REALLOC_FAIL);
+
+  assert_int_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
+static void test_array_second_item_alloc_failure(void **_CBOR_UNUSED(_state)) {
+  item = cbor_new_indefinite_array();
+  assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(42))));
+  assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(43))));
+
+  WITH_MOCK_MALLOC({ assert_null(cbor_copy(item)); }, 4,
+                   // New array, item copy, array reallocation, second item copy
+                   MALLOC, MALLOC, REALLOC, MALLOC_FAIL);
+
+  assert_int_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_uints),
@@ -349,6 +376,8 @@ int main(void) {
       cmocka_unit_test(test_string_second_chunk_alloc_failure),
       cmocka_unit_test(test_array_alloc_failure),
       cmocka_unit_test(test_array_item_alloc_failure),
+      cmocka_unit_test(test_array_push_failure),
+      cmocka_unit_test(test_array_second_item_alloc_failure),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
