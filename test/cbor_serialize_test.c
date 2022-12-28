@@ -5,6 +5,10 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
+// cbor_serialize_alloc
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -353,8 +357,8 @@ static void test_auto_serialize(void **_CBOR_UNUSED(_state)) {
 
   unsigned char *output;
   size_t output_size;
-  assert_int_equal(37, cbor_serialize_alloc(item, &output, &output_size));
-  assert_int_equal(64, output_size);
+  assert_int_equal(cbor_serialize_alloc(item, &output, &output_size), 37);
+  assert_int_equal(output_size, 37);
   assert_int_equal(cbor_serialized_size(item), 37);
   assert_memory_equal(output, ((unsigned char[]){0x84, 0x1B}), 2);
   cbor_decref(&item);
@@ -365,8 +369,9 @@ static void test_auto_serialize_no_size(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_build_uint8(1);
 
   unsigned char *output;
-  assert_int_equal(1, cbor_serialize_alloc(item, &output, NULL));
+  assert_int_equal(cbor_serialize_alloc(item, &output, NULL), 1);
   assert_memory_equal(output, ((unsigned char[]){0x01}), 1);
+  assert_int_equal(cbor_serialized_size(item), 1);
   cbor_decref(&item);
   _CBOR_FREE(output);
 }
