@@ -251,10 +251,21 @@ cbor_item_t *cbor_copy(cbor_item_t *item) {
       }
 
       struct cbor_pair *it = cbor_map_handle(item);
-      for (size_t i = 0; i < cbor_map_size(item); i++)
-        cbor_map_add(res, (struct cbor_pair){
-                              .key = cbor_move(cbor_copy(it[i].key)),
-                              .value = cbor_move(cbor_copy(it[i].value))});
+      for (size_t i = 0; i < cbor_map_size(item); i++) {
+        cbor_item_t *key_copy = cbor_copy(it[i].key);
+        if (key_copy == NULL) {
+          cbor_decref(&res);
+          return NULL;
+        }
+        cbor_item_t *value_copy = cbor_copy(it[i].value);
+        if (value_copy == NULL) {
+          cbor_decref(&res);
+          cbor_decref(&key_copy);
+          return NULL;
+        }
+        cbor_map_add(res, (struct cbor_pair){.key = cbor_move(key_copy),
+                                             .value = cbor_move(value_copy)});
+      }
       return res;
     }
     case CBOR_TYPE_TAG:

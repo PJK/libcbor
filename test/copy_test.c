@@ -362,6 +362,34 @@ static void test_map_alloc_failure(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
+static void test_map_key_alloc_failure(void **_CBOR_UNUSED(_state)) {
+  item = cbor_new_indefinite_map();
+  assert_true(
+      cbor_map_add(item, (struct cbor_pair){cbor_move(cbor_build_uint8(42)),
+                                            cbor_move(cbor_build_bool(true))}));
+
+  WITH_MOCK_MALLOC({ assert_null(cbor_copy(item)); }, 2,
+                   // New map, key copy
+                   MALLOC, MALLOC_FAIL);
+  assert_int_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
+static void test_map_value_alloc_failure(void **_CBOR_UNUSED(_state)) {
+  item = cbor_new_indefinite_map();
+  assert_true(
+      cbor_map_add(item, (struct cbor_pair){cbor_move(cbor_build_uint8(42)),
+                                            cbor_move(cbor_build_bool(true))}));
+
+  WITH_MOCK_MALLOC({ assert_null(cbor_copy(item)); }, 3,
+                   // New map, key copy, value copy
+                   MALLOC, MALLOC, MALLOC_FAIL);
+  assert_int_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
 // static void test_map_item_alloc_failure(void **_CBOR_UNUSED(_state)) {
 //   item = cbor_new_indefinite_map();
 //   assert_true(cbor_map_push(item, cbor_move(cbor_build_uint8(42))));
@@ -431,6 +459,12 @@ int main(void) {
       cmocka_unit_test(test_array_push_failure),
       cmocka_unit_test(test_array_second_item_alloc_failure),
       cmocka_unit_test(test_map_alloc_failure),
+      cmocka_unit_test(test_map_key_alloc_failure),
+      cmocka_unit_test(test_map_value_alloc_failure),
+      // cmocka_unit_test(),
+      // cmocka_unit_test(),
+      // cmocka_unit_test(),
+      // cmocka_unit_test(),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
