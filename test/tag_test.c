@@ -113,7 +113,7 @@ static void test_build_tag(void **_CBOR_UNUSED(_state)) {
 
   assert_true(cbor_typeof(tag) == CBOR_TYPE_TAG);
   assert_int_equal(cbor_tag_value(tag), 1);
-  assert_uint8(cbor_tag_item(tag), 42);
+  assert_uint8(cbor_move(cbor_tag_item(tag)), 42);
 
   cbor_decref(&tag);
 }
