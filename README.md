@@ -76,12 +76,12 @@ int main(int argc, char * argv[])
 		.key = cbor_move(cbor_build_uint8(42)),
 		.value = cbor_move(cbor_build_string("Is the answer"))
 	});
-	/* Output: `length` bytes of data in the `buffer` */
+	/* Output: `buffer_size` bytes of data in the `buffer` */
 	unsigned char * buffer;
-	size_t buffer_size,
-		length = cbor_serialize_alloc(root, &buffer, &buffer_size);
+	size_t buffer_size;
+	cbor_serialize_alloc(root, &buffer, &buffer_size);
 
-	fwrite(buffer, 1, length, stdout);
+	fwrite(buffer, 1, buffer_size, stdout);
 	free(buffer);
 
 	fflush(stdout);

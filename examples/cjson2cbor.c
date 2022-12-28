@@ -133,10 +133,10 @@ int main(int argc, char *argv[]) {
 
   /* Print out CBOR bytes */
   unsigned char *buffer;
-  size_t buffer_size,
-      cbor_length = cbor_serialize_alloc(cbor, &buffer, &buffer_size);
+  size_t buffer_size;
+  cbor_serialize_alloc(cbor, &buffer, &buffer_size);
 
-  fwrite(buffer, 1, cbor_length, stdout);
+  fwrite(buffer, 1, buffer_size, stdout);
 
   free(buffer);
   fflush(stdout);

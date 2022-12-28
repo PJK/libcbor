@@ -46,8 +46,12 @@ cbor_serialized_size(const cbor_item_t *item);
 
 /** Serialize the given item, allocating buffers as needed
  *
+ * Since libcbor v0.10, the return value is always the same as `buffer_size` (if
+ * provided, see https://github.com/PJK/libcbor/pull/251/). New clients should
+ * ignore the return value.
+ *
  * \rst
- * .. warning:: It is your responsibility to free the buffer using an
+ * .. warning:: It is the caller's responsibility to free the buffer using an
  *  appropriate ``free`` implementation.
  * \endrst
  *
@@ -57,8 +61,9 @@ cbor_serialized_size(const cbor_item_t *item);
  * @return Length of the result. 0 on failure, in which case \p buffer is
  * ``NULL``.
  */
-_CBOR_NODISCARD CBOR_DEPRECATED CBOR_EXPORT size_t cbor_serialize_alloc(
-    const cbor_item_t *item, cbor_mutable_data *buffer, size_t *buffer_size);
+CBOR_EXPORT size_t cbor_serialize_alloc(const cbor_item_t *item,
+                                        cbor_mutable_data *buffer,
+                                        size_t *buffer_size);
 
 /** Serialize an uint
  *
