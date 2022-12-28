@@ -33,6 +33,12 @@ bool _cbor_safe_to_add(size_t a, size_t b) {
   return sum >= a && sum >= b;
 }
 
+size_t _cbor_safe_signaling_add(size_t a, size_t b) {
+  if (a == 0 || b == 0) return 0;
+  if (_cbor_safe_to_add(a, b)) return a + b;
+  return 0;
+}
+
 void* _cbor_alloc_multiple(size_t item_size, size_t item_count) {
   if (_cbor_safe_to_multiply(item_size, item_count)) {
     return _CBOR_MALLOC(item_size * item_count);

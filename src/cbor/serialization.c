@@ -40,13 +40,31 @@ size_t cbor_serialize(const cbor_item_t *item, unsigned char *buffer,
   }
 }
 
+/** Largest integer that can be encoded as embedded in the item leading byte. */
+const uint64_t kMaxEmbeddedInt = 23;
+
+/** How many bytes will a tag for a nested item of a given `size` take when
+ * encoded.*/
+size_t _cbor_encoded_header_size(uint64_t size) {
+  if (size <= kMaxEmbeddedInt)
+    return 1;
+  else if (size <= UINT8_MAX)
+    return 2;
+  else if (size <= UINT16_MAX)
+    return 3;
+  else if (size <= UINT32_MAX)
+    return 5;
+  else
+    return 9;
+}
+
 size_t cbor_serialized_size(const cbor_item_t *item) {
   switch (cbor_typeof(item)) {
     case CBOR_TYPE_UINT:
     case CBOR_TYPE_NEGINT:
       switch (cbor_int_get_width(item)) {
         case CBOR_INT_8:
-          if (cbor_get_uint8(item) <= 23) return 1;
+          if (cbor_get_uint8(item) <= kMaxEmbeddedInt) return 1;
           return 2;
         case CBOR_INT_16:
           return 3;
@@ -56,8 +74,19 @@ size_t cbor_serialized_size(const cbor_item_t *item) {
           return 9;
       }
     case CBOR_TYPE_BYTESTRING:
-      // TODO
-      return 0;
+      if (cbor_bytestring_is_definite(item)) {
+        return _cbor_safe_signaling_add(
+            _cbor_encoded_header_size(cbor_bytestring_length(item)),
+            cbor_bytestring_length(item));
+      }
+      size_t chunk_count = cbor_bytestring_chunk_count(item);
+      size_t indef_bytestring_size = 2;  // Leading byte + break
+      cbor_item_t **chunks = cbor_bytestring_chunks_handle(item);
+      for (size_t i = 0; i < chunk_count; i++) {
+        indef_bytestring_size = _cbor_safe_signaling_add(
+            indef_bytestring_size, cbor_serialized_size(chunks[i]));
+      }
+      return indef_bytestring_size;
     case CBOR_TYPE_STRING:
       // TODO
       return 0;
