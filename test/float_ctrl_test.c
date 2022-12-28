@@ -105,6 +105,8 @@ static void test_bool(void **_CBOR_UNUSED(_state)) {
   assert_true(isnan(cbor_float_get_float(float_ctrl)));
   cbor_decref(&float_ctrl);
   assert_null(float_ctrl);
+
+  _cbor_enable_assert = true;
 }
 
 static void test_float_ctrl_creation(void **_CBOR_UNUSED(_state)) {

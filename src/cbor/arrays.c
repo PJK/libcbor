@@ -10,12 +10,12 @@
 #include "internal/memory_utils.h"
 
 size_t cbor_array_size(const cbor_item_t *item) {
-  assert(cbor_isa_array(item));
+  CBOR_ASSERT(cbor_isa_array(item));
   return item->metadata.array_metadata.end_ptr;
 }
 
 size_t cbor_array_allocated(const cbor_item_t *item) {
-  assert(cbor_isa_array(item));
+  CBOR_ASSERT(cbor_isa_array(item));
   return item->metadata.array_metadata.allocated;
 }
 
@@ -42,7 +42,7 @@ bool cbor_array_replace(cbor_item_t *item, size_t index, cbor_item_t *value) {
 }
 
 bool cbor_array_push(cbor_item_t *array, cbor_item_t *pushee) {
-  assert(cbor_isa_array(array));
+  CBOR_ASSERT(cbor_isa_array(array));
   struct _cbor_array_metadata *metadata =
       (struct _cbor_array_metadata *)&array->metadata;
   cbor_item_t **data = (cbor_item_t **)array->data;
@@ -80,17 +80,17 @@ bool cbor_array_push(cbor_item_t *array, cbor_item_t *pushee) {
 }
 
 bool cbor_array_is_definite(const cbor_item_t *item) {
-  assert(cbor_isa_array(item));
+  CBOR_ASSERT(cbor_isa_array(item));
   return item->metadata.array_metadata.type == _CBOR_METADATA_DEFINITE;
 }
 
 bool cbor_array_is_indefinite(const cbor_item_t *item) {
-  assert(cbor_isa_array(item));
+  CBOR_ASSERT(cbor_isa_array(item));
   return item->metadata.array_metadata.type == _CBOR_METADATA_INDEFINITE;
 }
 
 cbor_item_t **cbor_array_handle(const cbor_item_t *item) {
-  assert(cbor_isa_array(item));
+  CBOR_ASSERT(cbor_isa_array(item));
   return (cbor_item_t **)item->data;
 }
 

@@ -148,7 +148,7 @@ size_t cbor_encode_half(float value, unsigned char *buffer,
     res = (uint16_t)((val & 0x80000000u) >> 16u | mant >> 13u);
   } else { /* Normal numbers */
     int8_t logical_exp = (int8_t)(exp - 127);
-    assert(logical_exp == exp - 127);
+    CBOR_ASSERT(logical_exp == exp - 127);
 
     // Now we know that 2^exp <= 0 logically
     if (logical_exp < -24) {

@@ -82,7 +82,7 @@ cbor_item_t *cbor_incref(cbor_item_t *item) {
 
 void cbor_decref(cbor_item_t **item_ref) {
   cbor_item_t *item = *item_ref;
-  assert(item->refcount > 0);
+  CBOR_ASSERT(item->refcount > 0);
   if (--item->refcount == 0) {
     switch (item->type) {
       case CBOR_TYPE_UINT:
