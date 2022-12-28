@@ -236,13 +236,13 @@ static void test_map_add(void **_CBOR_UNUSED(_state)) {
       4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }
 
-static unsigned char simple_indef_map[] = {0xBF, 0x01, 0x02, 0x03, 0x04, 0xFF};
+static unsigned char test_indef_map[] = {0xBF, 0x01, 0x02, 0x03, 0x04, 0xFF};
 static void test_indef_map_decode(void **_CBOR_UNUSED(_state)) {
   WITH_MOCK_MALLOC(
       {
         cbor_item_t *map;
         struct cbor_load_result res;
-        map = cbor_load(simple_indef_map, 6, &res);
+        map = cbor_load(test_indef_map, 6, &res);
 
         assert_null(map);
         assert_int_equal(res.error.code, CBOR_ERR_MEMERROR);
