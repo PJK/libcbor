@@ -301,6 +301,7 @@ static void test_serialize_array_no_space(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_new_indefinite_array();
   cbor_item_t *one = cbor_build_uint8(1);
   assert_true(cbor_array_push(item, one));
+  assert_int_equal(cbor_serialized_size(item), 3);
 
   // Not enough space for the leading byte
   assert_int_equal(0, cbor_serialize(item, buffer, 0));
@@ -360,6 +361,30 @@ static void test_serialize_indefinite_map(void **_CBOR_UNUSED(_state)) {
   assert_memory_equal(
       buffer, ((unsigned char[]){0xBF, 0x01, 0x02, 0x02, 0x01, 0xFF}), 6);
   assert_int_equal(cbor_serialized_size(item), 6);
+  cbor_decref(&item);
+  cbor_decref(&one);
+  cbor_decref(&two);
+}
+
+static void test_serialize_map_no_space(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_indefinite_map();
+  cbor_item_t *one = cbor_build_uint8(1);
+  cbor_item_t *two = cbor_build_uint8(2);
+  assert_true(cbor_map_add(item, (struct cbor_pair){.key = one, .value = two}));
+  assert_int_equal(cbor_serialized_size(item), 4);
+
+  // Not enough space for the leading byte
+  assert_int_equal(cbor_serialize(item, buffer, 0), 0);
+
+  // Not enough space for the key
+  assert_int_equal(cbor_serialize(item, buffer, 1), 0);
+
+  // Not enough space for the value
+  assert_int_equal(cbor_serialize(item, buffer, 2), 0);
+
+  // Not enough space for the indef break
+  assert_int_equal(cbor_serialize(item, buffer, 3), 0);
+
   cbor_decref(&item);
   cbor_decref(&one);
   cbor_decref(&two);
@@ -517,6 +542,7 @@ int main(void) {
       cmocka_unit_test(test_serialize_array_no_space),
       cmocka_unit_test(test_serialize_definite_map),
       cmocka_unit_test(test_serialize_indefinite_map),
+      cmocka_unit_test(test_serialize_map_no_space),
       cmocka_unit_test(test_serialize_tags),
       cmocka_unit_test(test_serialize_half),
       cmocka_unit_test(test_serialize_single),
