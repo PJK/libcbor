@@ -135,7 +135,7 @@ size_t cbor_encode_half(float value, unsigned char *buffer,
       val & 0x7FFFFFu; /* 0b0000_0000_0111_1111_1111_1111_1111_1111 */
   if (exp == 0xFF) {   /* Infinity or NaNs */
     if (value != value) {
-      // TODO: We currently discard information bits in half-float NaNs. This is
+      // We discard information bits in half-float NaNs. This is
       // not required for the core CBOR protocol (it is only a suggestion in
       // Section 3.9).
       // See https://github.com/PJK/libcbor/issues/215
