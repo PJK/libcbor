@@ -154,6 +154,30 @@ static void test_serialize_indefinite_bytestring(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
+static void test_serialize_4b_bytestring(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_definite_bytestring();
+
+  // Fake having a huge chunk of data
+  unsigned char *data = malloc(1);
+  cbor_bytestring_set_handle(item, data, UINT32_MAX);
+
+  assert_int_equal(cbor_serialize(item, buffer, 512), 0);
+  assert_int_equal(cbor_serialized_size(item), (uint64_t)UINT32_MAX + 5);
+  cbor_decref(&item);
+}
+
+static void test_serialize_8b_bytestring(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_definite_bytestring();
+
+  // Fake having a huge chunk of data
+  unsigned char *data = malloc(1);
+  cbor_bytestring_set_handle(item, data, (uint64_t)UINT32_MAX + 1);
+
+  assert_int_equal(cbor_serialize(item, buffer, 512), 0);
+  assert_int_equal(cbor_serialized_size(item), (uint64_t)UINT32_MAX + 1 + 9);
+  cbor_decref(&item);
+}
+
 static void test_serialize_definite_string(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_new_definite_string();
   unsigned char *data = malloc(12);
@@ -361,6 +385,8 @@ int main(void) {
       cmocka_unit_test(test_serialize_negint64),
       cmocka_unit_test(test_serialize_definite_bytestring),
       cmocka_unit_test(test_serialize_indefinite_bytestring),
+      cmocka_unit_test(test_serialize_4b_bytestring),
+      cmocka_unit_test(test_serialize_8b_bytestring),
       cmocka_unit_test(test_serialize_definite_string),
       cmocka_unit_test(test_serialize_indefinite_string),
       cmocka_unit_test(test_serialize_definite_array),
