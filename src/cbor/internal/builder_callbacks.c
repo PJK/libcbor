@@ -58,8 +58,9 @@ void _cbor_builder_append(cbor_item_t *item,
       break;
     }
     case CBOR_TYPE_MAP: {
-      /* We use 0 and 1 subitems to distinguish between keys and values in
-       * indefinite items */
+      // Handle both definite and indefinite maps the same initially.
+      // Note: We use 0 and 1 subitems to distinguish between keys and values in
+      // indefinite items
       if (ctx->stack->top->subitems % 2) {
         /* Odd record, this is a value */
         if (!_cbor_map_add_value(ctx->stack->top->item, item)) {

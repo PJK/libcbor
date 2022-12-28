@@ -335,6 +335,34 @@ static void test_append_array_failure(void** _CBOR_UNUSED(_state)) {
   _cbor_stack_pop(&stack);
 }
 
+static void test_append_map_failure(void** _CBOR_UNUSED(_state)) {
+  struct _cbor_stack stack = _cbor_stack_init();
+  assert_non_null(
+      _cbor_stack_push(&stack, cbor_new_indefinite_map(), /*subitems=*/0));
+  struct _cbor_decoder_context context = {
+      .creation_failed = false,
+      .syntax_error = false,
+      .root = NULL,
+      .stack = &stack,
+  };
+  cbor_item_t* item = cbor_build_uint8(42);
+
+  WITH_MOCK_MALLOC({ _cbor_builder_append(item, &context); }, 1, REALLOC_FAIL);
+
+  assert_true(context.creation_failed);
+  assert_false(context.syntax_error);
+  assert_int_equal(context.stack->size, 1);
+
+  // The stack remains unchanged
+  cbor_item_t* map = stack.top->item;
+  assert_int_equal(cbor_refcount(map), 1);
+  assert_true(cbor_isa_map(map));
+  assert_int_equal(cbor_map_size(map), 0);
+
+  // item free'd by _cbor_builder_append
+  _cbor_stack_pop(&stack);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_default_callbacks),
@@ -350,6 +378,7 @@ int main(void) {
       cmocka_unit_test(
           test_builder_string_callback_append_parent_alloc_failure),
       cmocka_unit_test(test_append_array_failure),
+      cmocka_unit_test(test_append_map_failure),
   };
 
   cmocka_run_group_tests(tests, NULL, NULL);
