@@ -421,7 +421,25 @@ static void test_map_second_key_failure(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
-// }
+static void test_tag_item_alloc_failure(void **_CBOR_UNUSED(_state)) {
+  item = cbor_build_tag(1, cbor_move(cbor_build_uint8(42)));
+
+  WITH_FAILING_MALLOC({ assert_null(cbor_copy(item)); });
+  assert_int_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
+static void test_tag_alloc_failure(void **_CBOR_UNUSED(_state)) {
+  item = cbor_build_tag(1, cbor_move(cbor_build_uint8(42)));
+
+  WITH_MOCK_MALLOC({ assert_null(cbor_copy(item)); }, 2,
+                   // Item copy, tag
+                   MALLOC, MALLOC_FAIL);
+  assert_int_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
 
 int main(void) {
   const struct CMUnitTest tests[] = {
@@ -456,6 +474,8 @@ int main(void) {
       cmocka_unit_test(test_map_value_alloc_failure),
       cmocka_unit_test(test_map_add_failure),
       cmocka_unit_test(test_map_second_key_failure),
+      cmocka_unit_test(test_tag_item_alloc_failure),
+      cmocka_unit_test(test_tag_alloc_failure),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
