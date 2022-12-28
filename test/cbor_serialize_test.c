@@ -20,11 +20,21 @@
 
 unsigned char buffer[512];
 
-static void test_serialize_uint8(void **_CBOR_UNUSED(_state)) {
+static void test_serialize_uint8_embed(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_new_int8();
   cbor_set_uint8(item, 0);
   assert_int_equal(1, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, (unsigned char[]){0x00}, 1);
+  assert_int_equal(cbor_serialized_size(item), 1);
+  cbor_decref(&item);
+}
+
+static void test_serialize_uint8(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_int8();
+  cbor_set_uint8(item, 42);
+  assert_int_equal(2, cbor_serialize(item, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0x18, 0x2a}), 2);
+  assert_int_equal(cbor_serialized_size(item), 2);
   cbor_decref(&item);
 }
 
@@ -33,6 +43,7 @@ static void test_serialize_uint16(void **_CBOR_UNUSED(_state)) {
   cbor_set_uint16(item, 1000);
   assert_int_equal(3, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0x19, 0x03, 0xE8}), 3);
+  assert_int_equal(cbor_serialized_size(item), 3);
   cbor_decref(&item);
 }
 
@@ -42,6 +53,7 @@ static void test_serialize_uint32(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(5, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0x1A, 0x00, 0x0F, 0x42, 0x40}),
                       5);
+  assert_int_equal(cbor_serialized_size(item), 5);
   cbor_decref(&item);
 }
 
@@ -53,15 +65,27 @@ static void test_serialize_uint64(void **_CBOR_UNUSED(_state)) {
       buffer,
       ((unsigned char[]){0x1B, 0x00, 0x00, 0x00, 0xE8, 0xD4, 0xA5, 0x10, 0x00}),
       9);
+  assert_int_equal(cbor_serialized_size(item), 9);
   cbor_decref(&item);
 }
 
-static void test_serialize_negint8(void **_CBOR_UNUSED(_state)) {
+static void test_serialize_negint8_embed(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_new_int8();
   cbor_set_uint8(item, 0);
   cbor_mark_negint(item);
   assert_int_equal(1, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, (unsigned char[]){0x20}, 1);
+  assert_int_equal(cbor_serialized_size(item), 1);
+  cbor_decref(&item);
+}
+
+static void test_serialize_negint8(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_int8();
+  cbor_set_uint8(item, 42);
+  cbor_mark_negint(item);
+  assert_int_equal(2, cbor_serialize(item, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0x38, 0x2a}), 2);
+  assert_int_equal(cbor_serialized_size(item), 2);
   cbor_decref(&item);
 }
 
@@ -71,6 +95,7 @@ static void test_serialize_negint16(void **_CBOR_UNUSED(_state)) {
   cbor_mark_negint(item);
   assert_int_equal(3, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0x39, 0x03, 0xE8}), 3);
+  assert_int_equal(cbor_serialized_size(item), 3);
   cbor_decref(&item);
 }
 
@@ -81,6 +106,7 @@ static void test_serialize_negint32(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(5, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0x3A, 0x00, 0x0F, 0x42, 0x40}),
                       5);
+  assert_int_equal(cbor_serialized_size(item), 5);
   cbor_decref(&item);
 }
 
@@ -93,6 +119,7 @@ static void test_serialize_negint64(void **_CBOR_UNUSED(_state)) {
       buffer,
       ((unsigned char[]){0x3B, 0x00, 0x00, 0x00, 0xE8, 0xD4, 0xA5, 0x10, 0x00}),
       9);
+  assert_int_equal(cbor_serialized_size(item), 9);
   cbor_decref(&item);
 }
 
@@ -307,10 +334,12 @@ static void test_auto_serialize_no_size(void **_CBOR_UNUSED(_state)) {
 
 int main(void) {
   const struct CMUnitTest tests[] = {
+      cmocka_unit_test(test_serialize_uint8_embed),
       cmocka_unit_test(test_serialize_uint8),
       cmocka_unit_test(test_serialize_uint16),
       cmocka_unit_test(test_serialize_uint32),
       cmocka_unit_test(test_serialize_uint64),
+      cmocka_unit_test(test_serialize_negint8_embed),
       cmocka_unit_test(test_serialize_negint8),
       cmocka_unit_test(test_serialize_negint16),
       cmocka_unit_test(test_serialize_negint32),
