@@ -6,7 +6,9 @@
  */
 
 #include "builder_callbacks.h"
+
 #include <string.h>
+
 #include "../arrays.h"
 #include "../bytestrings.h"
 #include "../common.h"
@@ -28,6 +30,9 @@ void _cbor_builder_append(cbor_item_t *item,
   }
   /* Part of a bigger structure */
   switch (ctx->stack->top->item->type) {
+    // Handle Arrays and Maps since they can contain subitems of any type.
+    // Byte/string construction from chunks is handled in the respective chunk
+    // handlers.
     case CBOR_TYPE_ARRAY: {
       if (cbor_array_is_definite(ctx->stack->top->item)) {
         // We don't need an explicit check for whether the item still belongs
@@ -78,6 +83,7 @@ void _cbor_builder_append(cbor_item_t *item,
       }
       cbor_decref(&item);
       if (cbor_map_is_definite(ctx->stack->top->item)) {
+        CBOR_ASSERT(ctx->stack->top->subitems > 0);
         ctx->stack->top->subitems--;
         if (ctx->stack->top->subitems == 0) {
           cbor_item_t *map_entry = ctx->stack->top->item;
@@ -99,6 +105,7 @@ void _cbor_builder_append(cbor_item_t *item,
       _cbor_builder_append(tagged_item, ctx);
       break;
     }
+    // We have an item to append but nothing to append it to.
     default: {
       cbor_decref(&item);
       ctx->syntax_error = true;
@@ -225,16 +232,14 @@ void cbor_builder_byte_string_callback(void *context, cbor_data data,
 
   cbor_bytestring_set_handle(new_chunk, new_handle, length);
 
-  if (ctx->stack->size > 0 && cbor_isa_bytestring(ctx->stack->top->item)) {
-    if (cbor_bytestring_is_indefinite(ctx->stack->top->item)) {
-      if (!cbor_bytestring_add_chunk(ctx->stack->top->item, new_chunk)) {
-        ctx->creation_failed = true;
-      }
-      cbor_decref(&new_chunk);
-    } else {
-      cbor_decref(&new_chunk);
-      ctx->syntax_error = true;
+  // If an indef bytestring is on the stack, extend it (if it were closed, it
+  // would have been popped). Handle any syntax errors upstream.
+  if (ctx->stack->size > 0 && cbor_isa_bytestring(ctx->stack->top->item) &&
+      cbor_bytestring_is_indefinite(ctx->stack->top->item)) {
+    if (!cbor_bytestring_add_chunk(ctx->stack->top->item, new_chunk)) {
+      ctx->creation_failed = true;
     }
+    cbor_decref(&new_chunk);
   } else {
     _cbor_builder_append(new_chunk, ctx);
   }
@@ -278,17 +283,14 @@ void cbor_builder_string_callback(void *context, cbor_data data,
   cbor_string_set_handle(new_chunk, new_handle, length);
   new_chunk->metadata.string_metadata.codepoint_count = codepoint_count;
 
-  /* Careful here: order matters */
-  if (ctx->stack->size > 0 && cbor_isa_string(ctx->stack->top->item)) {
-    if (cbor_string_is_indefinite(ctx->stack->top->item)) {
-      if (!cbor_string_add_chunk(ctx->stack->top->item, new_chunk)) {
-        ctx->creation_failed = true;
-      }
-      cbor_decref(&new_chunk);
-    } else {
-      cbor_decref(&new_chunk);
-      ctx->syntax_error = true;
+  // If an indef string is on the stack, extend it (if it were closed, it would
+  // have been popped). Handle any syntax errors upstream.
+  if (ctx->stack->size > 0 && cbor_isa_string(ctx->stack->top->item) &&
+      cbor_string_is_indefinite(ctx->stack->top->item)) {
+    if (!cbor_string_add_chunk(ctx->stack->top->item, new_chunk)) {
+      ctx->creation_failed = true;
     }
+    cbor_decref(&new_chunk);
   } else {
     _cbor_builder_append(new_chunk, ctx);
   }
