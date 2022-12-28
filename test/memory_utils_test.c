@@ -42,11 +42,24 @@ static void test_safe_signalling_add(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(_cbor_safe_signaling_add(1, SIZE_MAX - 1), SIZE_MAX);
 }
 
+static void test_realloc_multiple(void **_CBOR_UNUSED(_state)) {
+  unsigned char *data = malloc(1);
+  data[0] = 0x2a;
+
+  data = _cbor_realloc_multiple(data, /*item_size=*/1, /*item_count=*/10);
+  assert_int_equal(data[0], 0x2a);
+  data[9] = 0x2b;  // Sanitizer will stop us if not ok
+  free(data);
+
+  assert_null(_cbor_realloc_multiple(NULL, SIZE_MAX, 2));
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_safe_multiply),
       cmocka_unit_test(test_safe_add),
       cmocka_unit_test(test_safe_signalling_add),
+      cmocka_unit_test(test_realloc_multiple),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
