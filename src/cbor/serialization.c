@@ -79,10 +79,9 @@ size_t cbor_serialized_size(const cbor_item_t *item) {
             _cbor_encoded_header_size(cbor_bytestring_length(item)),
             cbor_bytestring_length(item));
       }
-      size_t chunk_count = cbor_bytestring_chunk_count(item);
       size_t indef_bytestring_size = 2;  // Leading byte + break
       cbor_item_t **chunks = cbor_bytestring_chunks_handle(item);
-      for (size_t i = 0; i < chunk_count; i++) {
+      for (size_t i = 0; i < cbor_bytestring_chunk_count(item); i++) {
         indef_bytestring_size = _cbor_safe_signaling_add(
             indef_bytestring_size, cbor_serialized_size(chunks[i]));
       }
@@ -94,10 +93,9 @@ size_t cbor_serialized_size(const cbor_item_t *item) {
             _cbor_encoded_header_size(cbor_string_length(item)),
             cbor_string_length(item));
       }
-      size_t chunk_count = cbor_string_chunk_count(item);
       size_t indef_string_size = 2;  // Leading byte + break
       cbor_item_t **chunks = cbor_string_chunks_handle(item);
-      for (size_t i = 0; i < chunk_count; i++) {
+      for (size_t i = 0; i < cbor_string_chunk_count(item); i++) {
         indef_string_size = _cbor_safe_signaling_add(
             indef_string_size, cbor_serialized_size(chunks[i]));
       }
@@ -127,12 +125,22 @@ size_t cbor_serialized_size(const cbor_item_t *item) {
       }
       return map_size;
     }
-    case CBOR_TYPE_TAG:
-      // TODO
-      return 0;
+    case CBOR_TYPE_TAG: {
+      return _cbor_safe_signaling_add(
+          _cbor_encoded_header_size(cbor_tag_value(item)),
+          cbor_serialized_size(cbor_move(cbor_tag_item(item))));
+    }
     case CBOR_TYPE_FLOAT_CTRL:
-      // TODO
-      return 0;
+      switch (cbor_float_get_width(item)) {
+        case CBOR_FLOAT_0:
+          return _cbor_encoded_header_size(cbor_ctrl_value(item));
+        case CBOR_FLOAT_16:
+          return 3;
+        case CBOR_FLOAT_32:
+          return 5;
+        case CBOR_FLOAT_64:
+          return 9;
+      }
   }
 }
 
