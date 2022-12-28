@@ -262,6 +262,24 @@ static void test_string_add_chunk(void **_CBOR_UNUSED(_state)) {
       5, MALLOC, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }
 
+static void test_add_chunk_reallocation_overflow(void **_CBOR_UNUSED(_state)) {
+  string = cbor_new_indefinite_string();
+  cbor_item_t *chunk = cbor_build_string("Hello!");
+  struct cbor_indefinite_string_data *metadata =
+      (struct cbor_indefinite_string_data *)string->data;
+  // Pretend we already have many chunks allocated
+  metadata->chunk_count = SIZE_MAX;
+  metadata->chunk_capacity = SIZE_MAX;
+
+  assert_false(cbor_string_add_chunk(string, chunk));
+  assert_int_equal(cbor_refcount(chunk), 1);
+
+  metadata->chunk_count = 0;
+  metadata->chunk_capacity = 0;
+  cbor_decref(&chunk);
+  cbor_decref(&string);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_empty_string),
@@ -275,7 +293,7 @@ int main(void) {
       cmocka_unit_test(test_inline_creation),
       cmocka_unit_test(test_string_creation),
       cmocka_unit_test(test_string_add_chunk),
-      // TODO: string chunks realloc test
+      cmocka_unit_test(test_add_chunk_reallocation_overflow),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
