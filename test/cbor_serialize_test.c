@@ -183,9 +183,9 @@ static void test_serialize_8b_bytestring(void **_CBOR_UNUSED(_state)) {
 }
 
 static void test_serialize_bytestring_no_space(void **_CBOR_UNUSED(_state)) {
-  cbor_item_t *item = cbor_new_definite_string();
+  cbor_item_t *item = cbor_new_definite_bytestring();
   unsigned char *data = malloc(12);
-  cbor_string_set_handle(item, data, 12);
+  cbor_bytestring_set_handle(item, data, 12);
 
   assert_int_equal(cbor_serialize(item, buffer, 1), 0);
 
@@ -246,6 +246,37 @@ static void test_serialize_indefinite_string(void **_CBOR_UNUSED(_state)) {
                          0x6F, 0x72, 0x6C, 0x64, 0x21, 0xFF}),
       15);
   assert_int_equal(cbor_serialized_size(item), 15);
+  cbor_decref(&item);
+}
+
+static void test_serialize_string_no_space(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_definite_string();
+  unsigned char *data = malloc(12);
+  cbor_string_set_handle(item, data, 12);
+
+  assert_int_equal(cbor_serialize(item, buffer, 1), 0);
+
+  cbor_decref(&item);
+}
+
+static void test_serialize_indefinite_string_no_space(
+    void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_indefinite_string();
+  cbor_item_t *chunk = cbor_new_definite_string();
+  unsigned char *data = malloc(256);
+  cbor_string_set_handle(chunk, data, 256);
+  assert_true(cbor_string_add_chunk(item, cbor_move(chunk)));
+
+  // Not enough space for the leading byte
+  assert_int_equal(cbor_serialize(item, buffer, 0), 0);
+
+  // Not enough space for the chunk
+  assert_int_equal(cbor_serialize(item, buffer, 30), 0);
+
+  // Not enough space for the indef break
+  assert_int_equal(
+      cbor_serialize(item, buffer, 1 + cbor_serialized_size(chunk)), 0);
+
   cbor_decref(&item);
 }
 
@@ -461,6 +492,8 @@ int main(void) {
       cmocka_unit_test(test_serialize_indefinite_bytestring_no_space),
       cmocka_unit_test(test_serialize_definite_string),
       cmocka_unit_test(test_serialize_indefinite_string),
+      cmocka_unit_test(test_serialize_string_no_space),
+      cmocka_unit_test(test_serialize_indefinite_string_no_space),
       cmocka_unit_test(test_serialize_definite_array),
       cmocka_unit_test(test_serialize_indefinite_array),
       cmocka_unit_test(test_serialize_definite_map),
