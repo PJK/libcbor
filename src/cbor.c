@@ -275,10 +275,15 @@ cbor_item_t *cbor_copy(cbor_item_t *item) {
       }
       return res;
     }
-    case CBOR_TYPE_TAG:
-      return cbor_build_tag(
-          cbor_tag_value(item),
-          cbor_move(cbor_copy(cbor_move(cbor_tag_item(item)))));
+    case CBOR_TYPE_TAG: {
+      cbor_item_t *item_copy = cbor_copy(cbor_move(cbor_tag_item(item)));
+      if (item_copy == NULL) {
+        return NULL;
+      }
+      cbor_item_t *tag = cbor_build_tag(cbor_tag_value(item), item_copy);
+      cbor_decref(&item_copy);
+      return tag;
+    }
     case CBOR_TYPE_FLOAT_CTRL:
       return _cbor_copy_float_ctrl(item);
   }
