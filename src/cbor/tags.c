@@ -38,6 +38,9 @@ void cbor_tag_set_item(cbor_item_t *item, cbor_item_t *tagged_item) {
 
 cbor_item_t *cbor_build_tag(uint64_t value, cbor_item_t *item) {
   cbor_item_t *res = cbor_new_tag(value);
+  if (res == NULL) {
+    return NULL;
+  }
   cbor_tag_set_item(res, item);
   return res;
 }
