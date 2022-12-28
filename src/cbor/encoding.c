@@ -141,8 +141,11 @@ size_t cbor_encode_half(float value, unsigned char *buffer,
       // See https://github.com/PJK/libcbor/issues/215
       res = (uint16_t)0x007e00;
     } else {
-      res = (uint16_t)((val & 0x80000000u) >> 16u | 0x7C00u |
-                       (mant ? 1u : 0u) << 15u);
+      // If the mantissa is non-zero, we have a NaN, but those are handled
+      // above. See
+      // https://en.wikipedia.org/wiki/Half-precision_floating-point_format
+      CBOR_ASSERT(mant == 0u);
+      res = (uint16_t)((val & 0x80000000u) >> 16u | 0x7C00u);
     }
   } else if (exp == 0x00) { /* Zeroes or subnorms */
     res = (uint16_t)((val & 0x80000000u) >> 16u | mant >> 13u);
