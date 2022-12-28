@@ -103,9 +103,17 @@ size_t cbor_serialized_size(const cbor_item_t *item) {
       }
       return indef_string_size;
     }
-    case CBOR_TYPE_ARRAY:
-      // TODO
-      return 0;
+    case CBOR_TYPE_ARRAY: {
+      size_t array_size = cbor_array_is_definite(item)
+                              ? _cbor_encoded_header_size(cbor_array_size(item))
+                              : 2;  // Leading byte + break
+      cbor_item_t **items = cbor_array_handle(item);
+      for (size_t i = 0; i < cbor_array_size(item); i++) {
+        array_size = _cbor_safe_signaling_add(array_size,
+                                              cbor_serialized_size(items[i]));
+      }
+      return array_size;
+    }
     case CBOR_TYPE_MAP:
       // TODO
       return 0;
