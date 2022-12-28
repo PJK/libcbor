@@ -224,9 +224,14 @@ cbor_item_t *cbor_copy(cbor_item_t *item) {
         return NULL;
       }
 
-      for (size_t i = 0; i < cbor_array_size(item); i++)
-        cbor_array_push(
-            res, cbor_move(cbor_copy(cbor_move(cbor_array_get(item, i)))));
+      for (size_t i = 0; i < cbor_array_size(item); i++) {
+        cbor_item_t *entry_copy = cbor_copy(cbor_move(cbor_array_get(item, i)));
+        if (entry_copy == NULL) {
+          cbor_decref(&res);
+          return NULL;
+        }
+        cbor_array_push(res, cbor_move(entry_copy));
+      }
       return res;
     }
     case CBOR_TYPE_MAP: {
