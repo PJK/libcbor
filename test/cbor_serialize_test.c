@@ -165,6 +165,7 @@ static void test_serialize_definite_string(void **_CBOR_UNUSED(_state)) {
       ((unsigned char[]){0x6C, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F,
                          0x72, 0x6C, 0x64, 0x21}),
       13);
+  assert_int_equal(cbor_serialized_size(item), 13);
   cbor_decref(&item);
 }
 
@@ -185,6 +186,7 @@ static void test_serialize_indefinite_string(void **_CBOR_UNUSED(_state)) {
       ((unsigned char[]){0x7F, 0x6C, 0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77,
                          0x6F, 0x72, 0x6C, 0x64, 0x21, 0xFF}),
       15);
+  assert_int_equal(cbor_serialized_size(item), 15);
   cbor_decref(&item);
 }
 

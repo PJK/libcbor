@@ -21,9 +21,10 @@ extern "C" {
  * ============================================================================
  */
 
-/** Returns the length of the underlying string
+/** Returns the length of the underlying string in bytes
  *
- * For definite strings only
+ * There can be fewer unicode character than bytes (see
+ * `cbor_string_codepoint_count`). For definite strings only.
  *
  * @param item[borrow] a definite string
  * @return length of the string. Zero if no chunk has been attached yet
