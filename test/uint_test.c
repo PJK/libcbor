@@ -133,15 +133,30 @@ static void test_inline_creation(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&number);
 }
 
+static void test_int_creation(void **_CBOR_UNUSED(_state)) {
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_int8()); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_int16()); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_int32()); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_int64()); });
+
+  WITH_FAILING_MALLOC({ assert_null(cbor_build_uint8(0xFF)); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_build_uint16(0xFF)); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_build_uint32(0xFF)); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_build_uint64(0xFF)); });
+}
+
 int main(void) {
-  const struct CMUnitTest tests[] = {cmocka_unit_test(test_very_short_int),
-                                     cmocka_unit_test(test_short_int),
-                                     cmocka_unit_test(test_half_int),
-                                     cmocka_unit_test(test_int),
-                                     cmocka_unit_test(test_long_int),
-                                     cmocka_unit_test(test_incomplete_data),
-                                     cmocka_unit_test(test_refcounting),
-                                     cmocka_unit_test(test_empty_input),
-                                     cmocka_unit_test(test_inline_creation)};
+  const struct CMUnitTest tests[] = {
+      cmocka_unit_test(test_very_short_int),
+      cmocka_unit_test(test_short_int),
+      cmocka_unit_test(test_half_int),
+      cmocka_unit_test(test_int),
+      cmocka_unit_test(test_long_int),
+      cmocka_unit_test(test_incomplete_data),
+      cmocka_unit_test(test_refcounting),
+      cmocka_unit_test(test_empty_input),
+      cmocka_unit_test(test_inline_creation),
+      cmocka_unit_test(test_int_creation),
+  };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

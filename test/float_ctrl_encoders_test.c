@@ -127,7 +127,7 @@ static void test_half_special(void **_CBOR_UNUSED(_state)) {
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x00}), 3);
   assert_half_float_codec_identity();
 
-  // TODO: We currently discard all information bits in half-float NaNs. This is
+  // We discard all information bits in half-float NaNs. This is
   // not required for the core CBOR protocol (it is only a suggestion in
   // Section 3.9).
   // See https://github.com/PJK/libcbor/issues/215
