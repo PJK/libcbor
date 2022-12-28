@@ -5,6 +5,7 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
+#include <math.h>
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -83,12 +84,15 @@ static void test_undef(void **_CBOR_UNUSED(_state)) {
 unsigned char bool_data[] = {0xF4, 0xF5};
 
 static void test_bool(void **_CBOR_UNUSED(_state)) {
+  _cbor_enable_assert = false;
+
   float_ctrl = cbor_load(bool_data, 1, &res);
   assert_true(cbor_isa_float_ctrl(float_ctrl));
   assert_true(cbor_is_bool(float_ctrl));
   assert_false(cbor_get_bool(float_ctrl));
   cbor_set_bool(float_ctrl, true);
   assert_true(cbor_get_bool(float_ctrl));
+  assert_true(isnan(cbor_float_get_float(float_ctrl)));
   cbor_decref(&float_ctrl);
   assert_null(float_ctrl);
 
@@ -98,6 +102,7 @@ static void test_bool(void **_CBOR_UNUSED(_state)) {
   assert_true(cbor_get_bool(float_ctrl));
   cbor_set_bool(float_ctrl, false);
   assert_false(cbor_get_bool(float_ctrl));
+  assert_true(isnan(cbor_float_get_float(float_ctrl)));
   cbor_decref(&float_ctrl);
   assert_null(float_ctrl);
 }

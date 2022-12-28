@@ -56,10 +56,15 @@ static const uint8_t cbor_patch_version = CBOR_PATCH_VERSION;
       fprintf(stderr, "%s:%d:%s(): " fmt, __FILE__, __LINE__, __func__, \
               __VA_ARGS__);                                             \
   } while (0)
+extern bool _cbor_enable_assert;
+// Like `assert`, but can be dynamically disabled in tests to allow testing
+// invalid behaviors.
+#define CBOR_ASSERT(e) assert(!_cbor_enable_assert || (e))
 #else
 #define debug_print(fmt, ...) \
   do {                        \
   } while (0)
+#define CBOR_ASSERT(e)
 #endif
 
 #define _CBOR_TO_STR_(x) #x

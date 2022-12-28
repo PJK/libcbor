@@ -15,6 +15,10 @@
 #include "strings.h"
 #include "tags.h"
 
+#ifdef DEBUG
+bool _cbor_enable_assert = true;
+#endif
+
 bool cbor_isa_uint(const cbor_item_t *item) {
   return item->type == CBOR_TYPE_UINT;
 }
