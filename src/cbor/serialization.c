@@ -114,9 +114,19 @@ size_t cbor_serialized_size(const cbor_item_t *item) {
       }
       return array_size;
     }
-    case CBOR_TYPE_MAP:
-      // TODO
-      return 0;
+    case CBOR_TYPE_MAP: {
+      size_t map_size = cbor_map_is_definite(item)
+                            ? _cbor_encoded_header_size(cbor_map_size(item))
+                            : 2;  // Leading byte + break
+      struct cbor_pair *items = cbor_map_handle(item);
+      for (size_t i = 0; i < cbor_map_size(item); i++) {
+        map_size = _cbor_safe_signaling_add(
+            map_size,
+            _cbor_safe_signaling_add(cbor_serialized_size(items[i].key),
+                                     cbor_serialized_size(items[i].value)));
+      }
+      return map_size;
+    }
     case CBOR_TYPE_TAG:
       // TODO
       return 0;

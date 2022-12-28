@@ -234,6 +234,7 @@ static void test_serialize_definite_map(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(5, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xA2, 0x01, 0x02, 0x02, 0x01}),
                       5);
+  assert_int_equal(cbor_serialized_size(item), 5);
   cbor_decref(&item);
   cbor_decref(&one);
   cbor_decref(&two);
@@ -250,6 +251,7 @@ static void test_serialize_indefinite_map(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(6, cbor_serialize(item, buffer, 512));
   assert_memory_equal(
       buffer, ((unsigned char[]){0xBF, 0x01, 0x02, 0x02, 0x01, 0xFF}), 6);
+  assert_int_equal(cbor_serialized_size(item), 6);
   cbor_decref(&item);
   cbor_decref(&one);
   cbor_decref(&two);
