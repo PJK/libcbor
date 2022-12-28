@@ -8,11 +8,12 @@
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <tgmath.h>
 
 #include <cmocka.h>
 
-#include <tgmath.h>
 #include "cbor.h"
+#include "test_allocator.h"
 
 cbor_item_t *float_ctrl;
 struct cbor_load_result res;
@@ -101,10 +102,30 @@ static void test_bool(void **_CBOR_UNUSED(_state)) {
   assert_null(float_ctrl);
 }
 
+static void test_float_ctrl_creation(void **_CBOR_UNUSED(_state)) {
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_ctrl()); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_float2()); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_float4()); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_float8()); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_null()); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_undef()); });
+
+  WITH_FAILING_MALLOC({ assert_null(cbor_build_bool(false)); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_build_float2(3.14)); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_build_float4(3.14)); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_build_float8(3.14)); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_build_ctrl(0xAF)); });
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
-      cmocka_unit_test(test_float2), cmocka_unit_test(test_float4),
-      cmocka_unit_test(test_float8), cmocka_unit_test(test_null),
-      cmocka_unit_test(test_undef),  cmocka_unit_test(test_bool)};
+      cmocka_unit_test(test_float2),
+      cmocka_unit_test(test_float4),
+      cmocka_unit_test(test_float8),
+      cmocka_unit_test(test_null),
+      cmocka_unit_test(test_undef),
+      cmocka_unit_test(test_bool),
+      cmocka_unit_test(test_float_ctrl_creation),
+  };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

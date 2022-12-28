@@ -13,6 +13,7 @@
 
 #include "assertions.h"
 #include "cbor.h"
+#include "test_allocator.h"
 
 cbor_item_t *arr;
 struct cbor_load_result res;
@@ -170,6 +171,45 @@ static void test_array_push_overflow(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&array);
 }
 
+static void test_array_creation(void **_CBOR_UNUSED(_state)) {
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_array(42)); });
+  WITH_MOCK_MALLOC({ assert_null(cbor_new_definite_array(42)); }, 2, MALLOC,
+                   MALLOC_FAIL);
+
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_array()); });
+}
+
+static void test_array_push(void **_CBOR_UNUSED(_state)) {
+  WITH_MOCK_MALLOC(
+      {
+        cbor_item_t *array = cbor_new_indefinite_array();
+        cbor_item_t *string = cbor_build_string("Hello!");
+
+        assert_false(cbor_array_push(array, string));
+        assert_int_equal(cbor_array_allocated(array), 0);
+        assert_null(array->data);
+        assert_int_equal(array->metadata.array_metadata.end_ptr, 0);
+
+        cbor_decref(&string);
+        cbor_decref(&array);
+      },
+      4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
+}
+
+static unsigned char simple_indef_array[] = {0x9F, 0x01, 0x02, 0xFF};
+static void test_indef_array_decode(void **_CBOR_UNUSED(_state)) {
+  WITH_MOCK_MALLOC(
+      {
+        cbor_item_t *array;
+        struct cbor_load_result res;
+        array = cbor_load(simple_indef_array, 4, &res);
+
+        assert_null(array);
+        assert_int_equal(res.error.code, CBOR_ERR_MEMERROR);
+      },
+      4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_empty_array),
@@ -179,6 +219,9 @@ int main(void) {
       cmocka_unit_test(test_nested_indef_arrays),
       cmocka_unit_test(test_array_replace),
       cmocka_unit_test(test_array_push_overflow),
+      cmocka_unit_test(test_array_creation),
+      cmocka_unit_test(test_array_push),
+      cmocka_unit_test(test_indef_array_decode),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);

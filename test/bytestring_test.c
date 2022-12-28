@@ -12,6 +12,7 @@
 #include <cmocka.h>
 
 #include "cbor.h"
+#include "test_allocator.h"
 
 cbor_item_t *bs;
 struct cbor_load_result res;
@@ -327,6 +328,41 @@ static void test_add_chunk_reallocation_overflow(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&bs);
 }
 
+static void test_bytestring_creation(void **_CBOR_UNUSED(_state)) {
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_bytestring()); });
+
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_bytestring()); });
+  WITH_MOCK_MALLOC({ assert_null(cbor_new_indefinite_bytestring()); }, 2,
+                   MALLOC, MALLOC_FAIL);
+
+  unsigned char bytes[] = {0, 0, 0xFF, 0xAB};
+
+  WITH_FAILING_MALLOC({ assert_null(cbor_build_bytestring(bytes, 4)); });
+  WITH_MOCK_MALLOC({ assert_null(cbor_build_bytestring(bytes, 4)); }, 2, MALLOC,
+                   MALLOC_FAIL);
+}
+
+static void test_bytestring_add_chunk(void **_CBOR_UNUSED(_state)) {
+  unsigned char bytes[] = {0, 0, 0xFF, 0xAB};
+  WITH_MOCK_MALLOC(
+      {
+        cbor_item_t *bytestring = cbor_new_indefinite_bytestring();
+        cbor_item_t *chunk = cbor_build_bytestring(bytes, 4);
+
+        assert_false(cbor_bytestring_add_chunk(bytestring, chunk));
+
+        assert_int_equal(cbor_bytestring_chunk_count(bytestring), 0);
+        assert_int_equal(
+            ((struct cbor_indefinite_string_data *)bytestring->data)
+                ->chunk_capacity,
+            0);
+
+        cbor_decref(&chunk);
+        cbor_decref(&bytestring);
+      },
+      5, MALLOC, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_empty_bs),
@@ -343,6 +379,8 @@ int main(void) {
       cmocka_unit_test(test_missing_indef),
       cmocka_unit_test(test_inline_creation),
       cmocka_unit_test(test_add_chunk_reallocation_overflow),
+      cmocka_unit_test(test_bytestring_creation),
+      cmocka_unit_test(test_bytestring_add_chunk),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

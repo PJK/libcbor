@@ -127,6 +127,10 @@ static void test_build_tag_failure(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&tagged_item);
 }
 
+static void test_tag_creation(void **_CBOR_UNUSED(_state)) {
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_tag(42)); });
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_refcounting),
@@ -138,6 +142,7 @@ int main(void) {
       cmocka_unit_test(test_nested_tag),
       cmocka_unit_test(test_build_tag),
       cmocka_unit_test(test_build_tag_failure),
+      cmocka_unit_test(test_tag_creation),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
