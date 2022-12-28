@@ -147,7 +147,7 @@ static void test_serialize_indefinite_bytestring(void **_CBOR_UNUSED(_state)) {
   bzero(data, 256); /* Prevent undefined behavior in comparison */
   cbor_bytestring_set_handle(chunk, data, 256);
 
-  cbor_bytestring_add_chunk(item, cbor_move(chunk));
+  assert_true(cbor_bytestring_add_chunk(item, cbor_move(chunk)));
   assert_int_equal(cbor_bytestring_chunk_count(item), 1);
 
   assert_int_equal(1 + 3 + 256 + 1, cbor_serialize(item, buffer, 512));
@@ -223,9 +223,9 @@ static void test_serialize_definite_array(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *one = cbor_build_uint8(1);
   cbor_item_t *two = cbor_build_uint8(2);
 
-  cbor_array_push(item, one);
-  cbor_array_set(item, 1, two);
-  cbor_array_replace(item, 0, one);
+  assert_true(cbor_array_push(item, one));
+  assert_true(cbor_array_set(item, 1, two));
+  assert_true(cbor_array_replace(item, 0, one));
 
   assert_int_equal(3, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0x82, 0x01, 0x02}), 3);
@@ -240,8 +240,8 @@ static void test_serialize_indefinite_array(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *one = cbor_build_uint8(1);
   cbor_item_t *two = cbor_build_uint8(2);
 
-  cbor_array_push(item, one);
-  cbor_array_push(item, two);
+  assert_true(cbor_array_push(item, one));
+  assert_true(cbor_array_push(item, two));
 
   assert_int_equal(4, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0x9F, 0x01, 0x02, 0xFF}), 4);
@@ -256,8 +256,8 @@ static void test_serialize_definite_map(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *one = cbor_build_uint8(1);
   cbor_item_t *two = cbor_build_uint8(2);
 
-  cbor_map_add(item, (struct cbor_pair){.key = one, .value = two});
-  cbor_map_add(item, (struct cbor_pair){.key = two, .value = one});
+  assert_true(cbor_map_add(item, (struct cbor_pair){.key = one, .value = two}));
+  assert_true(cbor_map_add(item, (struct cbor_pair){.key = two, .value = one}));
 
   assert_int_equal(5, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xA2, 0x01, 0x02, 0x02, 0x01}),
@@ -352,8 +352,9 @@ static void test_serialize_long_ctrl(void **_CBOR_UNUSED(_state)) {
 
 static void test_auto_serialize(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_new_definite_array(4);
-  for (size_t i = 0; i < 4; i++)
-    cbor_array_push(item, cbor_move(cbor_build_uint64(0)));
+  for (size_t i = 0; i < 4; i++) {
+    assert_true(cbor_array_push(item, cbor_move(cbor_build_uint64(0))));
+  }
 
   unsigned char *output;
   size_t output_size;
