@@ -14,7 +14,8 @@ Next
 - [Fix a memory leak when the allocator fails when adding chunks to indefinite strings](https://github.com/PJK/libcbor/pull/246)
 - Potentially BUILD BREAKING: [Add nodiscard attributes to most functions](https://github.com/PJK/libcbor/pull/248)
   - **Warning**: This may cause new build warnings and (in rare cases, depending on your configuration) errors
-- [Fix `cbor_copy` leaking memory and creating invalid items when the allocator fails](https://github.com/PJK/libcbor/pull/249)
+- BREAKING: [Fix `cbor_copy` leaking memory and creating invalid items when the allocator fails](https://github.com/PJK/libcbor/pull/249).
+  - Previously, the failures were not handled in the interface. Now, `cbor_copy` may return `NULL` upon failure; clients should check the return value
 - [Fix `cbor_build_tag` illegal memory behavior when the allocator fails](https://github.com/PJK/libcbor/pull/249)
 
 
