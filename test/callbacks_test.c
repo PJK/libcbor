@@ -332,6 +332,7 @@ static void test_append_array_failure(void** _CBOR_UNUSED(_state)) {
   assert_int_equal(cbor_array_size(array), 0);
 
   // item free'd by _cbor_builder_append
+  cbor_decref(&array);
   _cbor_stack_pop(&stack);
 }
 
@@ -360,6 +361,7 @@ static void test_append_map_failure(void** _CBOR_UNUSED(_state)) {
   assert_int_equal(cbor_map_size(map), 0);
 
   // item free'd by _cbor_builder_append
+  cbor_decref(&map);
   _cbor_stack_pop(&stack);
 }
 
