@@ -153,7 +153,7 @@ size_t cbor_serialize_alloc(const cbor_item_t *item, unsigned char **buffer,
     if (buffer_size != NULL) *buffer_size = 0;
     return 0;
   }
-  *buffer = _CBOR_MALLOC(serialized_size);
+  *buffer = _cbor_malloc(serialized_size);
   if (*buffer == NULL) {
     if (buffer_size != NULL) *buffer_size = 0;
     return 0;

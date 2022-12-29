@@ -215,7 +215,7 @@ void cbor_builder_byte_string_callback(void *context, cbor_data data,
                                        uint64_t length) {
   struct _cbor_decoder_context *ctx = context;
   CHECK_LENGTH(ctx, length);
-  unsigned char *new_handle = _CBOR_MALLOC(length);
+  unsigned char *new_handle = _cbor_malloc(length);
   if (new_handle == NULL) {
     ctx->creation_failed = true;
     return;
@@ -225,7 +225,7 @@ void cbor_builder_byte_string_callback(void *context, cbor_data data,
   cbor_item_t *new_chunk = cbor_new_definite_bytestring();
 
   if (new_chunk == NULL) {
-    _CBOR_FREE(new_handle);
+    _cbor_free(new_handle);
     ctx->creation_failed = true;
     return;
   }
@@ -266,7 +266,7 @@ void cbor_builder_string_callback(void *context, cbor_data data,
   }
   CBOR_ASSERT(codepoint_count <= length);
 
-  unsigned char *new_handle = _CBOR_MALLOC(length);
+  unsigned char *new_handle = _cbor_malloc(length);
 
   if (new_handle == NULL) {
     ctx->creation_failed = true;
@@ -276,7 +276,7 @@ void cbor_builder_string_callback(void *context, cbor_data data,
   memcpy(new_handle, data, length);
   cbor_item_t *new_chunk = cbor_new_definite_string();
   if (new_chunk == NULL) {
-    _CBOR_FREE(new_handle);
+    _cbor_free(new_handle);
     ctx->creation_failed = true;
     return;
   }

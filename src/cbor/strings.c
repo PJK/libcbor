@@ -10,7 +10,7 @@
 #include "internal/memory_utils.h"
 
 cbor_item_t *cbor_new_definite_string(void) {
-  cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+  cbor_item_t *item = _cbor_malloc(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
   *item = (cbor_item_t){
       .refcount = 1,
@@ -20,14 +20,14 @@ cbor_item_t *cbor_new_definite_string(void) {
 }
 
 cbor_item_t *cbor_new_indefinite_string(void) {
-  cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+  cbor_item_t *item = _cbor_malloc(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
   *item = (cbor_item_t){
       .refcount = 1,
       .type = CBOR_TYPE_STRING,
       .metadata = {.string_metadata = {.type = _CBOR_METADATA_INDEFINITE,
                                        .length = 0}},
-      .data = _CBOR_MALLOC(sizeof(struct cbor_indefinite_string_data))};
+      .data = _cbor_malloc(sizeof(struct cbor_indefinite_string_data))};
   _CBOR_DEPENDENT_NOTNULL(item, item->data);
   *((struct cbor_indefinite_string_data *)item->data) =
       (struct cbor_indefinite_string_data){
@@ -42,7 +42,7 @@ cbor_item_t *cbor_build_string(const char *val) {
   cbor_item_t *item = cbor_new_definite_string();
   _CBOR_NOTNULL(item);
   size_t len = strlen(val);
-  unsigned char *handle = _CBOR_MALLOC(len);
+  unsigned char *handle = _cbor_malloc(len);
   _CBOR_DEPENDENT_NOTNULL(item, handle);
   memcpy(handle, val, len);
   cbor_string_set_handle(item, handle, len);
@@ -52,7 +52,7 @@ cbor_item_t *cbor_build_string(const char *val) {
 cbor_item_t *cbor_build_stringn(const char *val, size_t length) {
   cbor_item_t *item = cbor_new_definite_string();
   _CBOR_NOTNULL(item);
-  unsigned char *handle = _CBOR_MALLOC(length);
+  unsigned char *handle = _cbor_malloc(length);
   _CBOR_DEPENDENT_NOTNULL(item, handle);
   memcpy(handle, val, length);
   cbor_string_set_handle(item, handle, length);

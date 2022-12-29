@@ -484,7 +484,7 @@ static void test_auto_serialize(void **_CBOR_UNUSED(_state)) {
   assert_int_equal(cbor_serialized_size(item), 37);
   assert_memory_equal(output, ((unsigned char[]){0x84, 0x1B}), 2);
   cbor_decref(&item);
-  _CBOR_FREE(output);
+  _cbor_free(output);
 }
 
 static void test_auto_serialize_no_size(void **_CBOR_UNUSED(_state)) {
@@ -495,7 +495,7 @@ static void test_auto_serialize_no_size(void **_CBOR_UNUSED(_state)) {
   assert_memory_equal(output, ((unsigned char[]){0x01}), 1);
   assert_int_equal(cbor_serialized_size(item), 1);
   cbor_decref(&item);
-  _CBOR_FREE(output);
+  _cbor_free(output);
 }
 
 static void test_auto_serialize_too_large(void **_CBOR_UNUSED(_state)) {

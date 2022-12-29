@@ -3,6 +3,6 @@
 
 #include <cstdint>
 
-uint8_t cbor_version(void);
+void print_cbor_version(void);
 
 #endif  // HELLO_H_

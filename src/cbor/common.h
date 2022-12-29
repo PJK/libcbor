@@ -83,6 +83,14 @@ extern bool _cbor_enable_assert;
 #define _CBOR_NODISCARD
 #endif
 
+typedef void *(*_cbor_malloc_t)(size_t);
+typedef void *(*_cbor_realloc_t)(void *, size_t);
+typedef void (*_cbor_free_t)(void *);
+
+CBOR_EXPORT extern _cbor_malloc_t _cbor_malloc;
+CBOR_EXPORT extern _cbor_realloc_t _cbor_realloc;
+CBOR_EXPORT extern _cbor_free_t _cbor_free;
+
 // Macro to short-circuit builder functions when memory allocation fails
 #define _CBOR_NOTNULL(cbor_item) \
   do {                           \
@@ -95,24 +103,12 @@ extern bool _cbor_enable_assert;
 #define _CBOR_DEPENDENT_NOTNULL(cbor_item, pointer) \
   do {                                              \
     if (pointer == NULL) {                          \
-      _CBOR_FREE(cbor_item);                        \
+      _cbor_free(cbor_item);                        \
       return NULL;                                  \
     }                                               \
   } while (0)
 
-#if CBOR_CUSTOM_ALLOC
-
-typedef void *(*_cbor_malloc_t)(size_t);
-typedef void *(*_cbor_realloc_t)(void *, size_t);
-typedef void (*_cbor_free_t)(void *);
-
-CBOR_EXPORT extern _cbor_malloc_t _cbor_malloc;
-CBOR_EXPORT extern _cbor_realloc_t _cbor_realloc;
-CBOR_EXPORT extern _cbor_free_t _cbor_free;
-
 /** Sets the memory management routines to use.
- *
- * Only available when `CBOR_CUSTOM_ALLOC` is truthy
  *
  * \rst
  * .. warning:: This function modifies the global state and should therefore be
@@ -132,18 +128,6 @@ CBOR_EXPORT extern _cbor_free_t _cbor_free;
 CBOR_EXPORT void cbor_set_allocs(_cbor_malloc_t custom_malloc,
                                  _cbor_realloc_t custom_realloc,
                                  _cbor_free_t custom_free);
-
-#define _CBOR_MALLOC _cbor_malloc
-#define _CBOR_REALLOC _cbor_realloc
-#define _CBOR_FREE _cbor_free
-
-#else
-
-#define _CBOR_MALLOC malloc
-#define _CBOR_REALLOC realloc
-#define _CBOR_FREE free
-
-#endif
 
 /*
  * ============================================================================

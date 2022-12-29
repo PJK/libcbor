@@ -19,7 +19,7 @@ size_t cbor_map_allocated(const cbor_item_t *item) {
 }
 
 cbor_item_t *cbor_new_definite_map(size_t size) {
-  cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+  cbor_item_t *item = _cbor_malloc(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
 
   *item = (cbor_item_t){
@@ -35,7 +35,7 @@ cbor_item_t *cbor_new_definite_map(size_t size) {
 }
 
 cbor_item_t *cbor_new_indefinite_map(void) {
-  cbor_item_t *item = _CBOR_MALLOC(sizeof(cbor_item_t));
+  cbor_item_t *item = _cbor_malloc(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
 
   *item = (cbor_item_t){

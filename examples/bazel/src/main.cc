@@ -3,7 +3,8 @@
 #include <stdio.h>
 
 int main() {
-  printf("Hello, v=%d\n", cbor_version());
+  print_cbor_version();
+  
   return 0;
 }
 

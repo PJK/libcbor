@@ -18,6 +18,13 @@ if(BIG_ENDIAN)
 endif()
 
 option(CBOR_CUSTOM_ALLOC "Custom, dynamically defined allocator support" OFF)
+if(CBOR_CUSTOM_ALLOC)
+    message(WARNING 
+        "CBOR_CUSTOM_ALLOC has been deprecated. Custom allocators are now enabled by default."
+        "The flag is a no-op and will be removed in the next version. "
+        "Please remove CBOR_CUSTOM_ALLOC from your build configuation.")
+endif(CBOR_CUSTOM_ALLOC)
+
 option(CBOR_PRETTY_PRINTER "Include a pretty-printing routine" ON)
 set(CBOR_BUFFER_GROWTH "2" CACHE STRING "Factor for buffer growth & shrinking")
 set(CBOR_MAX_STACK_SIZE "2048" CACHE STRING "maximum size for decoding context stack")

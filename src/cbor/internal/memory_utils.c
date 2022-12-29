@@ -41,7 +41,7 @@ size_t _cbor_safe_signaling_add(size_t a, size_t b) {
 
 void* _cbor_alloc_multiple(size_t item_size, size_t item_count) {
   if (_cbor_safe_to_multiply(item_size, item_count)) {
-    return _CBOR_MALLOC(item_size * item_count);
+    return _cbor_malloc(item_size * item_count);
   } else {
     return NULL;
   }
@@ -50,7 +50,7 @@ void* _cbor_alloc_multiple(size_t item_size, size_t item_count) {
 void* _cbor_realloc_multiple(void* pointer, size_t item_size,
                              size_t item_count) {
   if (_cbor_safe_to_multiply(item_size, item_count)) {
-    return _CBOR_REALLOC(pointer, item_size * item_count);
+    return _cbor_realloc(pointer, item_size * item_count);
   } else {
     return NULL;
   }
