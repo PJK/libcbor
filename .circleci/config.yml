@@ -15,6 +15,13 @@ commands:
           -DCOVERAGE="${CMAKE_COVERAGE:='OFF'}" \
           .
     - run: make -j 16 VERBOSE=1
+  build-release:
+    steps:
+    - run: >
+        cmake -DWITH_TESTS=ON \
+          -DCMAKE_BUILD_TYPE=Release \
+          .
+    - run: make -j 16 VERBOSE=1
   test:
     steps:
     - run: ctest -VV
@@ -80,6 +87,18 @@ jobs:
       - build
       - test
 
+  build-and-test-release-clang:
+    machine:
+      image: ubuntu-2204:2022.10.2
+    environment:
+      TOOLCHAIN_PACKAGE: clang
+      CC: clang
+      CXX: clang++
+    steps:
+      - checkout
+      - linux-setup
+      - build-release
+      - test
 
   llvm-coverage:
     machine:
