@@ -22,8 +22,8 @@ Next
   - This should significantly speed up `cbor_serialize_alloc` for large items by avoiding multiple reallocation iterations
   - Clients should not use the return value of `cbor_serialize_alloc`. It may be removed in the future.
 - BUILD BREAKING: [Deprecate CBOR_CUSTOM_ALLOC](https://github.com/PJK/libcbor/pull/237)
-  - `cbor_set_allocs` will always be enabled 
-  - Note: The flag will be kept as a no-op for one version and then remove completely
+  - `cbor_set_allocs` will always be enabled from now on
+  - Note: The flag will be kept as a no-op triggering a warning when used for one version and then removed completely
 
 0.9.0 (2021-11-14)
 ---------------------
