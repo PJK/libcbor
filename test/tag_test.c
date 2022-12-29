@@ -13,6 +13,7 @@
 
 #include "assertions.h"
 #include "cbor.h"
+#include "test_allocator.h"
 
 cbor_item_t *tag;
 struct cbor_load_result res;
@@ -107,11 +108,41 @@ static void test_nested_tag(void **_CBOR_UNUSED(_state)) {
   assert_null(nested_tag);
 }
 
+static void test_build_tag(void **_CBOR_UNUSED(_state)) {
+  tag = cbor_build_tag(1, cbor_move(cbor_build_uint8(42)));
+
+  assert_true(cbor_typeof(tag) == CBOR_TYPE_TAG);
+  assert_int_equal(cbor_tag_value(tag), 1);
+  assert_uint8(cbor_move(cbor_tag_item(tag)), 42);
+
+  cbor_decref(&tag);
+}
+
+static void test_build_tag_failure(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *tagged_item = cbor_build_uint8(42);
+
+  WITH_FAILING_MALLOC({ assert_null(cbor_build_tag(1, tagged_item)); });
+  assert_int_equal(cbor_refcount(tagged_item), 1);
+
+  cbor_decref(&tagged_item);
+}
+
+static void test_tag_creation(void **_CBOR_UNUSED(_state)) {
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_tag(42)); });
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
-      cmocka_unit_test(test_refcounting), cmocka_unit_test(test_embedded_tag),
-      cmocka_unit_test(test_int8_tag),    cmocka_unit_test(test_int16_tag),
-      cmocka_unit_test(test_int32_tag),   cmocka_unit_test(test_int64_tag),
-      cmocka_unit_test(test_nested_tag)};
+      cmocka_unit_test(test_refcounting),
+      cmocka_unit_test(test_embedded_tag),
+      cmocka_unit_test(test_int8_tag),
+      cmocka_unit_test(test_int16_tag),
+      cmocka_unit_test(test_int32_tag),
+      cmocka_unit_test(test_int64_tag),
+      cmocka_unit_test(test_nested_tag),
+      cmocka_unit_test(test_build_tag),
+      cmocka_unit_test(test_build_tag_failure),
+      cmocka_unit_test(test_tag_creation),
+  };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

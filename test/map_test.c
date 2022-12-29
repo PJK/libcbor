@@ -8,12 +8,13 @@
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <string.h>
 
 #include <cmocka.h>
 
-#include <string.h>
 #include "assertions.h"
 #include "cbor.h"
+#include "test_allocator.h"
 
 cbor_item_t *map;
 struct cbor_load_result res;
@@ -177,6 +178,78 @@ static void test_streamed_streamed_kv_map(void **_CBOR_UNUSED(_state)) {
   assert_null(map);
 }
 
+static void test_map_add_full(void **_CBOR_UNUSED(_state)) {
+  map = cbor_new_definite_map(0);
+  cbor_item_t *one = cbor_build_uint8(1);
+  cbor_item_t *two = cbor_build_uint8(2);
+
+  assert_false(cbor_map_add(map, (struct cbor_pair){.key = one, .value = two}));
+
+  cbor_decref(&map);
+  cbor_decref(&one);
+  cbor_decref(&two);
+}
+
+static void test_map_add_too_big_to_realloc(void **_CBOR_UNUSED(_state)) {
+  map = cbor_new_indefinite_map();
+  struct _cbor_map_metadata *metadata =
+      (struct _cbor_map_metadata *)&map->metadata;
+  // Pretend we already have a huge memory block
+  metadata->allocated = SIZE_MAX;
+  metadata->end_ptr = SIZE_MAX;
+  cbor_item_t *one = cbor_build_uint8(1);
+  cbor_item_t *two = cbor_build_uint8(2);
+
+  assert_false(cbor_map_add(map, (struct cbor_pair){.key = one, .value = two}));
+
+  metadata->allocated = 0;
+  metadata->end_ptr = 0;
+  cbor_decref(&map);
+  cbor_decref(&one);
+  cbor_decref(&two);
+}
+
+static void test_map_creation(void **_CBOR_UNUSED(_state)) {
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_map(42)); });
+  WITH_MOCK_MALLOC({ assert_null(cbor_new_definite_map(42)); }, 2, MALLOC,
+                   MALLOC_FAIL);
+
+  WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_map()); });
+}
+
+static void test_map_add(void **_CBOR_UNUSED(_state)) {
+  WITH_MOCK_MALLOC(
+      {
+        cbor_item_t *map = cbor_new_indefinite_map();
+        cbor_item_t *key = cbor_build_uint8(0);
+        cbor_item_t *value = cbor_build_bool(true);
+
+        assert_false(
+            cbor_map_add(map, (struct cbor_pair){.key = key, .value = value}));
+        assert_int_equal(cbor_map_allocated(map), 0);
+        assert_null(map->data);
+
+        cbor_decref(&map);
+        cbor_decref(&key);
+        cbor_decref(&value);
+      },
+      4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
+}
+
+static unsigned char test_indef_map[] = {0xBF, 0x01, 0x02, 0x03, 0x04, 0xFF};
+static void test_indef_map_decode(void **_CBOR_UNUSED(_state)) {
+  WITH_MOCK_MALLOC(
+      {
+        cbor_item_t *map;
+        struct cbor_load_result res;
+        map = cbor_load(test_indef_map, 6, &res);
+
+        assert_null(map);
+        assert_int_equal(res.error.code, CBOR_ERR_MEMERROR);
+      },
+      4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_empty_map),
@@ -185,6 +258,12 @@ int main(void) {
       cmocka_unit_test(test_def_nested_map),
       cmocka_unit_test(test_streamed_key_map),
       cmocka_unit_test(test_streamed_kv_map),
-      cmocka_unit_test(test_streamed_streamed_kv_map)};
+      cmocka_unit_test(test_streamed_streamed_kv_map),
+      cmocka_unit_test(test_map_add_full),
+      cmocka_unit_test(test_map_add_too_big_to_realloc),
+      cmocka_unit_test(test_map_creation),
+      cmocka_unit_test(test_map_add),
+      cmocka_unit_test(test_indef_map_decode),
+  };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

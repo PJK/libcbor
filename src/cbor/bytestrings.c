@@ -10,17 +10,17 @@
 #include "internal/memory_utils.h"
 
 size_t cbor_bytestring_length(const cbor_item_t *item) {
-  assert(cbor_isa_bytestring(item));
+  CBOR_ASSERT(cbor_isa_bytestring(item));
   return item->metadata.bytestring_metadata.length;
 }
 
 unsigned char *cbor_bytestring_handle(const cbor_item_t *item) {
-  assert(cbor_isa_bytestring(item));
+  CBOR_ASSERT(cbor_isa_bytestring(item));
   return item->data;
 }
 
 bool cbor_bytestring_is_definite(const cbor_item_t *item) {
-  assert(cbor_isa_bytestring(item));
+  CBOR_ASSERT(cbor_isa_bytestring(item));
   return item->metadata.bytestring_metadata.type == _CBOR_METADATA_DEFINITE;
 }
 
@@ -71,36 +71,33 @@ cbor_item_t *cbor_build_bytestring(cbor_data handle, size_t length) {
 void cbor_bytestring_set_handle(cbor_item_t *item,
                                 cbor_mutable_data CBOR_RESTRICT_POINTER data,
                                 size_t length) {
-  assert(cbor_isa_bytestring(item));
-  assert(cbor_bytestring_is_definite(item));
+  CBOR_ASSERT(cbor_isa_bytestring(item));
+  CBOR_ASSERT(cbor_bytestring_is_definite(item));
   item->data = data;
   item->metadata.bytestring_metadata.length = length;
 }
 
 cbor_item_t **cbor_bytestring_chunks_handle(const cbor_item_t *item) {
-  assert(cbor_isa_bytestring(item));
-  assert(cbor_bytestring_is_indefinite(item));
+  CBOR_ASSERT(cbor_isa_bytestring(item));
+  CBOR_ASSERT(cbor_bytestring_is_indefinite(item));
   return ((struct cbor_indefinite_string_data *)item->data)->chunks;
 }
 
 size_t cbor_bytestring_chunk_count(const cbor_item_t *item) {
-  assert(cbor_isa_bytestring(item));
-  assert(cbor_bytestring_is_indefinite(item));
+  CBOR_ASSERT(cbor_isa_bytestring(item));
+  CBOR_ASSERT(cbor_bytestring_is_indefinite(item));
   return ((struct cbor_indefinite_string_data *)item->data)->chunk_count;
 }
 
 bool cbor_bytestring_add_chunk(cbor_item_t *item, cbor_item_t *chunk) {
-  assert(cbor_isa_bytestring(item));
-  assert(cbor_bytestring_is_indefinite(item));
-  assert(cbor_isa_bytestring(chunk));
-  assert(cbor_bytestring_is_definite(chunk));
+  CBOR_ASSERT(cbor_isa_bytestring(item));
+  CBOR_ASSERT(cbor_bytestring_is_indefinite(item));
+  CBOR_ASSERT(cbor_isa_bytestring(chunk));
+  CBOR_ASSERT(cbor_bytestring_is_definite(chunk));
   struct cbor_indefinite_string_data *data =
       (struct cbor_indefinite_string_data *)item->data;
   if (data->chunk_count == data->chunk_capacity) {
-    // TODO: Add a test for this
     if (!_cbor_safe_to_multiply(CBOR_BUFFER_GROWTH, data->chunk_capacity)) {
-      _cbor_free(chunk->data);
-      _cbor_free(chunk);
       return false;
     }
 
@@ -112,8 +109,6 @@ bool cbor_bytestring_add_chunk(cbor_item_t *item, cbor_item_t *chunk) {
         data->chunks, sizeof(cbor_item_t *), new_chunk_capacity);
 
     if (new_chunks_data == NULL) {
-      _cbor_free(chunk->data);
-      _cbor_free(chunk);
       return false;
     }
     data->chunk_capacity = new_chunk_capacity;

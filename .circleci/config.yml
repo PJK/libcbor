@@ -6,7 +6,7 @@ commands:
     - run: sudo apt-get update
     - run: sudo apt-get install -y cmake "${TOOLCHAIN_PACKAGE}"
     - run: sudo apt install libcmocka-dev
-  build-test:
+  build:
     steps:
     - run: >
         cmake -DWITH_TESTS=ON \
@@ -14,7 +14,9 @@ commands:
           -DSANITIZE=OFF \
           -DCOVERAGE="${CMAKE_COVERAGE:='OFF'}" \
           .
-    - run: make VERBOSE=1
+    - run: make -j 16 VERBOSE=1
+  test:
+    steps:
     - run: ctest -VV
 
 orbs:
@@ -30,7 +32,7 @@ jobs:
       - checkout
       - linux-setup
       - run: sudo apt-get install -y clang-format doxygen cppcheck
-      - run: cppcheck . --error-exitcode=1
+      - run: cppcheck --inline-suppr --error-exitcode=1 .
       - run: bash clang-format.sh --verbose
       - run: >
           if ! $(git diff-index --quiet HEAD); then
@@ -54,12 +56,14 @@ jobs:
       - checkout
       - linux-setup
       - run: sudo apt-get install -y valgrind
-      - build-test
+      - build
+      - test
       - run: ctest -T Coverage
       - codecov/upload
       - run: ctest --output-on-failure -T memcheck | tee memcheck.out
       - run: >
           if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
+            cat Testing/Temporary/MemoryChecker*
             exit 1
           fi;
 
@@ -73,7 +77,24 @@ jobs:
     steps:
       - checkout
       - linux-setup
-      - build-test
+      - build
+      - test
+
+
+  llvm-coverage:
+    machine:
+      image: ubuntu-2204:2022.10.2
+    environment:
+      TOOLCHAIN_PACKAGE: clang
+      CC: clang
+      CXX: clang++
+      CMAKE_COVERAGE: ON
+    steps:
+      - checkout
+      - linux-setup
+      - build
+      - run: make llvm-coverage
+
 
   build-and-test-arm:
     machine:
@@ -84,7 +105,8 @@ jobs:
     steps:
       - checkout
       - linux-setup
-      - build-test
+      - build
+      - test
 
   build-bazel:
     machine:
@@ -112,7 +134,8 @@ jobs:
       - checkout
       - run: bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       - run: brew install cmocka cmake
-      - build-test
+      - build
+      - test
 
 workflows:
   build-and-test:
@@ -121,11 +144,12 @@ workflows:
       - build-and-test
       - build-and-test-clang
       - build-and-test-arm
+      - build-bazel
+      - llvm-coverage
+      # OSX builds are expensive, run only on master
       - build-and-test-osx:
           requires:
             - build-and-test
           filters:
             branches:
-              only:
-                - master
-      - build-bazel
+              only: [master]

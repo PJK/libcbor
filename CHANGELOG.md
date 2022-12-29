@@ -10,8 +10,17 @@ Next
 - BUILD BREAKING: Minimum CMake version is 3.0 [[#201]](https://github.com/PJK/libcbor/pull/201) (by [thewtex@](https://github.com/thewtex))
   - See https://repology.org/project/cmake/versions for support; the vast majority of users should not be affected.
 - Fix a potential memory leak when the allocator fails during array or map decoding [[#224]](https://github.com/PJK/libcbor/pull/224) (by [James-ZHANG](https://github.com/James-ZHANG))
-- [Fix a memory leak when the allocator fails when adding chunks to indefinite strings.](https://github.com/PJK/libcbor/pull/228) (by [James-ZHANG](https://github.com/James-ZHANG))
-- Fix a memory leak when the allocator fails when adding chunks to indefinite strings.
+- [Fix a memory leak when the allocator fails when adding chunks to indefinite bytestrings.](https://github.com/PJK/libcbor/pull/242) ([discovered](https://github.com/PJK/libcbor/pull/228) by [James-ZHANG](https://github.com/James-ZHANG))
+- [Fix a memory leak when the allocator fails when adding chunks to indefinite strings](https://github.com/PJK/libcbor/pull/246)
+- Potentially BUILD BREAKING: [Add nodiscard attributes to most functions](https://github.com/PJK/libcbor/pull/248)
+  - **Warning**: This may cause new build warnings and (in rare cases, depending on your configuration) errors
+- BREAKING: [Fix `cbor_copy` leaking memory and creating invalid items when the allocator fails](https://github.com/PJK/libcbor/pull/249).
+  - Previously, the failures were not handled in the interface. Now, `cbor_copy` may return `NULL` upon failure; clients should check the return value
+- [Fix `cbor_build_tag` illegal memory behavior when the allocator fails](https://github.com/PJK/libcbor/pull/249)
+- [Add a new `cbor_serialized_size` API](https://github.com/PJK/libcbor/pull/250)
+- [Reworked `cbor_serialize_alloc` to allocate the exact amount of memory necessary upfront](https://github.com/PJK/libcbor/pull/251)
+  - This should significantly speed up `cbor_serialize_alloc` for large items by avoiding multiple reallocation iterations
+  - Clients should not use the return value of `cbor_serialize_alloc`. It may be removed in the future.
 - BUILD BREAKING: [Deprecate CBOR_CUSTOM_ALLOC](https://github.com/PJK/libcbor/pull/237)
   - `cbor_set_allocs` will always be enabled 
   - Note: The flag will be kept as a no-op for one version and then remove completely

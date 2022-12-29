@@ -6,7 +6,9 @@
  */
 
 #include "builder_callbacks.h"
+
 #include <string.h>
+
 #include "../arrays.h"
 #include "../bytestrings.h"
 #include "../common.h"
@@ -17,8 +19,8 @@
 #include "../tags.h"
 #include "unicode.h"
 
-// This function maintains the invariant that no memory reachable by ctx->stack
-// and item would be leaked.
+// `_cbor_builder_append` takes ownership of `item`. If adding the item to
+// parent container fails, `item` will be deallocated to prevent memory.
 void _cbor_builder_append(cbor_item_t *item,
                           struct _cbor_decoder_context *ctx) {
   if (ctx->stack->size == 0) {
@@ -28,14 +30,17 @@ void _cbor_builder_append(cbor_item_t *item,
   }
   /* Part of a bigger structure */
   switch (ctx->stack->top->item->type) {
+    // Handle Arrays and Maps since they can contain subitems of any type.
+    // Byte/string construction from chunks is handled in the respective chunk
+    // handlers.
     case CBOR_TYPE_ARRAY: {
       if (cbor_array_is_definite(ctx->stack->top->item)) {
-        /*
-         * We don't need an explicit check for whether the item still belongs
-         * into this array because if there are extra items, they will cause a
-         * syntax error when decoded.
-         */
-        assert(ctx->stack->top->subitems > 0);
+        // We don't need an explicit check for whether the item still belongs
+        // into this array because if there are extra items, they will cause a
+        // syntax error when decoded.
+        CBOR_ASSERT(ctx->stack->top->subitems > 0);
+        // This should never happen since the definite array should be
+        // preallocated for the expected number of items.
         if (!cbor_array_push(ctx->stack->top->item, item)) {
           ctx->creation_failed = true;
           cbor_decref(&item);
@@ -58,8 +63,9 @@ void _cbor_builder_append(cbor_item_t *item,
       break;
     }
     case CBOR_TYPE_MAP: {
-      /* We use 0 and 1 subitems to distinguish between keys and values in
-       * indefinite items */
+      // Handle both definite and indefinite maps the same initially.
+      // Note: We use 0 and 1 subitems to distinguish between keys and values in
+      // indefinite items
       if (ctx->stack->top->subitems % 2) {
         /* Odd record, this is a value */
         if (!_cbor_map_add_value(ctx->stack->top->item, item)) {
@@ -77,6 +83,7 @@ void _cbor_builder_append(cbor_item_t *item,
       }
       cbor_decref(&item);
       if (cbor_map_is_definite(ctx->stack->top->item)) {
+        CBOR_ASSERT(ctx->stack->top->subitems > 0);
         ctx->stack->top->subitems--;
         if (ctx->stack->top->subitems == 0) {
           cbor_item_t *map_entry = ctx->stack->top->item;
@@ -90,7 +97,7 @@ void _cbor_builder_append(cbor_item_t *item,
       break;
     }
     case CBOR_TYPE_TAG: {
-      assert(ctx->stack->top->subitems == 1);
+      CBOR_ASSERT(ctx->stack->top->subitems == 1);
       cbor_tag_set_item(ctx->stack->top->item, item);
       cbor_decref(&item); /* Give up on our reference */
       cbor_item_t *tagged_item = ctx->stack->top->item;
@@ -98,6 +105,7 @@ void _cbor_builder_append(cbor_item_t *item,
       _cbor_builder_append(tagged_item, ctx);
       break;
     }
+    // We have an item to append but nothing to append it to.
     default: {
       cbor_decref(&item);
       ctx->syntax_error = true;
@@ -214,27 +222,26 @@ void cbor_builder_byte_string_callback(void *context, cbor_data data,
   }
 
   memcpy(new_handle, data, length);
-  cbor_item_t *res = cbor_new_definite_bytestring();
+  cbor_item_t *new_chunk = cbor_new_definite_bytestring();
 
-  if (res == NULL) {
+  if (new_chunk == NULL) {
     _cbor_free(new_handle);
     ctx->creation_failed = true;
     return;
   }
 
-  cbor_bytestring_set_handle(res, new_handle, length);
+  cbor_bytestring_set_handle(new_chunk, new_handle, length);
 
-  if (ctx->stack->size > 0 && cbor_isa_bytestring(ctx->stack->top->item)) {
-    if (cbor_bytestring_is_indefinite(ctx->stack->top->item)) {
-      if (!cbor_bytestring_add_chunk(ctx->stack->top->item, cbor_move(res))) {
-        ctx->creation_failed = true;
-      }
-    } else {
-      cbor_decref(&res);
-      ctx->syntax_error = true;
+  // If an indef bytestring is on the stack, extend it (if it were closed, it
+  // would have been popped). Handle any syntax errors upstream.
+  if (ctx->stack->size > 0 && cbor_isa_bytestring(ctx->stack->top->item) &&
+      cbor_bytestring_is_indefinite(ctx->stack->top->item)) {
+    if (!cbor_bytestring_add_chunk(ctx->stack->top->item, new_chunk)) {
+      ctx->creation_failed = true;
     }
+    cbor_decref(&new_chunk);
   } else {
-    _cbor_builder_append(res, ctx);
+    _cbor_builder_append(new_chunk, ctx);
   }
 }
 
@@ -257,7 +264,7 @@ void cbor_builder_string_callback(void *context, cbor_data data,
     ctx->syntax_error = true;
     return;
   }
-  assert(codepoint_count <= length);
+  CBOR_ASSERT(codepoint_count <= length);
 
   unsigned char *new_handle = _cbor_malloc(length);
 
@@ -267,25 +274,25 @@ void cbor_builder_string_callback(void *context, cbor_data data,
   }
 
   memcpy(new_handle, data, length);
-  cbor_item_t *res = cbor_new_definite_string();
-  if (res == NULL) {
+  cbor_item_t *new_chunk = cbor_new_definite_string();
+  if (new_chunk == NULL) {
     _cbor_free(new_handle);
     ctx->creation_failed = true;
     return;
   }
-  cbor_string_set_handle(res, new_handle, length);
-  res->metadata.string_metadata.codepoint_count = codepoint_count;
+  cbor_string_set_handle(new_chunk, new_handle, length);
+  new_chunk->metadata.string_metadata.codepoint_count = codepoint_count;
 
-  /* Careful here: order matters */
-  if (ctx->stack->size > 0 && cbor_isa_string(ctx->stack->top->item)) {
-    if (cbor_string_is_indefinite(ctx->stack->top->item)) {
-      cbor_string_add_chunk(ctx->stack->top->item, cbor_move(res));
-    } else {
-      cbor_decref(&res);
-      ctx->syntax_error = true;
+  // If an indef string is on the stack, extend it (if it were closed, it would
+  // have been popped). Handle any syntax errors upstream.
+  if (ctx->stack->size > 0 && cbor_isa_string(ctx->stack->top->item) &&
+      cbor_string_is_indefinite(ctx->stack->top->item)) {
+    if (!cbor_string_add_chunk(ctx->stack->top->item, new_chunk)) {
+      ctx->creation_failed = true;
     }
+    cbor_decref(&new_chunk);
   } else {
-    _cbor_builder_append(res, ctx);
+    _cbor_builder_append(new_chunk, ctx);
   }
 }
 
@@ -340,14 +347,13 @@ void cbor_builder_map_start_callback(void *context, uint64_t size) {
 bool _cbor_is_indefinite(cbor_item_t *item) {
   switch (item->type) {
     case CBOR_TYPE_BYTESTRING:
-      return item->metadata.bytestring_metadata.type ==
-             _CBOR_METADATA_INDEFINITE;
+      return cbor_bytestring_is_indefinite(item);
     case CBOR_TYPE_STRING:
-      return item->metadata.string_metadata.type == _CBOR_METADATA_INDEFINITE;
+      return cbor_string_is_indefinite(item);
     case CBOR_TYPE_ARRAY:
-      return item->metadata.array_metadata.type == _CBOR_METADATA_INDEFINITE;
+      return cbor_array_is_indefinite(item);
     case CBOR_TYPE_MAP:
-      return item->metadata.map_metadata.type == _CBOR_METADATA_INDEFINITE;
+      return cbor_map_is_indefinite(item);
     default:
       return false;
   }

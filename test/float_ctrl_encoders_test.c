@@ -127,12 +127,22 @@ static void test_half_special(void **_CBOR_UNUSED(_state)) {
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x00}), 3);
   assert_half_float_codec_identity();
 
-  // TODO: We currently discard all information bits in half-float NaNs. This is
+  // We discard all information bits in half-float NaNs. This is
   // not required for the core CBOR protocol (it is only a suggestion in
   // Section 3.9).
   // See https://github.com/PJK/libcbor/issues/215
   assert_int_equal(3, cbor_encode_half(nanf("2"), buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x00}), 3);
+  assert_half_float_codec_identity();
+}
+
+static void test_half_infinity(void **_CBOR_UNUSED(_state)) {
+  assert_int_equal(3, cbor_encode_half(INFINITY, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7C, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  assert_int_equal(3, cbor_encode_half(-INFINITY, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0xFC, 0x00}), 3);
   assert_half_float_codec_identity();
 }
 
@@ -192,9 +202,11 @@ static void test_double(void **_CBOR_UNUSED(_state)) {
 
 int main(void) {
   const struct CMUnitTest tests[] = {
-      cmocka_unit_test(test_bools),  cmocka_unit_test(test_null),
-      cmocka_unit_test(test_undef),  cmocka_unit_test(test_break),
-      cmocka_unit_test(test_half),   cmocka_unit_test(test_float),
-      cmocka_unit_test(test_double), cmocka_unit_test(test_half_special)};
+      cmocka_unit_test(test_bools),         cmocka_unit_test(test_null),
+      cmocka_unit_test(test_undef),         cmocka_unit_test(test_break),
+      cmocka_unit_test(test_half),          cmocka_unit_test(test_float),
+      cmocka_unit_test(test_double),        cmocka_unit_test(test_half_special),
+      cmocka_unit_test(test_half_infinity),
+  };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

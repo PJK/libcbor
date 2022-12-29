@@ -15,6 +15,10 @@
 #include "strings.h"
 #include "tags.h"
 
+#ifdef DEBUG
+bool _cbor_enable_assert = true;
+#endif
+
 bool cbor_isa_uint(const cbor_item_t *item) {
   return item->type == CBOR_TYPE_UINT;
 }
@@ -78,7 +82,7 @@ cbor_item_t *cbor_incref(cbor_item_t *item) {
 
 void cbor_decref(cbor_item_t **item_ref) {
   cbor_item_t *item = *item_ref;
-  assert(item->refcount > 0);
+  CBOR_ASSERT(item->refcount > 0);
   if (--item->refcount == 0) {
     switch (item->type) {
       case CBOR_TYPE_UINT:

@@ -596,13 +596,10 @@ struct cbor_decoder_result cbor_stream_decode(
       { return (struct cbor_decoder_result){.status = CBOR_DECODER_ERROR}; }
     case 0xFF:
       /* Break */
-      {
-        callbacks->indef_break(context);
-        return result;
-      }
-    default: /* Never happens - this shuts up the compiler */
-    {
+      callbacks->indef_break(context);
+      // Never happens, the switch statement is exhaustive on the 1B range; make
+      // compiler happy
+    default:
       return result;
-    }
   }
 }

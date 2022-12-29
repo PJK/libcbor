@@ -22,7 +22,7 @@ static void test_stack_over_limit(void **_CBOR_UNUSED(_state)) {
   size_t overflow_data_len;
   struct cbor_load_result res;
   overflow_data_len = generate_overflow_data(&overflow_data);
-  cbor_load(overflow_data, overflow_data_len, &res);
+  assert_null(cbor_load(overflow_data, overflow_data_len, &res));
   free(overflow_data);
   assert_int_equal(res.error.code, CBOR_ERR_MEMERROR);
 }
