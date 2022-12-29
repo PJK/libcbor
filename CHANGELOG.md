@@ -3,6 +3,9 @@ Template:
 
 Next
 ---------------------
+
+0.10.0 (2022-12-29)
+---------------------
 - Make the buffer_size optional in `cbor_serialize_alloc` [[#205]](https://github.com/PJK/libcbor/pull/205) (by [hughsie](https://github.com/hughsie))
 - BREAKING: Improved half-float encoding for denormalized numbers. [[#208]](https://github.com/PJK/libcbor/pull/208) (by [ranvis](https://github.com/ranvis))
   - Denormalized half-floats will now preserve data in the mantissa
