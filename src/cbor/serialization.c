@@ -162,7 +162,7 @@ size_t cbor_serialize_alloc(const cbor_item_t *item, unsigned char **buffer,
   size_t written = cbor_serialize(item, *buffer, serialized_size);
   CBOR_ASSERT(written == serialized_size);
   if (buffer_size != NULL) *buffer_size = serialized_size;
-  return serialized_size;
+  return written;
 }
 
 size_t cbor_serialize_uint(const cbor_item_t *item, unsigned char *buffer,

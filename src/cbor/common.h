@@ -60,11 +60,20 @@ extern bool _cbor_enable_assert;
 // Like `assert`, but can be dynamically disabled in tests to allow testing
 // invalid behaviors.
 #define CBOR_ASSERT(e) assert(!_cbor_enable_assert || (e))
+#define _CBOR_TEST_DISABLE_ASSERT(block) \
+  do {                                   \
+    _cbor_enable_assert = false;         \
+    block _cbor_enable_assert = true;    \
+  } while (0)
 #else
 #define debug_print(fmt, ...) \
   do {                        \
   } while (0)
 #define CBOR_ASSERT(e)
+#define _CBOR_TEST_DISABLE_ASSERT(block) \
+  do {                                   \
+    block                                \
+  } while (0)
 #endif
 
 #define _CBOR_TO_STR_(x) #x
