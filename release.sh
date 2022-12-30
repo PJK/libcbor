@@ -67,7 +67,7 @@ popd
 prompt "Will proceed to tag the release with $TAG_NAME."
 git commit -a -m "Release $TAG_NAME"
 git tag "$TAG_NAME"
-git push
+git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)
 git push --tags
 
 set +x
