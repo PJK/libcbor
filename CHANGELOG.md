@@ -3,6 +3,7 @@ Template:
 
 Next
 ---------------------
+- Fix a regression in `cbor_serialize_alloc` that that caused serialization of zero-length strings and bytestrings to fail [] 
 
 0.10.0 (2022-12-29)
 ---------------------

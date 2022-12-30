@@ -74,11 +74,16 @@ size_t cbor_serialized_size(const cbor_item_t *item) {
         case CBOR_INT_64:
           return 9;
       }
+    // Note: We do not _cbor_safe_signaling_add zero-length definite strings,
+    // they would cause zeroes to propagate. All other items are at least one
+    // byte.
     case CBOR_TYPE_BYTESTRING: {
       if (cbor_bytestring_is_definite(item)) {
-        return _cbor_safe_signaling_add(
-            _cbor_encoded_header_size(cbor_bytestring_length(item)),
-            cbor_bytestring_length(item));
+        size_t header_size =
+            _cbor_encoded_header_size(cbor_bytestring_length(item));
+        if (cbor_bytestring_length(item) == 0) return header_size;
+        return _cbor_safe_signaling_add(header_size,
+                                        cbor_bytestring_length(item));
       }
       size_t indef_bytestring_size = 2;  // Leading byte + break
       cbor_item_t **chunks = cbor_bytestring_chunks_handle(item);
@@ -90,9 +95,10 @@ size_t cbor_serialized_size(const cbor_item_t *item) {
     }
     case CBOR_TYPE_STRING: {
       if (cbor_string_is_definite(item)) {
-        return _cbor_safe_signaling_add(
-            _cbor_encoded_header_size(cbor_string_length(item)),
-            cbor_string_length(item));
+        size_t header_size =
+            _cbor_encoded_header_size(cbor_string_length(item));
+        if (cbor_string_length(item) == 0) return header_size;
+        return _cbor_safe_signaling_add(header_size, cbor_string_length(item));
       }
       size_t indef_string_size = 2;  // Leading byte + break
       cbor_item_t **chunks = cbor_string_chunks_handle(item);

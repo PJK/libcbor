@@ -505,6 +505,7 @@ static void test_auto_serialize_too_large(void **_CBOR_UNUSED(_state)) {
 
   // Pretend the chunk is huge
   chunk->metadata.string_metadata.length = SIZE_MAX;
+  assert_true(SIZE_MAX + 2 == 1);
   assert_int_equal(cbor_serialized_size(item), 0);
   unsigned char *output;
   size_t output_size;
@@ -529,6 +530,58 @@ static void test_auto_serialize_alloc_fail(void **_CBOR_UNUSED(_state)) {
   });
 
   cbor_decref(&item);
+}
+
+static void test_auto_serialize_zero_len_bytestring(
+    void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_build_bytestring((cbor_data) "", 0);
+
+  unsigned char *output;
+  assert_int_equal(cbor_serialize_alloc(item, &output, NULL), 1);
+  assert_memory_equal(output, ((unsigned char[]){0x40}), 1);
+  assert_int_equal(cbor_serialized_size(item), 1);
+  cbor_decref(&item);
+  _cbor_free(output);
+}
+
+static void test_auto_serialize_zero_len_string(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_build_string("");
+
+  unsigned char *output;
+  assert_int_equal(cbor_serialize_alloc(item, &output, NULL), 1);
+  assert_memory_equal(output, ((unsigned char[]){0x60}), 1);
+  assert_int_equal(cbor_serialized_size(item), 1);
+  cbor_decref(&item);
+  _cbor_free(output);
+}
+
+static void test_auto_serialize_zero_len_bytestring_chunk(
+    void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_indefinite_bytestring();
+
+  assert_true(cbor_bytestring_add_chunk(
+      item, cbor_move(cbor_build_bytestring((cbor_data) "", 0))));
+
+  unsigned char *output;
+  assert_int_equal(cbor_serialize_alloc(item, &output, NULL), 3);
+  assert_memory_equal(output, ((unsigned char[]){0x5f, 0x40, 0xff}), 3);
+  assert_int_equal(cbor_serialized_size(item), 3);
+  cbor_decref(&item);
+  _cbor_free(output);
+}
+
+static void test_auto_serialize_zero_len_string_chunk(
+    void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_indefinite_string();
+
+  assert_true(cbor_string_add_chunk(item, cbor_move(cbor_build_string(""))));
+
+  unsigned char *output;
+  assert_int_equal(cbor_serialize_alloc(item, &output, NULL), 3);
+  assert_memory_equal(output, ((unsigned char[]){0x7f, 0x60, 0xff}), 3);
+  assert_int_equal(cbor_serialized_size(item), 3);
+  cbor_decref(&item);
+  _cbor_free(output);
 }
 
 int main(void) {
@@ -570,6 +623,10 @@ int main(void) {
       cmocka_unit_test(test_auto_serialize_no_size),
       cmocka_unit_test(test_auto_serialize_too_large),
       cmocka_unit_test(test_auto_serialize_alloc_fail),
+      cmocka_unit_test(test_auto_serialize_zero_len_bytestring),
+      cmocka_unit_test(test_auto_serialize_zero_len_string),
+      cmocka_unit_test(test_auto_serialize_zero_len_bytestring_chunk),
+      cmocka_unit_test(test_auto_serialize_zero_len_string_chunk),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
