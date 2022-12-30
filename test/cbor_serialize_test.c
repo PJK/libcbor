@@ -584,6 +584,52 @@ static void test_auto_serialize_zero_len_string_chunk(
   _cbor_free(output);
 }
 
+static void test_auto_serialize_zero_len_array(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_definite_array(0);
+
+  unsigned char *output;
+  assert_int_equal(cbor_serialize_alloc(item, &output, NULL), 1);
+  assert_memory_equal(output, ((unsigned char[]){0x80}), 1);
+  assert_int_equal(cbor_serialized_size(item), 1);
+  cbor_decref(&item);
+  _cbor_free(output);
+}
+
+static void test_auto_serialize_zero_len_indef_array(
+    void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_indefinite_array();
+
+  unsigned char *output;
+  assert_int_equal(cbor_serialize_alloc(item, &output, NULL), 2);
+  assert_memory_equal(output, ((unsigned char[]){0x9f, 0xff}), 2);
+  assert_int_equal(cbor_serialized_size(item), 2);
+  cbor_decref(&item);
+  _cbor_free(output);
+}
+
+static void test_auto_serialize_zero_len_map(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_definite_map(0);
+
+  unsigned char *output;
+  assert_int_equal(cbor_serialize_alloc(item, &output, NULL), 1);
+  assert_memory_equal(output, ((unsigned char[]){0xa0}), 1);
+  assert_int_equal(cbor_serialized_size(item), 1);
+  cbor_decref(&item);
+  _cbor_free(output);
+}
+
+static void test_auto_serialize_zero_len_indef_map(
+    void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_indefinite_map();
+
+  unsigned char *output;
+  assert_int_equal(cbor_serialize_alloc(item, &output, NULL), 2);
+  assert_memory_equal(output, ((unsigned char[]){0xbf, 0xff}), 2);
+  assert_int_equal(cbor_serialized_size(item), 2);
+  cbor_decref(&item);
+  _cbor_free(output);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_serialize_uint8_embed),
@@ -627,6 +673,10 @@ int main(void) {
       cmocka_unit_test(test_auto_serialize_zero_len_string),
       cmocka_unit_test(test_auto_serialize_zero_len_bytestring_chunk),
       cmocka_unit_test(test_auto_serialize_zero_len_string_chunk),
+      cmocka_unit_test(test_auto_serialize_zero_len_array),
+      cmocka_unit_test(test_auto_serialize_zero_len_indef_array),
+      cmocka_unit_test(test_auto_serialize_zero_len_map),
+      cmocka_unit_test(test_auto_serialize_zero_len_indef_map),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
