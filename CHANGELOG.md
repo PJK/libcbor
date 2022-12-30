@@ -3,7 +3,7 @@ Template:
 
 Next
 ---------------------
-- Fix a regression in `cbor_serialize_alloc` that that caused serialization of zero-length strings and bytestrings to fail [] 
+- [Fix a regression in `cbor_serialize_alloc` that caused serialization of zero-length strings and bytestrings or byte/strings with zero-length chunks to fail](https://github.com/PJK/libcbor/pull/260) (discovered by [martelletto](https://github.com/martelletto))
 
 0.10.0 (2022-12-29)
 ---------------------
