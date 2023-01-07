@@ -22,14 +22,6 @@ commands:
           -DCMAKE_BUILD_TYPE=Release \
           .
     - run: make -j 16 VERBOSE=1
-  build-32b:
-    steps:
-    - run: >
-        cmake -DWITH_TESTS=ON \
-          -DCMAKE_BUILD_TYPE=Debug \
-          -DCMAKE_TOOLCHAIN_FILE=./misc/toolchain_m32.cmake \
-          .
-    - run: make -j 16 VERBOSE=1
   test:
     steps:
     - run: ctest -VV
@@ -98,12 +90,24 @@ jobs:
   build-and-test-32b:
     machine:
       image: ubuntu-2204:2022.10.2
-    environment:
-      TOOLCHAIN_PACKAGES: gcc-multilib g++-multilib libc6-dev-i386
     steps:
       - checkout
-      - linux-setup
-      - build-32b
+      - run: sudo apt-get update
+      - run: sudo apt-get install -y cmake gcc-multilib g++-multilib libc6-dev-i386
+      # Make cmocka from source w/ 32b setup
+      - run: git clone https://git.cryptomilk.org/projects/cmocka.git ~/cmocka
+      - run: >
+          cd $(mktemp -d /tmp/build.XXXX) && \
+          cmake ~/cmocka -DCMAKE_TOOLCHAIN_FILE=~/cmocka/cmake/Toolchain-cross-m32.cmake && \
+          make && \
+          sudo make install
+      # Piggyback on the cmocka 32b toolchain
+      - run: >
+        cmake -DWITH_TESTS=ON \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_TOOLCHAIN_FILE=~/cmocka/cmake/Toolchain-cross-m32.cmake \
+          .
+      - run: make -j 16 VERBOSE=1
       - test
 
   build-and-test-release-clang:
@@ -123,7 +127,7 @@ jobs:
     machine:
       image: ubuntu-2204:2022.10.2
     environment:
-      TOOLCHAIN_PACKAGE: clang
+      TOOLCHAIN_PACKAGES: clang
       CC: clang
       CXX: clang++
       CMAKE_COVERAGE: ON
