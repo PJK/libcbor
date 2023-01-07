@@ -22,6 +22,14 @@ commands:
           -DCMAKE_BUILD_TYPE=Release \
           .
     - run: make -j 16 VERBOSE=1
+  build-32b:
+    steps:
+    - run: >
+        cmake -DWITH_TESTS=ON \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_TOOLCHAIN_FILE=misc/toolchain_m32.cmake
+          .
+    - run: make -j 16 VERBOSE=1
   test:
     steps:
     - run: ctest -VV
@@ -85,6 +93,17 @@ jobs:
       - checkout
       - linux-setup
       - build
+      - test
+
+  build-and-test-32b:
+    machine:
+      image: ubuntu-2204:2022.10.2
+    environment:
+      TOOLCHAIN_PACKAGE: gcc-multilib
+    steps:
+      - checkout
+      - linux-setup
+      - build-32b
       - test
 
   build-and-test-release-clang:
@@ -162,6 +181,7 @@ workflows:
       - static-test
       - build-and-test
       - build-and-test-clang
+      - build-and-test-32b
       - build-and-test-release-clang
       - build-and-test-arm
       - build-bazel
