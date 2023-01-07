@@ -103,10 +103,10 @@ jobs:
           sudo make install
       # Piggyback on the cmocka 32b toolchain
       - run: >
-        cmake -DWITH_TESTS=ON \
-          -DCMAKE_BUILD_TYPE=Debug \
-          -DCMAKE_TOOLCHAIN_FILE=~/cmocka/cmake/Toolchain-cross-m32.cmake \
-          .
+          cmake -DWITH_TESTS=ON \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_TOOLCHAIN_FILE=~/cmocka/cmake/Toolchain-cross-m32.cmake \
+            .
       - run: make -j 16 VERBOSE=1
       - test
 
