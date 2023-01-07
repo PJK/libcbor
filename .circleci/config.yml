@@ -97,9 +97,9 @@ jobs:
       # Make cmocka from source w/ 32b setup
       - run: git clone https://git.cryptomilk.org/projects/cmocka.git ~/cmocka
       - run: >
-          cd $(mktemp -d /tmp/build.XXXX) && \
-          cmake ~/cmocka -DCMAKE_TOOLCHAIN_FILE=~/cmocka/cmake/Toolchain-cross-m32.cmake && \
-          make && \
+          cd $(mktemp -d /tmp/build.XXXX) &&
+          cmake ~/cmocka -DCMAKE_TOOLCHAIN_FILE=~/cmocka/cmake/Toolchain-cross-m32.cmake &&
+          make &&
           sudo make install
       # Piggyback on the cmocka 32b toolchain
       - run: >
