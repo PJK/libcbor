@@ -27,7 +27,7 @@ commands:
     - run: >
         cmake -DWITH_TESTS=ON \
           -DCMAKE_BUILD_TYPE=Debug \
-          -DCMAKE_TOOLCHAIN_FILE=misc/toolchain_m32.cmake
+          -DCMAKE_TOOLCHAIN_FILE=./misc/toolchain_m32.cmake \
           .
     - run: make -j 16 VERBOSE=1
   test:
