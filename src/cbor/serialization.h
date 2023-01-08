@@ -56,100 +56,110 @@ cbor_serialized_size(const cbor_item_t *item);
  * \endrst
  *
  * @param item  A data item
- * @param buffer[out] Buffer containing the result
- * @param buffer_size[out] Size of the \p buffer, or ``NULL``
- * @return Length of the result. 0 on failure, in which case \p buffer is
- * ``NULL``.
+ * @param[out] buffer Buffer containing the result
+ * @param[out] buffer_size Size of the \p buffer, or 0 on memory allocation
+ * failure.
+ * @return Length of the result
+ * @return 0 on memory allocation failure, in which case \p buffer is `NULL`.
  */
 CBOR_EXPORT size_t cbor_serialize_alloc(const cbor_item_t *item,
-                                        cbor_mutable_data *buffer,
+                                        cbor_mutable_data buffer,
                                         size_t *buffer_size);
 
 /** Serialize an uint
  *
  * @param item  A uint
- * @param buffer Buffer to serialize to
+ * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
- * @return Length of the result. 0 on failure.
+ * @return Length of the result
+ * @return 0 if the \p buffer_size doesn't fit the result
  */
-_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_uint(const cbor_item_t *,
-                                                       cbor_mutable_data,
-                                                       size_t);
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_uint(const cbor_item_t *item,
+                                                       cbor_mutable_data buffer,
+                                                       size_t buffer_size);
 
 /** Serialize a negint
  *
  * @param item  A negint
- * @param buffer Buffer to serialize to
+ * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
- * @return Length of the result. 0 on failure.
+ * @return Length of the result
+ * @return 0 if the \p buffer_size doesn't fit the result
  */
-_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_negint(const cbor_item_t *,
-                                                         cbor_mutable_data,
-                                                         size_t);
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_negint(
+    const cbor_item_t *item, cbor_mutable_data buffer, size_t buffer_size);
 
 /** Serialize a bytestring
  *
  * @param item  A bytestring
- * @param buffer Buffer to serialize to
+ * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
- * @return Length of the result. 0 on failure.
+ * @return Length of the result
+ * @return 0 if the \p buffer_size doesn't fit the result. The \p buffer may
+ * still be modified
  */
-_CBOR_NODISCARD CBOR_EXPORT size_t
-cbor_serialize_bytestring(const cbor_item_t *, cbor_mutable_data, size_t);
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_bytestring(
+    const cbor_item_t *item, cbor_mutable_data buffer, size_t buffer_size);
 
 /** Serialize a string
  *
  * @param item  A string
- * @param buffer Buffer to serialize to
+ * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
- * @return Length of the result. 0 on failure.
+ * @return Length of the result
+ * @return 0 if the \p buffer_size doesn't fit the result. The \p buffer may
+ * still be modified
  */
-_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_string(const cbor_item_t *,
-                                                         cbor_mutable_data,
-                                                         size_t);
-
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_string(
+    const cbor_item_t *item, cbor_mutable_data buffer, size_t buffer_size);
 /** Serialize an array
  *
  * @param item  An array
- * @param buffer Buffer to serialize to
+ * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
- * @return Length of the result. 0 on failure.
+ * @return Length of the result
+ * @return 0 if the \p buffer_size doesn't fit the result. The \p buffer may
+ * still be modified
  */
-_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_array(const cbor_item_t *,
-                                                        cbor_mutable_data,
-                                                        size_t);
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_array(
+    const cbor_item_t *item, cbor_mutable_data buffer, size_t buffer_size);
 
 /** Serialize a map
  *
  * @param item  A map
- * @param buffer Buffer to serialize to
+ * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
- * @return Length of the result. 0 on failure.
+ * @return Length of the result
+ * @return 0 if the \p buffer_size doesn't fit the result. The \p buffer may
+ * still be modified
  */
-_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_map(const cbor_item_t *,
-                                                      cbor_mutable_data,
-                                                      size_t);
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_map(const cbor_item_t *item,
+                                                      cbor_mutable_data buffer,
+                                                      size_t buffer_size);
 
 /** Serialize a tag
  *
  * @param item  A tag
- * @param buffer Buffer to serialize to
+ * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
- * @return Length of the result. 0 on failure.
+ * @return Length of the result
+ * @return 0 if the \p buffer_size doesn't fit the result. The \p buffer may
+ * still be modified
  */
-_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_tag(const cbor_item_t *,
-                                                      cbor_mutable_data,
-                                                      size_t);
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_tag(const cbor_item_t *item,
+                                                      cbor_mutable_data buffer,
+                                                      size_t buffer_size);
 
 /** Serialize a
  *
  * @param item  A float or ctrl
- * @param buffer Buffer to serialize to
+ * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
- * @return Length of the result. 0 on failure.
+ * @return Length of the result
+ * @return 0 if the \p buffer_size doesn't fit the result
  */
-_CBOR_NODISCARD CBOR_EXPORT size_t
-cbor_serialize_float_ctrl(const cbor_item_t *, cbor_mutable_data, size_t);
+_CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_float_ctrl(
+    const cbor_item_t *item, cbor_mutable_data buffer, size_t buffer_size);
 
 #ifdef __cplusplus
 }
