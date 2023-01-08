@@ -93,8 +93,8 @@ CBOR_EXPORT bool cbor_array_is_indefinite(const cbor_item_t* item);
  * The items may be reordered and modified as long as references remain
  * consistent.
  *
- * @param item  An array
- * @return #cbor_array_size items
+ * @param item  An array item
+ * @return An array of #cbor_item_t pointers of size #cbor_array_size.
  */
 _CBOR_NODISCARD
 CBOR_EXPORT cbor_item_t** cbor_array_handle(const cbor_item_t* item);
@@ -102,14 +102,18 @@ CBOR_EXPORT cbor_item_t** cbor_array_handle(const cbor_item_t* item);
 /** Create new definite array
  *
  * @param size Number of slots to preallocate
- * @return Reference to the new array item or `NULL` upon malloc failure
+ * @return Reference to the new array item. The item's reference count is
+ * initialized to one.
+ * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD
 CBOR_EXPORT cbor_item_t* cbor_new_definite_array(size_t size);
 
 /** Create new indefinite array
  *
- * @return Reference to the new array item or `NULL` upon malloc failure
+ * @return Reference to the new array item. The item's reference count is
+ * initialized to one.
+ * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD
 CBOR_EXPORT cbor_item_t* cbor_new_indefinite_array(void);
@@ -122,7 +126,7 @@ CBOR_EXPORT cbor_item_t* cbor_new_indefinite_array(void);
  * @param array An array
  * @param pushee The item to push. Its reference count will be be increased by
  * one.
- * @return true on success, false on failure
+ * @return `true` on success, `false` on failure
  */
 _CBOR_NODISCARD
 CBOR_EXPORT bool cbor_array_push(cbor_item_t* array, cbor_item_t* pushee);
