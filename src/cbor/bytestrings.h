@@ -25,7 +25,7 @@ extern "C" {
  *
  * For definite byte strings only
  *
- * @param item  a definite bytestring
+ * @param item a definite bytestring
  * @return length of the binary data. Zero if no chunk has been attached yet
  */
 _CBOR_NODISCARD
@@ -33,7 +33,7 @@ CBOR_EXPORT size_t cbor_bytestring_length(const cbor_item_t *item);
 
 /** Is the byte string definite?
  *
- * @param item  a byte string
+ * @param item a byte string
  * @return Is the byte string definite?
  */
 _CBOR_NODISCARD
@@ -41,7 +41,7 @@ CBOR_EXPORT bool cbor_bytestring_is_definite(const cbor_item_t *item);
 
 /** Is the byte string indefinite?
  *
- * @param item  a byte string
+ * @param item a byte string
  * @return Is the byte string indefinite?
  */
 _CBOR_NODISCARD
@@ -52,7 +52,7 @@ CBOR_EXPORT bool cbor_bytestring_is_indefinite(const cbor_item_t *item);
  * Definite items only. Modifying the data is allowed. In that case, the caller
  * takes responsibility for the effect on items this item might be a part of
  *
- * @param item  A definite byte string
+ * @param item A definite byte string
  * @return The address of the underlying binary data
  * @return `NULL` if no data have been assigned
  * yet.
@@ -62,7 +62,7 @@ CBOR_EXPORT cbor_mutable_data cbor_bytestring_handle(const cbor_item_t *item);
 
 /** Set the handle to the binary data
  *
- * @param item  A definite byte string
+ * @param item A definite byte string
  * @param data The memory block. The caller gives up the ownership of the block.
  * libcbor will deallocate it when appropriate using the `free` implementation
  * configured using #cbor_set_allocs
@@ -77,7 +77,7 @@ CBOR_EXPORT void cbor_bytestring_set_handle(
  * Manipulations with the memory block (e.g. sorting it) are allowed, but the
  * validity and the number of chunks must be retained.
  *
- * @param item  A indefinite byte string
+ * @param item A indefinite byte string
  * @return array of #cbor_bytestring_chunk_count definite bytestrings
  */
 _CBOR_NODISCARD
@@ -86,7 +86,7 @@ CBOR_EXPORT cbor_item_t **cbor_bytestring_chunks_handle(
 
 /** Get the number of chunks this string consist of
  *
- * @param item  A indefinite bytestring
+ * @param item A indefinite bytestring
  * @return The chunk count. 0 for freshly created items.
  */
 _CBOR_NODISCARD
@@ -98,7 +98,7 @@ CBOR_EXPORT size_t cbor_bytestring_chunk_count(const cbor_item_t *item);
  *
  * May realloc the chunk storage.
  *
- * @param item  An indefinite byte string
+ * @param item An indefinite byte string
  * @param chunk A definite byte string. Its reference count will be be increased
  * by one.
  * @return true on success, false on realloc failure. In that case, the refcount

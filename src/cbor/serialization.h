@@ -23,7 +23,7 @@ extern "C" {
 
 /** Serialize the given item
  *
- * @param item  A data item
+ * @param item A data item
  * @param buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
  * @return Length of the result. 0 on failure.
@@ -37,7 +37,7 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize(const cbor_item_t *item,
  *
  * Time complexity is proportional to the number of nested items.
  *
- * @param item  A data item
+ * @param item A data item
  * @return Length (>= 1) of the item when serialized. 0 if the length overflows
  * `size_t`.
  */
@@ -55,7 +55,7 @@ cbor_serialized_size(const cbor_item_t *item);
  *  appropriate ``free`` implementation.
  * \endrst
  *
- * @param item  A data item
+ * @param item A data item
  * @param[out] buffer Buffer containing the result
  * @param[out] buffer_size Size of the \p buffer, or 0 on memory allocation
  * failure.
@@ -68,7 +68,7 @@ CBOR_EXPORT size_t cbor_serialize_alloc(const cbor_item_t *item,
 
 /** Serialize an uint
  *
- * @param item  A uint
+ * @param item A uint
  * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
  * @return Length of the result
@@ -80,7 +80,7 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_uint(const cbor_item_t *item,
 
 /** Serialize a negint
  *
- * @param item  A negint
+ * @param item A negint
  * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
  * @return Length of the result
@@ -91,7 +91,7 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_negint(
 
 /** Serialize a bytestring
  *
- * @param item  A bytestring
+ * @param item A bytestring
  * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
  * @return Length of the result
@@ -103,7 +103,7 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_bytestring(
 
 /** Serialize a string
  *
- * @param item  A string
+ * @param item A string
  * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
  * @return Length of the result
@@ -114,7 +114,7 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_string(
     const cbor_item_t *item, cbor_mutable_data buffer, size_t buffer_size);
 /** Serialize an array
  *
- * @param item  An array
+ * @param item An array
  * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
  * @return Length of the result
@@ -126,7 +126,7 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_array(
 
 /** Serialize a map
  *
- * @param item  A map
+ * @param item A map
  * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
  * @return Length of the result
@@ -139,7 +139,7 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_map(const cbor_item_t *item,
 
 /** Serialize a tag
  *
- * @param item  A tag
+ * @param item A tag
  * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
  * @return Length of the result
@@ -152,7 +152,7 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_tag(const cbor_item_t *item,
 
 /** Serialize a
  *
- * @param item  A float or ctrl
+ * @param item A float or ctrl
  * @param[out] buffer Buffer to serialize to
  * @param buffer_size Size of the \p buffer
  * @return Length of the result

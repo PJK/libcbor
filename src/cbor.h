@@ -54,7 +54,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_load(
  * alias or point to any items from the original \p item. All the reference
  * counts in the new structure are set to one.
  *
- * @param item  item to copy
+ * @param item item to copy
  * @return Reference to the new item. The item's reference count is initialized
  * to one.
  * @return `NULL` if memory allocation fails
