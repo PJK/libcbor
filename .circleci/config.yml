@@ -49,6 +49,11 @@ jobs:
             git diff | head -n 20
           fi
       - run: >
+          if doxygen Doxyfile | grep 'warning: '; then
+            echo "Doxygen warning (see above) -- misformatted docs?"
+            exit 1
+          fi
+      - run: >
           cd doc &&
           pip3 install -r source/requirements.txt &&
           make html
