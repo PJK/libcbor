@@ -146,7 +146,7 @@ CBOR_EXPORT void cbor_set_allocs(_cbor_malloc_t custom_malloc,
 
 /** Get the type of the item
  *
- * @param item[borrow]
+ * @param item
  * @return The type
  */
 _CBOR_NODISCARD
@@ -156,56 +156,56 @@ CBOR_EXPORT cbor_type cbor_typeof(
 /* Standard item types as described by the RFC */
 
 /** Does the item have the appropriate major type?
- * @param item[borrow] the item
+ * @param item  the item
  * @return Is the item an #CBOR_TYPE_UINT?
  */
 _CBOR_NODISCARD
 CBOR_EXPORT bool cbor_isa_uint(const cbor_item_t *item);
 
 /** Does the item have the appropriate major type?
- * @param item[borrow] the item
+ * @param item  the item
  * @return Is the item a #CBOR_TYPE_NEGINT?
  */
 _CBOR_NODISCARD
 CBOR_EXPORT bool cbor_isa_negint(const cbor_item_t *item);
 
 /** Does the item have the appropriate major type?
- * @param item[borrow] the item
+ * @param item  the item
  * @return Is the item a #CBOR_TYPE_BYTESTRING?
  */
 _CBOR_NODISCARD
 CBOR_EXPORT bool cbor_isa_bytestring(const cbor_item_t *item);
 
 /** Does the item have the appropriate major type?
- * @param item[borrow] the item
+ * @param item  the item
  * @return Is the item a #CBOR_TYPE_STRING?
  */
 _CBOR_NODISCARD
 CBOR_EXPORT bool cbor_isa_string(const cbor_item_t *item);
 
 /** Does the item have the appropriate major type?
- * @param item[borrow] the item
+ * @param item  the item
  * @return Is the item an #CBOR_TYPE_ARRAY?
  */
 _CBOR_NODISCARD
 CBOR_EXPORT bool cbor_isa_array(const cbor_item_t *item);
 
 /** Does the item have the appropriate major type?
- * @param item[borrow] the item
+ * @param item  the item
  * @return Is the item a #CBOR_TYPE_MAP?
  */
 _CBOR_NODISCARD
 CBOR_EXPORT bool cbor_isa_map(const cbor_item_t *item);
 
 /** Does the item have the appropriate major type?
- * @param item[borrow] the item
+ * @param item  the item
  * @return Is the item a #CBOR_TYPE_TAG?
  */
 _CBOR_NODISCARD
 CBOR_EXPORT bool cbor_isa_tag(const cbor_item_t *item);
 
 /** Does the item have the appropriate major type?
- * @param item[borrow] the item
+ * @param item  the item
  * @return Is the item a #CBOR_TYPE_FLOAT_CTRL?
  */
 _CBOR_NODISCARD
@@ -214,21 +214,21 @@ CBOR_EXPORT bool cbor_isa_float_ctrl(const cbor_item_t *item);
 /* Practical types with respect to their semantics (but not tag values) */
 
 /** Is the item an integer, either positive or negative?
- * @param item[borrow] the item
+ * @param item  the item
  * @return  Is the item an integer, either positive or negative?
  */
 _CBOR_NODISCARD
 CBOR_EXPORT bool cbor_is_int(const cbor_item_t *item);
 
 /** Is the item an a floating point number?
- * @param item[borrow] the item
+ * @param item  the item
  * @return  Is the item a floating point number?
  */
 _CBOR_NODISCARD
 CBOR_EXPORT bool cbor_is_float(const cbor_item_t *item);
 
 /** Is the item an a boolean?
- * @param item[borrow] the item
+ * @param item  the item
  * @return  Is the item a boolean?
  */
 _CBOR_NODISCARD
@@ -241,7 +241,7 @@ CBOR_EXPORT bool cbor_is_bool(const cbor_item_t *item);
  *  null pointer will most likely result in a crash.
  * \endrst
  *
- * @param item[borrow] the item
+ * @param item  the item
  * @return  Is the item (CBOR logical) null?
  */
 _CBOR_NODISCARD
@@ -254,7 +254,7 @@ CBOR_EXPORT bool cbor_is_null(const cbor_item_t *item);
  *  C.
  * \endrst
  *
- * @param item[borrow] the item
+ * @param item  the item
  * @return Is the item (CBOR logical) undefined?
  */
 _CBOR_NODISCARD
@@ -299,7 +299,7 @@ CBOR_EXPORT void cbor_intermediate_decref(cbor_item_t *item);
  * .. warning:: This does *not* account for transitive references.
  * \endrst
  *
- * @param item[borrow] the item
+ * @param item  the item
  * @return the reference count
  */
 _CBOR_NODISCARD

@@ -17,7 +17,7 @@ extern "C" {
 
 /** Get the number of members
  *
- * @param item[borrow] An array
+ * @param item  An array
  * @return The number of members
  */
 _CBOR_NODISCARD
@@ -25,7 +25,7 @@ CBOR_EXPORT size_t cbor_array_size(const cbor_item_t* item);
 
 /** Get the size of the allocated storage
  *
- * @param item[borrow] An array
+ * @param item  An array
  * @return The size of the allocated storage (number of items)
  */
 _CBOR_NODISCARD
@@ -33,7 +33,7 @@ CBOR_EXPORT size_t cbor_array_allocated(const cbor_item_t* item);
 
 /** Get item by index
  *
- * @param item[borrow] An array
+ * @param item  An array
  * @param index The index
  * @return **incref** The item, or `NULL` in case of boundary violation
  */
@@ -45,7 +45,7 @@ CBOR_EXPORT cbor_item_t* cbor_array_get(const cbor_item_t* item, size_t index);
  * If the index is out of bounds, the array is not modified and false is
  * returned. Creating arrays with holes is not possible.
  *
- * @param item[borrow] An array
+ * @param item  An array
  * @param value[incref] The item to assign
  * @param index The index, first item is 0.
  * @return true on success, false on allocation failure.
@@ -58,7 +58,7 @@ CBOR_EXPORT bool cbor_array_set(cbor_item_t* item, size_t index,
  *
  * The item being replace will be #cbor_decref 'ed.
  *
- * @param item[borrow] An array
+ * @param item  An array
  * @param value[incref] The item to assign
  * @param index The index, first item is 0.
  * @return true on success, false on allocation failure.
@@ -69,7 +69,7 @@ CBOR_EXPORT bool cbor_array_replace(cbor_item_t* item, size_t index,
 
 /** Is the array definite?
  *
- * @param item[borrow] An array
+ * @param item  An array
  * @return Is the array definite?
  */
 _CBOR_NODISCARD
@@ -77,7 +77,7 @@ CBOR_EXPORT bool cbor_array_is_definite(const cbor_item_t* item);
 
 /** Is the array indefinite?
  *
- * @param item[borrow] An array
+ * @param item  An array
  * @return Is the array indefinite?
  */
 _CBOR_NODISCARD
@@ -88,7 +88,7 @@ CBOR_EXPORT bool cbor_array_is_indefinite(const cbor_item_t* item);
  * The items may be reordered and modified as long as references remain
  * consistent.
  *
- * @param item[borrow] An array
+ * @param item  An array
  * @return #cbor_array_size items
  */
 _CBOR_NODISCARD

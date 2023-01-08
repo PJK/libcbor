@@ -50,7 +50,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_load(
  *
  * All the reference counts in the new structure are set to one.
  *
- * @param item[borrow] item to copy
+ * @param item  item to copy
  * @return **new** CBOR deep copy or `NULL` on failure.
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_copy(cbor_item_t* item);

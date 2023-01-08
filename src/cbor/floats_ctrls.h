@@ -23,7 +23,7 @@ extern "C" {
 
 /** Is this a ctrl value?
  *
- * @param item[borrow] A float or ctrl item
+ * @param item  A float or ctrl item
  * @return Is this a ctrl value?
  */
 _CBOR_NODISCARD CBOR_EXPORT bool cbor_float_ctrl_is_ctrl(
@@ -31,7 +31,7 @@ _CBOR_NODISCARD CBOR_EXPORT bool cbor_float_ctrl_is_ctrl(
 
 /** Get the float width
  *
- * @param item[borrow] A float or ctrl item
+ * @param item  A float or ctrl item
  * @return The width.
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_float_width
@@ -79,7 +79,7 @@ _CBOR_NODISCARD CBOR_EXPORT double cbor_float_get_float(
 
 /** Get value from a boolean ctrl item
  *
- * @param item[borrow] A ctrl item
+ * @param item  A ctrl item
  * @return boolean value
  */
 _CBOR_NODISCARD CBOR_EXPORT bool cbor_get_bool(const cbor_item_t *item);
@@ -142,7 +142,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t *cbor_build_bool(bool value);
  *  invalid value using this mechanism. Please consult the standard before use.
  * \endrst
  *
- * @param item[borrow] A ctrl item
+ * @param item  A ctrl item
  * @param value The simple value to assign. Please consult the standard for
  * 	allowed values
  */
@@ -150,35 +150,35 @@ CBOR_EXPORT void cbor_set_ctrl(cbor_item_t *item, uint8_t value);
 
 /** Assign a boolean value to a boolean ctrl item
  *
- * @param item[borrow] A ctrl item
+ * @param item  A ctrl item
  * @param value The simple value to assign.
  */
 CBOR_EXPORT void cbor_set_bool(cbor_item_t *item, bool value);
 
 /** Assigns a float value
  *
- * @param item[borrow] A half precision float
+ * @param item  A half precision float
  * @param value The value to assign
  */
 CBOR_EXPORT void cbor_set_float2(cbor_item_t *item, float value);
 
 /** Assigns a float value
  *
- * @param item[borrow] A single precision float
+ * @param item  A single precision float
  * @param value The value to assign
  */
 CBOR_EXPORT void cbor_set_float4(cbor_item_t *item, float value);
 
 /** Assigns a float value
  *
- * @param item[borrow] A double precision float
+ * @param item  A double precision float
  * @param value The value to assign
  */
 CBOR_EXPORT void cbor_set_float8(cbor_item_t *item, double value);
 
 /** Reads the control value
  *
- * @param item[borrow] A ctrl item
+ * @param item  A ctrl item
  * @return the simple value
  */
 _CBOR_NODISCARD CBOR_EXPORT uint8_t cbor_ctrl_value(const cbor_item_t *item);
