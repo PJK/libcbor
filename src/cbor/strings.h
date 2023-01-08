@@ -113,7 +113,7 @@ cbor_string_chunk_count(const cbor_item_t *item);
  * May realloc the chunk storage.
  *
  * @param item  An indefinite string
- * @param chunk A definite string item. Its reference count will be be increased
+ * @param chunk A definite string item. Its reference count will be increased
  * by one.
  * @return `true` on success. `false` on memory allocation failure. In that
  * case, the refcount of @p `chunk` is not increased and the @p `item` is left

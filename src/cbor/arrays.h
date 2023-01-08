@@ -63,7 +63,7 @@ CBOR_EXPORT bool cbor_array_set(cbor_item_t* item, size_t index,
  * The reference to the item being replaced will be released using #cbor_decref.
  *
  * @param item  An array
- * @param value The item to assign. Its reference count will be be increased by
+ * @param value The item to assign. Its reference count will be increased by
  * one.
  * @param index The index (zero-based)
  * @return true on success, false on allocation failure.
@@ -124,7 +124,7 @@ CBOR_EXPORT cbor_item_t* cbor_new_indefinite_array(void);
  * the preallocated capacity is available.
  *
  * @param array An array
- * @param pushee The item to push. Its reference count will be be increased by
+ * @param pushee The item to push. Its reference count will be increased by
  * one.
  * @return `true` on success, `false` on failure
  */

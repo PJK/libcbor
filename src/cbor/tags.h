@@ -50,14 +50,14 @@ _CBOR_NODISCARD CBOR_EXPORT uint64_t cbor_tag_value(const cbor_item_t *item);
 /** Set the tagged item
  *
  * @param item  A tag
- * @param tagged_item The item to tag. Its reference count will be be increased
+ * @param tagged_item The item to tag. Its reference count will be increased
  * by one.
  */
 CBOR_EXPORT void cbor_tag_set_item(cbor_item_t *item, cbor_item_t *tagged_item);
 
 /** Build a new tag
  *
- * @param item The item to tag. Its reference count will be be increased by
+ * @param item The item to tag. Its reference count will be increased by
  * one.
  * @param value Tag value
  * @return Reference to the new tag item. The item's reference count is

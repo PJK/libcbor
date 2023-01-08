@@ -38,13 +38,17 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_map_allocated(const cbor_item_t *item);
 /** Create a new definite map
  *
  * @param size The number of slots to preallocate
- * @return **new** definite map. `NULL` on malloc failure.
+ * @return Reference to the new map item. The item's reference count is
+ * initialized to one.
+ * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t *cbor_new_definite_map(size_t size);
 
 /** Create a new indefinite map
  *
- * @return **new** indefinite map. `NULL` on malloc failure.
+ * @return Reference to the new map item. The item's reference count is
+ * initialized to one.
+ * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t *cbor_new_indefinite_map(void);
 
@@ -54,9 +58,10 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t *cbor_new_indefinite_map(void);
  * indefinite maps, the storage will be expanded as needed
  *
  * @param item  A map
- * @param pair[incref] The key-value pair to add (incref is member-wise)
- * @return `true` on success, `false` if either reallocation failed or the
- * preallocated storage is full
+ * @param pair The key-value pair to add. Reference count of the #cbor_pair.key
+ * and #cbor_pair.value will be increased by one.
+ * @return `true` on success, `false` if memory allocation failed (indefinite
+ * maps) or the preallocated storage is full (definite maps)
  */
 _CBOR_NODISCARD CBOR_EXPORT bool cbor_map_add(cbor_item_t *item,
                                               struct cbor_pair pair);
@@ -66,7 +71,7 @@ _CBOR_NODISCARD CBOR_EXPORT bool cbor_map_add(cbor_item_t *item,
  * Sets the value to `NULL`. Internal API.
  *
  * @param item  A map
- * @param key[incref] The key
+ * @param key The key, Its reference count will be be increased by one.
  * @return `true` on success, `false` if either reallocation failed or the
  * preallocated storage is full
  */
@@ -78,7 +83,7 @@ _CBOR_NODISCARD CBOR_EXPORT bool _cbor_map_add_key(cbor_item_t *item,
  * Assumes that #_cbor_map_add_key has been called. Internal API.
  *
  * @param item  A map
- * @param key[incref] The value
+ * @param value The value. Its reference count will be be increased by one.
  * @return `true` on success, `false` if either reallocation failed or the
  * preallocated storage is full
  */
