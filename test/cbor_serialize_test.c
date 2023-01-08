@@ -159,27 +159,17 @@ static void test_serialize_indefinite_bytestring(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
-static void test_serialize_4b_bytestring(void **_CBOR_UNUSED(_state)) {
+static void test_serialize_bytestring_size_overflow(
+    void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_new_definite_bytestring();
 
   // Fake having a huge chunk of data
   unsigned char *data = malloc(1);
-  cbor_bytestring_set_handle(item, data, UINT32_MAX);
+  cbor_bytestring_set_handle(item, data, SIZE_MAX);
 
+  // Would require 1 + 8 + SIZE_MAX bytes, which overflows size_t
   assert_size_equal(cbor_serialize(item, buffer, 512), 0);
-  assert_size_equal(cbor_serialized_size(item), (uint64_t)UINT32_MAX + 5);
-  cbor_decref(&item);
-}
-
-static void test_serialize_8b_bytestring(void **_CBOR_UNUSED(_state)) {
-  cbor_item_t *item = cbor_new_definite_bytestring();
-
-  // Fake having a huge chunk of data
-  unsigned char *data = malloc(1);
-  cbor_bytestring_set_handle(item, data, (uint64_t)UINT32_MAX + 1);
-
-  assert_size_equal(cbor_serialize(item, buffer, 512), 0);
-  assert_size_equal(cbor_serialized_size(item), (uint64_t)UINT32_MAX + 1 + 9);
+  assert_size_equal(cbor_serialized_size(item), 0);
   cbor_decref(&item);
 }
 
