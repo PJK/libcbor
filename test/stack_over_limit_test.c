@@ -1,10 +1,4 @@
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#include <cmocka.h>
-
+#include "assertions.h"
 #include "cbor.h"
 
 static size_t generate_overflow_data(unsigned char **overflow_data) {
@@ -25,7 +19,7 @@ static void test_stack_over_limit(void **_CBOR_UNUSED(_state)) {
   overflow_data_len = generate_overflow_data(&overflow_data);
   assert_null(cbor_load(overflow_data, overflow_data_len, &res));
   free(overflow_data);
-  assert_int_equal(res.error.code, CBOR_ERR_MEMERROR);
+  assert_size_equal(res.error.code, CBOR_ERR_MEMERROR);
 }
 
 int main(void) {

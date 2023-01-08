@@ -52,3 +52,14 @@ void assert_minimum_input_size(size_t expected, cbor_data data) {
     assert_decoder_result_nedata(expected, decode(data, 1));
   }
 }
+
+void _assert_size_equal(size_t actual, size_t expected, const char* src_file,
+                        int src_line) {
+  if (actual == expected) return;
+  // Not using `fail_msg` since it mishandles variadic macro arguments, which
+  // causes compiler warnings/
+  // TODO file bug
+  printf("(%s:%d) assert_size_equal: Expected %zu to equal %zu\n", src_file,
+         src_line, actual, expected);
+  fail();
+}

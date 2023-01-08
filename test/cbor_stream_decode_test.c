@@ -5,13 +5,6 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#include <cmocka.h>
-
 #include "assertions.h"
 #include "cbor.h"
 #include "stream_expectations.h"

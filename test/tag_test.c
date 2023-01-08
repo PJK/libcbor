@@ -5,13 +5,6 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#include <cmocka.h>
-
 #include "assertions.h"
 #include "cbor.h"
 #include "test_allocator.h"
@@ -113,7 +106,7 @@ static void test_build_tag(void **_CBOR_UNUSED(_state)) {
   tag = cbor_build_tag(1, cbor_move(cbor_build_uint8(42)));
 
   assert_true(cbor_typeof(tag) == CBOR_TYPE_TAG);
-  assert_int_equal(cbor_tag_value(tag), 1);
+  assert_size_equal(cbor_tag_value(tag), 1);
   assert_uint8(cbor_move(cbor_tag_item(tag)), 42);
 
   cbor_decref(&tag);
@@ -123,7 +116,7 @@ static void test_build_tag_failure(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *tagged_item = cbor_build_uint8(42);
 
   WITH_FAILING_MALLOC({ assert_null(cbor_build_tag(1, tagged_item)); });
-  assert_int_equal(cbor_refcount(tagged_item), 1);
+  assert_size_equal(cbor_refcount(tagged_item), 1);
 
   cbor_decref(&tagged_item);
 }

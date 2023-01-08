@@ -1,13 +1,7 @@
 #ifndef TEST_ALLOCATOR_H_
 #define TEST_ALLOCATOR_H_
 
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#include <cmocka.h>
-
+#include "assertions.h"
 #include "cbor.h"
 
 // Harness for mocking `malloc` and `realloc`

@@ -29,7 +29,7 @@ static void test_empty_map(void **_CBOR_UNUSED(_state)) {
   assert_true(cbor_isa_map(map));
   assert_true(cbor_map_size(map) == 0);
   assert_true(res.read == 1);
-  assert_int_equal(cbor_map_allocated(map), 0);
+  assert_size_equal(cbor_map_allocated(map), 0);
   cbor_decref(&map);
   assert_null(map);
 }
@@ -119,9 +119,9 @@ static void test_streamed_key_map(void **_CBOR_UNUSED(_state)) {
   struct cbor_pair *handle = cbor_map_handle(map);
   assert_true(cbor_typeof(handle[0].key) == CBOR_TYPE_STRING);
   assert_true(cbor_string_is_indefinite(handle[0].key));
-  assert_int_equal(cbor_string_chunk_count(handle[0].key), 2);
+  assert_size_equal(cbor_string_chunk_count(handle[0].key), 2);
   assert_true(cbor_isa_map(handle[0].value));
-  assert_int_equal(cbor_map_size(handle[0].value), 0);
+  assert_size_equal(cbor_map_size(handle[0].value), 0);
   cbor_decref(&map);
   assert_null(map);
 }
@@ -136,15 +136,15 @@ static void test_streamed_kv_map(void **_CBOR_UNUSED(_state)) {
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
   assert_true(cbor_isa_map(map));
   assert_true(cbor_map_is_definite(map));
-  assert_int_equal(cbor_map_size(map), 1);
-  assert_int_equal(res.read, 13);
+  assert_size_equal(cbor_map_size(map), 1);
+  assert_size_equal(res.read, 13);
   struct cbor_pair *handle = cbor_map_handle(map);
   assert_true(cbor_typeof(handle[0].key) == CBOR_TYPE_STRING);
   assert_true(cbor_string_is_indefinite(handle[0].key));
-  assert_int_equal(cbor_string_chunk_count(handle[0].key), 2);
+  assert_size_equal(cbor_string_chunk_count(handle[0].key), 2);
   assert_true(cbor_typeof(handle[0].value) == CBOR_TYPE_STRING);
   assert_true(cbor_string_is_indefinite(handle[0].value));
-  assert_int_equal(cbor_string_chunk_count(handle[0].value), 2);
+  assert_size_equal(cbor_string_chunk_count(handle[0].value), 2);
   assert_memory_equal(
       cbor_string_handle(cbor_string_chunks_handle(handle[0].value)[1]), "d",
       1);
@@ -163,15 +163,15 @@ static void test_streamed_streamed_kv_map(void **_CBOR_UNUSED(_state)) {
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
   assert_true(cbor_isa_map(map));
   assert_true(cbor_map_is_indefinite(map));
-  assert_int_equal(cbor_map_size(map), 1);
-  assert_int_equal(res.read, 14);
+  assert_size_equal(cbor_map_size(map), 1);
+  assert_size_equal(res.read, 14);
   struct cbor_pair *handle = cbor_map_handle(map);
   assert_true(cbor_typeof(handle[0].key) == CBOR_TYPE_STRING);
   assert_true(cbor_string_is_indefinite(handle[0].key));
-  assert_int_equal(cbor_string_chunk_count(handle[0].key), 2);
+  assert_size_equal(cbor_string_chunk_count(handle[0].key), 2);
   assert_true(cbor_typeof(handle[0].value) == CBOR_TYPE_STRING);
   assert_true(cbor_string_is_indefinite(handle[0].value));
-  assert_int_equal(cbor_string_chunk_count(handle[0].value), 2);
+  assert_size_equal(cbor_string_chunk_count(handle[0].value), 2);
   assert_memory_equal(
       cbor_string_handle(cbor_string_chunks_handle(handle[0].value)[1]), "d",
       1);
@@ -227,7 +227,7 @@ static void test_map_add(void **_CBOR_UNUSED(_state)) {
 
         assert_false(
             cbor_map_add(map, (struct cbor_pair){.key = key, .value = value}));
-        assert_int_equal(cbor_map_allocated(map), 0);
+        assert_size_equal(cbor_map_allocated(map), 0);
         assert_null(map->data);
 
         cbor_decref(&map);
@@ -246,7 +246,7 @@ static void test_indef_map_decode(void **_CBOR_UNUSED(_state)) {
         map = cbor_load(test_indef_map, 6, &res);
 
         assert_null(map);
-        assert_int_equal(res.error.code, CBOR_ERR_MEMERROR);
+        assert_size_equal(res.error.code, CBOR_ERR_MEMERROR);
       },
       4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }

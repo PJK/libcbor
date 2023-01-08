@@ -5,13 +5,6 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#include <cmocka.h>
-
 #include "assertions.h"
 #include "cbor.h"
 #include "test_allocator.h"
@@ -76,8 +69,8 @@ static void test_indef_bytestring(void **_CBOR_UNUSED(_state)) {
       item, cbor_move(cbor_build_bytestring((cbor_data) "abc", 3))));
   copy = cbor_copy(item);
 
-  assert_int_equal(cbor_bytestring_chunk_count(item),
-                   cbor_bytestring_chunk_count(copy));
+  assert_size_equal(cbor_bytestring_chunk_count(item),
+                    cbor_bytestring_chunk_count(copy));
 
   assert_memory_equal(
       cbor_bytestring_handle(cbor_bytestring_chunks_handle(copy)[0]), "abc", 3);
@@ -98,8 +91,8 @@ static void test_indef_string(void **_CBOR_UNUSED(_state)) {
   assert_true(cbor_string_add_chunk(item, cbor_move(cbor_build_string("abc"))));
   copy = cbor_copy(item);
 
-  assert_int_equal(cbor_string_chunk_count(item),
-                   cbor_string_chunk_count(copy));
+  assert_size_equal(cbor_string_chunk_count(item),
+                    cbor_string_chunk_count(copy));
 
   assert_memory_equal(cbor_string_handle(cbor_string_chunks_handle(copy)[0]),
                       "abc", 3);
@@ -193,7 +186,7 @@ static void test_alloc_failure_simple(void **_CBOR_UNUSED(_state)) {
   item = cbor_build_uint8(10);
 
   WITH_FAILING_MALLOC({ assert_null(cbor_copy(item)); });
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -204,7 +197,7 @@ static void test_bytestring_alloc_failure(void **_CBOR_UNUSED(_state)) {
       item, cbor_move(cbor_build_bytestring((cbor_data) "abc", 3))));
 
   WITH_FAILING_MALLOC({ assert_null(cbor_copy(item)); });
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -215,7 +208,7 @@ static void test_bytestring_chunk_alloc_failure(void **_CBOR_UNUSED(_state)) {
       item, cbor_move(cbor_build_bytestring((cbor_data) "abc", 3))));
 
   WITH_MOCK_MALLOC({ assert_null(cbor_copy(item)); }, 2, MALLOC, MALLOC_FAIL);
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -229,7 +222,7 @@ static void test_bytestring_chunk_append_failure(void **_CBOR_UNUSED(_state)) {
                    // New indef string, cbor_indefinite_string_data, chunk item,
                    // chunk data, extend cbor_indefinite_string_data.chunks
                    MALLOC, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -247,7 +240,7 @@ static void test_bytestring_second_chunk_alloc_failure(
                    // chunk data, extend cbor_indefinite_string_data.chunks,
                    // second chunk item
                    MALLOC, MALLOC, MALLOC, MALLOC, REALLOC, MALLOC_FAIL);
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -257,7 +250,7 @@ static void test_string_alloc_failure(void **_CBOR_UNUSED(_state)) {
   assert_true(cbor_string_add_chunk(item, cbor_move(cbor_build_string("abc"))));
 
   WITH_FAILING_MALLOC({ assert_null(cbor_copy(item)); });
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -267,7 +260,7 @@ static void test_string_chunk_alloc_failure(void **_CBOR_UNUSED(_state)) {
   assert_true(cbor_string_add_chunk(item, cbor_move(cbor_build_string("abc"))));
 
   WITH_MOCK_MALLOC({ assert_null(cbor_copy(item)); }, 2, MALLOC, MALLOC_FAIL);
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -280,7 +273,7 @@ static void test_string_chunk_append_failure(void **_CBOR_UNUSED(_state)) {
                    // New indef string, cbor_indefinite_string_data, chunk item,
                    // chunk data, extend cbor_indefinite_string_data.chunks
                    MALLOC, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -296,7 +289,7 @@ static void test_string_second_chunk_alloc_failure(
                    // chunk data, extend cbor_indefinite_string_data.chunks,
                    // second chunk item
                    MALLOC, MALLOC, MALLOC, MALLOC, REALLOC, MALLOC_FAIL);
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -306,7 +299,7 @@ static void test_array_alloc_failure(void **_CBOR_UNUSED(_state)) {
   assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(42))));
 
   WITH_FAILING_MALLOC({ assert_null(cbor_copy(item)); });
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -319,7 +312,7 @@ static void test_array_item_alloc_failure(void **_CBOR_UNUSED(_state)) {
                    // New array, item copy
                    MALLOC, MALLOC_FAIL);
 
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -332,7 +325,7 @@ static void test_array_push_failure(void **_CBOR_UNUSED(_state)) {
                    // New array, item copy, array reallocation
                    MALLOC, MALLOC, REALLOC_FAIL);
 
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -346,7 +339,7 @@ static void test_array_second_item_alloc_failure(void **_CBOR_UNUSED(_state)) {
                    // New array, item copy, array reallocation, second item copy
                    MALLOC, MALLOC, REALLOC, MALLOC_FAIL);
 
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -358,7 +351,7 @@ static void test_map_alloc_failure(void **_CBOR_UNUSED(_state)) {
                                             cbor_move(cbor_build_bool(true))}));
 
   WITH_FAILING_MALLOC({ assert_null(cbor_copy(item)); });
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -372,7 +365,7 @@ static void test_map_key_alloc_failure(void **_CBOR_UNUSED(_state)) {
   WITH_MOCK_MALLOC({ assert_null(cbor_copy(item)); }, 2,
                    // New map, key copy
                    MALLOC, MALLOC_FAIL);
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -386,7 +379,7 @@ static void test_map_value_alloc_failure(void **_CBOR_UNUSED(_state)) {
   WITH_MOCK_MALLOC({ assert_null(cbor_copy(item)); }, 3,
                    // New map, key copy, value copy
                    MALLOC, MALLOC, MALLOC_FAIL);
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -400,7 +393,7 @@ static void test_map_add_failure(void **_CBOR_UNUSED(_state)) {
   WITH_MOCK_MALLOC({ assert_null(cbor_copy(item)); }, 4,
                    // New map, key copy, value copy, add
                    MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -417,7 +410,7 @@ static void test_map_second_key_failure(void **_CBOR_UNUSED(_state)) {
   WITH_MOCK_MALLOC({ assert_null(cbor_copy(item)); }, 5,
                    // New map, key copy, value copy, add, second key copy
                    MALLOC, MALLOC, MALLOC, REALLOC, MALLOC_FAIL);
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -426,7 +419,7 @@ static void test_tag_item_alloc_failure(void **_CBOR_UNUSED(_state)) {
   item = cbor_build_tag(1, cbor_move(cbor_build_uint8(42)));
 
   WITH_FAILING_MALLOC({ assert_null(cbor_copy(item)); });
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }
@@ -437,7 +430,7 @@ static void test_tag_alloc_failure(void **_CBOR_UNUSED(_state)) {
   WITH_MOCK_MALLOC({ assert_null(cbor_copy(item)); }, 2,
                    // Item copy, tag
                    MALLOC, MALLOC_FAIL);
-  assert_int_equal(cbor_refcount(item), 1);
+  assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
 }

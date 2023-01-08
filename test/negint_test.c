@@ -5,15 +5,9 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#include <cmocka.h>
-#include "test_allocator.h"
-
+#include "assertions.h"
 #include "cbor.h"
+#include "test_allocator.h"
 
 cbor_item_t *number;
 struct cbor_load_result res;
