@@ -54,7 +54,6 @@ CBOR_EXPORT cbor_item_t* cbor_array_get(const cbor_item_t* item, size_t index);
  * @return `true` on success, `false` on allocation failure.
  */
 _CBOR_NODISCARD
-}
 CBOR_EXPORT bool cbor_array_set(cbor_item_t* item, size_t index,
                                 cbor_item_t* value);
 

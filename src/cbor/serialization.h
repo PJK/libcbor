@@ -59,11 +59,11 @@ cbor_serialized_size(const cbor_item_t *item);
  * @param[out] buffer Buffer containing the result
  * @param[out] buffer_size Size of the \p buffer, or 0 on memory allocation
  * failure.
- * @return Length of the result
+ * @return Length of the result in bytes
  * @return 0 on memory allocation failure, in which case \p buffer is `NULL`.
  */
 CBOR_EXPORT size_t cbor_serialize_alloc(const cbor_item_t *item,
-                                        cbor_mutable_data buffer,
+                                        unsigned char **buffer,
                                         size_t *buffer_size);
 
 /** Serialize an uint
