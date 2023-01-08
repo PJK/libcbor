@@ -63,8 +63,8 @@ _CBOR_NODISCARD CBOR_EXPORT bool cbor_string_is_indefinite(
  * takes responsibility for the effect on items this item might be a part of
  *
  * @param item  A definite string
- * @return The address of the underlying string. `NULL` if no data have been
- * assigned yet.
+ * @return The address of the underlying string.
+ * @return `NULL` if no data have been assigned yet.
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_mutable_data
 cbor_string_handle(const cbor_item_t *item);
@@ -113,9 +113,11 @@ cbor_string_chunk_count(const cbor_item_t *item);
  * May realloc the chunk storage.
  *
  * @param item  An indefinite string
- * @param item[incref] A definite string
- * @return true on success. false on realloc failure. In that case, the refcount
- * of `chunk` is not increased and the `item` is left intact.
+ * @param chunk A definite string item. Its reference count will be be increased
+ * by one.
+ * @return `true` on success. `false` on memory allocation failure. In that
+ * case, the refcount of @p `chunk` is not increased and the @p `item` is left
+ * intact.
  */
 _CBOR_NODISCARD CBOR_EXPORT bool cbor_string_add_chunk(cbor_item_t *item,
                                                        cbor_item_t *chunk);
@@ -124,7 +126,9 @@ _CBOR_NODISCARD CBOR_EXPORT bool cbor_string_add_chunk(cbor_item_t *item,
  *
  * The handle is initialized to `NULL` and length to 0
  *
- * @return **new** definite string. `NULL` on malloc failure.
+ * @return Reference to the new string item. The item's reference count is
+ * initialized to one.
+ * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t *cbor_new_definite_string(void);
 
@@ -132,7 +136,9 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t *cbor_new_definite_string(void);
  *
  * The chunks array is initialized to `NULL` and chunkcount to 0
  *
- * @return **new** indefinite string. `NULL` on malloc failure.
+ * @return Reference to the new string item. The item's reference count is
+ * initialized to one.
+ * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t *cbor_new_indefinite_string(void);
 
@@ -141,7 +147,9 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t *cbor_new_indefinite_string(void);
  * The `val` will be copied to a newly allocated block
  *
  * @param val A null-terminated UTF-8 string
- * @return A **new** string with content `handle`. `NULL` on malloc failure.
+ * @return Reference to the new string item. The item's reference count is
+ * initialized to one.
+ * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t *cbor_build_string(const char *val);
 
@@ -149,8 +157,12 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t *cbor_build_string(const char *val);
  *
  * The `handle` will be copied to a newly allocated block
  *
- * @param val A UTF-8 string, at least \p length long (excluding the null byte)
- * @return A **new** string with content `handle`. `NULL` on malloc failure.
+ * @param val A UTF-8 string, at least @p `length` long (excluding the null
+ * byte)
+ * @param length Length (in bytes) of the string passed in @p `val`.
+ * @return Reference to the new string item. The item's reference count is
+ * initialized to one.
+ * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t *cbor_build_stringn(const char *val,
                                                             size_t length);
