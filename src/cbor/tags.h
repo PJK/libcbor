@@ -24,15 +24,19 @@ extern "C" {
 /** Create a new tag
  *
  * @param value The tag value. Please consult the tag repository
- * @return **new** tag. Item reference is `NULL`. Returns `NULL` upon
- * 	memory allocation failure
+ * @return Reference to the new tag item. The item's reference count is
+ * initialized to one.
+ * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t *cbor_new_tag(uint64_t value);
 
 /** Get the tagged item
  *
  * @param item  A tag
- * @return **incref** the tagged item
+ * @return Reference to the tagged item
+ *
+ * Increases the reference count of the underlying item. The returned reference
+ * must be released using #cbor_decref.
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t *cbor_tag_item(const cbor_item_t *item);
 
