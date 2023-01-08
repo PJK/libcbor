@@ -34,8 +34,11 @@ CBOR_EXPORT size_t cbor_array_allocated(const cbor_item_t* item);
 /** Get item by index
  *
  * @param item  An array
- * @param index The index
- * @return **incref** The item, or `NULL` in case of boundary violation
+ * @param index The index (zero-based)
+ * @return Reference to the item, or `NULL` in case of boundary violation.
+ *
+ * Increases the reference count of the underlying item. The returned reference
+ * must be released using #cbor_decref.
  */
 _CBOR_NODISCARD
 CBOR_EXPORT cbor_item_t* cbor_array_get(const cbor_item_t* item, size_t index);
@@ -46,21 +49,23 @@ CBOR_EXPORT cbor_item_t* cbor_array_get(const cbor_item_t* item, size_t index);
  * returned. Creating arrays with holes is not possible.
  *
  * @param item  An array
- * @param value[incref] The item to assign
- * @param index The index, first item is 0.
- * @return true on success, false on allocation failure.
+ * @param value The item to assign
+ * @param index The index (zero-based)
+ * @return `true` on success, `false` on allocation failure.
  */
 _CBOR_NODISCARD
+}
 CBOR_EXPORT bool cbor_array_set(cbor_item_t* item, size_t index,
                                 cbor_item_t* value);
 
 /** Replace item at an index
  *
- * The item being replace will be #cbor_decref 'ed.
+ * The reference to the item being replaced will be released using #cbor_decref.
  *
  * @param item  An array
- * @param value[incref] The item to assign
- * @param index The index, first item is 0.
+ * @param value The item to assign. Its reference count will be be increased by
+ * one.
+ * @param index The index (zero-based)
  * @return true on success, false on allocation failure.
  */
 _CBOR_NODISCARD
@@ -97,14 +102,14 @@ CBOR_EXPORT cbor_item_t** cbor_array_handle(const cbor_item_t* item);
 /** Create new definite array
  *
  * @param size Number of slots to preallocate
- * @return **new** array or `NULL` upon malloc failure
+ * @return Reference to the new array item or `NULL` upon malloc failure
  */
 _CBOR_NODISCARD
 CBOR_EXPORT cbor_item_t* cbor_new_definite_array(size_t size);
 
 /** Create new indefinite array
  *
- * @return **new** array or `NULL` upon malloc failure
+ * @return Reference to the new array item or `NULL` upon malloc failure
  */
 _CBOR_NODISCARD
 CBOR_EXPORT cbor_item_t* cbor_new_indefinite_array(void);
@@ -114,8 +119,9 @@ CBOR_EXPORT cbor_item_t* cbor_new_indefinite_array(void);
  * For indefinite items, storage may be reallocated. For definite items, only
  * the preallocated capacity is available.
  *
- * @param array[borrow] An array
- * @param pushee[incref] The item to push
+ * @param array An array
+ * @param pushee The item to push. Its reference count will be be increased by
+ * one.
  * @return true on success, false on failure
  */
 _CBOR_NODISCARD
