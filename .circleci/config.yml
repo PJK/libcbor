@@ -4,7 +4,7 @@ commands:
   linux-setup:
     steps:
     - run: sudo apt-get update
-    - run: sudo apt-get install -y cmake "${TOOLCHAIN_PACKAGE}"
+    - run: sudo apt-get install -y cmake ${TOOLCHAIN_PACKAGES}
     - run: sudo apt install libcmocka-dev
   build:
     steps:
@@ -34,7 +34,7 @@ jobs:
     machine:
       image: ubuntu-2204:2022.10.2
     environment:
-      TOOLCHAIN_PACKAGE: g++
+      TOOLCHAIN_PACKAGES: g++
     steps:
       - checkout
       - linux-setup
@@ -57,7 +57,7 @@ jobs:
     machine:
       image: ubuntu-2204:2022.10.2
     environment:
-      TOOLCHAIN_PACKAGE: g++
+      TOOLCHAIN_PACKAGES: g++
       CMAKE_COVERAGE: ON
     steps:
       - checkout
@@ -78,7 +78,7 @@ jobs:
     machine:
       image: ubuntu-2204:2022.10.2
     environment:
-      TOOLCHAIN_PACKAGE: clang
+      TOOLCHAIN_PACKAGES: clang
       CC: clang
       CXX: clang++
     steps:
@@ -87,11 +87,34 @@ jobs:
       - build
       - test
 
+  build-and-test-32b:
+    machine:
+      image: ubuntu-2204:2022.10.2
+    steps:
+      - checkout
+      - run: sudo apt-get update
+      - run: sudo apt-get install -y cmake gcc-multilib g++-multilib libc6-dev-i386
+      # Make cmocka from source w/ 32b setup
+      - run: git clone https://git.cryptomilk.org/projects/cmocka.git ~/cmocka
+      - run: >
+          cd $(mktemp -d /tmp/build.XXXX) &&
+          cmake ~/cmocka -DCMAKE_TOOLCHAIN_FILE=~/cmocka/cmake/Toolchain-cross-m32.cmake &&
+          make &&
+          sudo make install
+      # Piggyback on the cmocka 32b toolchain
+      - run: >
+          cmake -DWITH_TESTS=ON \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_TOOLCHAIN_FILE=~/cmocka/cmake/Toolchain-cross-m32.cmake \
+            .
+      - run: make -j 16 VERBOSE=1
+      - test
+
   build-and-test-release-clang:
     machine:
       image: ubuntu-2204:2022.10.2
     environment:
-      TOOLCHAIN_PACKAGE: clang
+      TOOLCHAIN_PACKAGES: clang
       CC: clang
       CXX: clang++
     steps:
@@ -104,7 +127,7 @@ jobs:
     machine:
       image: ubuntu-2204:2022.10.2
     environment:
-      TOOLCHAIN_PACKAGE: clang
+      TOOLCHAIN_PACKAGES: clang
       CC: clang
       CXX: clang++
       CMAKE_COVERAGE: ON
@@ -119,7 +142,7 @@ jobs:
     machine:
       image: ubuntu-2204:2022.10.2
     environment:
-      TOOLCHAIN_PACKAGE: g++
+      TOOLCHAIN_PACKAGES: g++
     resource_class: arm.medium
     steps:
       - checkout
@@ -131,7 +154,7 @@ jobs:
     machine:
       image: ubuntu-2204:2022.10.2
     environment:
-      TOOLCHAIN_PACKAGE: g++
+      TOOLCHAIN_PACKAGES: g++
     steps:
       - checkout
       - linux-setup
@@ -162,6 +185,7 @@ workflows:
       - static-test
       - build-and-test
       - build-and-test-clang
+      - build-and-test-32b
       - build-and-test-release-clang
       - build-and-test-arm
       - build-bazel
