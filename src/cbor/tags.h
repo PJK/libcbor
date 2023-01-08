@@ -50,15 +50,19 @@ _CBOR_NODISCARD CBOR_EXPORT uint64_t cbor_tag_value(const cbor_item_t *item);
 /** Set the tagged item
  *
  * @param item  A tag
- * @param tagged_item[incref] The item to tag
+ * @param tagged_item The item to tag. Its reference count will be be increased
+ * by one.
  */
 CBOR_EXPORT void cbor_tag_set_item(cbor_item_t *item, cbor_item_t *tagged_item);
 
 /** Build a new tag
  *
- * @param item[incref] The tagee
+ * @param item The item to tag. Its reference count will be be increased by
+ * one.
  * @param value Tag value
- * @return **new** tag item
+ * @return Reference to the new tag item. The item's reference count is
+ * initialized to one.
+ * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t *cbor_build_tag(uint64_t value,
                                                         cbor_item_t *item);
