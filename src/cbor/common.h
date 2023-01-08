@@ -120,6 +120,9 @@ CBOR_EXPORT extern _cbor_free_t _cbor_free;
 
 /** Sets the memory management routines to use.
  *
+ * By default, libcbor will use the standard library `malloc`, `realloc`, and
+ * `free`.
+ *
  * \rst
  * .. warning:: This function modifies the global state and should therefore be
  *  used accordingly. Changing the memory handlers while allocated items exist

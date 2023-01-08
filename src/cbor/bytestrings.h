@@ -53,7 +53,8 @@ CBOR_EXPORT bool cbor_bytestring_is_indefinite(const cbor_item_t *item);
  * takes responsibility for the effect on items this item might be a part of
  *
  * @param item  A definite byte string
- * @return The address of the binary data. `NULL` if no data have been assigned
+ * @return The address of the underlying binary data
+ * @return `NULL` if no data have been assigned
  * yet.
  */
 _CBOR_NODISCARD
@@ -63,7 +64,8 @@ CBOR_EXPORT cbor_mutable_data cbor_bytestring_handle(const cbor_item_t *item);
  *
  * @param item  A definite byte string
  * @param data The memory block. The caller gives up the ownership of the block.
- * libcbor will deallocate it when appropriate using its free function
+ * libcbor will deallocate it when appropriate using the `free` implementation
+ * configured using #cbor_set_allocs
  * @param length Length of the data block
  */
 CBOR_EXPORT void cbor_bytestring_set_handle(
@@ -97,7 +99,8 @@ CBOR_EXPORT size_t cbor_bytestring_chunk_count(const cbor_item_t *item);
  * May realloc the chunk storage.
  *
  * @param item  An indefinite byte string
- * @param item[incref] A definite byte string
+ * @param chunk A definite byte string. Its reference count will be be increased
+ * by one.
  * @return true on success, false on realloc failure. In that case, the refcount
  * of `chunk` is not increased and the `item` is left intact.
  */
@@ -109,7 +112,9 @@ CBOR_EXPORT bool cbor_bytestring_add_chunk(cbor_item_t *item,
  *
  * The handle is initialized to `NULL` and length to 0
  *
- * @return **new** definite bytestring. `NULL` on malloc failure.
+ * @return Reference to the new bytestring item. The item's reference count is
+ * initialized to one.
+ * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD
 CBOR_EXPORT cbor_item_t *cbor_new_definite_bytestring(void);
@@ -118,7 +123,9 @@ CBOR_EXPORT cbor_item_t *cbor_new_definite_bytestring(void);
  *
  * The chunks array is initialized to `NULL` and chunk count to 0
  *
- * @return **new** indefinite bytestring. `NULL` on malloc failure.
+ * @return Reference to the new bytestring item. The item's reference count is
+ * initialized to one.
+ * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD
 CBOR_EXPORT cbor_item_t *cbor_new_indefinite_bytestring(void);
@@ -129,8 +136,9 @@ CBOR_EXPORT cbor_item_t *cbor_new_indefinite_bytestring(void);
  *
  * @param handle Block of binary data
  * @param length Length of `data`
- * @return A **new** byte string with content `handle`. `NULL` on malloc
- * failure.
+ * @return Reference to the new bytestring item. The item's reference count is
+ * initialized to one.
+ * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD
 CBOR_EXPORT cbor_item_t *cbor_build_bytestring(cbor_data handle, size_t length);
