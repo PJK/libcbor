@@ -13,6 +13,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+
 #include "cbor/cbor_export.h"
 #include "cbor/configuration.h"
 #include "data.h"
@@ -266,38 +267,43 @@ CBOR_EXPORT bool cbor_is_undef(const cbor_item_t *item);
  * ============================================================================
  */
 
-/** Increases the reference count by one
+/** Increases the item's reference count by one
  *
- * No dependent items are affected.
+ * Constant complexity; items referring to this one or items being referred to
+ * are not updated.
  *
- * @param item[incref] item the item
- * @return the input reference
+ * This function can be used to extend reference counting to client code.
+ *
+ * @param item Reference to an item
+ * @return The input \p item
  */
 CBOR_EXPORT cbor_item_t *cbor_incref(cbor_item_t *item);
 
-/** Decreases the reference count by one, deallocating the item if needed
+/** Decreases the item's reference count by one, deallocating the item if needed
  *
- * In case the item is deallocated, the reference count of any dependent items
- * is adjusted accordingly in a recursive manner.
+ * In case the item is deallocated, the reference count of all items this item
+ * references will also be #cbor_decref 'ed recursively.
  *
- * @param item[take] the item. Set to `NULL` if deallocated
+ * @param item Reference to an item. Will be set to `NULL` if deallocated
  */
 CBOR_EXPORT void cbor_decref(cbor_item_t **item);
 
-/** Decreases the reference count by one, deallocating the item if needed
+/** Decreases the item's reference count by one, deallocating the item if needed
  *
  * Convenience wrapper for #cbor_decref when its set-to-null behavior is not
  * needed
  *
- * @param item[take] the item
+ * @param item Reference to an item
  */
 CBOR_EXPORT void cbor_intermediate_decref(cbor_item_t *item);
 
-/** Get the reference count
+/** Get the item's reference count
  *
  * \rst
  * .. warning:: This does *not* account for transitive references.
  * \endrst
+ *
+ * @todo Add some inline examples for reference counting
  *
  * @param item  the item
  * @return the reference count
@@ -317,7 +323,7 @@ CBOR_EXPORT size_t cbor_refcount(const cbor_item_t *item);
  *  count afterwards, the memory will be leaked.
  * \endrst
  *
- * @param item[take] the item
+ * @param item Reference to an item
  * @return the item with reference count decreased by one
  */
 _CBOR_NODISCARD
