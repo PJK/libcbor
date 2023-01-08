@@ -23,7 +23,7 @@ void set_mock_malloc(int calls, ...) {
 }
 
 void finalize_mock_malloc(void) {
-  assert_int_equal(alloc_calls, alloc_calls_expected);
+  assert_size_equal(alloc_calls, alloc_calls_expected);
   free(expectations);
 }
 

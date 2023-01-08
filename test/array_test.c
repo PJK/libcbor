@@ -5,13 +5,6 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#include <cmocka.h>
-
 #include "assertions.h"
 #include "cbor.h"
 #include "test_allocator.h"
@@ -39,9 +32,9 @@ static void test_simple_array(void **_CBOR_UNUSED(_state)) {
   assert_non_null(arr);
   assert_true(cbor_typeof(arr) == CBOR_TYPE_ARRAY);
   assert_true(cbor_isa_array(arr));
-  assert_int_equal(cbor_array_size(arr), 1);
+  assert_size_equal(cbor_array_size(arr), 1);
   assert_true(res.read == 2);
-  assert_int_equal(cbor_array_allocated(arr), 1);
+  assert_size_equal(cbor_array_allocated(arr), 1);
   /* Check the values */
   assert_uint8(cbor_array_handle(arr)[0], 1);
   cbor_item_t *intermediate = cbor_array_get(arr, 0);
@@ -106,7 +99,7 @@ static void test_nested_indef_arrays(void **_CBOR_UNUSED(_state)) {
   assert_non_null(arr);
   assert_true(cbor_typeof(arr) == CBOR_TYPE_ARRAY);
   assert_true(cbor_isa_array(arr));
-  assert_int_equal(cbor_array_size(arr), 3);
+  assert_size_equal(cbor_array_size(arr), 3);
   assert_true(res.read == 7);
   /* Check the values */
   assert_uint8(cbor_array_handle(arr)[0], 1);
@@ -122,30 +115,30 @@ static void test_nested_indef_arrays(void **_CBOR_UNUSED(_state)) {
 
 static void test_array_replace(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *array = cbor_new_definite_array(2);
-  assert_int_equal(cbor_array_size(array), 0);
+  assert_size_equal(cbor_array_size(array), 0);
   cbor_item_t *one = cbor_build_uint8(1);
   cbor_item_t *three = cbor_build_uint8(3);
-  assert_int_equal(cbor_refcount(one), 1);
-  assert_int_equal(cbor_refcount(three), 1);
+  assert_size_equal(cbor_refcount(one), 1);
+  assert_size_equal(cbor_refcount(three), 1);
 
   // No item to replace
   assert_false(cbor_array_replace(array, 0, three));
-  assert_int_equal(cbor_refcount(three), 1);
+  assert_size_equal(cbor_refcount(three), 1);
 
   // Add items [1, 2]
   assert_true(cbor_array_push(array, one));
   assert_true(cbor_array_push(array, cbor_move(cbor_build_uint8(2))));
-  assert_int_equal(cbor_refcount(one), 2);
-  assert_int_equal(cbor_array_size(array), 2);
+  assert_size_equal(cbor_refcount(one), 2);
+  assert_size_equal(cbor_array_size(array), 2);
 
   // Array has only two items
   assert_false(cbor_array_replace(array, 2, three));
-  assert_int_equal(cbor_refcount(three), 1);
+  assert_size_equal(cbor_refcount(three), 1);
 
   // Change [1, 2] to [3, 2]
   assert_true(cbor_array_replace(array, 0, three));
-  assert_int_equal(cbor_refcount(one), 1);
-  assert_int_equal(cbor_refcount(three), 2);
+  assert_size_equal(cbor_refcount(one), 1);
+  assert_size_equal(cbor_refcount(three), 2);
   assert_uint8(cbor_move(cbor_array_get(array, 0)), 3);
   assert_uint8(cbor_move(cbor_array_get(array, 1)), 2);
 
@@ -164,7 +157,7 @@ static void test_array_push_overflow(void **_CBOR_UNUSED(_state)) {
   metadata->end_ptr = SIZE_MAX;
 
   assert_false(cbor_array_push(array, one));
-  assert_int_equal(cbor_refcount(one), 1);
+  assert_size_equal(cbor_refcount(one), 1);
 
   cbor_decref(&one);
   metadata->allocated = 0;
@@ -187,9 +180,9 @@ static void test_array_push(void **_CBOR_UNUSED(_state)) {
         cbor_item_t *string = cbor_build_string("Hello!");
 
         assert_false(cbor_array_push(array, string));
-        assert_int_equal(cbor_array_allocated(array), 0);
+        assert_size_equal(cbor_array_allocated(array), 0);
         assert_null(array->data);
-        assert_int_equal(array->metadata.array_metadata.end_ptr, 0);
+        assert_size_equal(array->metadata.array_metadata.end_ptr, 0);
 
         cbor_decref(&string);
         cbor_decref(&array);
@@ -206,7 +199,7 @@ static void test_indef_array_decode(void **_CBOR_UNUSED(_state)) {
         array = cbor_load(simple_indef_array, 4, &res);
 
         assert_null(array);
-        assert_int_equal(res.error.code, CBOR_ERR_MEMERROR);
+        assert_size_equal(res.error.code, CBOR_ERR_MEMERROR);
       },
       4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }

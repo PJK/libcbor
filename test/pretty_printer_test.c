@@ -5,14 +5,8 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#include <cmocka.h>
-
 #include <stdio.h>
+#include "assertions.h"
 #include "cbor.h"
 
 unsigned char data[] = {0x8B, 0x01, 0x20, 0x5F, 0x41, 0x01, 0x41, 0x02,

@@ -5,13 +5,7 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#include <cmocka.h>
-
+#include "assertions.h"
 #include "cbor.h"
 #include "test_allocator.h"
 
@@ -144,7 +138,7 @@ static void test_empty_bs(void **_CBOR_UNUSED(_state)) {
   assert_non_null(bs);
   assert_true(cbor_typeof(bs) == CBOR_TYPE_BYTESTRING);
   assert_true(cbor_isa_bytestring(bs));
-  assert_int_equal(cbor_bytestring_length(bs), 0);
+  assert_size_equal(cbor_bytestring_length(bs), 0);
   assert_true(res.read == 1);
   cbor_decref(&bs);
   assert_null(bs);
@@ -274,7 +268,7 @@ unsigned char data11[] = {0x5F, 0x58, 0x01, 0xA1, 0x58, 0x01, 0xA2, 0xFF, 0xFF};
 static void test_two_indef(void **_CBOR_UNUSED(_state)) {
   bs = cbor_load(data11, 9, &res);
   assert_non_null(bs);
-  assert_int_equal(1, cbor_refcount(bs));
+  assert_size_equal(1, cbor_refcount(bs));
   assert_true(cbor_typeof(bs) == CBOR_TYPE_BYTESTRING);
   assert_true(cbor_isa_bytestring(bs));
   assert_true(cbor_bytestring_length(bs) == 0);
@@ -321,7 +315,7 @@ static void test_add_chunk_reallocation_overflow(void **_CBOR_UNUSED(_state)) {
   metadata->chunk_capacity = SIZE_MAX;
 
   assert_false(cbor_bytestring_add_chunk(bs, chunk));
-  assert_int_equal(cbor_refcount(chunk), 1);
+  assert_size_equal(cbor_refcount(chunk), 1);
 
   metadata->chunk_count = 0;
   metadata->chunk_capacity = 0;
@@ -352,8 +346,8 @@ static void test_bytestring_add_chunk(void **_CBOR_UNUSED(_state)) {
 
         assert_false(cbor_bytestring_add_chunk(bytestring, chunk));
 
-        assert_int_equal(cbor_bytestring_chunk_count(bytestring), 0);
-        assert_int_equal(
+        assert_size_equal(cbor_bytestring_chunk_count(bytestring), 0);
+        assert_size_equal(
             ((struct cbor_indefinite_string_data *)bytestring->data)
                 ->chunk_capacity,
             0);

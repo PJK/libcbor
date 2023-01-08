@@ -5,13 +5,7 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#include <cmocka.h>
-
+#include "assertions.h"
 #include "cbor.h"
 
 /* These tests verify behavior on interesting randomly generated inputs from the
@@ -26,7 +20,7 @@ static void test_1(void **_CBOR_UNUSED(_state)) {
   item = cbor_load(data1, 2, &res);
   assert_null(item);
   assert_true(res.error.code == CBOR_ERR_NOTENOUGHDATA);
-  assert_int_equal(res.error.position, 2);
+  assert_size_equal(res.error.position, 2);
 }
 
 unsigned char data2[] = {0x9D};
@@ -34,7 +28,7 @@ static void test_2(void **_CBOR_UNUSED(_state)) {
   item = cbor_load(data2, 1, &res);
   assert_null(item);
   assert_true(res.error.code == CBOR_ERR_MALFORMATED);
-  assert_int_equal(res.error.position, 0);
+  assert_size_equal(res.error.position, 0);
 }
 
 unsigned char data3[] = {0xD6};
@@ -42,7 +36,7 @@ static void test_3(void **_CBOR_UNUSED(_state)) {
   item = cbor_load(data3, 1, &res);
   assert_null(item);
   assert_true(res.error.code == CBOR_ERR_NOTENOUGHDATA);
-  assert_int_equal(res.error.position, 1);
+  assert_size_equal(res.error.position, 1);
 }
 
 #ifdef SANE_MALLOC
@@ -51,7 +45,7 @@ static void test_4(void **_CBOR_UNUSED(_state)) {
   item = cbor_load(data4, 7, &res);
   assert_null(item);
   assert_true(res.error.code == CBOR_ERR_MEMERROR);
-  assert_int_equal(res.error.position, 5);
+  assert_size_equal(res.error.position, 5);
 }
 
 unsigned char data5[] = {0x9A, 0xDA, 0x3A, 0xB2, 0x7F, 0x29};
@@ -59,7 +53,7 @@ static void test_5(void **_CBOR_UNUSED(_state)) {
   assert_true(res.error.code == CBOR_ERR_MEMERROR);
   item = cbor_load(data5, 6, &res);
   assert_null(item);
-  assert_int_equal(res.error.position, 5);
+  assert_size_equal(res.error.position, 5);
   /* Indef string expectation mismatch */
 }
 #endif
@@ -69,7 +63,7 @@ static void test_6(void **_CBOR_UNUSED(_state)) {
   item = cbor_load(data6, 5, &res);
   assert_null(item);
   assert_true(res.error.code == CBOR_ERR_SYNTAXERROR);
-  assert_int_equal(res.error.position, 2);
+  assert_size_equal(res.error.position, 2);
 }
 
 #ifdef EIGHT_BYTE_SIZE_T
@@ -81,7 +75,7 @@ static void test_7(void **_CBOR_UNUSED(_state)) {
   item = cbor_load(data7, 16, &res);
   assert_null(item);
   assert_true(res.error.code == CBOR_ERR_MEMERROR);
-  assert_int_equal(res.error.position, 10);
+  assert_size_equal(res.error.position, 10);
 }
 #endif
 
@@ -94,7 +88,7 @@ static void test_8(void **_CBOR_UNUSED(_state)) {
   item = cbor_load(data8, 39, &res);
   assert_null(item);
   assert_true(res.error.code == CBOR_ERR_SYNTAXERROR);
-  assert_int_equal(res.error.position, 7);
+  assert_size_equal(res.error.position, 7);
 }
 
 unsigned char data9[] = {0xBF, 0x05, 0xFF, 0x00, 0x00, 0x00, 0x10, 0x04};
@@ -102,7 +96,7 @@ static void test_9(void **_CBOR_UNUSED(_state)) {
   item = cbor_load(data9, 8, &res);
   assert_null(item);
   assert_true(res.error.code == CBOR_ERR_SYNTAXERROR);
-  assert_int_equal(res.error.position, 3);
+  assert_size_equal(res.error.position, 3);
 }
 
 int main(void) {

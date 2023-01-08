@@ -1,13 +1,7 @@
 #ifndef STREAM_EXPECTATIONS_H_
 #define STREAM_EXPECTATIONS_H_
 
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#include <cmocka.h>
-
+#include "assertions.h"
 #include "cbor.h"
 
 #define MAX_QUEUE_ITEMS 30

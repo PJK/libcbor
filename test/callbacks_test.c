@@ -4,13 +4,7 @@
  * libcbor is free software; you can redistribute it and/or modify
  * it under the terms of the MIT license. See LICENSE for details.
  */
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdint.h>
-
-#include <cmocka.h>
-
+#include "assertions.h"
 #include "cbor.h"
 #include "cbor/internal/builder_callbacks.h"
 #include "cbor/internal/stack.h"
@@ -52,22 +46,22 @@ static void test_builder_byte_string_callback_append(
 
   assert_false(context.creation_failed);
   assert_false(context.syntax_error);
-  assert_int_equal(context.stack->size, 1);
+  assert_size_equal(context.stack->size, 1);
 
   cbor_item_t* bytestring = stack.top->item;
-  assert_int_equal(cbor_refcount(bytestring), 1);
+  assert_size_equal(cbor_refcount(bytestring), 1);
   assert_true(cbor_typeof(bytestring) == CBOR_TYPE_BYTESTRING);
   assert_true(cbor_isa_bytestring(bytestring));
-  assert_int_equal(cbor_bytestring_length(bytestring), 0);
+  assert_size_equal(cbor_bytestring_length(bytestring), 0);
   assert_true(cbor_bytestring_is_indefinite(bytestring));
-  assert_int_equal(cbor_bytestring_chunk_count(bytestring), 1);
+  assert_size_equal(cbor_bytestring_chunk_count(bytestring), 1);
 
   cbor_item_t* chunk = cbor_bytestring_chunks_handle(bytestring)[0];
-  assert_int_equal(cbor_refcount(chunk), 1);
+  assert_size_equal(cbor_refcount(chunk), 1);
   assert_true(cbor_typeof(bytestring) == CBOR_TYPE_BYTESTRING);
   assert_true(cbor_isa_bytestring(chunk));
   assert_true(cbor_bytestring_is_definite(chunk));
-  assert_int_equal(cbor_bytestring_length(chunk), 3);
+  assert_size_equal(cbor_bytestring_length(chunk), 3);
   assert_memory_equal(cbor_bytestring_handle(chunk), bytestring_data, 3);
   // Data is copied
   assert_ptr_not_equal(cbor_bytestring_handle(chunk), bytestring_data);
@@ -93,16 +87,16 @@ static void test_builder_byte_string_callback_append_alloc_failure(
 
   assert_true(context.creation_failed);
   assert_false(context.syntax_error);
-  assert_int_equal(context.stack->size, 1);
+  assert_size_equal(context.stack->size, 1);
 
   // The stack remains unchanged
   cbor_item_t* bytestring = stack.top->item;
-  assert_int_equal(cbor_refcount(bytestring), 1);
+  assert_size_equal(cbor_refcount(bytestring), 1);
   assert_true(cbor_typeof(bytestring) == CBOR_TYPE_BYTESTRING);
   assert_true(cbor_isa_bytestring(bytestring));
-  assert_int_equal(cbor_bytestring_length(bytestring), 0);
+  assert_size_equal(cbor_bytestring_length(bytestring), 0);
   assert_true(cbor_bytestring_is_indefinite(bytestring));
-  assert_int_equal(cbor_bytestring_chunk_count(bytestring), 0);
+  assert_size_equal(cbor_bytestring_chunk_count(bytestring), 0);
 
   cbor_decref(&bytestring);
   _cbor_stack_pop(&stack);
@@ -127,16 +121,16 @@ static void test_builder_byte_string_callback_append_item_alloc_failure(
 
   assert_true(context.creation_failed);
   assert_false(context.syntax_error);
-  assert_int_equal(context.stack->size, 1);
+  assert_size_equal(context.stack->size, 1);
 
   // The stack remains unchanged
   cbor_item_t* bytestring = stack.top->item;
-  assert_int_equal(cbor_refcount(bytestring), 1);
+  assert_size_equal(cbor_refcount(bytestring), 1);
   assert_true(cbor_typeof(bytestring) == CBOR_TYPE_BYTESTRING);
   assert_true(cbor_isa_bytestring(bytestring));
-  assert_int_equal(cbor_bytestring_length(bytestring), 0);
+  assert_size_equal(cbor_bytestring_length(bytestring), 0);
   assert_true(cbor_bytestring_is_indefinite(bytestring));
-  assert_int_equal(cbor_bytestring_chunk_count(bytestring), 0);
+  assert_size_equal(cbor_bytestring_chunk_count(bytestring), 0);
 
   cbor_decref(&bytestring);
   _cbor_stack_pop(&stack);
@@ -161,16 +155,16 @@ static void test_builder_byte_string_callback_append_parent_alloc_failure(
 
   assert_true(context.creation_failed);
   assert_false(context.syntax_error);
-  assert_int_equal(context.stack->size, 1);
+  assert_size_equal(context.stack->size, 1);
 
   // The stack remains unchanged
   cbor_item_t* bytestring = stack.top->item;
-  assert_int_equal(cbor_refcount(bytestring), 1);
+  assert_size_equal(cbor_refcount(bytestring), 1);
   assert_true(cbor_typeof(bytestring) == CBOR_TYPE_BYTESTRING);
   assert_true(cbor_isa_bytestring(bytestring));
-  assert_int_equal(cbor_bytestring_length(bytestring), 0);
+  assert_size_equal(cbor_bytestring_length(bytestring), 0);
   assert_true(cbor_bytestring_is_indefinite(bytestring));
-  assert_int_equal(cbor_bytestring_chunk_count(bytestring), 0);
+  assert_size_equal(cbor_bytestring_chunk_count(bytestring), 0);
 
   cbor_decref(&bytestring);
   _cbor_stack_pop(&stack);
@@ -191,20 +185,20 @@ static void test_builder_string_callback_append(void** _CBOR_UNUSED(_state)) {
 
   assert_false(context.creation_failed);
   assert_false(context.syntax_error);
-  assert_int_equal(context.stack->size, 1);
+  assert_size_equal(context.stack->size, 1);
 
   cbor_item_t* string = stack.top->item;
-  assert_int_equal(cbor_refcount(string), 1);
+  assert_size_equal(cbor_refcount(string), 1);
   assert_true(cbor_isa_string(string));
-  assert_int_equal(cbor_string_length(string), 0);
+  assert_size_equal(cbor_string_length(string), 0);
   assert_true(cbor_string_is_indefinite(string));
-  assert_int_equal(cbor_string_chunk_count(string), 1);
+  assert_size_equal(cbor_string_chunk_count(string), 1);
 
   cbor_item_t* chunk = cbor_string_chunks_handle(string)[0];
-  assert_int_equal(cbor_refcount(chunk), 1);
+  assert_size_equal(cbor_refcount(chunk), 1);
   assert_true(cbor_isa_string(chunk));
   assert_true(cbor_string_is_definite(chunk));
-  assert_int_equal(cbor_string_length(chunk), 3);
+  assert_size_equal(cbor_string_length(chunk), 3);
   assert_memory_equal(cbor_string_handle(chunk), "abc", 3);
   // Data is copied
   assert_ptr_not_equal(cbor_string_handle(chunk), string_data);
@@ -229,16 +223,16 @@ static void test_builder_string_callback_append_alloc_failure(
 
   assert_true(context.creation_failed);
   assert_false(context.syntax_error);
-  assert_int_equal(context.stack->size, 1);
+  assert_size_equal(context.stack->size, 1);
 
   // The stack remains unchanged
   cbor_item_t* string = stack.top->item;
-  assert_int_equal(cbor_refcount(string), 1);
+  assert_size_equal(cbor_refcount(string), 1);
   assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
   assert_true(cbor_isa_string(string));
-  assert_int_equal(cbor_string_length(string), 0);
+  assert_size_equal(cbor_string_length(string), 0);
   assert_true(cbor_string_is_indefinite(string));
-  assert_int_equal(cbor_string_chunk_count(string), 0);
+  assert_size_equal(cbor_string_chunk_count(string), 0);
 
   cbor_decref(&string);
   _cbor_stack_pop(&stack);
@@ -261,16 +255,16 @@ static void test_builder_string_callback_append_item_alloc_failure(
 
   assert_true(context.creation_failed);
   assert_false(context.syntax_error);
-  assert_int_equal(context.stack->size, 1);
+  assert_size_equal(context.stack->size, 1);
 
   // The stack remains unchanged
   cbor_item_t* string = stack.top->item;
-  assert_int_equal(cbor_refcount(string), 1);
+  assert_size_equal(cbor_refcount(string), 1);
   assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
   assert_true(cbor_isa_string(string));
-  assert_int_equal(cbor_string_length(string), 0);
+  assert_size_equal(cbor_string_length(string), 0);
   assert_true(cbor_string_is_indefinite(string));
-  assert_int_equal(cbor_string_chunk_count(string), 0);
+  assert_size_equal(cbor_string_chunk_count(string), 0);
 
   cbor_decref(&string);
   _cbor_stack_pop(&stack);
@@ -293,16 +287,16 @@ static void test_builder_string_callback_append_parent_alloc_failure(
 
   assert_true(context.creation_failed);
   assert_false(context.syntax_error);
-  assert_int_equal(context.stack->size, 1);
+  assert_size_equal(context.stack->size, 1);
 
   // The stack remains unchanged
   cbor_item_t* string = stack.top->item;
-  assert_int_equal(cbor_refcount(string), 1);
+  assert_size_equal(cbor_refcount(string), 1);
   assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
   assert_true(cbor_isa_string(string));
-  assert_int_equal(cbor_string_length(string), 0);
+  assert_size_equal(cbor_string_length(string), 0);
   assert_true(cbor_string_is_indefinite(string));
-  assert_int_equal(cbor_string_chunk_count(string), 0);
+  assert_size_equal(cbor_string_chunk_count(string), 0);
 
   cbor_decref(&string);
   _cbor_stack_pop(&stack);
@@ -324,13 +318,13 @@ static void test_append_array_failure(void** _CBOR_UNUSED(_state)) {
 
   assert_true(context.creation_failed);
   assert_false(context.syntax_error);
-  assert_int_equal(context.stack->size, 1);
+  assert_size_equal(context.stack->size, 1);
 
   // The stack remains unchanged
   cbor_item_t* array = stack.top->item;
-  assert_int_equal(cbor_refcount(array), 1);
+  assert_size_equal(cbor_refcount(array), 1);
   assert_true(cbor_isa_array(array));
-  assert_int_equal(cbor_array_size(array), 0);
+  assert_size_equal(cbor_array_size(array), 0);
 
   // item free'd by _cbor_builder_append
   cbor_decref(&array);
@@ -353,13 +347,13 @@ static void test_append_map_failure(void** _CBOR_UNUSED(_state)) {
 
   assert_true(context.creation_failed);
   assert_false(context.syntax_error);
-  assert_int_equal(context.stack->size, 1);
+  assert_size_equal(context.stack->size, 1);
 
   // The stack remains unchanged
   cbor_item_t* map = stack.top->item;
-  assert_int_equal(cbor_refcount(map), 1);
+  assert_size_equal(cbor_refcount(map), 1);
   assert_true(cbor_isa_map(map));
-  assert_int_equal(cbor_map_size(map), 0);
+  assert_size_equal(cbor_map_size(map), 0);
 
   // item free'd by _cbor_builder_append
   cbor_decref(&map);
@@ -373,7 +367,7 @@ static void test_invalid_indef_break(void** _CBOR_UNUSED(_state)) {
   cbor_item_t* item = cbor_load(invalid_indef_break_data, 2, &res);
 
   assert_null(item);
-  assert_int_equal(res.read, 2);
+  assert_size_equal(res.read, 2);
   assert_true(res.error.code == CBOR_ERR_SYNTAXERROR);
 }
 
