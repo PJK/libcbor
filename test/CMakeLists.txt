@@ -6,6 +6,8 @@ message(STATUS "CMocka vars: ${CMOCKA_LIBRARIES} ${CMOCKA_INCLUDE_DIR}")
 
 find_library(MATH_LIBRARY m)
 
+CHECK_INCLUDE_FILE("execinfo.h" HAS_EXECINFO)
+
 foreach (TEST ${TESTS})
     string(REGEX REPLACE ".*/([^/]+).c" "\\1" NAME ${TEST})
     message("Adding test ${NAME}")

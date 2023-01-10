@@ -1,6 +1,8 @@
 #include "test_allocator.h"
 
+#ifdef HAS_EXECINFO
 #include <execinfo.h>
+#endif
 
 // How many alloc calls we expect
 int alloc_calls_expected;
@@ -28,6 +30,7 @@ void finalize_mock_malloc(void) {
 }
 
 void print_backtrace() {
+#if HAS_EXECINFO
   void *buffer[128];
   int frames = backtrace(buffer, 128);
   char **symbols = backtrace_symbols(buffer, frames);
@@ -36,6 +39,7 @@ void print_backtrace() {
     printf("%s\n", symbols[i]);
   }
   free(symbols);
+#endif
 }
 
 void *instrumented_malloc(size_t size) {
