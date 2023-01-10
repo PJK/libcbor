@@ -189,16 +189,11 @@ jobs:
     resource_class: 'windows.medium'
     machine:
       image: 'windows-server-2022-gui:current'
-      shell: 'powershell.exe -ExecutionPolicy Bypass'
+      shell: 'bash.exe'
     steps:
       - checkout
-      - run:
-        command: cmake -H. -Bbuild
-        shell: bash.exe
-      - run:
-        command: cmake --build build
-        shell: bash.exe
-
+      - run: cmake -H. -Bbuild
+      - run: cmake --build build
 
 workflows:
   build-and-test:
