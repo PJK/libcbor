@@ -184,6 +184,22 @@ jobs:
       - build
       - test
 
+  
+  build-and-test-win:
+    resource_class: 'windows.medium'
+    machine:
+      image: 'windows-server-2022-gui:current'
+      shell: 'powershell.exe -ExecutionPolicy Bypass'
+    steps:
+      - checkout
+      - run:
+        command: cmake -H. -Bbuild
+        shell: bash.exe
+      - run:
+        command: cmake --build build
+        shell: bash.exe
+
+
 workflows:
   build-and-test:
     jobs:
@@ -193,6 +209,7 @@ workflows:
       - build-and-test-32b
       - build-and-test-release-clang
       - build-and-test-arm
+      - build-and-test-win
       - build-bazel
       - llvm-coverage
       # OSX builds are expensive, run only on master
