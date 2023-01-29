@@ -15,7 +15,6 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
-#include <strings.h>
 
 #include <cmocka.h>
 
@@ -131,8 +130,8 @@ static void test_serialize_negint64(void **_CBOR_UNUSED(_state)) {
 static void test_serialize_definite_bytestring(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_new_definite_bytestring();
   unsigned char *data = malloc(256);
-  bzero(data, 256); /* Prevent undefined behavior in comparison */
   cbor_bytestring_set_handle(item, data, 256);
+  memset(data, 0, 256); /* Prevent undefined behavior in comparison */
   assert_size_equal(256 + 3, cbor_serialize(item, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0x59, 0x01, 0x00}), 3);
   assert_memory_equal(buffer + 3, data, 256);
@@ -145,7 +144,7 @@ static void test_serialize_indefinite_bytestring(void **_CBOR_UNUSED(_state)) {
 
   cbor_item_t *chunk = cbor_new_definite_bytestring();
   unsigned char *data = malloc(256);
-  bzero(data, 256); /* Prevent undefined behavior in comparison */
+  memset(data, 0, 256); /* Prevent undefined behavior in comparison */
   cbor_bytestring_set_handle(chunk, data, 256);
 
   assert_true(cbor_bytestring_add_chunk(item, cbor_move(chunk)));
