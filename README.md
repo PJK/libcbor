@@ -25,7 +25,7 @@
 
 ```bash
 git clone https://github.com/PJK/libcbor
-cmake -DCMAKE_BUILD_TYPE=Release -DCBOR_CUSTOM_ALLOC=ON libcbor
+cmake -DCMAKE_BUILD_TYPE=Release libcbor
 make
 make install
 ```
