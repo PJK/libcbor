@@ -3,6 +3,9 @@ Template:
 
 Next
 ---------------------
+
+0.10.2 (2023-01-31)
+---------------------
 - [Fixed minor test bug causing failures for x86 Linux](https://github.com/PJK/libcbor/pull/266) (discovered by [trofi](https://github.com/PJK/libcbor/issues/263))
   - Actual libcbor functionality not affected, bug was in the test suite
 - [Made tests platform-independent](https://github.com/PJK/libcbor/pull/272)
