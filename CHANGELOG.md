@@ -3,6 +3,7 @@ Template:
 
 Next
 ---------------------
+- [Updated documentation to refer to RFC 8949](https://github.com/PJK/libcbor/issues/269)
 
 0.10.2 (2023-01-31)
 ---------------------
