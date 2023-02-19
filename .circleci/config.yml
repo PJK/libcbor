@@ -5,11 +5,12 @@ commands:
     steps:
     - run: sudo apt-get update
     - run: sudo apt-get install -y cmake ${TOOLCHAIN_PACKAGES}
-    - run: sudo apt install libcmocka-dev
+    - run: sudo apt install libcmocka-dev libcjson-dev
   build:
     steps:
     - run: >
         cmake -DWITH_TESTS=ON \
+          -DWITH_EXAMPLES=ON \
           -DCMAKE_BUILD_TYPE=Debug \
           -DSANITIZE=OFF \
           -DCOVERAGE="${CMAKE_COVERAGE:='OFF'}" \
