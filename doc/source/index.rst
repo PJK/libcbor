@@ -9,7 +9,7 @@ Overview
 
 
 Main features
- - - Complete IETF RFC 8949 (STD 94) conformance [#]_
+ - Complete `IETF RFC 8949 (STD 94) <https://www.rfc-editor.org/info/std94>`_ conformance [#]_
  - Robust C99 implementation
  - Layered architecture offers both control and convenience
  - Flexible memory management
