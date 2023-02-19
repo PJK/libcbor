@@ -74,6 +74,8 @@ cJSON* cbor_to_cjson(cbor_item_t* item) {
       }
       return cJSON_CreateNumber(cbor_float_get_float(item));
   }
+
+  return cJSON_CreateNull();
 }
 
 /*
