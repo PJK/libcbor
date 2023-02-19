@@ -313,7 +313,7 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent) {
     case CBOR_TYPE_NEGINT: {
       fprintf(out, "%*s[CBOR_TYPE_NEGINT] ", indent, " ");
       fprintf(out, "Width: %dB, ", _pow(2, cbor_int_get_width(item)));
-      fprintf(out, "Value: -%" PRIu64 " -1\n", cbor_get_int(item));
+      fprintf(out, "Value: -%" PRIu64 " - 1\n", cbor_get_int(item));
       break;
     }
     case CBOR_TYPE_BYTESTRING: {
