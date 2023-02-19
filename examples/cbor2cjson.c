@@ -33,7 +33,9 @@ cJSON* cbor_to_cjson(cbor_item_t* item) {
         memcpy(null_terminated_string, cbor_string_handle(item),
                cbor_string_length(item));
         null_terminated_string[cbor_string_length(item)] = 0;
-        return cJSON_CreateString(null_terminated_string);
+        cJSON* result = cJSON_CreateString(null_terminated_string);
+        free(null_terminated_string);
+        return result;
       }
       return cJSON_CreateString("Unsupported CBOR item: Chunked string");
     case CBOR_TYPE_ARRAY: {
@@ -61,6 +63,7 @@ cJSON* cbor_to_cjson(cbor_item_t* item) {
 
         cJSON_AddItemToObject(result, key,
                               cbor_to_cjson(cbor_map_handle(item)[i].value));
+        free(key);
       }
       return result;
     }
