@@ -1,7 +1,6 @@
 # [libcbor](https://github.com/PJK/libcbor)
 
 [![CircleCI](https://circleci.com/gh/PJK/libcbor/tree/master.svg?style=svg)](https://circleci.com/gh/PJK/libcbor/tree/master)
-[![Build status](https://ci.appveyor.com/api/projects/status/8kkmvmefelsxp5u2?svg=true)](https://ci.appveyor.com/project/PJK/libcbor)
 [![Documentation Status](https://readthedocs.org/projects/libcbor/badge/?version=latest)](https://readthedocs.org/projects/libcbor/?badge=latest)
 [![latest packaged version(s)](https://repology.org/badge/latest-versions/libcbor.svg)](https://repology.org/project/libcbor/versions)
 [![codecov](https://codecov.io/gh/PJK/libcbor/branch/master/graph/badge.svg)](https://codecov.io/gh/PJK/libcbor)
