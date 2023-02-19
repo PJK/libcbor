@@ -111,7 +111,7 @@ void cjson_cbor_stream_decode(cJSON *source,
 }
 
 void usage(void) {
-  printf("Usage: cjson [input JSON file]\n");
+  printf("Usage: cjson2cbor [input JSON file]\n");
   exit(1);
 }
 
