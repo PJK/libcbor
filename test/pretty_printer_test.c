@@ -6,33 +6,66 @@
  */
 
 #include <stdio.h>
+#include <string.h>
+
 #include "assertions.h"
 #include "cbor.h"
 
-unsigned char data[] = {0x8B, 0x01, 0x20, 0x5F, 0x41, 0x01, 0x41, 0x02,
-                        0xFF, 0x7F, 0x61, 0x61, 0x61, 0x62, 0xFF, 0x9F,
-                        0xFF, 0xA1, 0x61, 0x61, 0x61, 0x62, 0xC0, 0xBF,
-                        0xFF, 0xFB, 0x40, 0x09, 0x1E, 0xB8, 0x51, 0xEB,
-                        0x85, 0x1F, 0xF6, 0xF7, 0xF5};
-
-static void test_pretty_printer(void **_CBOR_UNUSED(_state)) {
+void assert_describe_result(cbor_item_t *item, char *result[], size_t lines) {
 #if CBOR_PRETTY_PRINTER
   FILE *outfile = tmpfile();
-  struct cbor_load_result res;
-  cbor_item_t *item = cbor_load(data, 37, &res);
   cbor_describe(item, outfile);
-  cbor_decref(&item);
-
-  item = cbor_new_ctrl();
-  cbor_set_ctrl(item, 1);
-  cbor_describe(item, outfile);
-  cbor_decref(&item);
-
+  cbor_describe(item, stdout);
+  rewind(outfile);
+  for (size_t i = 0; i < lines; i++) {
+    // Expected line + linebreak + null character
+    char *buffer = malloc(strlen(result[i]) + 2);
+    char *result_with_newline = malloc(strlen(result[i]) + 2);
+    assert_non_null(buffer);
+    assert_non_null(result_with_newline);
+    sprintf(result_with_newline, "%s\n", result[i]);
+    fgets(buffer, strlen(result[i]) + 2, outfile);
+    fprintf(stdout, "%s", buffer);
+    assert_int_equal(strlen(buffer), strlen(result_with_newline));
+    assert_string_equal(buffer, result_with_newline);
+    free(buffer);
+  }
+  fgetc(outfile);
+  assert_true(feof(outfile));
   fclose(outfile);
 #endif
 }
 
+static void test_uint(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_build_uint8(42);
+  char *expected[] = {"[CBOR_TYPE_UINT] Width: 1B, Value: 42"};
+  assert_describe_result(item, expected, 1);
+  cbor_decref(&item);
+}
+
+static void test_negint(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_build_negint16(40);
+  char *expected[] = {"[CBOR_TYPE_NEGINT] Width: 2B, Value: -40 - 1"};
+  assert_describe_result(item, expected, 1);
+  cbor_decref(&item);
+}
+
+static void test_definite_array(void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_definite_array(2);
+  assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(1))));
+  assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(2))));
+  char *expected[] = {
+      "[CBOR_TYPE_ARRAY] Definite, size: 2",
+      "    [CBOR_TYPE_UINT] Width: 1B, Value: 1",
+      "    [CBOR_TYPE_UINT] Width: 1B, Value: 2",
+  };
+  assert_describe_result(item, expected, 3);
+  cbor_decref(&item);
+}
+
 int main(void) {
-  const struct CMUnitTest tests[] = {cmocka_unit_test(test_pretty_printer)};
+  const struct CMUnitTest tests[] = {cmocka_unit_test(test_uint),
+                                     cmocka_unit_test(test_negint),
+                                     cmocka_unit_test(test_definite_array)};
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

@@ -301,17 +301,21 @@ static int _pow(int b, int ex) {
   return res;
 }
 
+static void _cbor_type_marquee(FILE *out, char *label, int indent) {
+  fprintf(out, "%*.*s[%s] ", indent, indent, " ", label);
+}
+
 static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent) {
   setlocale(LC_ALL, "");
   switch (cbor_typeof(item)) {
     case CBOR_TYPE_UINT: {
-      fprintf(out, "%*s[CBOR_TYPE_UINT] ", indent, " ");
+      _cbor_type_marquee(out, "CBOR_TYPE_UINT", indent);
       fprintf(out, "Width: %dB, ", _pow(2, cbor_int_get_width(item)));
       fprintf(out, "Value: %" PRIu64 "\n", cbor_get_int(item));
       break;
     }
     case CBOR_TYPE_NEGINT: {
-      fprintf(out, "%*s[CBOR_TYPE_NEGINT] ", indent, " ");
+      _cbor_type_marquee(out, "CBOR_TYPE_NEGINT", indent);
       fprintf(out, "Width: %dB, ", _pow(2, cbor_int_get_width(item)));
       fprintf(out, "Value: -%" PRIu64 " - 1\n", cbor_get_int(item));
       break;
@@ -351,7 +355,7 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent) {
       break;
     }
     case CBOR_TYPE_ARRAY: {
-      fprintf(out, "%*s[CBOR_TYPE_ARRAY] ", indent, " ");
+      _cbor_type_marquee(out, "CBOR_TYPE_ARRAY", indent);
       if (cbor_array_is_definite(item)) {
         fprintf(out, "Definite, size: %zu\n", cbor_array_size(item));
       } else {
