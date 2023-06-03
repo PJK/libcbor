@@ -59,7 +59,8 @@ static void test_float8(void **_CBOR_UNUSED(_state)) {
   // XXX: the cast prevents promotion to 80-bit floats on 32-bit x86
   assert_true(cbor_float_get_float8(float_ctrl) == (double)1.0e+300);
   // Not using `assert_double_equal` since CI has an old version of cmocka
-  assert_true(fabs(cbor_float_get_float(float_ctrl) - 1.0e+300) < eps);
+  printf("%f\n", cbor_float_get_float(float_ctrl));
+  assert_true(fabs(cbor_float_get_float(float_ctrl) - (double)1.0e+300) < eps);
   cbor_decref(&float_ctrl);
   assert_null(float_ctrl);
 }
