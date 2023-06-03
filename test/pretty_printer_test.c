@@ -28,6 +28,7 @@ void assert_describe_result(cbor_item_t *item, char *result[], size_t lines) {
     assert_int_equal(strlen(buffer), strlen(result_with_newline));
     assert_string_equal(buffer, result_with_newline);
     free(buffer);
+    free(result_with_newline);
   }
   fgetc(outfile);
   assert_true(feof(outfile));
