@@ -68,9 +68,11 @@ void _cbor_builder_append(cbor_item_t *item,
       // indefinite items
       if (ctx->stack->top->subitems % 2) {
         // Odd record, this is a value.
+        ctx->creation_failed =
+            !_cbor_map_add_value(ctx->stack->top->item, item);
         // Adding a value never fails since the memory is allocated when the
         // key is added
-        CBOR_ASSERT(_cbor_map_add_value(ctx->stack->top->item, item));
+        CBOR_ASSERT(!ctx->creation_failed);
       } else {
         // Even record, this is a key.
         if (!_cbor_map_add_key(ctx->stack->top->item, item)) {
