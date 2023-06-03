@@ -55,8 +55,9 @@ static void test_definite_bytestring(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_build_bytestring(data, 3);
   char *expected[] = {
       "[CBOR_TYPE_BYTESTRING] Definite, length 3B",
+      "    010203",
   };
-  assert_describe_result(item, expected, 1);
+  assert_describe_result(item, expected, 2);
   cbor_decref(&item);
 }
 
@@ -70,9 +71,11 @@ static void test_indefinite_bytestring(void **_CBOR_UNUSED(_state)) {
   char *expected[] = {
       "[CBOR_TYPE_BYTESTRING] Indefinite, with 2 chunks:",
       "    [CBOR_TYPE_BYTESTRING] Definite, length 3B",
+      "        010203",
       "    [CBOR_TYPE_BYTESTRING] Definite, length 2B",
+      "        0102",
   };
-  assert_describe_result(item, expected, 3);
+  assert_describe_result(item, expected, 5);
   cbor_decref(&item);
 }
 
