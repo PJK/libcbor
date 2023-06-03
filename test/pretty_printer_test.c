@@ -11,53 +11,46 @@
 #include "assertions.h"
 #include "cbor.h"
 
-void assert_describe_result(cbor_item_t *item, char *result[], size_t lines) {
+void assert_describe_result(cbor_item_t *item, char *expected_result) {
 #if CBOR_PRETTY_PRINTER
+  // We know the expected size based on `expected_result`, but read everything
+  // in order to get the full actual output in a useful error message.
+  const size_t buffer_size = 512;
   FILE *outfile = tmpfile();
   cbor_describe(item, outfile);
   rewind(outfile);
-  for (size_t i = 0; i < lines; i++) {
-    // Expected line + linebreak + null character
-    size_t buffer_size = strlen(result[i]) + 2;
-    char *buffer = malloc(buffer_size);
-    char *result_with_newline = malloc(buffer_size);
-    assert_non_null(buffer);
-    assert_non_null(result_with_newline);
-    snprintf(result_with_newline, buffer_size, "%s\n", result[i]);
-    fgets(buffer, strlen(result[i]) + 2, outfile);
-    assert_int_equal(strlen(buffer), strlen(result_with_newline));
-    assert_string_equal(buffer, result_with_newline);
-    free(buffer);
-    free(result_with_newline);
-  }
-  fgetc(outfile);
+  // Treat string as null-terminated since cmocka doesn't have asserts
+  // for explicit length strings.
+  char *output = malloc(buffer_size);
+  assert_non_null(output);
+  size_t output_size = fread(output, sizeof(char), buffer_size, outfile);
+  output[output_size] = '\0';
+  assert_string_equal(output, expected_result);
   assert_true(feof(outfile));
+  free(output);
   fclose(outfile);
 #endif
 }
 
 static void test_uint(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_build_uint8(42);
-  char *expected[] = {"[CBOR_TYPE_UINT] Width: 1B, Value: 42"};
-  assert_describe_result(item, expected, 1);
+  assert_describe_result(item, "[CBOR_TYPE_UINT] Width: 1B, Value: 42\n");
   cbor_decref(&item);
 }
 
 static void test_negint(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_build_negint16(40);
-  char *expected[] = {"[CBOR_TYPE_NEGINT] Width: 2B, Value: -40 - 1"};
-  assert_describe_result(item, expected, 1);
+  assert_describe_result(item,
+                         "[CBOR_TYPE_NEGINT] Width: 2B, Value: -40 - 1\n");
   cbor_decref(&item);
 }
 
 static void test_definite_bytestring(void **_CBOR_UNUSED(_state)) {
   unsigned char data[] = {0x01, 0x02, 0x03};
   cbor_item_t *item = cbor_build_bytestring(data, 3);
-  char *expected[] = {
-      "[CBOR_TYPE_BYTESTRING] Definite, length 3B",
-      "    010203",
-  };
-  assert_describe_result(item, expected, 2);
+  assert_describe_result(item,
+                         "[CBOR_TYPE_BYTESTRING] Definite, Length: 3B, Data:\n"
+                         "    010203\n");
   cbor_decref(&item);
 }
 
@@ -68,26 +61,24 @@ static void test_indefinite_bytestring(void **_CBOR_UNUSED(_state)) {
       item, cbor_move(cbor_build_bytestring(data, 3))));
   assert_true(cbor_bytestring_add_chunk(
       item, cbor_move(cbor_build_bytestring(data, 2))));
-  char *expected[] = {
-      "[CBOR_TYPE_BYTESTRING] Indefinite, with 2 chunks:",
-      "    [CBOR_TYPE_BYTESTRING] Definite, length 3B",
-      "        010203",
-      "    [CBOR_TYPE_BYTESTRING] Definite, length 2B",
-      "        0102",
-  };
-  assert_describe_result(item, expected, 5);
+  assert_describe_result(
+      item,
+      "[CBOR_TYPE_BYTESTRING] Indefinite, Chunks: 2, Chunk data:\n"
+      "    [CBOR_TYPE_BYTESTRING] Definite, Length: 3B, Data:\n"
+      "        010203\n"
+      "    [CBOR_TYPE_BYTESTRING] Definite, Length: 2B, Data:\n"
+      "        0102\n");
   cbor_decref(&item);
 }
 
 static void test_definite_string(void **_CBOR_UNUSED(_state)) {
   char *string = "Hello!";
   cbor_item_t *item = cbor_build_string(string);
-  char *expected[] = {
-      // TODO: Codepoint metadata is not set by the builder, fix.
-      "[CBOR_TYPE_STRING] Definite, length 6B, 0 codepoints",
-      "    Hello!",
-  };
-  assert_describe_result(item, expected, 2);
+  // TODO: Codepoint metadata is not set by the builder, fix.
+  assert_describe_result(
+      item,
+      "[CBOR_TYPE_STRING] Definite, Length: 6B, Codepoints: 0, Data:\n"
+      "    Hello!\n");
   cbor_decref(&item);
 }
 
@@ -98,14 +89,13 @@ static void test_indefinite_string(void **_CBOR_UNUSED(_state)) {
       cbor_string_add_chunk(item, cbor_move(cbor_build_string(string))));
   assert_true(
       cbor_string_add_chunk(item, cbor_move(cbor_build_string(string))));
-  char *expected[] = {
-      "[CBOR_TYPE_STRING] Indefinite, with 2 chunks:",
-      "    [CBOR_TYPE_STRING] Definite, length 6B, 0 codepoints",
-      "        Hello!",
-      "    [CBOR_TYPE_STRING] Definite, length 6B, 0 codepoints",
-      "        Hello!",
-  };
-  assert_describe_result(item, expected, 5);
+  assert_describe_result(
+      item,
+      "[CBOR_TYPE_STRING] Indefinite, Chunks: 2, Chunk data:\n"
+      "    [CBOR_TYPE_STRING] Definite, Length: 6B, Codepoints: 0, Data:\n"
+      "        Hello!\n"
+      "    [CBOR_TYPE_STRING] Definite, Length: 6B, Codepoints: 0, Data:\n"
+      "        Hello!\n");
   cbor_decref(&item);
 }
 
@@ -113,13 +103,11 @@ static void test_multibyte_string(void **_CBOR_UNUSED(_state)) {
   // "Štěstíčko" in UTF-8
   char *string = "\xc5\xa0t\xc4\x9bst\xc3\xad\xc4\x8dko";
   cbor_item_t *item = cbor_build_string(string);
-  cbor_describe(item, stdout);
-  char *expected[] = {
-      // TODO: Codepoint metadata is not set by the builder, fix.
-      "[CBOR_TYPE_STRING] Definite, length 13B, 0 codepoints",
-      "    \xc5\xa0t\xc4\x9bst\xc3\xad\xc4\x8dko",
-  };
-  assert_describe_result(item, expected, 2);
+  // TODO: Codepoint metadata is not set by the builder, fix.
+  assert_describe_result(
+      item,
+      "[CBOR_TYPE_STRING] Definite, Length: 13B, Codepoints: 0, Data:\n"
+      "    \xc5\xa0t\xc4\x9bst\xc3\xad\xc4\x8dko\n");
   cbor_decref(&item);
 }
 
@@ -127,12 +115,10 @@ static void test_definite_array(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_new_definite_array(2);
   assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(1))));
   assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(2))));
-  char *expected[] = {
-      "[CBOR_TYPE_ARRAY] Definite, size: 2",
-      "    [CBOR_TYPE_UINT] Width: 1B, Value: 1",
-      "    [CBOR_TYPE_UINT] Width: 1B, Value: 2",
-  };
-  assert_describe_result(item, expected, 3);
+  assert_describe_result(item,
+                         "[CBOR_TYPE_ARRAY] Definite, Size: 2, Contents:\n"
+                         "    [CBOR_TYPE_UINT] Width: 1B, Value: 1\n"
+                         "    [CBOR_TYPE_UINT] Width: 1B, Value: 2\n");
   cbor_decref(&item);
 }
 
@@ -140,12 +126,10 @@ static void test_indefinite_array(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_new_indefinite_array();
   assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(1))));
   assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(2))));
-  char *expected[] = {
-      "[CBOR_TYPE_ARRAY] Indefinite, size: 2",
-      "    [CBOR_TYPE_UINT] Width: 1B, Value: 1",
-      "    [CBOR_TYPE_UINT] Width: 1B, Value: 2",
-  };
-  assert_describe_result(item, expected, 3);
+  assert_describe_result(item,
+                         "[CBOR_TYPE_ARRAY] Indefinite, Size: 2, Contents:\n"
+                         "    [CBOR_TYPE_UINT] Width: 1B, Value: 1\n"
+                         "    [CBOR_TYPE_UINT] Width: 1B, Value: 2\n");
   cbor_decref(&item);
 }
 
@@ -154,12 +138,12 @@ static void test_definite_map(void **_CBOR_UNUSED(_state)) {
   assert_true(cbor_map_add(
       item, (struct cbor_pair){.key = cbor_move(cbor_build_uint8(1)),
                                .value = cbor_move(cbor_build_uint8(2))}));
-  char *expected[] = {
-      "[CBOR_TYPE_MAP] Definite, size: 1",
-      "    [CBOR_TYPE_UINT] Width: 1B, Value: 1",
-      "    [CBOR_TYPE_UINT] Width: 1B, Value: 2",
-  };
-  assert_describe_result(item, expected, 3);
+  cbor_describe(item, stdout);
+  assert_describe_result(item,
+                         "[CBOR_TYPE_MAP] Definite, Size: 1, Contents:\n"
+                         "    Map entry 0\n"
+                         "        [CBOR_TYPE_UINT] Width: 1B, Value: 1\n"
+                         "        [CBOR_TYPE_UINT] Width: 1B, Value: 2\n");
   cbor_decref(&item);
 }
 
@@ -168,22 +152,19 @@ static void test_indefinite_map(void **_CBOR_UNUSED(_state)) {
   assert_true(cbor_map_add(
       item, (struct cbor_pair){.key = cbor_move(cbor_build_uint8(1)),
                                .value = cbor_move(cbor_build_uint8(2))}));
-  char *expected[] = {
-      "[CBOR_TYPE_MAP] Indefinite, size: 1",
-      "    [CBOR_TYPE_UINT] Width: 1B, Value: 1",
-      "    [CBOR_TYPE_UINT] Width: 1B, Value: 2",
-  };
-  assert_describe_result(item, expected, 3);
+  assert_describe_result(item,
+                         "[CBOR_TYPE_MAP] Indefinite, Size: 1, Contents:\n"
+                         "    Map entry 0\n"
+                         "        [CBOR_TYPE_UINT] Width: 1B, Value: 1\n"
+                         "        [CBOR_TYPE_UINT] Width: 1B, Value: 2\n");
   cbor_decref(&item);
 }
 
 static void test_tag(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_build_tag(42, cbor_move(cbor_build_uint8(1)));
-  char *expected[] = {
-      "[CBOR_TYPE_TAG] Value: 42",
-      "    [CBOR_TYPE_UINT] Width: 1B, Value: 1",
-  };
-  assert_describe_result(item, expected, 2);
+  assert_describe_result(item,
+                         "[CBOR_TYPE_TAG] Value: 42\n"
+                         "    [CBOR_TYPE_UINT] Width: 1B, Value: 1\n");
   cbor_decref(&item);
 }
 
@@ -196,15 +177,14 @@ static void test_floats(void **_CBOR_UNUSED(_state)) {
       cbor_array_push(item, cbor_move(cbor_build_ctrl(CBOR_CTRL_NULL))));
   assert_true(cbor_array_push(item, cbor_move(cbor_build_ctrl(24))));
   assert_true(cbor_array_push(item, cbor_move(cbor_build_float4(3.14f))));
-  char *expected[] = {
-      "[CBOR_TYPE_ARRAY] Indefinite, size: 5",
-      "    [CBOR_TYPE_FLOAT_CTRL] Bool: true",
-      "    [CBOR_TYPE_FLOAT_CTRL] Undefined",
-      "    [CBOR_TYPE_FLOAT_CTRL] Null",
-      "    [CBOR_TYPE_FLOAT_CTRL] Simple value: 24",
-      "    [CBOR_TYPE_FLOAT_CTRL] Width: 4B, value: 3.140000",
-  };
-  assert_describe_result(item, expected, 6);
+  assert_describe_result(
+      item,
+      "[CBOR_TYPE_ARRAY] Indefinite, Size: 5, Contents:\n"
+      "    [CBOR_TYPE_FLOAT_CTRL] Bool: true\n"
+      "    [CBOR_TYPE_FLOAT_CTRL] Undefined\n"
+      "    [CBOR_TYPE_FLOAT_CTRL] Null\n"
+      "    [CBOR_TYPE_FLOAT_CTRL] Simple value: 24\n"
+      "    [CBOR_TYPE_FLOAT_CTRL] Width: 4B, Value: 3.140000\n");
   cbor_decref(&item);
 }
 
