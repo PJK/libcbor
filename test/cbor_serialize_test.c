@@ -242,6 +242,7 @@ static void test_serialize_indefinite_string(void **_CBOR_UNUSED(_state)) {
 static void test_serialize_string_no_space(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_new_definite_string();
   unsigned char *data = malloc(12);
+  memset(data, 0, 12);
   cbor_string_set_handle(item, data, 12);
 
   assert_size_equal(cbor_serialize(item, buffer, 1), 0);
@@ -254,6 +255,7 @@ static void test_serialize_indefinite_string_no_space(
   cbor_item_t *item = cbor_new_indefinite_string();
   cbor_item_t *chunk = cbor_new_definite_string();
   unsigned char *data = malloc(256);
+  memset(data, 0, 256);
   cbor_string_set_handle(chunk, data, 256);
   assert_true(cbor_string_add_chunk(item, cbor_move(chunk)));
 

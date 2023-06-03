@@ -7,6 +7,9 @@ Next
 - Improvements to `cbor_describe`
   - [Bytestring data will now be printed as well](https://github.com/PJK/libcbor/pull/281) by  [akallabeth](https://github.com/akallabeth)
   - [Formatting consistency and clarity improvements](https://github.com/PJK/libcbor/pull/285)
+- [Fix `cbor_string_set_handle` not setting the codepoint count](https://github.com/PJK/libcbor/pull/286)
+- BREAKING: [`cbor_load` will no longer fail on input strings that are well-formed but not valid UTF-8](https://github.com/PJK/libcbor/pull/286)
+  - If you were relying on the validation, please check the result using `cbor_string_codepoint_count` instead 
 
 0.10.2 (2023-01-31)
 ---------------------
