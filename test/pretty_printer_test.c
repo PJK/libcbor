@@ -109,6 +109,20 @@ static void test_indefinite_string(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
+static void test_multibyte_string(void **_CBOR_UNUSED(_state)) {
+  // "Štěstíčko" in UTF-8
+  char *string = "\xc5\xa0t\xc4\x9bst\xc3\xad\xc4\x8dko";
+  cbor_item_t *item = cbor_build_string(string);
+  cbor_describe(item, stdout);
+  char *expected[] = {
+      // TODO: Codepoint metadata is not set by the builder, fix.
+      "[CBOR_TYPE_STRING] Definite, length 13B, 0 codepoints",
+      "    \xc5\xa0t\xc4\x9bst\xc3\xad\xc4\x8dko",
+  };
+  assert_describe_result(item, expected, 2);
+  cbor_decref(&item);
+}
+
 static void test_definite_array(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_new_definite_array(2);
   assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(1))));
@@ -202,6 +216,7 @@ int main(void) {
       cmocka_unit_test(test_indefinite_bytestring),
       cmocka_unit_test(test_definite_string),
       cmocka_unit_test(test_indefinite_string),
+      cmocka_unit_test(test_multibyte_string),
       cmocka_unit_test(test_definite_array),
       cmocka_unit_test(test_indefinite_array),
       cmocka_unit_test(test_definite_map),

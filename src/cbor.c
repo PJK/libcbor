@@ -349,13 +349,11 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent) {
       } else {
         fprintf(out, "Definite, length %zuB, %zu codepoints\n",
                 cbor_string_length(item), cbor_string_codepoint_count(item));
-        /* Careful - this doesn't support multibyte characters! */
-        /* Printing those is out of the scope of this demo :) */
-        /* libICU is your friend */
-        // TODO: Handle escaping
         fprintf(out, "%*s", indent + 4, " ");
-        /* XXX: no null at the end -> confused vprintf */
-        fwrite(cbor_string_handle(item), (int)cbor_string_length(item), 1, out);
+        // Note: The string is not escaped, whitespace and control character
+        // will be printed in verbatim and take effect.
+        fwrite(cbor_string_handle(item), sizeof(unsigned char),
+               cbor_string_length(item), out);
         fprintf(out, "\n");
       }
       break;
