@@ -237,7 +237,8 @@ static void test_serialize_definite_string_8b_header(
   cbor_item_t *item = cbor_new_definite_string();
   const size_t size = (size_t)UINT32_MAX + 1;
   unsigned char *data = malloc(1);
-  cbor_string_set_handle(item, data, size);
+  data[0] = '\0';
+  cbor_string_set_handle(item, data, 1);
   // Pretend that we have a big item to avoid the huge malloc
   item->metadata.string_metadata.length = size;
   assert_size_equal(cbor_serialized_size(item), 1 + 8 + size);
