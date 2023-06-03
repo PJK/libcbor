@@ -218,6 +218,17 @@ static void test_serialize_definite_string(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
+static void test_serialize_definite_string_4b_header(
+    void **_CBOR_UNUSED(_state)) {
+  cbor_item_t *item = cbor_new_definite_string();
+  const size_t size = UINT16_MAX + 1;
+  unsigned char *data = malloc(size);
+  memset(data, 0, size);
+  cbor_string_set_handle(item, data, size);
+  assert_size_equal(cbor_serialized_size(item), 1 + 4 + size);
+  cbor_decref(&item);
+}
+
 static void test_serialize_indefinite_string(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_new_indefinite_string();
   cbor_item_t *chunk = cbor_new_definite_string();
@@ -640,6 +651,7 @@ int main(void) {
       cmocka_unit_test(test_serialize_bytestring_no_space),
       cmocka_unit_test(test_serialize_indefinite_bytestring_no_space),
       cmocka_unit_test(test_serialize_definite_string),
+      cmocka_unit_test(test_serialize_definite_string_4b_header),
       cmocka_unit_test(test_serialize_indefinite_string),
       cmocka_unit_test(test_serialize_string_no_space),
       cmocka_unit_test(test_serialize_indefinite_string_no_space),
