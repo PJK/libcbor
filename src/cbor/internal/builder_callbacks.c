@@ -67,14 +67,14 @@ void _cbor_builder_append(cbor_item_t *item,
       // Note: We use 0 and 1 subitems to distinguish between keys and values in
       // indefinite items
       if (ctx->stack->top->subitems % 2) {
-        /* Odd record, this is a value */
-        if (!_cbor_map_add_value(ctx->stack->top->item, item)) {
-          ctx->creation_failed = true;
-          cbor_decref(&item);
-          break;
-        }
+        // Odd record, this is a value.
+        ctx->creation_failed =
+            !_cbor_map_add_value(ctx->stack->top->item, item);
+        // Adding a value never fails since the memory is allocated when the
+        // key is added
+        CBOR_ASSERT(!ctx->creation_failed);
       } else {
-        /* Even record, this is a key */
+        // Even record, this is a key.
         if (!_cbor_map_add_key(ctx->stack->top->item, item)) {
           ctx->creation_failed = true;
           cbor_decref(&item);
@@ -344,6 +344,8 @@ bool _cbor_is_indefinite(cbor_item_t *item) {
     case CBOR_TYPE_MAP:
       return cbor_map_is_indefinite(item);
     default:
+      // Should never happen since a non-nested item cannot be on top of the
+      // stack.
       return false;
   }
 }
