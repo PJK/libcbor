@@ -329,7 +329,12 @@ static void _cbor_nested_describe(cbor_item_t *item, FILE *out, int indent) {
           _cbor_nested_describe(cbor_bytestring_chunks_handle(item)[i], out,
                                 indent + 4);
       } else {
+        const unsigned char* data = cbor_bytestring_handle(item);
         fprintf(out, "Definite, length %zuB\n", cbor_bytestring_length(item));
+        fprintf(out, "%*s", indent + 4, " ");
+        for (size_t i = 0; i < cbor_bytestring_length(item); i++)
+          fprintf(out, "%02x", (int)(data[i] & 0xff));
+        fprintf(out, "\n");
       }
       break;
     }
