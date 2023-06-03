@@ -256,18 +256,8 @@ void cbor_builder_string_callback(void *context, cbor_data data,
                                   uint64_t length) {
   struct _cbor_decoder_context *ctx = context;
   CHECK_LENGTH(ctx, length);
-  struct _cbor_unicode_status unicode_status;
-  uint64_t codepoint_count =
-      _cbor_unicode_codepoint_count(data, length, &unicode_status);
-
-  if (unicode_status.status != _CBOR_UNICODE_OK) {
-    ctx->syntax_error = true;
-    return;
-  }
-  CBOR_ASSERT(codepoint_count <= length);
 
   unsigned char *new_handle = _cbor_malloc(length);
-
   if (new_handle == NULL) {
     ctx->creation_failed = true;
     return;
@@ -281,7 +271,6 @@ void cbor_builder_string_callback(void *context, cbor_data data,
     return;
   }
   cbor_string_set_handle(new_chunk, new_handle, length);
-  new_chunk->metadata.string_metadata.codepoint_count = codepoint_count;
 
   // If an indef string is on the stack, extend it (if it were closed, it would
   // have been popped). Handle any syntax errors upstream.

@@ -217,6 +217,22 @@ static void test_short_indef_string(void **_CBOR_UNUSED(_state)) {
   assert_null(string);
 }
 
+static void test_invalid_utf(void **_CBOR_UNUSED(_state)) {
+  /* 0x60 + 1 | 0xC5 (invalid unfinished 2B codepoint) */
+  unsigned char string_data[] = {0x61, 0xC5};
+  string = cbor_load(string_data, 2, &res);
+
+  assert_non_null(string);
+  assert_true(cbor_typeof(string) == CBOR_TYPE_STRING);
+  assert_true(cbor_isa_string(string));
+  assert_size_equal(cbor_string_length(string), 1);
+  assert_size_equal(cbor_string_codepoint_count(string), 0);
+  assert_true(cbor_string_is_definite(string));
+  assert_true(res.read == 2);
+
+  cbor_decref(&string);
+}
+
 static void test_inline_creation(void **_CBOR_UNUSED(_state)) {
   string = cbor_build_string("Hello!");
   assert_memory_equal(cbor_string_handle(string), "Hello!", strlen("Hello!"));
@@ -332,6 +348,7 @@ int main(void) {
       cmocka_unit_test(test_int32_string),
       cmocka_unit_test(test_int64_string),
       cmocka_unit_test(test_short_indef_string),
+      cmocka_unit_test(test_invalid_utf),
       cmocka_unit_test(test_inline_creation),
       cmocka_unit_test(test_string_creation),
       cmocka_unit_test(test_string_add_chunk),
