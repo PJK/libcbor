@@ -342,6 +342,8 @@ bool _cbor_is_indefinite(cbor_item_t *item) {
     case CBOR_TYPE_MAP:
       return cbor_map_is_indefinite(item);
     default:
+      // Should never happen since a non-nested item cannot be on top of the
+      // stack.
       return false;
   }
 }
