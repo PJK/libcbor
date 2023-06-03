@@ -146,6 +146,8 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t *cbor_new_indefinite_string(void);
  *
  * The `val` will be copied to a newly allocated block
  *
+ * TODO update null handling docs, doesn't seem right.
+ *
  * @param val A null-terminated UTF-8 string
  * @return Reference to the new string item. The item's reference count is
  * initialized to one.

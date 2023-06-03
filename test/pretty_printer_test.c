@@ -74,10 +74,9 @@ static void test_indefinite_bytestring(void **_CBOR_UNUSED(_state)) {
 static void test_definite_string(void **_CBOR_UNUSED(_state)) {
   char *string = "Hello!";
   cbor_item_t *item = cbor_build_string(string);
-  // TODO: Codepoint metadata is not set by the builder, fix.
   assert_describe_result(
       item,
-      "[CBOR_TYPE_STRING] Definite, Length: 6B, Codepoints: 0, Data:\n"
+      "[CBOR_TYPE_STRING] Definite, Length: 6B, Codepoints: 6, Data:\n"
       "    Hello!\n");
   cbor_decref(&item);
 }
@@ -92,9 +91,9 @@ static void test_indefinite_string(void **_CBOR_UNUSED(_state)) {
   assert_describe_result(
       item,
       "[CBOR_TYPE_STRING] Indefinite, Chunks: 2, Chunk data:\n"
-      "    [CBOR_TYPE_STRING] Definite, Length: 6B, Codepoints: 0, Data:\n"
+      "    [CBOR_TYPE_STRING] Definite, Length: 6B, Codepoints: 6, Data:\n"
       "        Hello!\n"
-      "    [CBOR_TYPE_STRING] Definite, Length: 6B, Codepoints: 0, Data:\n"
+      "    [CBOR_TYPE_STRING] Definite, Length: 6B, Codepoints: 6, Data:\n"
       "        Hello!\n");
   cbor_decref(&item);
 }
@@ -103,10 +102,9 @@ static void test_multibyte_string(void **_CBOR_UNUSED(_state)) {
   // "Štěstíčko" in UTF-8
   char *string = "\xc5\xa0t\xc4\x9bst\xc3\xad\xc4\x8dko";
   cbor_item_t *item = cbor_build_string(string);
-  // TODO: Codepoint metadata is not set by the builder, fix.
   assert_describe_result(
       item,
-      "[CBOR_TYPE_STRING] Definite, Length: 13B, Codepoints: 0, Data:\n"
+      "[CBOR_TYPE_STRING] Definite, Length: 13B, Codepoints: 9, Data:\n"
       "    \xc5\xa0t\xc4\x9bst\xc3\xad\xc4\x8dko\n");
   cbor_decref(&item);
 }
@@ -138,7 +136,6 @@ static void test_definite_map(void **_CBOR_UNUSED(_state)) {
   assert_true(cbor_map_add(
       item, (struct cbor_pair){.key = cbor_move(cbor_build_uint8(1)),
                                .value = cbor_move(cbor_build_uint8(2))}));
-  cbor_describe(item, stdout);
   assert_describe_result(item,
                          "[CBOR_TYPE_MAP] Definite, Size: 1, Contents:\n"
                          "    Map entry 0\n"
