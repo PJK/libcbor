@@ -55,6 +55,8 @@ double cbor_float_get_float(const cbor_item_t *item) {
       return cbor_float_get_float4(item);
     case CBOR_FLOAT_64:
       return cbor_float_get_float8(item);
+    default:
+      return 0;
   }
 }
 

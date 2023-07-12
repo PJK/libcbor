@@ -148,6 +148,8 @@ static cbor_item_t *_cbor_copy_float_ctrl(cbor_item_t *item) {
       return cbor_build_float4(cbor_float_get_float4(item));
     case CBOR_FLOAT_64:
       return cbor_build_float8(cbor_float_get_float8(item));
+    default:
+      return 0;
   }
 }
 
@@ -283,6 +285,8 @@ cbor_item_t *cbor_copy(cbor_item_t *item) {
     }
     case CBOR_TYPE_FLOAT_CTRL:
       return _cbor_copy_float_ctrl(item);
+    default:
+      return 0;
   }
 }
 
