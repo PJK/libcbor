@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
+
 project(libcbor)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/")
 include(CTest)
@@ -9,6 +10,8 @@ SET(CBOR_VERSION_PATCH "2")
 SET(CBOR_VERSION ${CBOR_VERSION_MAJOR}.${CBOR_VERSION_MINOR}.${CBOR_VERSION_PATCH})
 
 option(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY "cmake --build --target install does not depend on cmake --build" true)
+option(BUILD_SHARED_LIBS "build as shared library" false)
+
 include(CheckIncludeFiles)
 
 include(TestBigEndian)
@@ -19,7 +22,7 @@ endif()
 
 option(CBOR_CUSTOM_ALLOC "Custom, dynamically defined allocator support" OFF)
 if(CBOR_CUSTOM_ALLOC)
-    message(WARNING 
+    message(WARNING
         "CBOR_CUSTOM_ALLOC has been deprecated. Custom allocators are now enabled by default."
         "The flag is a no-op and will be removed in the next version. "
         "Please remove CBOR_CUSTOM_ALLOC from your build configuation.")
