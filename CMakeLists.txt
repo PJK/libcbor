@@ -139,6 +139,10 @@ if (COVERAGE)
 endif (COVERAGE)
 
 
+message("top level")
+message(${CMAKE_INSTALL_INCLUDEDIR})
+message(${CMAKE_INSTALL_INCLUDEDIR}/cbor)
+
 # We want to generate configuration.h from the template and make it so that it is accessible using the same
 # path during both library build and installed header use, without littering the source dir.
 # Using cbor/configuration.h in the build dir works b/c headers will be installed to <prefix>/cbor
