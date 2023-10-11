@@ -4,7 +4,8 @@ commands:
   linux-setup:
     steps:
     - run: sudo apt-get update
-    - run: sudo apt-get install -y cmake ${TOOLCHAIN_PACKAGES}
+    # NEEDRESTART_MODE prevents automatic restarts which seem to hang.
+    - run: sudo NEEDRESTART_MODE=l apt-get install -y cmake ${TOOLCHAIN_PACKAGES}
     - run: sudo apt install libcmocka-dev libcjson-dev
   build:
     steps:
