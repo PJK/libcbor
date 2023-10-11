@@ -22,6 +22,8 @@ include(GenerateExportHeader)
 generate_export_header(cbor EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/cbor/cbor_export.h)
 target_include_directories(cbor PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cbor/cbor_export.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cbor)
+message(${CMAKE_INSTALL_INCLUDEDIR})
+message(${CMAKE_INSTALL_INCLUDEDIR}/cbor)
 
 if (NOT ${CBOR_VERSION_MAJOR} EQUAL 0)
 	MESSAGE(FATAL_ERROR "Change the shared library version scheme to reflect https://github.com/PJK/libcbor/issues/52.")
