@@ -6,7 +6,7 @@ commands:
     - run: sudo apt-get update
     # NEEDRESTART_MODE prevents automatic restarts which seem to hang.
     - run: sudo NEEDRESTART_MODE=l apt-get install -y cmake ${TOOLCHAIN_PACKAGES}
-    - run: sudo NEEDRESTART_MODE=l apt install libcmocka-dev libcjson-dev
+    - run: sudo NEEDRESTART_MODE=l apt-get install -y libcmocka-dev libcjson-dev
   build:
     steps:
     - run: >
@@ -40,7 +40,7 @@ jobs:
     steps:
       - checkout
       - linux-setup
-      - run: sudo apt-get install -y clang-format doxygen cppcheck
+      - run: sudo NEEDRESTART_MODE=l apt-get install -y clang-format doxygen cppcheck
       - run: cppcheck --inline-suppr --error-exitcode=1 .
       - run: bash clang-format.sh --verbose
       - run: >
@@ -69,7 +69,7 @@ jobs:
     steps:
       - checkout
       - linux-setup
-      - run: sudo apt-get install -y valgrind
+      - run: sudo NEEDRESTART_MODE=l apt-get install -y valgrind
       - build
       - test
       - run: ctest -T Coverage
@@ -100,7 +100,7 @@ jobs:
     steps:
       - checkout
       - run: sudo apt-get update
-      - run: sudo apt-get install -y cmake gcc-multilib g++-multilib libc6-dev-i386
+      - run: sudo NEEDRESTART_MODE=l apt-get install -y cmake gcc-multilib g++-multilib libc6-dev-i386
       # Make cmocka from source w/ 32b setup
       - run: git clone https://git.cryptomilk.org/projects/cmocka.git ~/cmocka
       - run: >
