@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 project(libcbor)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/")
 include(CTest)
+include(GNUInstallDirs) # Provides CMAKE_INSTALL_ variables
 
 SET(CBOR_VERSION_MAJOR "0")
 SET(CBOR_VERSION_MINOR "10")
@@ -138,12 +139,10 @@ if (COVERAGE)
     endif()
 endif (COVERAGE)
 
-
 # We want to generate configuration.h from the template and make it so that it is accessible using the same
 # path during both library build and installed header use, without littering the source dir.
-# Using cbor/configuration.h in the build dir works b/c headers will be installed to <prefix>/cbor
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/cbor/configuration.h.in ${PROJECT_BINARY_DIR}/cbor/configuration.h)
-install(FILES ${PROJECT_BINARY_DIR}/cbor/configuration.h DESTINATION include/cbor)
+install(FILES ${PROJECT_BINARY_DIR}/cbor/configuration.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cbor)
 # Make the header visible at compile time
 include_directories(${PROJECT_BINARY_DIR})
 
