@@ -23,7 +23,7 @@ Goals
 ~~~~~~~~~~~~~~~~~~~~~~
 
 Standard conformance and full feature support
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Anything the standard allows, libcbor can do.
 
