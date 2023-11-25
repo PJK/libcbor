@@ -48,3 +48,23 @@ install(FILES cbor.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libcbor.pc"
 	DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+	libcborConfig.cmake.in
+	${CMAKE_CURRENT_BINARY_DIR}/libcborConfig.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libcbor
+	PATH_VARS CMAKE_INSTALL_INCLUDEDIR
+)
+write_basic_package_version_file(
+	${CMAKE_CURRENT_BINARY_DIR}/libcborConfigVersion.cmake
+	VERSION ${CBOR_VERSION}
+  COMPATIBILITY SameMajorVersion
+)
+install(
+	FILES
+		${CMAKE_CURRENT_BINARY_DIR}/libcborConfig.cmake
+		${CMAKE_CURRENT_BINARY_DIR}/libcborConfigVersion.cmake
+	DESTINATION
+		${CMAKE_INSTALL_LIBDIR}/cmake/libcbor
+	)
