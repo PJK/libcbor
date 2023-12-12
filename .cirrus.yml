@@ -14,9 +14,9 @@ freebsd_task:
     - cd build
     - ctest -VV
     matrix:
-    - name: freebsd12-4-amd64
-      freebsd_instance:
-        image: freebsd-12-4-release-amd64
     - name: freebsd13-2-amd64
       freebsd_instance:
         image: freebsd-13-2-release-amd64
+    - name: freebsd14-0-amd64
+      freebsd_instance:
+        image: freebsd-14-0-release-amd64
