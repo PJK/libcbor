@@ -14,9 +14,13 @@ freebsd_task:
     - cd build
     - ctest -VV
     matrix:
-    - name: freebsd13-2-amd64
+    # From gcloud compute images list --project freebsd-org-cloud-dev --no-standard-images
+    - name: freebsd-13-2
       freebsd_instance:
-        image: freebsd-13-2-release-amd64
-    - name: freebsd14-0-amd64
+        image_family: freebsd-13-2
+    - name: freebsd-14-0
       freebsd_instance:
-        image: freebsd-14-0-release-amd64
+        image_family: freebsd-14-0
+    - name: freebsd-15-0-snap
+      freebsd_instance:
+        image_family: freebsd-15-0-snap
