@@ -124,7 +124,7 @@ Next
 Breaks build & header compatibility due to:
 
 - Improved build configuration and feature check macros
-- Endianess configuration fixes (by Erwin Kroon and David Grigsby)
+- Endianness configuration fixes (by Erwin Kroon and David Grigsby)
 - pkg-config compatibility (by Vincent Bernat)
 - enable use of versioned SONAME (by Vincent Bernat)
 - better fuzzer (wasn't random until now, ooops)

@@ -7,7 +7,7 @@
 
 /**
  * This code demonstrates how cJSON (https://github.com/DaveGamble/cJSON)
- * callbacks can be used in conjuction with the streaming parser to translate
+ * callbacks can be used in conjunction with the streaming parser to translate
  * JSON to CBOR. Please note that cbor_builder_* APIs are internal and thus
  * subject to change.
  *

@@ -32,7 +32,7 @@ and also borrowing from
 
 General notes on the API design
 --------------------------------
-The API design has two main driving priciples:
+The API design has two main driving principles:
 
  1. Let the client manage the memory as much as possible
  2. Behave exactly as specified by the standard
