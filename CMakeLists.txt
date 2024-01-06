@@ -26,7 +26,7 @@ if(CBOR_CUSTOM_ALLOC)
     message(WARNING
         "CBOR_CUSTOM_ALLOC has been deprecated. Custom allocators are now enabled by default."
         "The flag is a no-op and will be removed in the next version. "
-        "Please remove CBOR_CUSTOM_ALLOC from your build configuation.")
+        "Please remove CBOR_CUSTOM_ALLOC from your build configuration.")
 endif(CBOR_CUSTOM_ALLOC)
 
 option(CBOR_PRETTY_PRINTER "Include a pretty-printing routine" ON)
