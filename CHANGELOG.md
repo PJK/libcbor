@@ -3,6 +3,9 @@ Template:
 
 Next
 ---------------------
+
+0.11.0 (2024-02-04)
+---------------------
 - [Updated documentation to refer to RFC 8949](https://github.com/PJK/libcbor/issues/269)
 - Improvements to `cbor_describe`
   - [Bytestring data will now be printed as well](https://github.com/PJK/libcbor/pull/281) by  [akallabeth](https://github.com/akallabeth)

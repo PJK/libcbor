@@ -6,8 +6,8 @@ include(CTest)
 include(GNUInstallDirs) # Provides CMAKE_INSTALL_ variables
 
 SET(CBOR_VERSION_MAJOR "0")
-SET(CBOR_VERSION_MINOR "10")
-SET(CBOR_VERSION_PATCH "2")
+SET(CBOR_VERSION_MINOR "11")
+SET(CBOR_VERSION_PATCH "0")
 SET(CBOR_VERSION ${CBOR_VERSION_MAJOR}.${CBOR_VERSION_MINOR}.${CBOR_VERSION_PATCH})
 
 option(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY "cmake --build --target install does not depend on cmake --build" true)
