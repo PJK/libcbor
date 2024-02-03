@@ -120,6 +120,7 @@ static void test_all_tag_values_supported(void **_CBOR_UNUSED(_state)) {
     assert_null(tag);
     cbor_decref(&tag_item);
     assert_null(tag_item);
+    free(serialized_tag);
   }
 }
 
