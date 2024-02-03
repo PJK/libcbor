@@ -10,6 +10,9 @@ Next
 - [Fix `cbor_string_set_handle` not setting the codepoint count](https://github.com/PJK/libcbor/pull/286)
 - BREAKING: [`cbor_load` will no longer fail on input strings that are well-formed but not valid UTF-8](https://github.com/PJK/libcbor/pull/286)
   - If you were relying on the validation, please check the result using `cbor_string_codepoint_count` instead 
+- BREAKING: [All decoders like `cbor_load` and `cbor_stream_decode` will accept all well-formed tag values](https://github.com/PJK/libcbor/pull/308) (bug discovered by [dskern-github](https://github.com/dskern-github))
+  - Previously, decoding of certain values would fail with `CBOR_ERR_MALFORMATED` or `CBOR_DECODER_ERROR`
+  - This also makes decoding symmetrical with serialization, which already accepts all values
 
 0.10.2 (2023-01-31)
 ---------------------
