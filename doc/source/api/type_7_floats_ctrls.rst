@@ -60,7 +60,7 @@ Manipulating existing items
 .. doxygenfunction:: cbor_set_float8
 
 
-.. _api_type_7_hard_floats:
+.. _api_type_7_floats_ctrls_hard_floats:
 
 Half floats
 ~~~~~~~~~~~~
