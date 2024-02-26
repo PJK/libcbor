@@ -78,8 +78,7 @@ if(MSVC)
     # This just doesn't work right -- https://msdn.microsoft.com/en-us/library/5ft82fed.aspx
     set(CBOR_RESTRICT_SPECIFIER "")
 
-    # Do not prepend existing flags since MSVC cannot handle the default
-    set(CMAKE_C_FLAGS_DEBUG "/sdl")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /sdl")
 else()
     set(CBOR_RESTRICT_SPECIFIER "restrict")
 
@@ -91,10 +90,9 @@ else()
             -fsanitize=undefined -fsanitize=address \
             -fsanitize=bounds -fsanitize=alignment")
     endif()
+
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-g")
 endif()
-
-set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-g")
-
 
 include(CheckTypeSize)
 check_type_size("size_t" SIZEOF_SIZE_T)
