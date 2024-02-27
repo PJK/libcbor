@@ -77,6 +77,8 @@ endif()
 if(MSVC)
     # This just doesn't work right -- https://msdn.microsoft.com/en-us/library/5ft82fed.aspx
     set(CBOR_RESTRICT_SPECIFIER "")
+    # Safe stdio is only available in C11
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /sdl")
 else()
