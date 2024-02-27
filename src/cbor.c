@@ -116,7 +116,7 @@ error:
 }
 
 static cbor_item_t *_cbor_copy_int(cbor_item_t *item, bool negative) {
-  cbor_item_t *res;
+  cbor_item_t *res = NULL;
   switch (cbor_int_get_width(item)) {
     case CBOR_INT_8:
       res = cbor_build_uint8(cbor_get_uint8(item));
