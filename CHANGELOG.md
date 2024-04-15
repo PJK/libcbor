@@ -3,6 +3,7 @@ Template:
 
 Next
 ---------------------
+- BUILD BREAKING: [Respect `INTERPROCEDURAL_OPTIMIZATION` and use the default value](https://github.com/PJK/libcbor/issues/315) 
 
 0.11.0 (2024-02-04)
 ---------------------
