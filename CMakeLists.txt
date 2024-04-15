@@ -27,7 +27,7 @@ if(CBOR_CUSTOM_ALLOC)
         "CBOR_CUSTOM_ALLOC has been deprecated. Custom allocators are now enabled by default."
         "The flag is a no-op and will be removed in the next version. "
         "Please remove CBOR_CUSTOM_ALLOC from your build configuration.")
-endif(CBOR_CUSTOM_ALLOC)
+endif()
 
 option(CBOR_PRETTY_PRINTER "Include a pretty-printing routine" ON)
 set(CBOR_BUFFER_GROWTH "2" CACHE STRING "Factor for buffer growth & shrinking")
@@ -36,24 +36,24 @@ set(CBOR_MAX_STACK_SIZE "2048" CACHE STRING "maximum size for decoding context s
 option(WITH_TESTS "[TEST] Build unit tests (requires CMocka)" OFF)
 if(WITH_TESTS)
     add_definitions(-DWITH_TESTS)
-endif(WITH_TESTS)
+endif()
 
 option(WITH_EXAMPLES "Build examples" ON)
 
 option(HUGE_FUZZ "[TEST] Fuzz through 8GB of data in the test. Do not use with memory instrumentation!" OFF)
 if(HUGE_FUZZ)
     add_definitions(-DHUGE_FUZZ)
-endif(HUGE_FUZZ)
+endif()
 
 option(SANE_MALLOC "[TEST] Assume that malloc will not allocate multi-GB blocks. Tests only, platform specific" OFF)
 if(SANE_MALLOC)
     add_definitions(-DSANE_MALLOC)
-endif(SANE_MALLOC)
+endif()
 
 option(PRINT_FUZZ "[TEST] Print the fuzzer input" OFF)
 if(PRINT_FUZZ)
     add_definitions(-DPRINT_FUZZ)
-endif(PRINT_FUZZ)
+endif()
 
 option(SANITIZE "Enable ASan & a few compatible sanitizers in Debug mode" ON)
 
@@ -155,34 +155,39 @@ include_directories(${PROJECT_BINARY_DIR})
 # CMake >= 3.9.0 enables LTO for GCC and Clang with INTERPROCEDURAL_OPTIMIZATION
 # Policy CMP0069 enables this behavior when we set the minimum CMake version < 3.9.0
 # Checking for LTO support before setting INTERPROCEDURAL_OPTIMIZATION is mandatory with CMP0069 set to NEW.
-set(use_lto FALSE)
-if(${CMAKE_VERSION} VERSION_GREATER "3.9.0" OR ${CMAKE_VERSION} VERSION_EQUAL "3.9.0")
+set(lto_supported FALSE)
+if (${CMAKE_VERSION} VERSION_GREATER "3.9.0" OR ${CMAKE_VERSION} VERSION_EQUAL "3.9.0")
     cmake_policy(SET CMP0069 NEW)
     # Require LTO support to build libcbor with newer CMake versions
     include(CheckIPOSupported)
-    check_ipo_supported(RESULT use_lto)
-endif(${CMAKE_VERSION} VERSION_GREATER "3.9.0" OR ${CMAKE_VERSION} VERSION_EQUAL "3.9.0")
-if(use_lto)
-    message(STATUS "LTO is enabled")
+    check_ipo_supported(RESULT lto_supported)
+endif ()
+
+if (NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
+endif ()
+
+if(lto_supported)
+    message(STATUS "LTO is supported and CMAKE_INTERPROCEDURAL_OPTIMIZATION=${CMAKE_INTERPROCEDURAL_OPTIMIZATION}")
 else()
-    message(STATUS "LTO is not enabled")
-endif(use_lto)
+    message(STATUS "LTO is not supported")
+endif()
 
 add_subdirectory(src)
-if(use_lto)
-    set_property(DIRECTORY src PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
-endif(use_lto)
+if (lto_supported)
+    set_property(DIRECTORY src PROPERTY INTERPROCEDURAL_OPTIMIZATION CMAKE_INTERPROCEDURAL_OPTIMIZATION)
+endif ()
 
 if (WITH_TESTS)
     add_subdirectory(test)
-    if(use_lto)
-        set_property(DIRECTORY test PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
-    endif(use_lto)
-endif (WITH_TESTS)
+    if(lto_supported)
+        set_property(DIRECTORY test PROPERTY INTERPROCEDURAL_OPTIMIZATION CMAKE_INTERPROCEDURAL_OPTIMIZATION)
+    endif()
+endif ()
 
 if (WITH_EXAMPLES)
     add_subdirectory(examples)
-    if(use_lto)
-        set_property(DIRECTORY examples PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
-    endif(use_lto)
-endif (WITH_EXAMPLES)
+    if(lto_supported)
+        set_property(DIRECTORY examples PROPERTY INTERPROCEDURAL_OPTIMIZATION CMAKE_INTERPROCEDURAL_OPTIMIZATION)
+    endif()
+endif ()
