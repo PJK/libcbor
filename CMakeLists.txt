@@ -27,7 +27,7 @@ if(CBOR_CUSTOM_ALLOC)
         "CBOR_CUSTOM_ALLOC has been deprecated. Custom allocators are now enabled by default."
         "The flag is a no-op and will be removed in the next version. "
         "Please remove CBOR_CUSTOM_ALLOC from your build configuration.")
-endif(CBOR_CUSTOM_ALLOC)
+endif()
 
 option(CBOR_PRETTY_PRINTER "Include a pretty-printing routine" ON)
 set(CBOR_BUFFER_GROWTH "2" CACHE STRING "Factor for buffer growth & shrinking")
@@ -36,24 +36,24 @@ set(CBOR_MAX_STACK_SIZE "2048" CACHE STRING "maximum size for decoding context s
 option(WITH_TESTS "[TEST] Build unit tests (requires CMocka)" OFF)
 if(WITH_TESTS)
     add_definitions(-DWITH_TESTS)
-endif(WITH_TESTS)
+endif()
 
 option(WITH_EXAMPLES "Build examples" ON)
 
 option(HUGE_FUZZ "[TEST] Fuzz through 8GB of data in the test. Do not use with memory instrumentation!" OFF)
 if(HUGE_FUZZ)
     add_definitions(-DHUGE_FUZZ)
-endif(HUGE_FUZZ)
+endif()
 
 option(SANE_MALLOC "[TEST] Assume that malloc will not allocate multi-GB blocks. Tests only, platform specific" OFF)
 if(SANE_MALLOC)
     add_definitions(-DSANE_MALLOC)
-endif(SANE_MALLOC)
+endif()
 
 option(PRINT_FUZZ "[TEST] Print the fuzzer input" OFF)
 if(PRINT_FUZZ)
     add_definitions(-DPRINT_FUZZ)
-endif(PRINT_FUZZ)
+endif()
 
 option(SANITIZE "Enable ASan & a few compatible sanitizers in Debug mode" ON)
 
@@ -171,7 +171,7 @@ if(lto_supported)
     message(STATUS "LTO is supported and CMAKE_INTERPROCEDURAL_OPTIMIZATION=${CMAKE_INTERPROCEDURAL_OPTIMIZATION}")
 else()
     message(STATUS "LTO is not supported")
-endif(lto_supported)
+endif()
 
 add_subdirectory(src)
 if (lto_supported)
@@ -182,12 +182,12 @@ if (WITH_TESTS)
     add_subdirectory(test)
     if(lto_supported)
         set_property(DIRECTORY test PROPERTY INTERPROCEDURAL_OPTIMIZATION CMAKE_INTERPROCEDURAL_OPTIMIZATION)
-    endif(lto_supported)
+    endif()
 endif ()
 
 if (WITH_EXAMPLES)
     add_subdirectory(examples)
     if(lto_supported)
         set_property(DIRECTORY examples PROPERTY INTERPROCEDURAL_OPTIMIZATION CMAKE_INTERPROCEDURAL_OPTIMIZATION)
-    endif(lto_supported)
+    endif()
 endif ()
