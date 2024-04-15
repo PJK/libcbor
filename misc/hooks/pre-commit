@@ -1,14 +1,16 @@
 #!/bin/sh
 
-set -ex
+set -e
 
-# Run clang-format and add modified files
+# Run cmake-lint, clang-format, and add modified files
 MODIFIED_UNSTAGED=$(git -C . diff --name-only)
 MODIFIED_STAGED=$(git -C . diff --name-only --cached --diff-filter=d)
 
 CMAKE_FILES=$(echo "${MODIFIED_STAGED} ${MODIFIED_UNSTAGED}" | grep -oE '(\S*)CMakeLists.txt' | cat)
-# Returns 1 if there are findings
-cmake-lint --line-width 140 ${CMAKE_FILES}
+if ! cmake-lint --line-width 140 ${CMAKE_FILES} > /dev/null; then
+  echo "cmake-lint failed:"
+  cmake-lint --line-width 140 ${CMAKE_FILES}
+fi
 
 ./clang-format.sh
 
