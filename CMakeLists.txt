@@ -28,9 +28,10 @@ option(CBOR_CUSTOM_ALLOC "Custom, dynamically defined allocator support" OFF)
 if(CBOR_CUSTOM_ALLOC)
   message(
     WARNING
-      "CBOR_CUSTOM_ALLOC has been deprecated. Custom allocators are now enabled by default."
-      "The flag is a no-op and will be removed in the next version. "
-      "Please remove CBOR_CUSTOM_ALLOC from your build configuration.")
+      "CBOR_CUSTOM_ALLOC has been deprecated. \
+      Custom allocators are now enabled by default. \
+      The flag is a no-op and will be removed in the next version. \
+      Please remove CBOR_CUSTOM_ALLOC from your build configuration.")
 endif()
 
 option(CBOR_PRETTY_PRINTER "Include a pretty-printing routine" ON)
@@ -48,18 +49,15 @@ endif()
 
 option(WITH_EXAMPLES "Build examples" ON)
 
-option(
-  HUGE_FUZZ
-  "[TEST] Fuzz through 8GB of data in the test. Do not use with memory instrumentation!"
-  OFF)
+option(HUGE_FUZZ "[TEST] Fuzz through 8GB of data in the test.\
+       Do not use with memory instrumentation!" OFF)
 if(HUGE_FUZZ)
   add_definitions(-DHUGE_FUZZ)
 endif()
 
-option(
-  SANE_MALLOC
-  "[TEST] Assume that malloc will not allocate multi-GB blocks. Tests only, platform specific"
-  OFF)
+option(SANE_MALLOC
+       "[TEST] Assume that malloc will not allocate multi-GB blocks.\
+       Tests only, platform specific" OFF)
 if(SANE_MALLOC)
   add_definitions(-DSANE_MALLOC)
 endif()
@@ -118,8 +116,10 @@ check_type_size("size_t" SIZEOF_SIZE_T)
 if(SIZEOF_SIZE_T LESS 8)
   message(
     WARNING
-      "Your size_t is less than 8 bytes. Decoding of huge items that would exceed the memory address space will always fail. Consider implementing a custom streaming decoder if you need to deal with huge items."
-  )
+      "Your size_t is less than 8 bytes. \
+      Decoding of huge items that would exceed the memory address space \
+      will always fail. Consider implementing a custom streaming \
+      decoder if you need to deal with huge items.")
 else()
   add_definitions(-DEIGHT_BYTE_SIZE_T)
 endif()
@@ -139,6 +139,7 @@ add_custom_target(
   COMMAND
     echo
     "Coverage report ready: ${CMAKE_CURRENT_BINARY_DIR}/coverage_html/index.html"
+  COMMENT "Generate coverage report using the GNU toolchain"
 )
 
 add_custom_target(
@@ -163,7 +164,8 @@ add_custom_target(
   COMMAND
     echo
     "Coverage report ready: ${CMAKE_CURRENT_BINARY_DIR}/coverage_profiles/report.html"
-  VERBATIM)
+  VERBATIM
+  COMMENT "Generate coverage report using the LLVM toolchain")
 
 include_directories(src)
 
