@@ -206,20 +206,20 @@ include_directories(${PROJECT_BINARY_DIR})
 # Policy CMP0069 enables this behavior when we set the minimum CMake version <
 # 3.9.0 Checking for LTO support before setting INTERPROCEDURAL_OPTIMIZATION is
 # mandatory with CMP0069 set to NEW.
-set(lto_supported FALSE)
+set(LTO_SUPPORTED FALSE)
 if(${CMAKE_VERSION} VERSION_GREATER "3.9.0" OR ${CMAKE_VERSION} VERSION_EQUAL
                                                "3.9.0")
   cmake_policy(SET CMP0069 NEW)
   # Require LTO support to build libcbor with newer CMake versions
   include(CheckIPOSupported)
-  check_ipo_supported(RESULT lto_supported)
+  check_ipo_supported(RESULT LTO_SUPPORTED)
 endif()
 
 if(NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION)
   set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 endif()
 
-if(lto_supported)
+if(LTO_SUPPORTED)
   message(
     STATUS
       "LTO is supported and CMAKE_INTERPROCEDURAL_OPTIMIZATION=${CMAKE_INTERPROCEDURAL_OPTIMIZATION}"
@@ -229,25 +229,20 @@ else()
 endif()
 
 add_subdirectory(src)
-if(lto_supported)
-  set_property(DIRECTORY src PROPERTY INTERPROCEDURAL_OPTIMIZATION
-                                      CMAKE_INTERPROCEDURAL_OPTIMIZATION)
+if(LTO_SUPPORTED)
+  set_property(DIRECTORY src PROPERTY INTERPROCEDURAL_OPTIMIZATION CMAKE_INTERPROCEDURAL_OPTIMIZATION)
 endif()
 
 if(WITH_TESTS)
   add_subdirectory(test)
-  if(lto_supported)
-    set_property(
-      DIRECTORY
-      test
-      PROPERTY INTERPROCEDURAL_OPTIMIZATION CMAKE_INTERPROCEDURAL_OPTIMIZATION)
+  if(LTO_SUPPORTED)
+    set_property(DIRECTORY test PROPERTY INTERPROCEDURAL_OPTIMIZATION CMAKE_INTERPROCEDURAL_OPTIMIZATION)
   endif()
 endif()
 
 if(WITH_EXAMPLES)
   add_subdirectory(examples)
-  if(lto_supported)
-    set_property(DIRECTORY examples PROPERTY INTERPROCEDURAL_OPTIMIZATION
-                                             CMAKE_INTERPROCEDURAL_OPTIMIZATION)
+  if(LTO_SUPPORTED)
+    set_property(DIRECTORY examples PROPERTY INTERPROCEDURAL_OPTIMIZATION CMAKE_INTERPROCEDURAL_OPTIMIZATION)
   endif()
 endif()
