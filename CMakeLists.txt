@@ -169,7 +169,7 @@ add_custom_target(
 
 include_directories(src)
 
-option(c "Enable code coverage instrumentation" OFF)
+option(COVERAGE "Enable code coverage instrumentation" OFF)
 if(COVERAGE)
   message("Configuring code coverage instrumentation")
   if(CMAKE_C_COMPILER_ID MATCHES "GNU")
