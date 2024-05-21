@@ -15,7 +15,7 @@ packaging==23.2
 Pygments==2.16.1
 pyparsing==3.1.1
 pytz==2021.3
-requests==2.31.0
+requests==2.32.0
 snowballstemmer==2.2.0
 Sphinx==7.2.6
 sphinx-autobuild==2021.3.14
