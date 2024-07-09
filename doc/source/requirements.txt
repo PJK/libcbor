@@ -28,4 +28,4 @@ sphinxcontrib-qthelp==1.0.6
 sphinxcontrib-serializinghtml==1.1.9
 tornado==6.3.3
 urllib3==2.1.0
-zipp==3.17.0
+zipp==3.19.1
