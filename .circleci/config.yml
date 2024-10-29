@@ -34,7 +34,7 @@ orbs:
 jobs:
   static-test:
     machine: &default-machine
-      image: ubuntu-2204:2023.07.2
+      image: ubuntu-2204:current
     environment:
       TOOLCHAIN_PACKAGES: g++
     steps:
@@ -159,7 +159,7 @@ jobs:
 
   build-bazel:
     machine:
-      image: ubuntu-2204:2023.07.2
+      <<: *default-machine
     environment:
       TOOLCHAIN_PACKAGES: g++
     steps:
