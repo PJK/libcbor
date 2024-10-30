@@ -178,7 +178,7 @@ jobs:
 
   build-and-test-osx:
     macos:
-      xcode: 12.5.1
+      xcode: 16.0.0
     steps:
       - checkout
       - run: bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
