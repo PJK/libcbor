@@ -4,6 +4,12 @@ Template:
 Next
 ---------------------
 - BUILD BREAKING: [Respect `INTERPROCEDURAL_OPTIMIZATION` and use the default value](https://github.com/PJK/libcbor/issues/315) 
+- BREAKING: Changes to NaN encoding
+  - [Fix NaN encoding on Windows](https://github.com/PJK/libcbor/issues/271)
+  - [Fix NaN encoding on mips/mipsel](https://github.com/PJK/libcbor/issues/329)
+  - [Signaling NaNs will from now on be encoded as canonical quiet NaNs](https://github.com/PJK/libcbor/pull/335). This was already the existing behavior for half-precision floats
+  - Decoding is unchanged
+  - Please note that this is an intermediate state and likely to be revisited (https://github.com/PJK/libcbor/issues/336)
 
 0.11.0 (2024-02-04)
 ---------------------

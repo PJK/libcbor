@@ -118,13 +118,22 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_encode_undef(unsigned char *, size_t);
  * lost.
  *   - In all other cases, the sign bit, the exponent, and 10 most significant
  * bits of the significand are kept
+ *
+ * Note: Signaling NaNs are encoded as a standard, "quiet" NaN.
  */
 _CBOR_NODISCARD CBOR_EXPORT size_t cbor_encode_half(float, unsigned char *,
                                                     size_t);
-
+/** Encodes a single precision float
+ *
+ * Note: Signaling NaNs are encoded as a standard, "quiet" NaN.
+ */
 _CBOR_NODISCARD CBOR_EXPORT size_t cbor_encode_single(float, unsigned char *,
                                                       size_t);
 
+/** Encodes a double precision float
+ *
+ * Note: Signaling NaNs are encoded as a standard, "quiet" NaN.
+ */
 _CBOR_NODISCARD CBOR_EXPORT size_t cbor_encode_double(double, unsigned char *,
                                                       size_t);
 
