@@ -211,7 +211,14 @@ jobs:
     steps:
       - attach_workspace:
           at: /home/circleci/project
-      - run: ls -al
+      # Build cmocka from source
+      - run: git clone https://git.cryptomilk.org/projects/cmocka.git ~/cmocka
+      - run: >
+          cd $(mktemp -d /tmp/build.XXXX) &&
+          cmake ~/cmocka -DCMAKE_TOOLCHAIN_FILE=~/cmocka/cmake/Toolchain-cross-m32.cmake &&
+          make &&
+          sudo make install
+      - build
 
 workflows:
   build-and-test:
