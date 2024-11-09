@@ -205,6 +205,17 @@ jobs:
           export PATH="$(pwd)/cmocka_build/src/Debug/:$PATH" &&
           /c/Program\ Files/Cmake/bin/ctest.exe --test-dir libcbor_build --output-on-failure
 
+  build-and-test-mips:
+    build:
+      docker:
+        - image: dockcross/linux-mips
+    steps:
+      - attach_workspace:
+          at: /home/circleci/project
+      - run:
+        name: LS
+        command: ls -al
+
 workflows:
   build-and-test:
     jobs:
@@ -215,6 +226,7 @@ workflows:
       - build-and-test-release-clang
       - build-and-test-arm
       - build-and-test-win
+      - build-and-test-mips
       - build-bazel
       - llvm-coverage
       # OSX builds are expensive, run only on master
