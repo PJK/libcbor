@@ -209,6 +209,7 @@ jobs:
     docker:
       - image: dockcross/linux-mips
     steps:
+      - checkout
       - attach_workspace:
           at: /home/circleci/project
       - run: ls -al
