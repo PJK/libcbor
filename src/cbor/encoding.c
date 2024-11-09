@@ -6,6 +6,9 @@
  */
 
 #include "encoding.h"
+
+#include <math.h>
+
 #include "internal/encoders.h"
 
 size_t cbor_encode_uint8(uint8_t value, unsigned char *buffer,
@@ -126,6 +129,7 @@ size_t cbor_encode_undef(unsigned char *buffer, size_t buffer_size) {
 
 size_t cbor_encode_half(float value, unsigned char *buffer,
                         size_t buffer_size) {
+  // TODO: Broken on systems that do not use IEEE 754
   /* Assuming value is normalized */
   uint32_t val = ((union _cbor_float_helper){.as_float = value}).as_uint;
   uint16_t res;
@@ -134,11 +138,8 @@ size_t cbor_encode_half(float value, unsigned char *buffer,
   uint32_t mant =
       val & 0x7FFFFFu; /* 0b0000_0000_0111_1111_1111_1111_1111_1111 */
   if (exp == 0xFF) {   /* Infinity or NaNs */
-    if (value != value) {
-      // We discard information bits in half-float NaNs. This is
-      // not required for the core CBOR protocol (it is only a suggestion in
-      // Section 3.9).
-      // See https://github.com/PJK/libcbor/issues/215
+    if (isnan(value)) {
+      // Note: Values of signaling NaNs are discarded. See `cbor_encode_single`.
       res = (uint16_t)0x007e00;
     } else {
       // If the mantissa is non-zero, we have a NaN, but those are handled
@@ -178,6 +179,13 @@ size_t cbor_encode_half(float value, unsigned char *buffer,
 
 size_t cbor_encode_single(float value, unsigned char *buffer,
                           size_t buffer_size) {
+  // Note: Values of signaling NaNs are discarded. There is no standard
+  // way to extract it without assumptions about the internal float
+  // representation.
+  if (isnan(value)) {
+    return _cbor_encode_uint32(0x7FC0 << 16, buffer, buffer_size, 0xE0);
+  }
+  // TODO: Broken on systems that do not use IEEE 754
   return _cbor_encode_uint32(
       ((union _cbor_float_helper){.as_float = value}).as_uint, buffer,
       buffer_size, 0xE0);
@@ -185,6 +193,12 @@ size_t cbor_encode_single(float value, unsigned char *buffer,
 
 size_t cbor_encode_double(double value, unsigned char *buffer,
                           size_t buffer_size) {
+  // Note: Values of signaling NaNs are discarded. See `cbor_encode_single`.
+  if (isnan(value)) {
+    return _cbor_encode_uint64((uint64_t)0x7FF8 << 48, buffer, buffer_size,
+                               0xE0);
+  }
+  // TODO: Broken on systems that do not use IEEE 754
   return _cbor_encode_uint64(
       ((union _cbor_double_helper){.as_double = value}).as_uint, buffer,
       buffer_size, 0xE0);

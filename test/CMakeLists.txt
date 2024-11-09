@@ -19,12 +19,7 @@ foreach(test_file ${TESTS})
     target_link_libraries(${NAME} ${MATH_LIBRARY})
   endif()
   target_include_directories(${NAME} PUBLIC ${CMOCKA_INCLUDE_DIR})
-  # See https://stackoverflow.com/a/10824578/499521
-  add_test(ctest_build_test_${NAME} "${CMAKE_COMMAND}" --build
-           ${CMAKE_BINARY_DIR} --target ${NAME})
-  add_test(ctest_run_${NAME} ${NAME})
-  set_tests_properties(ctest_run_${NAME} PROPERTIES DEPENDS
-                                                    ctest_build_test_${NAME})
+  add_test(NAME ${NAME} COMMAND ${NAME})
   add_dependencies(coverage ${NAME})
 endforeach()
 

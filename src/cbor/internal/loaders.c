@@ -51,6 +51,8 @@ uint64_t _cbor_load_uint64(const unsigned char *source) {
 
 /* As per https://www.rfc-editor.org/rfc/rfc8949.html#name-half-precision */
 float _cbor_decode_half(unsigned char *halfp) {
+  // TODO: Broken if we are not on IEEE 754
+  // (https://github.com/PJK/libcbor/issues/336)
   int half = (halfp[0] << 8) + halfp[1];
   int exp = (half >> 10) & 0x1f;
   int mant = half & 0x3ff;
@@ -70,11 +72,15 @@ float _cbor_load_half(cbor_data source) {
 }
 
 float _cbor_load_float(cbor_data source) {
+  // TODO: Broken if we are not on IEEE 754
+  // (https://github.com/PJK/libcbor/issues/336)
   union _cbor_float_helper helper = {.as_uint = _cbor_load_uint32(source)};
   return helper.as_float;
 }
 
 double _cbor_load_double(cbor_data source) {
+  // TODO: Broken if we are not on IEEE 754
+  // (https://github.com/PJK/libcbor/issues/336)
   union _cbor_double_helper helper = {.as_uint = _cbor_load_uint64(source)};
   return helper.as_double;
 }

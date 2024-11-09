@@ -6,6 +6,7 @@
  */
 
 #include "encoders.h"
+
 #include <string.h>
 
 size_t _cbor_encode_uint8(uint8_t value, unsigned char *buffer,
@@ -27,38 +28,38 @@ size_t _cbor_encode_uint8(uint8_t value, unsigned char *buffer,
 
 size_t _cbor_encode_uint16(uint16_t value, unsigned char *buffer,
                            size_t buffer_size, uint8_t offset) {
-  if (buffer_size >= 3) {
-    buffer[0] = 0x19 + offset;
+  if (buffer_size < 3) {
+    return 0;
+  }
+  buffer[0] = 0x19 + offset;
 
 #ifdef IS_BIG_ENDIAN
-    memcpy(buffer + 1, &value, 2);
+  memcpy(buffer + 1, &value, 2);
 #else
-    buffer[1] = (unsigned char)(value >> 8);
-    buffer[2] = (unsigned char)value;
+  buffer[1] = (unsigned char)(value >> 8);
+  buffer[2] = (unsigned char)value;
 #endif
 
-    return 3;
-  } else
-    return 0;
+  return 3;
 }
 
 size_t _cbor_encode_uint32(uint32_t value, unsigned char *buffer,
                            size_t buffer_size, uint8_t offset) {
-  if (buffer_size >= 5) {
-    buffer[0] = 0x1A + offset;
+  if (buffer_size < 5) {
+    return 0;
+  }
+  buffer[0] = 0x1A + offset;
 
 #ifdef IS_BIG_ENDIAN
-    memcpy(buffer + 1, &value, 4);
+  memcpy(buffer + 1, &value, 4);
 #else
-    buffer[1] = (unsigned char)(value >> 24);
-    buffer[2] = (unsigned char)(value >> 16);
-    buffer[3] = (unsigned char)(value >> 8);
-    buffer[4] = (unsigned char)value;
+  buffer[1] = (unsigned char)(value >> 24);
+  buffer[2] = (unsigned char)(value >> 16);
+  buffer[3] = (unsigned char)(value >> 8);
+  buffer[4] = (unsigned char)value;
 #endif
 
-    return 5;
-  } else
-    return 0;
+  return 5;
 }
 
 size_t _cbor_encode_uint64(uint64_t value, unsigned char *buffer,
