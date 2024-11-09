@@ -220,6 +220,7 @@ jobs:
           make &&
           sudo make install
       - build
+      - test
 
 workflows:
   build-and-test:
