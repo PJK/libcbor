@@ -3,30 +3,38 @@ version: 2.1
 commands:
   linux-setup:
     steps:
-    - run: sudo apt-get update
-    # NEEDRESTART_MODE prevents automatic restarts which seem to hang.
-    - run: sudo NEEDRESTART_MODE=l apt-get install -y cmake ${TOOLCHAIN_PACKAGES}
-    - run: sudo NEEDRESTART_MODE=l apt-get install -y libcmocka-dev libcjson-dev
+      - run: sudo apt-get update
+      # NEEDRESTART_MODE prevents automatic restarts which seem to hang.
+      - run: sudo NEEDRESTART_MODE=l apt-get install -y cmake ${TOOLCHAIN_PACKAGES}
+      - run: sudo NEEDRESTART_MODE=l apt-get install -y libcmocka-dev libcjson-dev
+  install-cmocka-from-source:
+    steps:
+      - run: git clone https://git.cryptomilk.org/projects/cmocka.git ~/cmocka
+      - run: >
+          cd $(mktemp -d /tmp/build.XXXX) &&
+          cmake ~/cmocka &&
+          make &&
+          sudo make install
   build:
     steps:
-    - run: >
-        cmake -DWITH_TESTS=ON \
-          -DWITH_EXAMPLES=ON \
-          -DCMAKE_BUILD_TYPE=Debug \
-          -DSANITIZE=OFF \
-          -DCOVERAGE="${CMAKE_COVERAGE:='OFF'}" \
-          .
-    - run: make -j 16 VERBOSE=1
+      - run: >
+          cmake -DWITH_TESTS=ON \
+            -DWITH_EXAMPLES=ON \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DSANITIZE=OFF \
+            -DCOVERAGE="${CMAKE_COVERAGE:='OFF'}" \
+            .
+      - run: make -j 16 VERBOSE=1
   build-release:
     steps:
-    - run: >
-        cmake -DWITH_TESTS=ON \
-          -DCMAKE_BUILD_TYPE=Release \
-          .
-    - run: make -j 16 VERBOSE=1
+      - run: >
+          cmake -DWITH_TESTS=ON \
+            -DCMAKE_BUILD_TYPE=Release \
+            .
+      - run: make -j 16 VERBOSE=1
   test:
     steps:
-    - run: ctest -VV
+      - run: ctest -VV
 
 orbs:
   codecov: codecov/codecov@3.2.2
@@ -205,22 +213,21 @@ jobs:
           export PATH="$(pwd)/cmocka_build/src/Debug/:$PATH" &&
           /c/Program\ Files/Cmake/bin/ctest.exe --test-dir libcbor_build --output-on-failure
 
-  build-and-test-mips:
+  build-and-test-mips: &dockcross-job
     docker:
-      - image: dockcross/linux-mips
-    steps:
+      - image: dockcross/linux-mips-lts
+    steps: 
       - checkout
       - attach_workspace:
           at: /home/circleci/project
-      # Build cmocka from source
-      - run: git clone https://git.cryptomilk.org/projects/cmocka.git ~/cmocka
-      - run: >
-          cd $(mktemp -d /tmp/build.XXXX) &&
-          cmake ~/cmocka &&
-          make &&
-          sudo make install
+      - install-cmocka-from-source
       - build
       - test
+
+  build-and-test-mipsel:
+    <<: *dockcross-job
+    docker:
+      - image: dockcross/linux-mipsel-lts
 
 workflows:
   build-and-test:
@@ -233,6 +240,7 @@ workflows:
       - build-and-test-arm
       - build-and-test-win
       - build-and-test-mips
+      - build-and-test-mipsel
       - build-bazel
       - llvm-coverage
       # OSX builds are expensive, run only on master
