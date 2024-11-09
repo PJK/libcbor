@@ -122,10 +122,6 @@ static void test_half_special(void **_CBOR_UNUSED(_state)) {
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x00}), 3);
   assert_half_float_codec_identity();
 
-  // We discard all information bits in half-float NaNs. This is
-  // not required for the core CBOR protocol (it is only a suggestion in
-  // Section 3.9).
-  // See https://github.com/PJK/libcbor/issues/215
   assert_size_equal(3, cbor_encode_half(nanf("2"), buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x00}), 3);
   assert_half_float_codec_identity();
@@ -150,12 +146,9 @@ static void test_float(void **_CBOR_UNUSED(_state)) {
   assert_memory_equal(buffer, ((unsigned char[]){0xFA, 0x7F, 0xC0, 0x00, 0x00}),
                       5);
 
-#ifndef _WIN32
-  // TODO: https://github.com/PJK/libcbor/issues/271
   assert_size_equal(5, cbor_encode_single(nanf("3"), buffer, 512));
-  assert_memory_equal(buffer, ((unsigned char[]){0xFA, 0x7F, 0xC0, 0x00, 0x03}),
+  assert_memory_equal(buffer, ((unsigned char[]){0xFA, 0x7F, 0xC0, 0x00, 0x00}),
                       5);
-#endif
 
   assert_size_equal(5, cbor_encode_single(strtof("Inf", NULL), buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xFA, 0x7F, 0x80, 0x00, 0x00}),
@@ -179,14 +172,11 @@ static void test_double(void **_CBOR_UNUSED(_state)) {
       ((unsigned char[]){0xFB, 0x7F, 0xF8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}),
       9);
 
-#ifndef _WIN32
-  // TODO: https://github.com/PJK/libcbor/issues/271
   assert_size_equal(9, cbor_encode_double(nan("3"), buffer, 512));
   assert_memory_equal(
       buffer,
-      ((unsigned char[]){0xFB, 0x7F, 0xF8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03}),
+      ((unsigned char[]){0xFB, 0x7F, 0xF8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}),
       9);
-#endif
 
   assert_size_equal(9, cbor_encode_double(strtod("Inf", NULL), buffer, 512));
   assert_memory_equal(
