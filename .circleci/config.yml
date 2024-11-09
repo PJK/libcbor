@@ -206,15 +206,12 @@ jobs:
           /c/Program\ Files/Cmake/bin/ctest.exe --test-dir libcbor_build --output-on-failure
 
   build-and-test-mips:
-    build:
-      docker:
-        - image: dockcross/linux-mips
+    docker:
+      - image: dockcross/linux-mips
     steps:
       - attach_workspace:
           at: /home/circleci/project
-      - run:
-        name: LS
-        command: ls -al
+      - run: ls -al
 
 workflows:
   build-and-test:
