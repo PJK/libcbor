@@ -216,7 +216,7 @@ jobs:
       - run: git clone https://git.cryptomilk.org/projects/cmocka.git ~/cmocka
       - run: >
           cd $(mktemp -d /tmp/build.XXXX) &&
-          cmake ~/cmocka -DCMAKE_TOOLCHAIN_FILE=~/cmocka/cmake/Toolchain-cross-m32.cmake &&
+          cmake ~/cmocka &&
           make &&
           sudo make install
       - build
