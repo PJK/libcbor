@@ -209,6 +209,7 @@ jobs:
     docker:
       - image: dockcross/linux-mips
     steps:
+      - checkout
       - attach_workspace:
           at: /home/circleci/project
       # Build cmocka from source
