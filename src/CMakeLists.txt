@@ -29,7 +29,13 @@ if(NOT DEFINED CMAKE_MACOSX_RPATH)
 endif()
 
 add_library(cbor ${SOURCES})
-target_include_directories(cbor PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(cbor PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+set_target_properties(cbor PROPERTIES EXPORT_NAME libcbor)
+# For vendored builds
+add_library(libcbor::libcbor ALIAS cbor)
 
 # Explicitly link math.h if necessary
 check_function_exists(ldexp LDEXP_AVAILABLE)
@@ -40,7 +46,6 @@ endif()
 include(GenerateExportHeader)
 generate_export_header(cbor EXPORT_FILE_NAME
                        ${CMAKE_CURRENT_BINARY_DIR}/cbor/cbor_export.h)
-target_include_directories(cbor PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cbor/cbor_export.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cbor)
 
@@ -65,6 +70,7 @@ configure_file(libcbor.pc.in libcbor.pc @ONLY)
 # http://www.cmake.org/Wiki/CMake:Install_Commands
 install(
   TARGETS cbor
+  EXPORT libcborTargets
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
@@ -91,4 +97,7 @@ write_basic_package_version_file(
   COMPATIBILITY SameMajorVersion)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libcborConfig.cmake
               ${CMAKE_CURRENT_BINARY_DIR}/libcborConfigVersion.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libcbor)
+install(EXPORT libcborTargets
+        NAMESPACE libcbor::
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libcbor)
