@@ -27,5 +27,5 @@ sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.6
 sphinxcontrib-serializinghtml==1.1.9
 tornado==6.3.3
-urllib3==2.1.0
+urllib3==2.2.2
 zipp==3.17.0
