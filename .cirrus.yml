@@ -18,9 +18,9 @@ freebsd_task:
     - name: freebsd-13-4
       freebsd_instance:
         image_family: freebsd-13-4
-    - name: freebsd-14-1
+    - name: freebsd-14-2
       freebsd_instance:
-        image_family: freebsd-14-1
+        image_family: freebsd-14-2
     - name: freebsd-15-0-snap
       freebsd_instance:
         image_family: freebsd-15-0-snap
