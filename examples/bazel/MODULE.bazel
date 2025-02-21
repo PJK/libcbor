@@ -9,5 +9,5 @@ bazel_dep(name = "googletest", version = "1.15.2")
 bazel_dep(name = "libcbor")
 local_path_override(
     module_name = "libcbor",
-    path = "../../src",
+    path = "../..",
 )
