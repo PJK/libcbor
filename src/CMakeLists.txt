@@ -32,6 +32,7 @@ add_library(cbor ${SOURCES})
 target_include_directories(cbor PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 set_target_properties(cbor PROPERTIES EXPORT_NAME libcbor)
 # For vendored builds

@@ -199,8 +199,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/cbor/configuration.h.in
                ${PROJECT_BINARY_DIR}/cbor/configuration.h)
 install(FILES ${PROJECT_BINARY_DIR}/cbor/configuration.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cbor)
-# Make the header visible at compile time
-include_directories(${PROJECT_BINARY_DIR})
 
 # CMake >= 3.9.0 enables LTO for GCC and Clang with INTERPROCEDURAL_OPTIMIZATION
 # Policy CMP0069 enables this behavior when we set the minimum CMake version <
