@@ -220,7 +220,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: /home/circleci/project
-      - install-cmocka-from-source
+      - linux-setup
       - build
       - test
 
