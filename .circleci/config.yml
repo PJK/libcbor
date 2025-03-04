@@ -5,9 +5,10 @@ commands:
     steps:
       - run: sudo apt-get update
       # NEEDRESTART_MODE prevents automatic restarts which seem to hang.
-      - run: sudo NEEDRESTART_MODE=l apt-get install -y cmake ${TOOLCHAIN_PACKAGES}
+      - run: sudo NEEDRESTART_MODE=l  apt-get install -y cmake ${TOOLCHAIN_PACKAGES}
       - run: sudo NEEDRESTART_MODE=l apt-get install -y libcmocka-dev libcjson-dev
-  install-cmocka-from-source:
+  build-with-cmocka-from-source:
+    # For whatever reason, cmocka find stopped working on dockercross at some point.
     steps:
       - run: git clone https://git.cryptomilk.org/projects/cmocka.git ~/cmocka
       - run: >
@@ -15,6 +16,15 @@ commands:
           cmake ~/cmocka &&
           make &&
           sudo make install
+      - run: >
+          cmake -DWITH_TESTS=ON \
+            -DWITH_EXAMPLES=ON \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DSANITIZE=OFF \
+            -DCOVERAGE="${CMAKE_COVERAGE:='OFF'}" \
+            -DCMOCKA_INCLUDE_DIR=/usr/local/include \
+            -DCMOCKA_LIBRARIES=/usr/local/lib/libcmocka.so
+      - run: make -j 16 VERBOSE=1
   build:
     steps:
       - run: >
@@ -220,8 +230,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: /home/circleci/project
-      - install-cmocka-from-source
-      - build
+      - build-with-cmocka-from-source
       - test
 
   build-and-test-mipsel:
