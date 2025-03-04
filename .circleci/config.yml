@@ -5,8 +5,8 @@ commands:
     steps:
       - run: sudo apt-get update
       # NEEDRESTART_MODE prevents automatic restarts which seem to hang.
-      - run: sudo NEEDRESTART_MODE=l apt-get install -y cmake ${TOOLCHAIN_PACKAGES}
-      - run: sudo NEEDRESTART_MODE=l apt-get install -y libcmocka-dev libcjson-dev
+      - run: NEEDRESTART_MODE=l sudo apt-get install -y cmake ${TOOLCHAIN_PACKAGES}
+      - run: NEEDRESTART_MODE=l sudo apt-get install -y libcmocka-dev libcjson-dev
   install-cmocka-from-source:
     steps:
       - run: git clone https://git.cryptomilk.org/projects/cmocka.git ~/cmocka
