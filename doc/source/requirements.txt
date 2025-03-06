@@ -12,7 +12,7 @@ h11==0.14.0
 idna==3.10
 imagesize==1.4.1
 importlib_metadata==8.6.1
-Jinja2==3.1.5
+Jinja2==3.1.6
 livereload @ https://github.com/lepture/python-livereload/archive/master.zip#sha256=95371213cf9107242808ea6e1353b524d7c38d96e299604e651e43271263352c
 MarkupSafe==3.0.2
 packaging==24.2
