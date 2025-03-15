@@ -119,8 +119,8 @@ static void test_float_ctrl_creation(void** _state _CBOR_UNUSED) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_undef()); });
 
   WITH_FAILING_MALLOC({ assert_null(cbor_build_bool(false)); });
-  WITH_FAILING_MALLOC({ assert_null(cbor_build_float2(3.14)); });
-  WITH_FAILING_MALLOC({ assert_null(cbor_build_float4(3.14)); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_build_float2(3.14f)); });
+  WITH_FAILING_MALLOC({ assert_null(cbor_build_float4(3.14f)); });
   WITH_FAILING_MALLOC({ assert_null(cbor_build_float8(3.14)); });
   WITH_FAILING_MALLOC({ assert_null(cbor_build_ctrl(0xAF)); });
 }
