@@ -592,9 +592,10 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xFF:
       /* Break */
       callbacks->indef_break(context);
-      // Never happens, the switch statement is exhaustive on the 1B range; make
-      // compiler happy
+      return result;
     default:
+      // Never happens, the switch statement is exhaustive on the 1B range
+      _CBOR_UNREACHABLE;
       return result;
   }
 }

@@ -19,7 +19,6 @@
 
 size_t cbor_serialize(const cbor_item_t *item, unsigned char *buffer,
                       size_t buffer_size) {
-  // cppcheck-suppress missingReturn
   switch (cbor_typeof(item)) {
     case CBOR_TYPE_UINT:
       return cbor_serialize_uint(item, buffer, buffer_size);
@@ -37,6 +36,9 @@ size_t cbor_serialize(const cbor_item_t *item, unsigned char *buffer,
       return cbor_serialize_tag(item, buffer, buffer_size);
     case CBOR_TYPE_FLOAT_CTRL:
       return cbor_serialize_float_ctrl(item, buffer, buffer_size);
+    default:
+      _CBOR_UNREACHABLE;
+      return 0;
   }
 }
 
@@ -59,7 +61,6 @@ size_t _cbor_encoded_header_size(uint64_t size) {
 }
 
 size_t cbor_serialized_size(const cbor_item_t *item) {
-  // cppcheck-suppress missingReturn
   switch (cbor_typeof(item)) {
     case CBOR_TYPE_UINT:
     case CBOR_TYPE_NEGINT:
@@ -73,6 +74,9 @@ size_t cbor_serialized_size(const cbor_item_t *item) {
           return 5;
         case CBOR_INT_64:
           return 9;
+        default:
+          _CBOR_UNREACHABLE;
+          return 0;
       }
     // Note: We do not _cbor_safe_signaling_add zero-length definite strings,
     // they would cause zeroes to propagate. All other items are at least one
@@ -147,7 +151,13 @@ size_t cbor_serialized_size(const cbor_item_t *item) {
           return 5;
         case CBOR_FLOAT_64:
           return 9;
+        default:
+          _CBOR_UNREACHABLE;
+          return 0;
       }
+    default:
+      _CBOR_UNREACHABLE;
+      return 0;
   }
 }
 
@@ -184,6 +194,9 @@ size_t cbor_serialize_uint(const cbor_item_t *item, unsigned char *buffer,
       return cbor_encode_uint32(cbor_get_uint32(item), buffer, buffer_size);
     case CBOR_INT_64:
       return cbor_encode_uint64(cbor_get_uint64(item), buffer, buffer_size);
+    default:
+      _CBOR_UNREACHABLE;
+      return 0;
   }
 }
 
@@ -200,6 +213,9 @@ size_t cbor_serialize_negint(const cbor_item_t *item, unsigned char *buffer,
       return cbor_encode_negint32(cbor_get_uint32(item), buffer, buffer_size);
     case CBOR_INT_64:
       return cbor_encode_negint64(cbor_get_uint64(item), buffer, buffer_size);
+    default:
+      _CBOR_UNREACHABLE;
+      return 0;
   }
 }
 
@@ -364,5 +380,8 @@ size_t cbor_serialize_float_ctrl(const cbor_item_t *item, unsigned char *buffer,
     case CBOR_FLOAT_64:
       return cbor_encode_double(cbor_float_get_float8(item), buffer,
                                 buffer_size);
+    default:
+      _CBOR_UNREACHABLE;
+      return 0;
   }
 }
