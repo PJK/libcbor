@@ -124,6 +124,19 @@ else()
   add_definitions(-DEIGHT_BYTE_SIZE_T)
 endif()
 
+include(CheckCSourceCompiles)
+
+check_c_source_compiles("
+    int main() {
+        __builtin_unreachable();
+        return 0;
+    }
+" HAS_BUILTIN_UNREACHABLE)
+
+if (HAS_BUILTIN_UNREACHABLE)
+  add_definitions(-D_CBOR_HAS_BUILTIN_UNREACHABLE)
+endif()
+
 enable_testing()
 
 set(CTEST_MEMORYCHECK_COMMAND "/usr/bin/valgrind")

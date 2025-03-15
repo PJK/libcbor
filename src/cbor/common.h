@@ -93,6 +93,12 @@ extern bool _cbor_enable_assert;
 #define _CBOR_NODISCARD
 #endif
 
+#ifdef CBOR_HAS_BUILTIN_UNREACHABLE
+#define _CBOR_UNREACHABLE __builtin_unreachable()
+#else
+#define _CBOR_UNREACHABLE
+#endif
+
 typedef void *(*_cbor_malloc_t)(size_t);
 typedef void *(*_cbor_realloc_t)(void *, size_t);
 typedef void (*_cbor_free_t)(void *);
