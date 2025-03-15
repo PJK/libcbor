@@ -105,7 +105,7 @@ static void test_nested_tag(void **_CBOR_UNUSED(_state)) {
 static void test_all_tag_values_supported(void **_CBOR_UNUSED(_state)) {
   /* Test all items in the protected range of
    * https://www.iana.org/assignments/cbor-tags/cbor-tags.xhtml */
-  for (int64_t tag_value = 0; tag_value <= 32767; tag_value++) {
+  for (uint64_t tag_value = 0; tag_value <= 32767; tag_value++) {
     cbor_item_t *tag_item =
         cbor_build_tag(tag_value, cbor_move(cbor_build_uint8(42)));
     unsigned char *serialized_tag;

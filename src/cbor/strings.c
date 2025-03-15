@@ -16,7 +16,9 @@ cbor_item_t *cbor_new_definite_string(void) {
   *item = (cbor_item_t){
       .refcount = 1,
       .type = CBOR_TYPE_STRING,
-      .metadata = {.string_metadata = {_CBOR_METADATA_DEFINITE, 0}}};
+      .metadata = {.string_metadata = {.type = _CBOR_METADATA_DEFINITE,
+                                       .codepoint_count = 0,
+                                       .length = 0}}};
   return item;
 }
 
