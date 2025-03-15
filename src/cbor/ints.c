@@ -48,6 +48,9 @@ uint64_t cbor_get_int(const cbor_item_t *item) {
       return cbor_get_uint32(item);
     case CBOR_INT_64:
       return cbor_get_uint64(item);
+    default:
+      _CBOR_UNREACHABLE;
+      return 0;
   }
 }
 

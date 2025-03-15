@@ -45,7 +45,6 @@ double cbor_float_get_float8(const cbor_item_t *item) {
 
 double cbor_float_get_float(const cbor_item_t *item) {
   CBOR_ASSERT(cbor_is_float(item));
-  // cppcheck-suppress missingReturn
   switch (cbor_float_get_width(item)) {
     case CBOR_FLOAT_0:
       return NAN;
@@ -55,6 +54,9 @@ double cbor_float_get_float(const cbor_item_t *item) {
       return cbor_float_get_float4(item);
     case CBOR_FLOAT_64:
       return cbor_float_get_float8(item);
+    default:
+      _CBOR_UNREACHABLE;
+      return 0;
   }
 }
 
