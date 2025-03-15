@@ -22,7 +22,7 @@ struct cbor_load_result res;
 
 unsigned char empty_map[] = {0xA0};
 
-static void test_empty_map(void **_CBOR_UNUSED(_state)) {
+static void test_empty_map(void **_state _CBOR_UNUSED) {
   map = cbor_load(empty_map, 1, &res);
   assert_non_null(map);
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
@@ -37,7 +37,7 @@ static void test_empty_map(void **_CBOR_UNUSED(_state)) {
 unsigned char simple_map[] = {0xA2, 0x01, 0x02, 0x03, 0x04};
 
 /* {1: 2, 3: 4} */
-static void test_simple_map(void **_CBOR_UNUSED(_state)) {
+static void test_simple_map(void **_state _CBOR_UNUSED) {
   map = cbor_load(simple_map, 5, &res);
   assert_non_null(map);
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
@@ -57,7 +57,7 @@ static void test_simple_map(void **_CBOR_UNUSED(_state)) {
 unsigned char simple_indef_map[] = {0xBF, 0x01, 0x02, 0x03, 0x04, 0xFF};
 
 /* {_ 1: 2, 3: 4} */
-static void test_indef_simple_map(void **_CBOR_UNUSED(_state)) {
+static void test_indef_simple_map(void **_state _CBOR_UNUSED) {
   map = cbor_load(simple_indef_map, 6, &res);
   assert_non_null(map);
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
@@ -84,7 +84,7 @@ unsigned char def_nested_map[] = {
     0x74, 0x69, 0x74, 0x6C, 0x65, 0x70, 0x65, 0x78, 0x61, 0x6D, 0x70, 0x6C,
     0x65, 0x20, 0x67, 0x6C, 0x6F, 0x73, 0x73, 0x61, 0x72, 0x79};
 
-static void test_def_nested_map(void **_CBOR_UNUSED(_state)) {
+static void test_def_nested_map(void **_state _CBOR_UNUSED) {
   map = cbor_load(def_nested_map, 34, &res);
   assert_non_null(map);
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
@@ -108,7 +108,7 @@ unsigned char streamed_key_map[] = {0xA1, 0x7F, 0x61, 0x61,
                                     0x61, 0x62, 0xFF, 0xA0};
 
 /* '{ (_"a" "b"): {}}' */
-static void test_streamed_key_map(void **_CBOR_UNUSED(_state)) {
+static void test_streamed_key_map(void **_state _CBOR_UNUSED) {
   map = cbor_load(streamed_key_map, 8, &res);
   assert_non_null(map);
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
@@ -130,7 +130,7 @@ unsigned char streamed_kv_map[] = {0xA1, 0x7F, 0x61, 0x61, 0x61, 0x62, 0xFF,
                                    0x7F, 0x61, 0x63, 0x61, 0x64, 0xFF};
 
 /* '{ (_"a" "b"): (_"c", "d")}' */
-static void test_streamed_kv_map(void **_CBOR_UNUSED(_state)) {
+static void test_streamed_kv_map(void **_state _CBOR_UNUSED) {
   map = cbor_load(streamed_kv_map, 13, &res);
   assert_non_null(map);
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
@@ -157,7 +157,7 @@ unsigned char streamed_streamed_kv_map[] = {0xBF, 0x7F, 0x61, 0x61, 0x61,
                                             0x61, 0x64, 0xFF, 0xFF};
 
 /* '{_ (_"a" "b"): (_"c", "d")}' */
-static void test_streamed_streamed_kv_map(void **_CBOR_UNUSED(_state)) {
+static void test_streamed_streamed_kv_map(void **_state _CBOR_UNUSED) {
   map = cbor_load(streamed_streamed_kv_map, 14, &res);
   assert_non_null(map);
   assert_true(cbor_typeof(map) == CBOR_TYPE_MAP);
@@ -179,7 +179,7 @@ static void test_streamed_streamed_kv_map(void **_CBOR_UNUSED(_state)) {
   assert_null(map);
 }
 
-static void test_map_add_full(void **_CBOR_UNUSED(_state)) {
+static void test_map_add_full(void **_state _CBOR_UNUSED) {
   map = cbor_new_definite_map(0);
   cbor_item_t *one = cbor_build_uint8(1);
   cbor_item_t *two = cbor_build_uint8(2);
@@ -191,7 +191,7 @@ static void test_map_add_full(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&two);
 }
 
-static void test_map_add_too_big_to_realloc(void **_CBOR_UNUSED(_state)) {
+static void test_map_add_too_big_to_realloc(void **_state _CBOR_UNUSED) {
   map = cbor_new_indefinite_map();
   struct _cbor_map_metadata *metadata =
       (struct _cbor_map_metadata *)&map->metadata;
@@ -210,7 +210,7 @@ static void test_map_add_too_big_to_realloc(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&two);
 }
 
-static void test_map_creation(void **_CBOR_UNUSED(_state)) {
+static void test_map_creation(void **_state _CBOR_UNUSED) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_definite_map(42)); });
   WITH_MOCK_MALLOC({ assert_null(cbor_new_definite_map(42)); }, 2, MALLOC,
                    MALLOC_FAIL);
@@ -218,7 +218,7 @@ static void test_map_creation(void **_CBOR_UNUSED(_state)) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_map()); });
 }
 
-static void test_map_add(void **_CBOR_UNUSED(_state)) {
+static void test_map_add(void **_state _CBOR_UNUSED) {
   WITH_MOCK_MALLOC(
       {
         cbor_item_t *map = cbor_new_indefinite_map();
@@ -238,7 +238,7 @@ static void test_map_add(void **_CBOR_UNUSED(_state)) {
 }
 
 static unsigned char test_indef_map[] = {0xBF, 0x01, 0x02, 0x03, 0x04, 0xFF};
-static void test_indef_map_decode(void **_CBOR_UNUSED(_state)) {
+static void test_indef_map_decode(void **_state _CBOR_UNUSED) {
   WITH_MOCK_MALLOC(
       {
         cbor_item_t *map;

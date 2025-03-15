@@ -81,15 +81,15 @@ extern bool _cbor_enable_assert;
 #define _CBOR_TO_STR(x) _CBOR_TO_STR_(x) /* enables proper double expansion */
 
 #ifdef __GNUC__
-#define _CBOR_UNUSED(x) __attribute__((__unused__)) x
+#define _CBOR_UNUSED __attribute__((__unused__))
 // TODO(https://github.com/PJK/libcbor/issues/247): Prefer [[nodiscard]] if
 // available
 #define _CBOR_NODISCARD __attribute__((warn_unused_result))
 #elif defined(_MSC_VER)
-#define _CBOR_UNUSED(x) __pragma(warning(suppress : 4100 4101)) x
+#define _CBOR_UNUSED x __pragma(warning(suppress : 4100 4101)) x
 #define _CBOR_NODISCARD
 #else
-#define _CBOR_UNUSED(x) x
+#define _CBOR_UNUSED x x
 #define _CBOR_NODISCARD
 #endif
 

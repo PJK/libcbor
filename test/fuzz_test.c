@@ -55,7 +55,7 @@ static void run_round(void) {
   free(data);
 }
 
-static void fuzz(void **_CBOR_UNUSED(_state)) {
+static void fuzz(void **_state _CBOR_UNUSED) {
   cbor_set_allocs(mock_malloc, realloc, free);
   printf("Fuzzing %llu rounds of up to %llu bytes with seed %u\n", ROUNDS,
          MAXLEN, seed);

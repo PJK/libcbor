@@ -32,20 +32,20 @@ void assert_describe_result(cbor_item_t *item, char *expected_result) {
 #endif
 }
 
-static void test_uint(void **_CBOR_UNUSED(_state)) {
+static void test_uint(void **_state _CBOR_UNUSED) {
   cbor_item_t *item = cbor_build_uint8(42);
   assert_describe_result(item, "[CBOR_TYPE_UINT] Width: 1B, Value: 42\n");
   cbor_decref(&item);
 }
 
-static void test_negint(void **_CBOR_UNUSED(_state)) {
+static void test_negint(void **_state _CBOR_UNUSED) {
   cbor_item_t *item = cbor_build_negint16(40);
   assert_describe_result(item,
                          "[CBOR_TYPE_NEGINT] Width: 2B, Value: -40 - 1\n");
   cbor_decref(&item);
 }
 
-static void test_definite_bytestring(void **_CBOR_UNUSED(_state)) {
+static void test_definite_bytestring(void **_state _CBOR_UNUSED) {
   unsigned char data[] = {0x01, 0x02, 0x03};
   cbor_item_t *item = cbor_build_bytestring(data, 3);
   assert_describe_result(item,
@@ -54,7 +54,7 @@ static void test_definite_bytestring(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
-static void test_indefinite_bytestring(void **_CBOR_UNUSED(_state)) {
+static void test_indefinite_bytestring(void **_state _CBOR_UNUSED) {
   unsigned char data[] = {0x01, 0x02, 0x03};
   cbor_item_t *item = cbor_new_indefinite_bytestring();
   assert_true(cbor_bytestring_add_chunk(
@@ -71,7 +71,7 @@ static void test_indefinite_bytestring(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
-static void test_definite_string(void **_CBOR_UNUSED(_state)) {
+static void test_definite_string(void **_state _CBOR_UNUSED) {
   char *string = "Hello!";
   cbor_item_t *item = cbor_build_string(string);
   assert_describe_result(
@@ -81,7 +81,7 @@ static void test_definite_string(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
-static void test_indefinite_string(void **_CBOR_UNUSED(_state)) {
+static void test_indefinite_string(void **_state _CBOR_UNUSED) {
   char *string = "Hello!";
   cbor_item_t *item = cbor_new_indefinite_string();
   assert_true(
@@ -98,7 +98,7 @@ static void test_indefinite_string(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
-static void test_multibyte_string(void **_CBOR_UNUSED(_state)) {
+static void test_multibyte_string(void **_state _CBOR_UNUSED) {
   // "Štěstíčko" in UTF-8
   char *string = "\xc5\xa0t\xc4\x9bst\xc3\xad\xc4\x8dko";
   cbor_item_t *item = cbor_build_string(string);
@@ -109,7 +109,7 @@ static void test_multibyte_string(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
-static void test_definite_array(void **_CBOR_UNUSED(_state)) {
+static void test_definite_array(void **_state _CBOR_UNUSED) {
   cbor_item_t *item = cbor_new_definite_array(2);
   assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(1))));
   assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(2))));
@@ -120,7 +120,7 @@ static void test_definite_array(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
-static void test_indefinite_array(void **_CBOR_UNUSED(_state)) {
+static void test_indefinite_array(void **_state _CBOR_UNUSED) {
   cbor_item_t *item = cbor_new_indefinite_array();
   assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(1))));
   assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(2))));
@@ -131,7 +131,7 @@ static void test_indefinite_array(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
-static void test_definite_map(void **_CBOR_UNUSED(_state)) {
+static void test_definite_map(void **_state _CBOR_UNUSED) {
   cbor_item_t *item = cbor_new_definite_map(1);
   assert_true(cbor_map_add(
       item, (struct cbor_pair){.key = cbor_move(cbor_build_uint8(1)),
@@ -144,7 +144,7 @@ static void test_definite_map(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
-static void test_indefinite_map(void **_CBOR_UNUSED(_state)) {
+static void test_indefinite_map(void **_state _CBOR_UNUSED) {
   cbor_item_t *item = cbor_new_indefinite_map();
   assert_true(cbor_map_add(
       item, (struct cbor_pair){.key = cbor_move(cbor_build_uint8(1)),
@@ -157,7 +157,7 @@ static void test_indefinite_map(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
-static void test_tag(void **_CBOR_UNUSED(_state)) {
+static void test_tag(void **_state _CBOR_UNUSED) {
   cbor_item_t *item = cbor_build_tag(42, cbor_move(cbor_build_uint8(1)));
   assert_describe_result(item,
                          "[CBOR_TYPE_TAG] Value: 42\n"
@@ -165,7 +165,7 @@ static void test_tag(void **_CBOR_UNUSED(_state)) {
   cbor_decref(&item);
 }
 
-static void test_floats(void **_CBOR_UNUSED(_state)) {
+static void test_floats(void **_state _CBOR_UNUSED) {
   cbor_item_t *item = cbor_new_indefinite_array();
   assert_true(cbor_array_push(item, cbor_move(cbor_build_bool(true))));
   assert_true(
