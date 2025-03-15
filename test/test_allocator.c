@@ -8,7 +8,7 @@
 int alloc_calls_expected;
 // How many alloc calls we got
 int alloc_calls;
-// Array of booleans indicating whether to return a block or fail with NULL
+// Array of expected call and their behavior (success or failure)
 call_expectation *expectations;
 
 void set_mock_malloc(int calls, ...) {
@@ -59,7 +59,7 @@ error:
   print_error(
       "Unexpected call to malloc(%zu) at position %d of %d; expected %d\n",
       size, alloc_calls, alloc_calls_expected,
-      alloc_calls < alloc_calls_expected ? expectations[alloc_calls] : -1);
+      alloc_calls < alloc_calls_expected ? (int)expectations[alloc_calls] : -1);
   print_backtrace();
   fail();
   return NULL;
@@ -82,7 +82,7 @@ error:
   print_error(
       "Unexpected call to realloc(%zu) at position %d of %d; expected %d\n",
       size, alloc_calls, alloc_calls_expected,
-      alloc_calls < alloc_calls_expected ? expectations[alloc_calls] : -1);
+      alloc_calls < alloc_calls_expected ? (int)expectations[alloc_calls] : -1);
   print_backtrace();
   fail();
   return NULL;
