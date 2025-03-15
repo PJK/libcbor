@@ -98,8 +98,8 @@ else()
   set(CBOR_RESTRICT_SPECIFIER "restrict")
 
   set(CMAKE_C_FLAGS_DEBUG
-      "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -g -ggdb -DDEBUG=true")
-  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -Wall -DNDEBUG")
+      "${CMAKE_C_FLAGS_DEBUG} -O0 -pedantic -Wall -Wextra -g -ggdb -DDEBUG=true")
+  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -pedantic -Wall -Wextra -DNDEBUG")
 
   if(SANITIZE)
     set(CMAKE_C_FLAGS_DEBUG
@@ -122,6 +122,19 @@ if(SIZEOF_SIZE_T LESS 8)
       decoder if you need to deal with huge items.")
 else()
   add_definitions(-DEIGHT_BYTE_SIZE_T)
+endif()
+
+include(CheckCSourceCompiles)
+
+check_c_source_compiles("
+    int main() {
+        __builtin_unreachable();
+        return 0;
+    }
+" HAS_BUILTIN_UNREACHABLE)
+
+if (HAS_BUILTIN_UNREACHABLE)
+  add_definitions(-D_CBOR_HAS_BUILTIN_UNREACHABLE)
 endif()
 
 enable_testing()

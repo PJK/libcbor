@@ -9,7 +9,7 @@
 
 #include <string.h>
 
-size_t _cbor_encode_uint8(uint8_t value, unsigned char *buffer,
+size_t _cbor_encode_uint8(uint8_t value, unsigned char* buffer,
                           size_t buffer_size, uint8_t offset) {
   if (value <= 23) {
     if (buffer_size >= 1) {
@@ -26,7 +26,7 @@ size_t _cbor_encode_uint8(uint8_t value, unsigned char *buffer,
   return 0;
 }
 
-size_t _cbor_encode_uint16(uint16_t value, unsigned char *buffer,
+size_t _cbor_encode_uint16(uint16_t value, unsigned char* buffer,
                            size_t buffer_size, uint8_t offset) {
   if (buffer_size < 3) {
     return 0;
@@ -43,7 +43,7 @@ size_t _cbor_encode_uint16(uint16_t value, unsigned char *buffer,
   return 3;
 }
 
-size_t _cbor_encode_uint32(uint32_t value, unsigned char *buffer,
+size_t _cbor_encode_uint32(uint32_t value, unsigned char* buffer,
                            size_t buffer_size, uint8_t offset) {
   if (buffer_size < 5) {
     return 0;
@@ -62,7 +62,7 @@ size_t _cbor_encode_uint32(uint32_t value, unsigned char *buffer,
   return 5;
 }
 
-size_t _cbor_encode_uint64(uint64_t value, unsigned char *buffer,
+size_t _cbor_encode_uint64(uint64_t value, unsigned char* buffer,
                            size_t buffer_size, uint8_t offset) {
   if (buffer_size >= 9) {
     buffer[0] = 0x1B + offset;
@@ -85,7 +85,7 @@ size_t _cbor_encode_uint64(uint64_t value, unsigned char *buffer,
     return 0;
 }
 
-size_t _cbor_encode_uint(uint64_t value, unsigned char *buffer,
+size_t _cbor_encode_uint(uint64_t value, unsigned char* buffer,
                          size_t buffer_size, uint8_t offset) {
   if (value <= UINT16_MAX)
     if (value <= UINT8_MAX)
