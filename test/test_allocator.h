@@ -21,9 +21,9 @@ void set_mock_malloc(int calls, ...);
 
 void finalize_mock_malloc(void);
 
-void *instrumented_malloc(size_t size);
+void* instrumented_malloc(size_t size);
 
-void *instrumented_realloc(void *ptr, size_t size);
+void* instrumented_realloc(void* ptr, size_t size);
 
 #define WITH_MOCK_MALLOC(block, malloc_calls, ...)                    \
   do {                                                                \

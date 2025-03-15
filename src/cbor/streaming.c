@@ -9,7 +9,7 @@
 #include "internal/loaders.h"
 
 static bool claim_bytes(size_t required, size_t provided,
-                        struct cbor_decoder_result *result) {
+                        struct cbor_decoder_result* result) {
   if (required > (provided - result->read)) {
     result->required = required + result->read;
     result->read = 0;
@@ -42,7 +42,7 @@ static bool claim_bytes(size_t required, size_t provided,
 
 struct cbor_decoder_result cbor_stream_decode(
     cbor_data source, size_t source_size,
-    const struct cbor_callbacks *callbacks, void *context) {
+    const struct cbor_callbacks* callbacks, void* context) {
   // Attempt to claim the initial MTB byte
   struct cbor_decoder_result result = {.status = CBOR_DECODER_FINISHED};
   if (!claim_bytes(1, source_size, &result)) {
