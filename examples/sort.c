@@ -14,7 +14,7 @@
  * standard library functions.
  */
 
-int compareUint(const void* a, const void* b) {
+int compare_uint(const void* a, const void* b) {
   uint8_t av = cbor_get_uint8(*(cbor_item_t**)a),
           bv = cbor_get_uint8(*(cbor_item_t**)b);
 
@@ -35,7 +35,7 @@ int main(void) {
   if (!success) return 1;
 
   qsort(cbor_array_handle(array), cbor_array_size(array), sizeof(cbor_item_t*),
-        compareUint);
+        compare_uint);
 
   cbor_describe(array, stdout);
   fflush(stdout);
