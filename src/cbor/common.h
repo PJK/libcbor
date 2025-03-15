@@ -86,10 +86,10 @@ extern bool _cbor_enable_assert;
 // available
 #define _CBOR_NODISCARD __attribute__((warn_unused_result))
 #elif defined(_MSC_VER)
-#define _CBOR_UNUSED x __pragma(warning(suppress : 4100 4101)) x
+#define _CBOR_UNUSED __pragma(warning(suppress : 4100 4101))
 #define _CBOR_NODISCARD
 #else
-#define _CBOR_UNUSED x x
+#define _CBOR_UNUSED
 #define _CBOR_NODISCARD
 #endif
 
