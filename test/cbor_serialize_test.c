@@ -6,7 +6,6 @@
  */
 
 // cbor_serialize_alloc
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 #include <math.h>
