@@ -3,6 +3,9 @@ Template:
 
 Next
 ---------------------
+
+0.12.0 (2025-03-16)
+---------------------
 - BUILD BREAKING: [Respect `INTERPROCEDURAL_OPTIMIZATION` and use the default value](https://github.com/PJK/libcbor/issues/315) 
 - BREAKING: Changes to NaN encoding
   - [Fix NaN encoding on Windows](https://github.com/PJK/libcbor/issues/271)
