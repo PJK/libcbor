@@ -19,16 +19,21 @@ OUTDIR=$(mktemp -d)
 TAG_NAME="v$1"
 BRANCH_NAME="release-${VERSION}"
 
+
+echo ">>>>> Bumping version"
+cd $DIR
 git checkout -b "$BRANCH_NAME"
+python3 misc/update_version.py "$1"
+git commit -a -m "Bump version to $1"
+prompt "Check the repository state, everything looks good?"
+
+echo ">>>>> Pushing version bump branch"
 git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)
 echo "Open and merge PR: https://github.com/PJK/libcbor/pull/new/${BRANCH_NAME}"
 prompt "Did you merge the PR?"
 
 git checkout master
 git pull
-
-cd $DIR
-python3 misc/update_version.py "$1"
 
 echo ">>>>> Checking changelog"
 grep -A 10 -F "$1" CHANGELOG.md || true
