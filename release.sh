@@ -17,7 +17,7 @@ function prompt() {
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OUTDIR=$(mktemp -d)
 TAG_NAME="v$1"
-BRANCH_NAME="release-${VERSION}"
+BRANCH_NAME="release-$1"
 
 
 echo ">>>>> Bumping version"
@@ -25,15 +25,8 @@ cd $DIR
 git checkout -b "$BRANCH_NAME"
 python3 misc/update_version.py "$1"
 git commit -a -m "Bump version to $1"
+git log -2
 prompt "Check the repository state, everything looks good?"
-
-echo ">>>>> Pushing version bump branch"
-git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)
-echo "Open and merge PR: https://github.com/PJK/libcbor/pull/new/${BRANCH_NAME}"
-prompt "Did you merge the PR?"
-
-git checkout master
-git pull
 
 echo ">>>>> Checking changelog"
 grep -A 10 -F "$1" CHANGELOG.md || true
@@ -77,6 +70,14 @@ cmake "$DIR" -DCMAKE_BUILD_TYPE=Release -DWITH_TESTS=ON
 make
 ctest
 popd
+
+echo ">>>>> Pushing version bump branch"
+git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)
+echo "Open and merge PR: https://github.com/PJK/libcbor/pull/new/${BRANCH_NAME}"
+prompt "Did you merge the PR?"
+
+git checkout master
+git pull
 
 prompt "Will proceed to tag the release with $TAG_NAME."
 git commit -a -m "Release $TAG_NAME"
