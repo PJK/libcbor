@@ -6,7 +6,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 include(CTest)
 include(GNUInstallDirs) # Provides CMAKE_INSTALL_ variables
 
-set(CBOR_VERSION_MAJOR "42")
+set(CBOR_VERSION_MAJOR "0")
 set(CBOR_VERSION_MINOR "43")
 set(CBOR_VERSION_PATCH "46")
 set(CBOR_VERSION
