@@ -4,6 +4,9 @@ Template:
 Next
 ---------------------
 
+42.43.45 (2025-03-16)
+---------------------
+
 42.43.44 (2025-03-16)
 ---------------------
 - BUILD BREAKING: [Respect `INTERPROCEDURAL_OPTIMIZATION` and use the default value](https://github.com/PJK/libcbor/issues/315) 
