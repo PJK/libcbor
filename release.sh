@@ -37,7 +37,7 @@ grep PROJECT_NUMBER Doxyfile
 prompt "Is the Doxyfile version correct?"
 
 echo ">>>>> Checking CMakeLists"
-grep -A 2 'SET(CBOR_VERSION_MAJOR' CMakeLists.txt
+grep -A 2 'set(CBOR_VERSION_MAJOR' CMakeLists.txt
 prompt "Is the CMake version correct?"
 
 echo ">>>>> Checking Bazel build"
