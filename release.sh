@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Guides my forgetful self through the release process.
-# Usage release.sh VERSION
+# Usage: release.sh 0.42.0
 
 set -e
 
@@ -17,6 +17,15 @@ function prompt() {
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OUTDIR=$(mktemp -d)
 TAG_NAME="v$1"
+BRANCH_NAME="release-${VERSION}"
+
+git checkout -b "$BRANCH_NAME"
+git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)
+echo "Open and merge PR: https://github.com/PJK/libcbor/pull/new/${BRANCH_NAME}"
+prompt "Did you merge the PR?"
+
+git checkout master
+git pull
 
 cd $DIR
 python3 misc/update_version.py "$1"
