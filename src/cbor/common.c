@@ -71,7 +71,8 @@ bool cbor_is_null(const cbor_item_t* item) {
 }
 
 bool cbor_is_undef(const cbor_item_t* item) {
-  return cbor_isa_float_ctrl(item) && cbor_float_ctrl_is_ctrl(item) &&
+  return cbor_isa_float_ctrl(item) &&
+         // cbor_float_ctrl_is_ctrl(item) &&
          cbor_ctrl_value(item) == CBOR_CTRL_UNDEF;
 }
 
