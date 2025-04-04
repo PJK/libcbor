@@ -154,7 +154,7 @@ int main(void) {
       cmocka_unit_test(test_undef),
       cmocka_unit_test(test_bool),
       cmocka_unit_test(test_float_ctrl_creation),
-      // cmocka_unit_test(test_ctrl_on_float),
+      cmocka_unit_test(test_ctrl_on_float),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
