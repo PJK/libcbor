@@ -58,17 +58,19 @@ bool cbor_is_int(const cbor_item_t* item) {
 }
 
 bool cbor_is_bool(const cbor_item_t* item) {
-  return cbor_isa_float_ctrl(item) &&
+  return cbor_isa_float_ctrl(item) && cbor_float_ctrl_is_ctrl(item) &&
          (cbor_ctrl_value(item) == CBOR_CTRL_FALSE ||
           cbor_ctrl_value(item) == CBOR_CTRL_TRUE);
 }
 
 bool cbor_is_null(const cbor_item_t* item) {
-  return cbor_isa_float_ctrl(item) && cbor_ctrl_value(item) == CBOR_CTRL_NULL;
+  return cbor_isa_float_ctrl(item) && cbor_float_ctrl_is_ctrl(item) &&
+         cbor_ctrl_value(item) == CBOR_CTRL_NULL;
 }
 
 bool cbor_is_undef(const cbor_item_t* item) {
-  return cbor_isa_float_ctrl(item) && cbor_ctrl_value(item) == CBOR_CTRL_UNDEF;
+  return cbor_isa_float_ctrl(item) && cbor_float_ctrl_is_ctrl(item) &&
+         cbor_ctrl_value(item) == CBOR_CTRL_UNDEF;
 }
 
 bool cbor_is_float(const cbor_item_t* item) {
