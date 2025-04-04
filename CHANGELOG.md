@@ -3,6 +3,7 @@ Template:
 
 Next
 ---------------------
+- [Fix `cbor_is_null`, `cbor_is_undef`, `cbor_is_bool` assertion failing on non-ctrl floats in debug mode](https://github.com/PJK/libcbor/issues/352) (bug discovered by https://github.com/psturm-swift)
 
 0.12.0 (2025-03-16)
 ---------------------
