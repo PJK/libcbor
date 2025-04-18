@@ -8,16 +8,20 @@
 **libcbor** is a C library for parsing and generating [CBOR](https://cbor.io/), the general-purpose schema-less binary data format.
 
 ## Main features
- - Complete [IETF RFC 8949 (STD 94)](https://www.rfc-editor.org/info/std94) conformance
- - Robust platform-independent C99 implementation
- - Layered architecture offers both control and convenience
- - Flexible memory management
- - No shared global state - threading friendly
- - Proper handling of UTF-8
- - Full support for streams & incremental processing
- - Extensive documentation and test suite
- - No runtime dependencies, small footprint
- 
+
+- Complete CBOR [IETF RFC 8949 (STD 94)](https://www.rfc-editor.org/info/std94) specification conformance (previously known as [RFC 7049](https://www.rfc-editor.org/info/rfc7049))
+- Supports CBOR Sequences ([RFC 8742](https://datatracker.ietf.org/doc/html/rfc8742))
+- Robust platform-independent C99 implementation, tested on
+  - Linux, OS X, Windows, BSD
+  - x86(_64), arm(64), mips(el)
+- Layered architecture offers both control and convenience
+- Flexible memory management
+- No shared global state - threading friendly
+- Proper handling of UTF-8
+- Full support for streams & incremental processing
+- Extensive documentation and test suite
+- No runtime dependencies, small footprint
+
 ## Getting started
 
 ### Compile from source
@@ -48,7 +52,7 @@ sudo apt-get install libcbor-dev
 yum install libcbor-devel
 ```
 
-### Others 
+### Others
 
 <details>
   <summary>Packaged libcbor is available from 15+ major repositories. Click here for more detail</summary>
@@ -89,6 +93,7 @@ int main(void) {
 ```
 
 ## Documentation
+
 Get the latest documentation at [libcbor.readthedocs.org](http://libcbor.readthedocs.org/)
 
 ## Contributions
@@ -98,6 +103,7 @@ Bug reports and contributions are welcome. Please see [CONTRIBUTING.md](https://
 Kudos to all the [contributors](https://github.com/PJK/libcbor/graphs/contributors)!
 
 ## License
+
 The MIT License (MIT)
 
 Copyright (c) Pavel Kalvoda, 2014-2020
