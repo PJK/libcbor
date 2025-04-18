@@ -13,7 +13,7 @@
 - Supports CBOR Sequences ([RFC 8742](https://datatracker.ietf.org/doc/html/rfc8742))
 - Robust platform-independent C99 implementation, tested on
   - Linux, OS X, Windows, BSD
-  - x86(_64), arm(64), mips(el)
+  - x86(_64), arm(64), mips(el), riscv64
 - Layered architecture offers both control and convenience
 - Flexible memory management
 - No shared global state - threading friendly
