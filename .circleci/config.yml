@@ -44,7 +44,9 @@ commands:
       - run: make -j 16 VERBOSE=1
   test:
     steps:
-      - run: ctest -VV
+      - run: ctest -VV --output-junit ctest_out.xml
+      - store_test_results:
+          path: ctest_out.xml
 
 orbs:
   codecov: codecov/codecov@3.2.2
