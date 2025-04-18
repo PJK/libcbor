@@ -133,7 +133,7 @@ void moving_values() {
   }
 
   {
-    // cbor_move avoid the need to decref and the dangling pointer
+    // cbor_move avoids the need to decref and the dangling pointer
     cbor_item_t* array_item = cbor_new_definite_array(1);
     assert(cbor_array_push(array_item, cbor_move(cbor_build_uint8(42))));
     cbor_item_t* first_array_element = cbor_array_get(array_item, 0);
