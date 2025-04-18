@@ -10,6 +10,7 @@ Next
 - [Use C23/c2x if available](https://github.com/PJK/libcbor/pull/361)
   - libcbor remains C99 compatible
   - When the compiler does not support new standard, C99 will be used, so the change should be backwards compatible
+- [Improved introduction documentation and examples](https://github.com/PJK/libcbor/pull/363)
 
 0.12.0 (2025-03-16)
 ---------------------
