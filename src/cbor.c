@@ -142,7 +142,7 @@ static cbor_item_t* _cbor_copy_int(cbor_item_t* item, bool negative) {
 }
 
 static cbor_item_t* _cbor_copy_float_ctrl(cbor_item_t* item) {
-  CBOR_ASSERT(cbor_is_float_ctrl(item));
+  CBOR_ASSERT(cbor_isa_float_ctrl(item));
   CBOR_ASSERT(cbor_float_get_width(item) >= CBOR_FLOAT_0 &&
               cbor_float_get_width(item) <= CBOR_FLOAT_64);
   switch (cbor_float_get_width(item)) {
