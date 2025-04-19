@@ -365,6 +365,7 @@ cbor_item_t* cbor_copy_definite(cbor_item_t* item) {
           return NULL;
         }
         // Cannot fail since we have a definite array preallocated
+        // cppcheck-suppress syntaxError
         const bool item_pushed _CBOR_UNUSED = cbor_array_push(res, entry_copy);
         CBOR_ASSERT(item_pushed);
         cbor_decref(&entry_copy);
@@ -392,6 +393,7 @@ cbor_item_t* cbor_copy_definite(cbor_item_t* item) {
           return NULL;
         }
         // Cannot fail since we have a definite map preallocated
+        // cppcheck-suppress syntaxError
         const bool item_added _CBOR_UNUSED = cbor_map_add(
             res, (struct cbor_pair){.key = key_copy, .value = value_copy});
         CBOR_ASSERT(item_added);
