@@ -348,10 +348,12 @@ static void test_definite_indef_map_nested(void** _state _CBOR_UNUSED) {
 static void test_definite_tag(void** _state _CBOR_UNUSED) {
   item = cbor_build_tag(10, cbor_move(cbor_build_uint8(42)));
 
-  assert_uint8(cbor_move(cbor_tag_item(copy = cbor_copy_definite(item))), 42);
+  copy = cbor_copy_definite(item);
+  assert_uint8(tmp = cbor_tag_item(copy), 42);
 
   cbor_decref(&item);
   cbor_decref(&copy);
+  cbor_decref(&tmp);
 }
 
 static void test_definite_tag_nested(void** _state _CBOR_UNUSED) {
