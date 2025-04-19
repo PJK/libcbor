@@ -162,9 +162,7 @@ static cbor_item_t* _cbor_copy_float_ctrl(cbor_item_t* item) {
 }
 
 cbor_item_t* cbor_copy(cbor_item_t* item) {
-  CBOR_ASSERT(item != NULL);
-  CBOR_ASSERT(cbor_typeof(item) >= CBOR_TYPE_UINT &&
-              cbor_typeof(item) <= CBOR_TYPE_FLOAT_CTRL);
+  CBOR_ASSERT_VALID_TYPE(cbor_typeof(item));
   switch (cbor_typeof(item)) {
     case CBOR_TYPE_UINT:
       return _cbor_copy_int(item, false);
@@ -302,6 +300,7 @@ cbor_item_t* cbor_copy(cbor_item_t* item) {
 }
 
 cbor_item_t* cbor_copy_definite(cbor_item_t* item) {
+  CBOR_ASSERT_VALID_TYPE(cbor_typeof(item));
   switch (cbor_typeof(item)) {
     case CBOR_TYPE_UINT:
     case CBOR_TYPE_NEGINT:
@@ -423,9 +422,9 @@ cbor_item_t* cbor_copy_definite(cbor_item_t* item) {
     }
     case CBOR_TYPE_FLOAT_CTRL:
       return cbor_copy(item);
-    default:
+    default:  // LCOV_EXCL_START
       _CBOR_UNREACHABLE;
-      return NULL;
+      return NULL;  // LCOV_EXCL_STOP
   }
 }
 
@@ -449,7 +448,6 @@ static void _cbor_type_marquee(FILE* out, char* label, int indent) {
 }
 
 static void _cbor_nested_describe(cbor_item_t* item, FILE* out, int indent) {
-  CBOR_ASSERT(item != NULL);
   CBOR_ASSERT(cbor_typeof(item) >= CBOR_TYPE_UINT &&
               cbor_typeof(item) <= CBOR_TYPE_FLOAT_CTRL);
   const int indent_offset = 4;
