@@ -414,9 +414,9 @@ static void test_definite_map_key_alloc_failure(void** _state _CBOR_UNUSED) {
                                      .value = cbor_move(cbor_build_uint8(43)),
                                  }));
 
-  WITH_MOCK_MALLOC({ assert_null(cbor_copy_definite(item)); }, 2,
-                   // New map, key copy
-                   MALLOC, MALLOC_FAIL);
+  WITH_MOCK_MALLOC({ assert_null(cbor_copy_definite(item)); }, 3,
+                   // New map, map data, key copy
+                   MALLOC, MALLOC, MALLOC_FAIL);
 
   assert_size_equal(cbor_refcount(item), 1);
 
@@ -430,9 +430,9 @@ static void test_definite_map_value_alloc_failure(void** _state _CBOR_UNUSED) {
                                      .value = cbor_move(cbor_build_uint8(43)),
                                  }));
 
-  WITH_MOCK_MALLOC({ assert_null(cbor_copy_definite(item)); }, 3,
-                   // New map, key copy, value copy
-                   MALLOC, MALLOC, MALLOC_FAIL);
+  WITH_MOCK_MALLOC({ assert_null(cbor_copy_definite(item)); }, 4,
+                   // New map, map data, key copy, value copy
+                   MALLOC, MALLOC, MALLOC, MALLOC_FAIL);
 
   assert_size_equal(cbor_refcount(item), 1);
 
