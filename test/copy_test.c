@@ -306,6 +306,29 @@ static void test_definite_indef_array_nested(void** _state _CBOR_UNUSED) {
   cbor_decref(&tmp);
 }
 
+static void test_definite_array_alloc_failure(void** _state _CBOR_UNUSED) {
+  item = cbor_new_indefinite_array();
+  assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(42))));
+
+  WITH_FAILING_MALLOC({ assert_null(cbor_copy_definite(item)); });
+  assert_size_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
+static void test_definite_array_item_alloc_failure(void** _state _CBOR_UNUSED) {
+  item = cbor_new_indefinite_array();
+  assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(42))));
+
+  WITH_MOCK_MALLOC({ assert_null(cbor_copy_definite(item)); }, 2,
+                   // New array, item copy
+                   MALLOC, MALLOC_FAIL);
+
+  assert_size_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
 static void test_definite_map(void** _state _CBOR_UNUSED) {
   item = cbor_new_definite_map(1);
   assert_true(cbor_map_add(item, (struct cbor_pair){
@@ -718,6 +741,8 @@ int main(void) {
       cmocka_unit_test(test_definite_array),
       cmocka_unit_test(test_definite_indef_array),
       cmocka_unit_test(test_definite_indef_array_nested),
+      cmocka_unit_test(test_definite_array_alloc_failure),
+      cmocka_unit_test(test_definite_array_item_alloc_failure),
       cmocka_unit_test(test_definite_map),
       cmocka_unit_test(test_definite_indef_map),
       cmocka_unit_test(test_definite_indef_map_nested),

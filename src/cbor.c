@@ -230,11 +230,8 @@ cbor_item_t* cbor_copy(cbor_item_t* item) {
           cbor_decref(&res);
           return NULL;
         }
-        if (!cbor_array_push(res, entry_copy)) {
-          cbor_decref(&entry_copy);
-          cbor_decref(&res);
-          return NULL;
-        }
+        // Cannot fail since we have a definite array preallocated.
+        CBOR_ASSERT(cbor_array_push(res, entry_copy));
         cbor_decref(&entry_copy);
       }
       return res;
