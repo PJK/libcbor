@@ -5,6 +5,9 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
+#include <stdbool.h>
+#include <string.h>
+
 #include "cbor.h"
 #include "cbor/internal/builder_callbacks.h"
 #include "cbor/internal/loaders.h"
@@ -283,6 +286,136 @@ cbor_item_t* cbor_copy(cbor_item_t* item) {
     }
     case CBOR_TYPE_FLOAT_CTRL:
       return _cbor_copy_float_ctrl(item);
+    default:
+      _CBOR_UNREACHABLE;
+      return NULL;
+  }
+}
+
+cbor_item_t* cbor_copy_definite(cbor_item_t* item) {
+  switch (cbor_typeof(item)) {
+    case CBOR_TYPE_UINT:
+    case CBOR_TYPE_NEGINT:
+      return cbor_copy(item);
+    case CBOR_TYPE_BYTESTRING:
+      if (cbor_bytestring_is_definite(item)) {
+        return cbor_copy(item);
+      } else {
+        size_t total_length = 0;
+        for (size_t i = 0; i < cbor_bytestring_chunk_count(item); i++) {
+          total_length +=
+              cbor_bytestring_length(cbor_bytestring_chunks_handle(item)[i]);
+        }
+
+        unsigned char* combined_data = _cbor_malloc(total_length);
+        if (combined_data == NULL) {
+          return NULL;
+        }
+
+        size_t offset = 0;
+        for (size_t i = 0; i < cbor_bytestring_chunk_count(item); i++) {
+          cbor_item_t* chunk = cbor_bytestring_chunks_handle(item)[i];
+          memcpy(combined_data + offset, cbor_bytestring_handle(chunk),
+                 cbor_bytestring_length(chunk));
+          offset += cbor_bytestring_length(chunk);
+        }
+
+        cbor_item_t* res = cbor_new_definite_bytestring();
+        cbor_bytestring_set_handle(res, combined_data, total_length);
+        return res;
+      }
+    case CBOR_TYPE_STRING:
+      if (cbor_string_is_definite(item)) {
+        return cbor_copy(item);
+      } else {
+        size_t total_length = 0;
+        for (size_t i = 0; i < cbor_string_chunk_count(item); i++) {
+          total_length +=
+              cbor_string_length(cbor_string_chunks_handle(item)[i]);
+        }
+
+        unsigned char* combined_data = _cbor_malloc(total_length);
+        if (combined_data == NULL) {
+          return NULL;
+        }
+
+        size_t offset = 0;
+        for (size_t i = 0; i < cbor_string_chunk_count(item); i++) {
+          cbor_item_t* chunk = cbor_string_chunks_handle(item)[i];
+          memcpy(combined_data + offset, cbor_string_handle(chunk),
+                 cbor_string_length(chunk));
+          offset += cbor_string_length(chunk);
+        }
+
+        cbor_item_t* res = cbor_new_definite_string();
+        cbor_string_set_handle(res, combined_data, total_length);
+        return res;
+      }
+    case CBOR_TYPE_ARRAY: {
+      cbor_item_t* res = cbor_new_definite_array(cbor_array_size(item));
+      if (res == NULL) {
+        return NULL;
+      }
+
+      for (size_t i = 0; i < cbor_array_size(item); i++) {
+        cbor_item_t* entry_copy =
+            cbor_copy_definite(cbor_array_handle(item)[i]);
+        if (entry_copy == NULL) {
+          cbor_decref(&res);
+          return NULL;
+        }
+        if (!cbor_array_push(res, entry_copy)) {
+          cbor_decref(&entry_copy);
+          cbor_decref(&res);
+          return NULL;
+        }
+        cbor_decref(&entry_copy);
+      }
+      return res;
+    }
+    case CBOR_TYPE_MAP: {
+      cbor_item_t* res;
+      res = cbor_new_definite_map(cbor_map_size(item));
+      if (res == NULL) {
+        return NULL;
+      }
+
+      struct cbor_pair* it = cbor_map_handle(item);
+      for (size_t i = 0; i < cbor_map_size(item); i++) {
+        cbor_item_t* key_copy = cbor_copy_definite(it[i].key);
+        if (key_copy == NULL) {
+          cbor_decref(&res);
+          return NULL;
+        }
+        cbor_item_t* value_copy = cbor_copy_definite(it[i].value);
+        if (value_copy == NULL) {
+          cbor_decref(&res);
+          cbor_decref(&key_copy);
+          return NULL;
+        }
+        if (!cbor_map_add(res, (struct cbor_pair){.key = key_copy,
+                                                  .value = value_copy})) {
+          cbor_decref(&res);
+          cbor_decref(&key_copy);
+          cbor_decref(&value_copy);
+          return NULL;
+        }
+        cbor_decref(&key_copy);
+        cbor_decref(&value_copy);
+      }
+      return res;
+    }
+    case CBOR_TYPE_TAG: {
+      cbor_item_t* item_copy = cbor_copy_definite(cbor_tag_item(item));
+      if (item_copy == NULL) {
+        return NULL;
+      }
+      cbor_item_t* tag = cbor_build_tag(cbor_tag_value(item), item_copy);
+      cbor_decref(&item_copy);
+      return tag;
+    }
+    case CBOR_TYPE_FLOAT_CTRL:
+      return cbor_copy(item);
     default:
       _CBOR_UNREACHABLE;
       return NULL;
