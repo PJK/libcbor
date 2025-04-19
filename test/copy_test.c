@@ -389,6 +389,51 @@ static void test_definite_indef_map_nested(void** _state _CBOR_UNUSED) {
   cbor_decref(&copy);
 }
 
+static void test_definite_map_alloc_failure(void** _state _CBOR_UNUSED) {
+  item = cbor_new_indefinite_map();
+  assert_true(cbor_map_add(item, (struct cbor_pair){
+                                     .key = cbor_move(cbor_build_uint8(42)),
+                                     .value = cbor_move(cbor_build_uint8(43)),
+                                 }));
+
+  WITH_FAILING_MALLOC({ assert_null(cbor_copy_definite(item)); });
+  assert_size_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
+static void test_definite_map_key_alloc_failure(void** _state _CBOR_UNUSED) {
+  item = cbor_new_indefinite_map();
+  assert_true(cbor_map_add(item, (struct cbor_pair){
+                                     .key = cbor_move(cbor_build_uint8(42)),
+                                     .value = cbor_move(cbor_build_uint8(43)),
+                                 }));
+
+  WITH_MOCK_MALLOC({ assert_null(cbor_copy_definite(item)); }, 2,
+                   // New map, key copy
+                   MALLOC, MALLOC_FAIL);
+
+  assert_size_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
+static void test_definite_map_value_alloc_failure(void** _state _CBOR_UNUSED) {
+  item = cbor_new_indefinite_map();
+  assert_true(cbor_map_add(item, (struct cbor_pair){
+                                     .key = cbor_move(cbor_build_uint8(42)),
+                                     .value = cbor_move(cbor_build_uint8(43)),
+                                 }));
+
+  WITH_MOCK_MALLOC({ assert_null(cbor_copy_definite(item)); }, 3,
+                   // New map, key copy, value copy
+                   MALLOC, MALLOC, MALLOC_FAIL);
+
+  assert_size_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
 static void test_definite_tag(void** _state _CBOR_UNUSED) {
   item = cbor_build_tag(10, cbor_move(cbor_build_uint8(42)));
 
@@ -414,6 +459,15 @@ static void test_definite_tag_nested(void** _state _CBOR_UNUSED) {
   cbor_decref(&item);
   cbor_decref(&copy);
   cbor_decref(&tmp);
+}
+
+static void test_definite_tag_alloc_failure(void** _state _CBOR_UNUSED) {
+  item = cbor_build_tag(10, cbor_move(cbor_new_indefinite_array()));
+
+  WITH_FAILING_MALLOC({ assert_null(cbor_copy_definite(item)); });
+  assert_size_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
 }
 
 static void test_definite_ctrls(void** _state _CBOR_UNUSED) {
@@ -746,8 +800,12 @@ int main(void) {
       cmocka_unit_test(test_definite_map),
       cmocka_unit_test(test_definite_indef_map),
       cmocka_unit_test(test_definite_indef_map_nested),
+      cmocka_unit_test(test_definite_map_alloc_failure),
+      cmocka_unit_test(test_definite_map_key_alloc_failure),
+      cmocka_unit_test(test_definite_map_value_alloc_failure),
       cmocka_unit_test(test_definite_tag),
       cmocka_unit_test(test_definite_tag_nested),
+      cmocka_unit_test(test_definite_tag_alloc_failure),
       cmocka_unit_test(test_definite_ctrls),
       cmocka_unit_test(test_definite_floats),
   };
