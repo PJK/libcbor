@@ -5,6 +5,8 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
+#include <stdbool.h>
+
 #include "cbor.h"
 #include "cbor/internal/builder_callbacks.h"
 #include "cbor/internal/loaders.h"
@@ -115,6 +117,9 @@ error:
 }
 
 static cbor_item_t* _cbor_copy_int(cbor_item_t* item, bool negative) {
+  CBOR_ASSERT(cbor_isa_uint(item) || cbor_isa_negint(item));
+  CBOR_ASSERT(cbor_int_get_width(item) >= CBOR_INT_8 &&
+              cbor_int_get_width(item) <= CBOR_INT_64);
   cbor_item_t* res = NULL;
   switch (cbor_int_get_width(item)) {
     case CBOR_INT_8:
@@ -137,6 +142,9 @@ static cbor_item_t* _cbor_copy_int(cbor_item_t* item, bool negative) {
 }
 
 static cbor_item_t* _cbor_copy_float_ctrl(cbor_item_t* item) {
+  CBOR_ASSERT(cbor_is_float_ctrl(item));
+  CBOR_ASSERT(cbor_float_get_width(item) >= CBOR_FLOAT_0 &&
+              cbor_float_get_width(item) <= CBOR_FLOAT_64);
   switch (cbor_float_get_width(item)) {
     case CBOR_FLOAT_0:
       return cbor_build_ctrl(cbor_ctrl_value(item));
@@ -146,9 +154,9 @@ static cbor_item_t* _cbor_copy_float_ctrl(cbor_item_t* item) {
       return cbor_build_float4(cbor_float_get_float4(item));
     case CBOR_FLOAT_64:
       return cbor_build_float8(cbor_float_get_float8(item));
-    default:
+    default:  // LCOV_EXCL_START
       _CBOR_UNREACHABLE;
-      return NULL;
+      return NULL;  // LCOV_EXCL_START
   }
 }
 

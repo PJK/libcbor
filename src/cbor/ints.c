@@ -49,9 +49,9 @@ uint64_t cbor_get_int(const cbor_item_t* item) {
       return cbor_get_uint32(item);
     case CBOR_INT_64:
       return cbor_get_uint64(item);
-    default:
+    default:  // LCOV_EXCL_START
       _CBOR_UNREACHABLE;
-      return 0;  // LCOV_EXCL_LINE
+      return 0;  // LCOV_EXCL_STOP
   }
 }
 
