@@ -406,7 +406,8 @@ cbor_item_t* cbor_copy_definite(cbor_item_t* item) {
       return res;
     }
     case CBOR_TYPE_TAG: {
-      cbor_item_t* item_copy = cbor_copy_definite(cbor_tag_item(item));
+      cbor_item_t* item_copy =
+          cbor_copy_definite(cbor_move(cbor_tag_item(item)));
       if (item_copy == NULL) {
         return NULL;
       }
