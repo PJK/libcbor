@@ -325,9 +325,9 @@ static void test_definite_array_item_alloc_failure(void** _state _CBOR_UNUSED) {
   item = cbor_new_indefinite_array();
   assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(42))));
 
-  WITH_MOCK_MALLOC({ assert_null(cbor_copy_definite(item)); }, 2,
-                   // New array, item copy
-                   MALLOC, MALLOC_FAIL);
+  WITH_MOCK_MALLOC({ assert_null(cbor_copy_definite(item)); }, 3,
+                   // New array, new array data, item copy
+                   MALLOC, MALLOC, MALLOC_FAIL);
 
   assert_size_equal(cbor_refcount(item), 1);
 
@@ -467,7 +467,7 @@ static void test_definite_tag_nested(void** _state _CBOR_UNUSED) {
 }
 
 static void test_definite_tag_alloc_failure(void** _state _CBOR_UNUSED) {
-  item = cbor_build_tag(10, cbor_move(cbor_new_indefinite_array()));
+  item = cbor_build_tag(10, cbor_move(cbor_build_uint8(42)));
 
   WITH_FAILING_MALLOC({ assert_null(cbor_copy_definite(item)); });
   assert_size_equal(cbor_refcount(item), 1);
