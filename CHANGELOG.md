@@ -11,6 +11,7 @@ Next
   - libcbor remains C99 compatible
   - When the compiler does not support new standard, C99 will be used, so the change should be backwards compatible
 - [Improved introduction documentation and examples](https://github.com/PJK/libcbor/pull/363)
+- [Add cbor_copy_definite to turn indefinite items into definite equivalents](https://github.com/PJK/libcbor/pull/364/files) (proposed by Jacob Teplitsky)
 
 0.12.0 (2025-03-16)
 ---------------------
