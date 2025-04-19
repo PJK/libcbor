@@ -266,7 +266,12 @@ static void test_definite_array(void** _state _CBOR_UNUSED) {
   item = cbor_new_definite_array(1);
   assert_true(cbor_array_push(item, cbor_move(cbor_build_uint8(42))));
 
-  assert_uint8(tmp = cbor_array_get(copy = cbor_copy_definite(item), 0), 42);
+  copy = cbor_copy_definite(item);
+  assert_true(cbor_isa_array(copy));
+  assert_true(cbor_array_is_definite(copy));
+  assert_size_equal(cbor_array_size(copy), 1);
+  assert_uint8(tmp = cbor_array_get(copy, 0), 42);
+
   cbor_decref(&item);
   cbor_decref(&copy);
   cbor_decref(&tmp);

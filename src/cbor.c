@@ -365,7 +365,8 @@ cbor_item_t* cbor_copy_definite(cbor_item_t* item) {
           return NULL;
         }
         // Cannot fail since we have a definite array preallocated
-        CBOR_ASSERT(cbor_array_push(res, entry_copy));
+        _CBOR_UNUSED const bool item_pushed = cbor_array_push(res, entry_copy);
+        CBOR_ASSERT(item_pushed);
         cbor_decref(&entry_copy);
       }
       return res;
@@ -391,8 +392,9 @@ cbor_item_t* cbor_copy_definite(cbor_item_t* item) {
           return NULL;
         }
         // Cannot fail since we have a definite map preallocated
-        CBOR_ASSERT(cbor_map_add(
-            res, (struct cbor_pair){.key = key_copy, .value = value_copy}));
+        _CBOR_UNUSED const bool item_added = cbor_map_add(
+            res, (struct cbor_pair){.key = key_copy, .value = value_copy});
+        CBOR_ASSERT(item_added);
         cbor_decref(&key_copy);
         cbor_decref(&value_copy);
       }
