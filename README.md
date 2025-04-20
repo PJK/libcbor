@@ -29,8 +29,9 @@ libcbor is most prominently used in:
 - Yubico's [libfido2](https://developers.yubico.com/libfido2/) 2FA security key implementation
 - Amazon's [AWS C SDK](https://github.com/awslabs/aws-c-common)
 - Gnome [fwdup](https://github.com/fwupd/fwupd/blob/main/meson.build#L339)
-- [ITK](https://docs.itk.org/projects/wasm/en/latest/introduction/parts.html)
+- Alibaba's [Inclavare librats](https://github.com/inclavare-containers/librats)
 - [QEMU](https://wiki.qemu.org/ChangeLog/9.2)
+- [ITK](https://docs.itk.org/projects/wasm/en/latest/introduction/parts.html)
 
 It found its way into many open source an proprietary projects. If you run among others [OpenSSH](https://www.matbra.com/2020/02/17/using-fido2-with-ssh.html), [Microsoft PowerShell](https://github.com/PowerShell/libcbor), [SteamOS](https://github.com/randombk/steamos-teardown/blob/5a37d977fae55d9c41eaf1d07528fa965740bb26/docs/packages.md?plain=1#L461), or [MySQL](https://dev.mysql.com/doc/relnotes/mysql/8.0/en/news-8-0-34.html) -- you might be indirectly running libcbor too.
 
@@ -63,6 +64,14 @@ sudo apt-get install libcbor-dev
 ```bash
 yum install libcbor-devel
 ```
+
+### Include git repository using using CMake
+
+See e.g. <https://github.com/inclavare-containers/librats/blob/master/cmake/LibCBOR.cmake>.
+
+## Include git repository using Bazel
+
+See <https://github.com/PJK/libcbor/tree/master/examples/bazel>.
 
 ### Others
 
