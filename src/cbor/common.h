@@ -142,14 +142,17 @@ CBOR_EXPORT extern _cbor_free_t _cbor_free;
  * and `free`.
  *
  * \rst
- * .. warning:: This function modifies the global state and should
- * therefore be used accordingly. Changing the memory handlers while
- * allocated items exist will result in a ``free``/``malloc`` mismatch.
- * This function is not thread safe with respect to both itself and all
- * the other *libcbor* functions that work with the heap.
+ * .. warning::
+ *   This function modifies the global state and should
+ *   therefore be used accordingly. Changing the memory handlers while
+ *   allocated items exist will result in a ``free``/``malloc`` mismatch.
+ *   This function is not thread safe with respect to both itself and all
+ *   the other *libcbor* functions that work with the heap.
  *
- * .. note:: `realloc` implementation must correctly support `NULL`
- * reallocation (see e.g. http://en.cppreference.com/w/c/memory/realloc)
+ * .. note::
+ *   `realloc` implementation must correctly support `NULL`
+ *   reallocation (see e.g. http://en.cppreference.com/w/c/memory/realloc)
+ *
  * \endrst
  *
  * @param custom_malloc malloc implementation
@@ -259,8 +262,9 @@ CBOR_EXPORT bool cbor_is_bool(const cbor_item_t* item);
 /** Does this item represent `null`
  *
  * \rst
- * .. warning:: This is in no way related to the value of the pointer.
- * Passing a null pointer will most likely result in a crash.
+ * .. warning::
+ *   This is in no way related to the value of the pointer.
+ *   Passing a null pointer will most likely result in a crash.
  * \endrst
  *
  * @param item the item
@@ -272,8 +276,8 @@ CBOR_EXPORT bool cbor_is_null(const cbor_item_t* item);
 /** Does this item represent `undefined`
  *
  * \rst
- * .. warning:: Care must be taken to distinguish nulls and undefined
- * values in C.
+ * .. warning::
+ *   Care must be taken to distinguish nulls and undefined values in C.
  * \endrst
  *
  * @param item the item
@@ -323,7 +327,8 @@ CBOR_EXPORT void cbor_intermediate_decref(cbor_item_t* item);
 /** Get the item's reference count
  *
  * \rst
- * .. warning:: This does *not* account for transitive references.
+ * .. warning::
+ *   This does *not* account for transitive references.
  * \endrst
  *
  * @todo Add some inline examples for reference counting
@@ -342,8 +347,9 @@ CBOR_EXPORT size_t cbor_refcount(const cbor_item_t* item);
  * only be used with functions that `incref` their arguments.
  *
  * \rst
- * .. warning:: If the item is moved without correctly increasing the
- * reference count afterwards, the memory will be leaked.
+ * .. warning::
+ *   If the item is moved without correctly increasing the
+ *   reference count afterwards, the memory will be leaked.
  * \endrst
  *
  * @param item Reference to an item
