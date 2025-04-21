@@ -1,15 +1,15 @@
 Tutorial
 ===========================
 
-libcbor is a C library to encode, decode, and manipulate CBOR data. It is to CBOR to what `cJSON <https://github.com/DaveGamble/cJSON>`_ is to JSON. We assume you are familiar with the CBOR standard. If not, we recommend `cbor.io <http://cbor.io/>`_. 
+*libcbor* is a C library to encode, decode, and manipulate CBOR data. It is to CBOR to what `cJSON <https://github.com/DaveGamble/cJSON>`_ is to JSON. We assume you are familiar with the CBOR standard. If not, we recommend `cbor.io <http://cbor.io/>`_. 
 
 
 Where to start
 --------------
 
 - Skim through the Crash course section below.
-- Examples of of how to read, write, manipulate, and translate data to and from JSON using libcbor are in the `examples directory <https://github.com/PJK/libcbor/tree/master/examples>`_.
-- The :doc:`API documentation <api>` is a complete reference of libcbor.
+- Examples of of how to read, write, manipulate, and translate data to and from JSON using *libcbor* are in the `examples directory <https://github.com/PJK/libcbor/tree/master/examples>`_.
+- The :doc:`API documentation <api>` is a complete reference of *libcbor*.
 
 
 Crash course 
