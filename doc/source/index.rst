@@ -28,7 +28,7 @@ Contents
 .. toctree::
 
    getting_started
-   using
+   tutorial
    api
    tests
    standard_conformance

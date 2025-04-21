@@ -117,6 +117,8 @@ int main(void) {
 
 ## Documentation
 
+Crash course: <https://libcbor.readthedocs.io/en/latest/tutorial.html#crash-course>
+
 Get the latest documentation at [libcbor.readthedocs.org](http://libcbor.readthedocs.org/)
 
 ## Contributions
