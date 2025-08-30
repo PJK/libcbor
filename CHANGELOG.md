@@ -12,6 +12,8 @@ Next
   - When the compiler does not support new standard, C99 will be used, so the change should be backwards compatible
 - [Improved introduction documentation and examples](https://github.com/PJK/libcbor/pull/363)
 - [Add cbor_copy_definite to turn indefinite items into definite equivalents](https://github.com/PJK/libcbor/pull/364/files) (proposed by Jacob Teplitsky)
+- BUILD BREAKING: [Minimum CMake version set to 3.5](https://github.com/PJK/libcbor/pull/355) to [be compatible with CMake 4](https://github.com/eclipse-ecal/ecal/issues/2041) ([suggestion](https://github.com/PJK/libcbor/commit/1183292d4695300785b272532c1e02d68840e4b8#commitcomment-164507943) by <https://github.com/hnyman>)
+  - See <https://repology.org/project/cmake/versions> for support; the vast majority of users should not be affected.
 
 0.12.0 (2025-03-16)
 ---------------------
