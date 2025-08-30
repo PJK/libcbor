@@ -5,6 +5,9 @@ Template:
 Next
 ---------------------
 
+0.13.0 (2025-08-30)
+---------------------
+
 - [Fix `cbor_is_null`, `cbor_is_undef`, `cbor_is_bool` assertion failing on non-ctrl floats in debug mode](https://github.com/PJK/libcbor/issues/352) (bug discovered by <https://github.com/psturm-swift>)
 - [Add an example for handling of CBOR Sequences](https://github.com/PJK/libcbor/pull/358)
 - [Use C23/c2x if available](https://github.com/PJK/libcbor/pull/361)
