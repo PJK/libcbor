@@ -21,7 +21,6 @@ cd oss_fuzz_build
 cmake -D CMAKE_BUILD_TYPE=Debug \
       -D CMAKE_INSTALL_PREFIX="$WORK" \
       -D SANITIZE=OFF \
-      -D WITH_TESTS=ON \
       -D CMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
       ..
 make "-j$(nproc)"
