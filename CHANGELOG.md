@@ -5,6 +5,8 @@ Template:
 Next
 ---------------------
 
+- [Only generate CMake coverage build targets when explicitly enabled](https://github.com/PJK/libcbor/issues/383)
+
 0.13.0 (2025-08-30)
 ---------------------
 
