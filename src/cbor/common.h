@@ -93,7 +93,9 @@ extern bool _cbor_enable_assert;
 #define _CBOR_UNUSED __attribute__((__unused__))
 // Fall back to __attribute__((warn_unused_result)) if we don't have
 // [[nodiscard]]
-#ifndef CBOR_HAS_NODISCARD_ATTRIBUTE
+#ifdef CBOR_HAS_NODISCARD_ATTRIBUTE
+#define _CBOR_NODISCARD CBOR_NODISCARD
+#else
 #define _CBOR_NODISCARD __attribute__((warn_unused_result))
 #endif
 #elif defined(_MSC_VER)
