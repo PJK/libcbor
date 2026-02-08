@@ -15,11 +15,11 @@ applied to.
 ==================================  ======================================================
 Corresponding :type:`cbor_type`     ``CBOR_TYPE_TAG``
 Number of allocations               One plus any manipulations with the data
-                                    reallocations relative  to chunk count
 Storage requirements                ``sizeof(cbor_item_t) + the tagged item``
 ==================================  ======================================================
 
 .. doxygenfunction:: cbor_new_tag
+.. doxygenfunction:: cbor_build_tag
 .. doxygenfunction:: cbor_tag_item
 .. doxygenfunction:: cbor_tag_value
 .. doxygenfunction:: cbor_tag_set_item

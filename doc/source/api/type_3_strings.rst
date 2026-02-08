@@ -22,6 +22,7 @@ Getting metadata
 ~~~~~~~~~~~~~~~~~
 
 .. doxygenfunction:: cbor_string_length
+.. doxygenfunction:: cbor_string_codepoint_count
 .. doxygenfunction:: cbor_string_is_definite
 .. doxygenfunction:: cbor_string_is_indefinite
 .. doxygenfunction:: cbor_string_chunk_count
@@ -42,6 +43,7 @@ Creating new items
 Building items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. doxygenfunction:: cbor_build_string
+.. doxygenfunction:: cbor_build_stringn
 
 
 Manipulating existing items
