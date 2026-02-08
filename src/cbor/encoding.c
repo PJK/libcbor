@@ -183,7 +183,8 @@ size_t cbor_encode_single(float value, unsigned char* buffer,
   // way to extract it without assumptions about the internal float
   // representation.
   if (isnan(value)) {
-    return _cbor_encode_uint32(0x7FC0 << 16, buffer, buffer_size, 0xE0);
+    return _cbor_encode_uint32((uint32_t)0x7FC0 << 16, buffer, buffer_size,
+                               0xE0);
   }
   // TODO: Broken on systems that do not use IEEE 754
   return _cbor_encode_uint32(
