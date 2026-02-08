@@ -113,6 +113,22 @@ static void test_nested_indef_arrays(void** _state _CBOR_UNUSED) {
   assert_null(arr);
 }
 
+static void test_array_get_out_of_bounds(void** _state _CBOR_UNUSED) {
+  cbor_item_t* array = cbor_new_definite_array(2);
+  assert_true(cbor_array_push(array, cbor_move(cbor_build_uint8(1))));
+
+  assert_null(cbor_array_get(array, 1));
+  assert_null(cbor_array_get(array, 100));
+
+  cbor_decref(&array);
+}
+
+static void test_array_get_empty(void** _state _CBOR_UNUSED) {
+  cbor_item_t* array = cbor_new_definite_array(0);
+  assert_null(cbor_array_get(array, 0));
+  cbor_decref(&array);
+}
+
 static void test_array_replace(void** _state _CBOR_UNUSED) {
   cbor_item_t* array = cbor_new_definite_array(2);
   assert_size_equal(cbor_array_size(array), 0);
@@ -211,6 +227,8 @@ int main(void) {
       cmocka_unit_test(test_nested_arrays),
       cmocka_unit_test(test_indef_arrays),
       cmocka_unit_test(test_nested_indef_arrays),
+      cmocka_unit_test(test_array_get_out_of_bounds),
+      cmocka_unit_test(test_array_get_empty),
       cmocka_unit_test(test_array_replace),
       cmocka_unit_test(test_array_push_overflow),
       cmocka_unit_test(test_array_creation),
