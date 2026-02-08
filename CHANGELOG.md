@@ -9,6 +9,8 @@ Next
 - Fix CMake feature macro names and ensure `_CBOR_NODISCARD` is defined with `[[nodiscard]]`
 - [Fix integer overflow in `cbor_copy_definite()` when accumulating indefinite bytestring/string chunk lengths](https://github.com/PJK/libcbor/pull/387)
 - [Add bounds check in `cbor_array_get()` to return NULL on out-of-bounds access](https://github.com/PJK/libcbor/pull/388)
+- BREAKING: [`cbor_tag_set_item` now releases the reference to the previous tagged item](https://github.com/PJK/libcbor/pull/391)
+  - Previously, replacing the tagged item would leak the old item's reference. If you were manually releasing the old item before calling `cbor_tag_set_item`, you should remove the extra `cbor_decref`.
 
 0.13.0 (2025-08-30)
 ---------------------
