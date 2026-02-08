@@ -33,7 +33,7 @@ The following diagram illustrates the relationship among different parts of libc
     │                                                                                              │
     └──────────────────────────────────────────────────────────────────────────────────────────────┘
 
-                  (PSD = Provided Data Structures, CDS = Custom Data Structures)
+                  (PDS = Provided Data Structures, CDS = Custom Data Structures)
 
 This section will deal with the API that is labeled as the "Default driver" in the diagram. That is, routines that
 decode complete libcbor data items

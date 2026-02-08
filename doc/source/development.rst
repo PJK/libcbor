@@ -30,7 +30,7 @@ Anything the standard allows, libcbor can do.
 **Why?** Because conformance and interoperability is the point of defining
 standards. Clients expect the support to be feature-complete and
 there is no significant complexity reduction that can be achieved by slightly
-cutting corners, which means that the incremental cost of full [CBOR standard](https://www.rfc-editor.org/info/std94) support is
+cutting corners, which means that the incremental cost of full `CBOR standard <https://www.rfc-editor.org/info/std94>`_ support is
 comparatively small over "almost-conformance" seen in many alternatives.
 
 

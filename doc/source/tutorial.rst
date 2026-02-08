@@ -8,7 +8,7 @@ Where to start
 --------------
 
 - Skim through the Crash course section below.
-- Examples of of how to read, write, manipulate, and translate data to and from JSON using *libcbor* are in the `examples directory <https://github.com/PJK/libcbor/tree/master/examples>`_.
+- Examples of how to read, write, manipulate, and translate data to and from JSON using *libcbor* are in the `examples directory <https://github.com/PJK/libcbor/tree/master/examples>`_.
 - The :doc:`API documentation <api>` is a complete reference of *libcbor*.
 
 

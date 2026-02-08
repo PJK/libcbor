@@ -1,7 +1,7 @@
 Type 6 – Semantic tags 
 =============================
 
-Tag are additional metadata that can be used to extend or specialize the meaning or interpretation of the other data items.
+Tags are additional metadata that can be used to extend or specialize the meaning or interpretation of the other data items.
 
 For example, one might tag an array of numbers to communicate that it should be interpreted as a vector.
 
