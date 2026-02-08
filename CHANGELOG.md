@@ -6,14 +6,17 @@ Next
 ---------------------
 
 - [Only generate CMake coverage build targets when explicitly enabled](https://github.com/PJK/libcbor/issues/383)
-- Fix CMake feature macro names and ensure `_CBOR_NODISCARD` is defined with `[[nodiscard]]`
+- [Fix CMake feature macro names and ensure `_CBOR_NODISCARD` is defined with `[[nodiscard]]`](https://github.com/PJK/libcbor/pull/385)
 - [Fix integer overflow in `cbor_copy_definite()` when accumulating indefinite bytestring/string chunk lengths](https://github.com/PJK/libcbor/pull/387)
 - [Add bounds check in `cbor_array_get()` to return NULL on out-of-bounds access](https://github.com/PJK/libcbor/pull/388)
 - BREAKING: [`cbor_tag_set_item` now releases the reference to the previous tagged item](https://github.com/PJK/libcbor/pull/391)
   - Previously, replacing the tagged item would leak the old item's reference. If you were manually releasing the old item before calling `cbor_tag_set_item`, you should remove the extra `cbor_decref`.
 - Potentially BREAKING: [`cbor_tag_item` now returns NULL if the tag has no item set](https://github.com/PJK/libcbor/pull/392)
   - Previously, this would be undefined behavior (NULL pointer dereference), so no valid clients should be affected.
-- Potentially BUILD BREAKING: CPack Debian package architecture is now detected via `dpkg` instead of being hardcoded to `amd64`
+- Potentially BUILD BREAKING: [CPack Debian package architecture is now detected via `dpkg` instead of being hardcoded to `amd64`](https://github.com/PJK/libcbor/pull/394)
+- BUILD BREAKING: [Remove deprecated `CBOR_CUSTOM_ALLOC` CMake option](https://github.com/PJK/libcbor/pull/402)
+  - The option has been a no-op since 0.10.0. If your build passes `-DCBOR_CUSTOM_ALLOC=ON`, remove it.
+- [Modernize CMake build: use `project(VERSION ...)`, replace `add_definitions()` with target-scoped `target_compile_definitions()`, remove redundant `include_directories()`](https://github.com/PJK/libcbor/pull/402)
 
 0.13.0 (2025-08-30)
 ---------------------

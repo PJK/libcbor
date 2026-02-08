@@ -19,6 +19,11 @@ foreach(test_file ${TESTS})
     target_link_libraries(${NAME} ${MATH_LIBRARY})
   endif()
   target_include_directories(${NAME} PUBLIC ${CMOCKA_INCLUDE_DIR})
+  target_compile_definitions(${NAME} PRIVATE
+    $<$<BOOL:${HUGE_FUZZ}>:HUGE_FUZZ>
+    $<$<BOOL:${SANE_MALLOC}>:SANE_MALLOC>
+    $<$<BOOL:${PRINT_FUZZ}>:PRINT_FUZZ>
+    $<$<BOOL:${HAVE_EIGHT_BYTE_SIZE_T}>:EIGHT_BYTE_SIZE_T>)
   add_test(NAME ${NAME} COMMAND ${NAME})
   if(COVERAGE)
     add_dependencies(coverage ${NAME})
