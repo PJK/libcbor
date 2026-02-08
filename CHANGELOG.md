@@ -7,6 +7,7 @@ Next
 
 - [Only generate CMake coverage build targets when explicitly enabled](https://github.com/PJK/libcbor/issues/383)
 - Fix CMake feature macro names and ensure `_CBOR_NODISCARD` is defined with `[[nodiscard]]`
+- [Fix integer overflow in `cbor_copy_definite()` when accumulating indefinite bytestring/string chunk lengths](https://github.com/PJK/libcbor/pull/387)
 
 0.13.0 (2025-08-30)
 ---------------------
