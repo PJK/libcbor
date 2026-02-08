@@ -93,7 +93,7 @@ check_c_source_compiles("
 
 if(HAS_NODISCARD_ATTRIBUTE)
   message(STATUS "[[nodiscard]] is supported.")
-  add_definitions(-D_CBOR_HAS_NODISCARD_ATTRIBUTE)
+  add_definitions(-DCBOR_HAS_NODISCARD_ATTRIBUTE)
   # Assume that if we have [[nodiscard]], we have some C23 support. May fail.
   if(NOT DEFINED CMAKE_C_STANDARD)
     message(STATUS "Switching to C23-like mode. To prevent this, pass -DCMAKE_C_STANDARD explicitly.")
@@ -163,7 +163,7 @@ check_c_source_compiles("
 "  HAS_BUILTIN_UNREACHABLE)
 
 if(HAS_BUILTIN_UNREACHABLE)
-  add_definitions(-D_CBOR_HAS_BUILTIN_UNREACHABLE)
+  add_definitions(-DCBOR_HAS_BUILTIN_UNREACHABLE)
 endif()
 
 # CMake >= 3.9.0 enables LTO for GCC and Clang with INTERPROCEDURAL_OPTIMIZATION
