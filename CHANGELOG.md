@@ -13,6 +13,7 @@ Next
   - Previously, replacing the tagged item would leak the old item's reference. If you were manually releasing the old item before calling `cbor_tag_set_item`, you should remove the extra `cbor_decref`.
 - Potentially BREAKING: [`cbor_tag_item` now returns NULL if the tag has no item set](https://github.com/PJK/libcbor/pull/392)
   - Previously, this would be undefined behavior (NULL pointer dereference), so no valid clients should be affected.
+- Potentially BUILD BREAKING: CPack Debian package architecture is now detected via `dpkg` instead of being hardcoded to `amd64`
 
 0.13.0 (2025-08-30)
 ---------------------
