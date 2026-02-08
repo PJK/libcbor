@@ -21,8 +21,8 @@ void write_cbor_sequence(const char* filename) {
   cbor_item_t* int_item = cbor_build_uint32(42);
   cbor_item_t* string_item = cbor_build_string("Hello, CBOR!");
   cbor_item_t* array_item = cbor_new_definite_array(2);
-  assert(cbor_array_push(array_item, cbor_build_uint8(1)));
-  assert(cbor_array_push(array_item, cbor_build_uint8(2)));
+  assert(cbor_array_push(array_item, cbor_move(cbor_build_uint8(1))));
+  assert(cbor_array_push(array_item, cbor_move(cbor_build_uint8(2))));
 
   // Serialize and write items to the file
   unsigned char* buffer;
