@@ -17,6 +17,7 @@ Next
 - BUILD BREAKING: [Remove deprecated `CBOR_CUSTOM_ALLOC` CMake option](https://github.com/PJK/libcbor/pull/402)
   - The option has been a no-op since 0.10.0. If your build passes `-DCBOR_CUSTOM_ALLOC=ON`, remove it.
 - [Modernize CMake build: use `project(VERSION ...)`, replace `add_definitions()` with target-scoped `target_compile_definitions()`, remove redundant `include_directories()`](https://github.com/PJK/libcbor/pull/402)
+- [Replace global `CMAKE_C_FLAGS` mutations with target-scoped `target_compile_options()` via an INTERFACE library, and simplify LTO configuration](https://github.com/PJK/libcbor/pull/403)
 
 0.13.0 (2025-08-30)
 ---------------------

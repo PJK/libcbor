@@ -38,6 +38,23 @@ target_compile_definitions(cbor
     $<$<BOOL:${HAS_NODISCARD_ATTRIBUTE}>:CBOR_HAS_NODISCARD_ATTRIBUTE>
     $<$<BOOL:${HAS_BUILTIN_UNREACHABLE}>:CBOR_HAS_BUILTIN_UNREACHABLE>)
 
+# Compile options set directly (not via cbor_project_options INTERFACE library)
+# because the cbor target is exported and PRIVATE INTERFACE library deps cause
+# install(EXPORT ...) errors in CMake < 3.15.
+if(MINGW)
+  target_compile_options(cbor PRIVATE -std=gnu99)
+elseif(NOT MSVC)
+  target_compile_options(cbor PRIVATE -pedantic)
+endif()
+if(MSVC)
+  target_compile_options(cbor PRIVATE $<$<CONFIG:Debug>:/sdl>)
+else()
+  target_compile_options(cbor PRIVATE
+    $<$<CONFIG:Debug>:-O0 -Wall -Wextra -g -ggdb>
+    $<$<CONFIG:Release>:-O3 -Wall -Wextra>)
+  target_compile_definitions(cbor PRIVATE $<$<CONFIG:Debug>:DEBUG=true>)
+endif()
+
 target_include_directories(cbor PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>

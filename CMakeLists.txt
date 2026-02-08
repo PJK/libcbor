@@ -83,7 +83,6 @@ elseif(NOT MSVC)
   if(NOT DEFINED CMAKE_C_STANDARD)
     set(CMAKE_C_STANDARD 99 CACHE STRING "C language standard")
   endif()
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pedantic")
 endif()
 
 # CMAKE_C_STANDARD set above
@@ -94,15 +93,11 @@ if(MSVC)
   # This just doesn't work right --
   # https://msdn.microsoft.com/en-us/library/5ft82fed.aspx
   set(CBOR_RESTRICT_SPECIFIER "")
-
-  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /sdl")
 else()
   set(CBOR_RESTRICT_SPECIFIER "restrict")
 
-  set(CMAKE_C_FLAGS_DEBUG
-    "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -Wextra -g -ggdb -DDEBUG=true")
-  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -Wall -Wextra -DNDEBUG")
-
+  # Sanitizer flags must stay in CMAKE_C_FLAGS because they need to be passed
+  # to both the compiler and linker, and target_link_options requires CMake 3.13
   if(SANITIZE)
     set(CMAKE_C_FLAGS_DEBUG
       "${CMAKE_C_FLAGS_DEBUG} \
@@ -111,6 +106,25 @@ else()
   endif()
 
   set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-g")
+endif()
+
+add_library(cbor_project_options INTERFACE)
+
+if(MINGW)
+  target_compile_options(cbor_project_options INTERFACE -std=gnu99)
+elseif(NOT MSVC)
+  target_compile_options(cbor_project_options INTERFACE -pedantic)
+endif()
+
+if(MSVC)
+  target_compile_options(cbor_project_options INTERFACE
+    $<$<CONFIG:Debug>:/sdl>)
+else()
+  target_compile_options(cbor_project_options INTERFACE
+    $<$<CONFIG:Debug>:-O0 -Wall -Wextra -g -ggdb>
+    $<$<CONFIG:Release>:-O3 -Wall -Wextra>)
+  target_compile_definitions(cbor_project_options INTERFACE
+    $<$<CONFIG:Debug>:DEBUG=true>)
 endif()
 
 include(CheckTypeSize)
@@ -145,7 +159,7 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.9.0")
   check_ipo_supported(RESULT LTO_SUPPORTED)
 endif()
 
-if(NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION)
+if(LTO_SUPPORTED AND NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION)
   set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 endif()
 
@@ -242,20 +256,11 @@ install(FILES ${PROJECT_BINARY_DIR}/cbor/configuration.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cbor)
 
 add_subdirectory(src)
-if(LTO_SUPPORTED)
-  set_property(DIRECTORY src PROPERTY INTERPROCEDURAL_OPTIMIZATION CMAKE_INTERPROCEDURAL_OPTIMIZATION)
-endif()
 
 if(WITH_TESTS)
   add_subdirectory(test)
-  if(LTO_SUPPORTED)
-    set_property(DIRECTORY test PROPERTY INTERPROCEDURAL_OPTIMIZATION CMAKE_INTERPROCEDURAL_OPTIMIZATION)
-  endif()
 endif()
 
 if(WITH_EXAMPLES)
   add_subdirectory(examples)
-  if(LTO_SUPPORTED)
-    set_property(DIRECTORY examples PROPERTY INTERPROCEDURAL_OPTIMIZATION CMAKE_INTERPROCEDURAL_OPTIMIZATION)
-  endif()
 endif()
