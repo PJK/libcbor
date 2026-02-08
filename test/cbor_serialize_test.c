@@ -171,6 +171,51 @@ static void test_serialize_bytestring_size_overflow(
   cbor_decref(&item);
 }
 
+static void test_serialize_string_size_overflow(void** _state _CBOR_UNUSED) {
+  cbor_item_t* item = cbor_new_definite_string();
+
+  // Fake having a huge chunk of data. Set fields directly to avoid
+  // cbor_string_set_handle's UTF-8 validation reading out of bounds.
+  unsigned char* data = malloc(1);
+  item->data = data;
+  item->metadata.string_metadata.length = SIZE_MAX;
+
+  // Would require 1 + 8 + SIZE_MAX bytes, which overflows size_t
+  assert_size_equal(cbor_serialize(item, buffer, 512), 0);
+  assert_size_equal(cbor_serialized_size(item), 0);
+  cbor_decref(&item);
+}
+
+static void test_serialize_indef_bytestring_size_overflow(
+    void** _state _CBOR_UNUSED) {
+  cbor_item_t* item = cbor_new_indefinite_bytestring();
+  cbor_item_t* chunk = cbor_new_definite_bytestring();
+
+  // Fake a chunk with SIZE_MAX length so the total overflows
+  unsigned char* data = malloc(1);
+  cbor_bytestring_set_handle(chunk, data, SIZE_MAX);
+  cbor_bytestring_add_chunk(item, cbor_move(chunk));
+
+  assert_size_equal(cbor_serialized_size(item), 0);
+  cbor_decref(&item);
+}
+
+static void test_serialize_indef_string_size_overflow(
+    void** _state _CBOR_UNUSED) {
+  cbor_item_t* item = cbor_new_indefinite_string();
+  cbor_item_t* chunk = cbor_new_definite_string();
+
+  // Fake a chunk with SIZE_MAX length so the total overflows. Set fields
+  // directly to avoid cbor_string_set_handle's UTF-8 validation.
+  unsigned char* data = malloc(1);
+  chunk->data = data;
+  chunk->metadata.string_metadata.length = SIZE_MAX;
+  cbor_string_add_chunk(item, cbor_move(chunk));
+
+  assert_size_equal(cbor_serialized_size(item), 0);
+  cbor_decref(&item);
+}
+
 static void test_serialize_bytestring_no_space(void** _state _CBOR_UNUSED) {
   cbor_item_t* item = cbor_new_definite_bytestring();
   unsigned char* data = malloc(12);
@@ -663,6 +708,9 @@ int main(void) {
       cmocka_unit_test(test_serialize_definite_bytestring),
       cmocka_unit_test(test_serialize_indefinite_bytestring),
       cmocka_unit_test(test_serialize_bytestring_size_overflow),
+      cmocka_unit_test(test_serialize_string_size_overflow),
+      cmocka_unit_test(test_serialize_indef_bytestring_size_overflow),
+      cmocka_unit_test(test_serialize_indef_string_size_overflow),
       cmocka_unit_test(test_serialize_bytestring_no_space),
       cmocka_unit_test(test_serialize_indefinite_bytestring_no_space),
       cmocka_unit_test(test_serialize_definite_string),
