@@ -163,6 +163,12 @@ static void test_set_item_replaces_previous(void** _state _CBOR_UNUSED) {
   cbor_decref(&tag);
 }
 
+static void test_tag_item_null(void** _state _CBOR_UNUSED) {
+  tag = cbor_new_tag(0);
+  assert_null(cbor_tag_item(tag));
+  cbor_decref(&tag);
+}
+
 static void test_tag_creation(void** _state _CBOR_UNUSED) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_tag(42)); });
 }
@@ -180,6 +186,7 @@ int main(void) {
       cmocka_unit_test(test_build_tag),
       cmocka_unit_test(test_build_tag_failure),
       cmocka_unit_test(test_set_item_replaces_previous),
+      cmocka_unit_test(test_tag_item_null),
       cmocka_unit_test(test_tag_creation),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
