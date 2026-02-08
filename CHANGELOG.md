@@ -14,6 +14,7 @@ Next
 - Potentially BREAKING: [`cbor_tag_item` now returns NULL if the tag has no item set](https://github.com/PJK/libcbor/pull/392)
   - Previously, this would be undefined behavior (NULL pointer dereference), so no valid clients should be affected.
 - Potentially BUILD BREAKING: CPack Debian package architecture is now detected via `dpkg` instead of being hardcoded to `amd64`
+- Modernize CMake build: use `project(VERSION ...)`, replace `add_definitions()` with target-scoped `target_compile_definitions()`, remove redundant `include_directories()`, remove deprecated `CBOR_CUSTOM_ALLOC` option
 
 0.13.0 (2025-08-30)
 ---------------------
