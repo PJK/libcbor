@@ -51,7 +51,7 @@ Combining these two principles in practice turns out to be quite difficult. Inde
 
 Coding style
 -------------
-This code loosely follows the `Linux kernel coding style <https://www.kernel.org/doc/Documentation/CodingStyle>`_. Tabs are tabs, and they are 4 characters wide.
+This code uses a Google-based clang-format style with 2-space indentation and an 80-column limit. Run ``bash clang-format.sh`` before committing.
 
 
 Memory layout

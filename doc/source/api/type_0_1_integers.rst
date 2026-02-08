@@ -55,10 +55,15 @@ Building new items
 .. doxygenfunction:: cbor_build_uint16
 .. doxygenfunction:: cbor_build_uint32
 .. doxygenfunction:: cbor_build_uint64
+.. doxygenfunction:: cbor_build_negint8
+.. doxygenfunction:: cbor_build_negint16
+.. doxygenfunction:: cbor_build_negint32
+.. doxygenfunction:: cbor_build_negint64
 
 
 Retrieving values
 ------------------------
+.. doxygenfunction:: cbor_get_int
 .. doxygenfunction:: cbor_get_uint8
 .. doxygenfunction:: cbor_get_uint16
 .. doxygenfunction:: cbor_get_uint32
