@@ -5,6 +5,7 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include "cbor.h"
 
@@ -31,7 +32,7 @@ void flush(size_t bytes) {
 int main(int argc, char* argv[]) {
   if (argc != 2) usage();
   size_t n;
-  scanf(argv[1], "%zu", &n);
+  sscanf(argv[1], "%zu", &n);
   out = freopen(NULL, "wb", stdout);
   if (!out) exit(1);
 

@@ -141,5 +141,7 @@ int main(int argc, char* argv[]) {
   free(buffer);
   fflush(stdout);
   cJSON_Delete(json);
+  free(json_buffer);
   cbor_decref(&cbor);
+  fclose(f);
 }

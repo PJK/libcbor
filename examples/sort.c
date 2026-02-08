@@ -39,4 +39,5 @@ int main(void) {
 
   cbor_describe(array, stdout);
   fflush(stdout);
+  cbor_decref(&array);
 }
