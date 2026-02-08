@@ -16,7 +16,7 @@ void set_mock_malloc(int calls, ...) {
   va_start(args, calls);
   alloc_calls_expected = calls;
   alloc_calls = 0;
-  expectations = calloc(calls, sizeof(expectations));
+  expectations = calloc(calls, sizeof(*expectations));
   for (int i = 0; i < calls; i++) {
     // Promotable types, baby
     expectations[i] = va_arg(args, call_expectation);
