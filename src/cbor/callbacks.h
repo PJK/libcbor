@@ -67,9 +67,9 @@ struct cbor_callbacks {
   /** Negative int */
   cbor_int8_callback negint8;
 
-  /** Definite byte string */
-  cbor_simple_callback byte_string_start;
   /** Indefinite byte string start */
+  cbor_simple_callback byte_string_start;
+  /** Definite byte string */
   cbor_string_callback byte_string;
 
   /** Definite string */
@@ -77,14 +77,14 @@ struct cbor_callbacks {
   /** Indefinite string start */
   cbor_simple_callback string_start;
 
-  /** Definite array */
+  /** Indefinite array start */
   cbor_simple_callback indef_array_start;
-  /** Indefinite array */
+  /** Definite array */
   cbor_collection_callback array_start;
 
-  /** Definite map */
+  /** Indefinite map start */
   cbor_simple_callback indef_map_start;
-  /** Indefinite map */
+  /** Definite map */
   cbor_collection_callback map_start;
 
   /** Tags */

@@ -29,7 +29,7 @@ Building & installing libcbor
 
 Prerequisites:
  - C99 compiler
- - CMake_ 2.8 or newer (might also be called ``cmakesetup``, ``cmake-gui`` or ``ccmake`` depending on the installed version and system)
+ - CMake_ 3.5 or newer (might also be called ``cmakesetup``, ``cmake-gui`` or ``ccmake`` depending on the installed version and system)
  - C build system CMake can target (make, Apple Xcode, MinGW, ...)
 
 .. _CMake: http://cmake.org/
