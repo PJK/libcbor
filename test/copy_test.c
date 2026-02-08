@@ -219,6 +219,44 @@ static void test_definite_indef_bytestring(void** _state _CBOR_UNUSED) {
   cbor_decref(&copy);
 }
 
+static void test_definite_indef_bytestring_chunk_length_overflow(
+    void** _state _CBOR_UNUSED) {
+  item = cbor_new_indefinite_bytestring();
+  assert_true(cbor_bytestring_add_chunk(
+      item, cbor_move(cbor_build_bytestring((cbor_data) "a", 1))));
+  assert_true(cbor_bytestring_add_chunk(
+      item, cbor_move(cbor_build_bytestring((cbor_data) "b", 1))));
+
+  // Simulate overflow: set the first chunk's length to SIZE_MAX so that
+  // total_length would wrap around when adding the second chunk's length.
+  cbor_bytestring_chunks_handle(item)[0]->metadata.bytestring_metadata.length =
+      SIZE_MAX;
+
+  assert_null(cbor_copy_definite(item));
+
+  // Restore the length so cleanup doesn't read out of bounds.
+  cbor_bytestring_chunks_handle(item)[0]->metadata.bytestring_metadata.length =
+      1;
+  cbor_decref(&item);
+}
+
+static void test_definite_indef_string_chunk_length_overflow(
+    void** _state _CBOR_UNUSED) {
+  item = cbor_new_indefinite_string();
+  assert_true(cbor_string_add_chunk(item, cbor_move(cbor_build_string("a"))));
+  assert_true(cbor_string_add_chunk(item, cbor_move(cbor_build_string("b"))));
+
+  // Simulate overflow: set the first chunk's length to SIZE_MAX.
+  cbor_string_chunks_handle(item)[0]->metadata.string_metadata.length =
+      SIZE_MAX;
+
+  assert_null(cbor_copy_definite(item));
+
+  // Restore the length so cleanup doesn't read out of bounds.
+  cbor_string_chunks_handle(item)[0]->metadata.string_metadata.length = 1;
+  cbor_decref(&item);
+}
+
 static void test_definite_bytestring_alloc_failure(void** _state _CBOR_UNUSED) {
   item = cbor_new_indefinite_bytestring();
   assert_true(cbor_bytestring_add_chunk(
@@ -794,8 +832,10 @@ int main(void) {
       cmocka_unit_test(test_definite_bytestring),
       cmocka_unit_test(test_definite_bytestring_alloc_failure),
       cmocka_unit_test(test_definite_indef_bytestring),
+      cmocka_unit_test(test_definite_indef_bytestring_chunk_length_overflow),
       cmocka_unit_test(test_definite_string),
       cmocka_unit_test(test_definite_indef_string),
+      cmocka_unit_test(test_definite_indef_string_chunk_length_overflow),
       cmocka_unit_test(test_definite_string_alloc_failure),
       cmocka_unit_test(test_definite_array),
       cmocka_unit_test(test_definite_indef_array),

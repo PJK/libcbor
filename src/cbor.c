@@ -11,6 +11,7 @@
 #include "cbor.h"
 #include "cbor/internal/builder_callbacks.h"
 #include "cbor/internal/loaders.h"
+#include "cbor/internal/memory_utils.h"
 
 cbor_item_t* cbor_load(cbor_data source, size_t source_size,
                        struct cbor_load_result* result) {
@@ -311,8 +312,12 @@ cbor_item_t* cbor_copy_definite(cbor_item_t* item) {
       } else {
         size_t total_length = 0;
         for (size_t i = 0; i < cbor_bytestring_chunk_count(item); i++) {
-          total_length +=
+          size_t chunk_length =
               cbor_bytestring_length(cbor_bytestring_chunks_handle(item)[i]);
+          if (!_cbor_safe_to_add(total_length, chunk_length)) {
+            return NULL;
+          }
+          total_length += chunk_length;
         }
 
         unsigned char* combined_data = _cbor_malloc(total_length);
@@ -338,8 +343,12 @@ cbor_item_t* cbor_copy_definite(cbor_item_t* item) {
       } else {
         size_t total_length = 0;
         for (size_t i = 0; i < cbor_string_chunk_count(item); i++) {
-          total_length +=
+          size_t chunk_length =
               cbor_string_length(cbor_string_chunks_handle(item)[i]);
+          if (!_cbor_safe_to_add(total_length, chunk_length)) {
+            return NULL;
+          }
+          total_length += chunk_length;
         }
 
         unsigned char* combined_data = _cbor_malloc(total_length);
