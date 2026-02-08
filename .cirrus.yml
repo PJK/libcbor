@@ -20,6 +20,7 @@ freebsd_task:
     - name: freebsd-15-0-amd64-zfs
       freebsd_instance:
         image_family: freebsd-15-0-amd64-zfs
-    - name: freebsd-16-0-snap
-      freebsd_instance:
-        image_family: freebsd-16-0-snap
+    # Temporarily disabled: https://github.com/cirruslabs/cirrus-ci-docs/issues/1322
+    # - name: freebsd-16-0-snap
+    #   freebsd_instance:
+    #     image_family: freebsd-16-0-snap
