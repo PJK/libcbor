@@ -8,8 +8,14 @@
 #include "streaming.h"
 #include "internal/loaders.h"
 
+// Increment the number of bytes read in the `result` by `required` if there are
+// enough bytes `provided` and return true, or set the `result` to an error
+// state and return false.
+//
 static bool claim_bytes(size_t required, size_t provided,
                         struct cbor_decoder_result* result) {
+  // Safe from underflow: read is only incremented on successful claims
+  CBOR_ASSERT(result->read <= provided);
   if (required > (provided - result->read)) {
     result->required = required + result->read;
     result->read = 0;
