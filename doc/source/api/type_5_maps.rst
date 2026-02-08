@@ -5,7 +5,7 @@ CBOR maps are the plain old associative maps similar JSON objects or Python dict
 
 Definite maps have a fixed size which is stored in the header, whereas indefinite maps do not and are terminated by a special "break" byte instead.
 
-Map are explicitly created or decoded as definite or indefinite and will be encoded using the corresponding wire representation, regardless of whether the actual size is known at the time of encoding.
+Maps are explicitly created or decoded as definite or indefinite and will be encoded using the corresponding wire representation, regardless of whether the actual size is known at the time of encoding.
 
 .. note::
 

@@ -154,7 +154,7 @@ libcbor is known to successfully work on ARM Android devices. Cross-compilation 
 Linking with libcbor
 ---------------------
 
-If you include and linker paths include the directories to which libcbor has been installed, compiling programs that uses libcbor requires
+If your include and linker paths include the directories to which libcbor has been installed, compiling programs that uses libcbor requires
 no extra considerations.
 
 You can verify that everything has been set up properly by creating a file with the following contents
@@ -208,7 +208,7 @@ location by checking the installation log. If you used make, it will look someth
     -- Installing: /usr/local/include/cbor/encoding.h
     ...
 
-Make sure that ``CMAKE_INSTALL_PREFIX`` (if you provided it) was correct. Including the path path during compilation should suffice, e.g.:
+Make sure that ``CMAKE_INSTALL_PREFIX`` (if you provided it) was correct. Including the path during compilation should suffice, e.g.:
 
 .. code-block:: bash
 

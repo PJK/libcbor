@@ -8,7 +8,7 @@ If you have specific requirements, you should consider rolling your own driver f
 Using custom allocator
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-*libcbor* gives you with the ability to provide your own implementations of ``malloc``, ``realloc``, and ``free``. 
+*libcbor* gives you the ability to provide your own implementations of ``malloc``, ``realloc``, and ``free``. 
 This can be useful if you are using a custom allocator throughout your application, 
 or if you want to implement custom policies (e.g. tighter restrictions on the amount of allocated memory).
 

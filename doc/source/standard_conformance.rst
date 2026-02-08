@@ -11,7 +11,7 @@ There is no explicit limitation of indefinite length byte strings. [#]_ *libcbor
 
 "Half-precision" IEEE 754 floats
 ---------------------------------
-As of C99 and even C11, there is no standard implementation for 2 bytes floats. *libcbor* packs them as a `float <https://en.cppreference.com/w/c/language/type>`. When encoding, *libcbor* selects the appropriate wire representation based on metadata and the actual value. This applies both to canonical and normal mode.
+As of C99 and even C11, there is no standard implementation for 2 bytes floats. *libcbor* packs them as a `float <https://en.cppreference.com/w/c/language/type>`_. When encoding, *libcbor* selects the appropriate wire representation based on metadata and the actual value. This applies both to canonical and normal mode.
 
 For more information on half-float serialization, please refer to the section on :ref:`api_type_7_floats_ctrls_half_floats`.
 
