@@ -224,7 +224,7 @@ if(COVERAGE)
 
   add_custom_target(
     llvm-coverage
-    COMMAND make -j 16
+    COMMAND cmake --build . --parallel
     COMMAND rm -rf coverage_profiles
     COMMAND mkdir coverage_profiles
     COMMAND
