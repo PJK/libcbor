@@ -29,7 +29,7 @@ Examples
 
 ::
 
-    0x9f        Start array, 1B length follows
+    0x98        Start definite array, 1B length follows
     0x20        Unsigned integer 32
         ...        32 items follow
 

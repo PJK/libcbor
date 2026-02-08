@@ -7,7 +7,7 @@ In case a byte string is indefinite, it is encoded as a series of definite byte 
 
 ::
 
-    0xf5	    Start indefinite byte string
+    0x5f	    Start indefinite byte string
 	0x41	    Byte string (1B long)
 	    0x00
 	0x41	    Byte string (1B long)
