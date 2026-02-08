@@ -143,6 +143,26 @@ static void test_build_tag_failure(void** _state _CBOR_UNUSED) {
   cbor_decref(&tagged_item);
 }
 
+static void test_set_item_replaces_previous(void** _state _CBOR_UNUSED) {
+  cbor_item_t* item1 = cbor_build_uint8(1);
+  cbor_item_t* item2 = cbor_build_uint8(2);
+  tag = cbor_build_tag(0, item1);
+
+  assert_size_equal(cbor_refcount(item1), 2);
+  assert_size_equal(cbor_refcount(item2), 1);
+
+  cbor_tag_set_item(tag, item2);
+
+  // item1 should have been released by cbor_tag_set_item
+  assert_size_equal(cbor_refcount(item1), 1);
+  assert_size_equal(cbor_refcount(item2), 2);
+  assert_uint8(cbor_move(cbor_tag_item(tag)), 2);
+
+  cbor_decref(&item1);
+  cbor_decref(&item2);
+  cbor_decref(&tag);
+}
+
 static void test_tag_creation(void** _state _CBOR_UNUSED) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_tag(42)); });
 }
@@ -159,6 +179,7 @@ int main(void) {
       cmocka_unit_test(test_all_tag_values_supported),
       cmocka_unit_test(test_build_tag),
       cmocka_unit_test(test_build_tag_failure),
+      cmocka_unit_test(test_set_item_replaces_previous),
       cmocka_unit_test(test_tag_creation),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
