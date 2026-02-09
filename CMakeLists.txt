@@ -119,6 +119,8 @@ endif()
 if(MSVC)
   target_compile_options(cbor_project_options INTERFACE
     $<$<CONFIG:Debug>:/sdl>)
+  target_compile_definitions(cbor_project_options INTERFACE
+    _CRT_SECURE_NO_WARNINGS)
 else()
   target_compile_options(cbor_project_options INTERFACE
     $<$<CONFIG:Debug>:-O0 -Wall -Wextra -g -ggdb>
@@ -159,14 +161,14 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.9.0")
   check_ipo_supported(RESULT LTO_SUPPORTED)
 endif()
 
-if(LTO_SUPPORTED AND NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION)
-  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
+if(LTO_SUPPORTED AND NOT DEFINED CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE)
+  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
 endif()
 
 if(LTO_SUPPORTED)
   message(
     STATUS
-    "LTO is supported and CMAKE_INTERPROCEDURAL_OPTIMIZATION=${CMAKE_INTERPROCEDURAL_OPTIMIZATION}"
+    "LTO is supported and CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE=${CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE}"
   )
 else()
   message(STATUS "LTO is not supported")

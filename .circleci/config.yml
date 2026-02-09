@@ -218,9 +218,9 @@ jobs:
       - run: git clone https://git.cryptomilk.org/projects/cmocka.git
       - run: cd cmocka && git checkout tags/cmocka-1.1.5 
       - run: /c/Program\ Files/Cmake/bin/cmake -S cmocka -B cmocka_build
-      - run: /c/Program\ Files/Cmake/bin/cmake --build cmocka_build
+      - run: /c/Program\ Files/Cmake/bin/cmake --build cmocka_build --parallel
       - run: /c/Program\ Files/Cmake/bin/cmake -S . -B libcbor_build -DWITH_TESTS=ON -DWITH_EXAMPLES=ON -DCMOCKA_INCLUDE_DIR=cmocka/include -DCMOCKA_LIBRARIES=$(pwd)/cmocka_build/src/Debug/cmocka.lib
-      - run: /c/Program\ Files/Cmake/bin/cmake --build libcbor_build
+      - run: /c/Program\ Files/Cmake/bin/cmake --build libcbor_build --parallel
       - run: >
           export PATH="$(pwd)/cmocka_build/src/Debug/:$PATH" &&
           /c/Program\ Files/Cmake/bin/ctest.exe --test-dir libcbor_build -C Debug --output-on-failure
