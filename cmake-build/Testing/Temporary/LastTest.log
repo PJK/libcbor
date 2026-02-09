@@ -1,0 +1,1141 @@
+Start testing: Feb 08 20:44 CET
+----------------------------------------------------------
+1/26 Testing: array_encoders_test
+1/26 Test: array_encoders_test
+Command: "/Users/pavel/libcbor/cmake-build/test/array_encoders_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"array_encoders_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 4 test(s).
+[ RUN      ] test_embedded_array_start
+[       OK ] test_embedded_array_start
+[ RUN      ] test_array_start
+[       OK ] test_array_start
+[ RUN      ] test_indef_array_start
+[       OK ] test_indef_array_start
+[ RUN      ] test_indef_array_encoding
+[       OK ] test_indef_array_encoding
+[==========] tests: 4 test(s) run.
+[  PASSED  ] 4 test(s).
+<end of output>
+Test time =   0.53 sec
+----------------------------------------------------------
+Test Passed.
+"array_encoders_test" end time: Feb 08 20:44 CET
+"array_encoders_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/26 Testing: array_test
+2/26 Test: array_test
+Command: "/Users/pavel/libcbor/cmake-build/test/array_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"array_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 12 test(s).
+[ RUN      ] test_empty_array
+[       OK ] test_empty_array
+[ RUN      ] test_simple_array
+[       OK ] test_simple_array
+[ RUN      ] test_nested_arrays
+[       OK ] test_nested_arrays
+[ RUN      ] test_indef_arrays
+[       OK ] test_indef_arrays
+[ RUN      ] test_nested_indef_arrays
+[       OK ] test_nested_indef_arrays
+[ RUN      ] test_array_get_out_of_bounds
+[       OK ] test_array_get_out_of_bounds
+[ RUN      ] test_array_get_empty
+[       OK ] test_array_get_empty
+[ RUN      ] test_array_replace
+[       OK ] test_array_replace
+[ RUN      ] test_array_push_overflow
+[       OK ] test_array_push_overflow
+[ RUN      ] test_array_creation
+[       OK ] test_array_creation
+[ RUN      ] test_array_push
+[       OK ] test_array_push
+[ RUN      ] test_indef_array_decode
+[       OK ] test_indef_array_decode
+[==========] tests: 12 test(s) run.
+[  PASSED  ] 12 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"array_test" end time: Feb 08 20:44 CET
+"array_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/26 Testing: bad_inputs_test
+3/26 Test: bad_inputs_test
+Command: "/Users/pavel/libcbor/cmake-build/test/bad_inputs_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"bad_inputs_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 7 test(s).
+[ RUN      ] test_1
+[       OK ] test_1
+[ RUN      ] test_2
+[       OK ] test_2
+[ RUN      ] test_3
+[       OK ] test_3
+[ RUN      ] test_6
+[       OK ] test_6
+[ RUN      ] test_7
+[       OK ] test_7
+[ RUN      ] test_8
+[       OK ] test_8
+[ RUN      ] test_9
+[       OK ] test_9
+[==========] tests: 7 test(s) run.
+[  PASSED  ] 7 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"bad_inputs_test" end time: Feb 08 20:44 CET
+"bad_inputs_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/26 Testing: bytestring_encoders_test
+4/26 Test: bytestring_encoders_test
+Command: "/Users/pavel/libcbor/cmake-build/test/bytestring_encoders_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"bytestring_encoders_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 3 test(s).
+[ RUN      ] test_embedded_bytestring_start
+[       OK ] test_embedded_bytestring_start
+[ RUN      ] test_bytestring_start
+[       OK ] test_bytestring_start
+[ RUN      ] test_indef_bytestring_start
+[       OK ] test_indef_bytestring_start
+[==========] tests: 3 test(s) run.
+[  PASSED  ] 3 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"bytestring_encoders_test" end time: Feb 08 20:44 CET
+"bytestring_encoders_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/26 Testing: bytestring_test
+5/26 Test: bytestring_test
+Command: "/Users/pavel/libcbor/cmake-build/test/bytestring_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"bytestring_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 16 test(s).
+[ RUN      ] test_empty_bs
+[       OK ] test_empty_bs
+[ RUN      ] test_embedded_bs
+[       OK ] test_embedded_bs
+[ RUN      ] test_notenough_data
+[       OK ] test_notenough_data
+[ RUN      ] test_short_bs1
+[       OK ] test_short_bs1
+[ RUN      ] test_short_bs2
+[       OK ] test_short_bs2
+[ RUN      ] test_half_bs
+[       OK ] test_half_bs
+[ RUN      ] test_int_bs
+[       OK ] test_int_bs
+[ RUN      ] test_long_bs
+[       OK ] test_long_bs
+[ RUN      ] test_zero_indef
+[       OK ] test_zero_indef
+[ RUN      ] test_short_indef
+[       OK ] test_short_indef
+[ RUN      ] test_two_indef
+[       OK ] test_two_indef
+[ RUN      ] test_missing_indef
+[       OK ] test_missing_indef
+[ RUN      ] test_inline_creation
+[       OK ] test_inline_creation
+[ RUN      ] test_add_chunk_reallocation_overflow
+[       OK ] test_add_chunk_reallocation_overflow
+[ RUN      ] test_bytestring_creation
+[       OK ] test_bytestring_creation
+[ RUN      ] test_bytestring_add_chunk
+[       OK ] test_bytestring_add_chunk
+[==========] tests: 16 test(s) run.
+[  PASSED  ] 16 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"bytestring_test" end time: Feb 08 20:44 CET
+"bytestring_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/26 Testing: callbacks_test
+6/26 Test: callbacks_test
+Command: "/Users/pavel/libcbor/cmake-build/test/callbacks_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"callbacks_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 13 test(s).
+[ RUN      ] test_default_callbacks
+[       OK ] test_default_callbacks
+[ RUN      ] test_builder_byte_string_callback_append
+[       OK ] test_builder_byte_string_callback_append
+[ RUN      ] test_builder_byte_string_callback_append_alloc_failure
+[       OK ] test_builder_byte_string_callback_append_alloc_failure
+[ RUN      ] test_builder_byte_string_callback_append_item_alloc_failure
+[       OK ] test_builder_byte_string_callback_append_item_alloc_failure
+[ RUN      ] test_builder_byte_string_callback_append_parent_alloc_failure
+[       OK ] test_builder_byte_string_callback_append_parent_alloc_failure
+[ RUN      ] test_builder_string_callback_append
+[       OK ] test_builder_string_callback_append
+[ RUN      ] test_builder_string_callback_append_alloc_failure
+[       OK ] test_builder_string_callback_append_alloc_failure
+[ RUN      ] test_builder_string_callback_append_item_alloc_failure
+[       OK ] test_builder_string_callback_append_item_alloc_failure
+[ RUN      ] test_builder_string_callback_append_parent_alloc_failure
+[       OK ] test_builder_string_callback_append_parent_alloc_failure
+[ RUN      ] test_append_array_failure
+[       OK ] test_append_array_failure
+[ RUN      ] test_append_map_failure
+[       OK ] test_append_map_failure
+[ RUN      ] test_invalid_indef_break
+[       OK ] test_invalid_indef_break
+[ RUN      ] test_invalid_state_indef_break
+[       OK ] test_invalid_state_indef_break
+[==========] tests: 13 test(s) run.
+[  PASSED  ] 13 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"callbacks_test" end time: Feb 08 20:44 CET
+"callbacks_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/26 Testing: cbor_serialize_test
+7/26 Test: cbor_serialize_test
+Command: "/Users/pavel/libcbor/cmake-build/test/cbor_serialize_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"cbor_serialize_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 49 test(s).
+[ RUN      ] test_serialize_uint8_embed
+[       OK ] test_serialize_uint8_embed
+[ RUN      ] test_serialize_uint8
+[       OK ] test_serialize_uint8
+[ RUN      ] test_serialize_uint16
+[       OK ] test_serialize_uint16
+[ RUN      ] test_serialize_uint32
+[       OK ] test_serialize_uint32
+[ RUN      ] test_serialize_uint64
+[       OK ] test_serialize_uint64
+[ RUN      ] test_serialize_negint8_embed
+[       OK ] test_serialize_negint8_embed
+[ RUN      ] test_serialize_negint8
+[       OK ] test_serialize_negint8
+[ RUN      ] test_serialize_negint16
+[       OK ] test_serialize_negint16
+[ RUN      ] test_serialize_negint32
+[       OK ] test_serialize_negint32
+[ RUN      ] test_serialize_negint64
+[       OK ] test_serialize_negint64
+[ RUN      ] test_serialize_definite_bytestring
+[       OK ] test_serialize_definite_bytestring
+[ RUN      ] test_serialize_indefinite_bytestring
+[       OK ] test_serialize_indefinite_bytestring
+[ RUN      ] test_serialize_bytestring_size_overflow
+[       OK ] test_serialize_bytestring_size_overflow
+[ RUN      ] test_serialize_string_size_overflow
+[       OK ] test_serialize_string_size_overflow
+[ RUN      ] test_serialize_indef_bytestring_size_overflow
+[       OK ] test_serialize_indef_bytestring_size_overflow
+[ RUN      ] test_serialize_indef_string_size_overflow
+[       OK ] test_serialize_indef_string_size_overflow
+[ RUN      ] test_serialize_bytestring_no_space
+[       OK ] test_serialize_bytestring_no_space
+[ RUN      ] test_serialize_indefinite_bytestring_no_space
+[       OK ] test_serialize_indefinite_bytestring_no_space
+[ RUN      ] test_serialize_definite_string
+[       OK ] test_serialize_definite_string
+[ RUN      ] test_serialize_definite_string_4b_header
+[       OK ] test_serialize_definite_string_4b_header
+[ RUN      ] test_serialize_definite_string_8b_header
+[       OK ] test_serialize_definite_string_8b_header
+[ RUN      ] test_serialize_indefinite_string
+[       OK ] test_serialize_indefinite_string
+[ RUN      ] test_serialize_string_no_space
+[       OK ] test_serialize_string_no_space
+[ RUN      ] test_serialize_indefinite_string_no_space
+[       OK ] test_serialize_indefinite_string_no_space
+[ RUN      ] test_serialize_definite_array
+[       OK ] test_serialize_definite_array
+[ RUN      ] test_serialize_indefinite_array
+[       OK ] test_serialize_indefinite_array
+[ RUN      ] test_serialize_array_no_space
+[       OK ] test_serialize_array_no_space
+[ RUN      ] test_serialize_definite_map
+[       OK ] test_serialize_definite_map
+[ RUN      ] test_serialize_indefinite_map
+[       OK ] test_serialize_indefinite_map
+[ RUN      ] test_serialize_map_no_space
+[       OK ] test_serialize_map_no_space
+[ RUN      ] test_serialize_tags
+[       OK ] test_serialize_tags
+[ RUN      ] test_serialize_tags_no_space
+[       OK ] test_serialize_tags_no_space
+[ RUN      ] test_serialize_half
+[       OK ] test_serialize_half
+[ RUN      ] test_serialize_single
+[       OK ] test_serialize_single
+[ RUN      ] test_serialize_double
+[       OK ] test_serialize_double
+[ RUN      ] test_serialize_ctrl
+[       OK ] test_serialize_ctrl
+[ RUN      ] test_serialize_long_ctrl
+[       OK ] test_serialize_long_ctrl
+[ RUN      ] test_auto_serialize
+[       OK ] test_auto_serialize
+[ RUN      ] test_auto_serialize_no_size
+[       OK ] test_auto_serialize_no_size
+[ RUN      ] test_auto_serialize_too_large
+[       OK ] test_auto_serialize_too_large
+[ RUN      ] test_auto_serialize_alloc_fail
+[       OK ] test_auto_serialize_alloc_fail
+[ RUN      ] test_auto_serialize_zero_len_bytestring
+[       OK ] test_auto_serialize_zero_len_bytestring
+[ RUN      ] test_auto_serialize_zero_len_string
+[       OK ] test_auto_serialize_zero_len_string
+[ RUN      ] test_auto_serialize_zero_len_bytestring_chunk
+[       OK ] test_auto_serialize_zero_len_bytestring_chunk
+[ RUN      ] test_auto_serialize_zero_len_string_chunk
+[       OK ] test_auto_serialize_zero_len_string_chunk
+[ RUN      ] test_auto_serialize_zero_len_array
+[       OK ] test_auto_serialize_zero_len_array
+[ RUN      ] test_auto_serialize_zero_len_indef_array
+[       OK ] test_auto_serialize_zero_len_indef_array
+[ RUN      ] test_auto_serialize_zero_len_map
+[       OK ] test_auto_serialize_zero_len_map
+[ RUN      ] test_auto_serialize_zero_len_indef_map
+[       OK ] test_auto_serialize_zero_len_indef_map
+[==========] tests: 49 test(s) run.
+[  PASSED  ] 49 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"cbor_serialize_test" end time: Feb 08 20:44 CET
+"cbor_serialize_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/26 Testing: cbor_stream_decode_test
+8/26 Test: cbor_stream_decode_test
+Command: "/Users/pavel/libcbor/cmake-build/test/cbor_stream_decode_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"cbor_stream_decode_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 55 test(s).
+[ RUN      ] test_no_data
+[       OK ] test_no_data
+[ RUN      ] test_uint8_embedded_decoding
+[       OK ] test_uint8_embedded_decoding
+[ RUN      ] test_uint8_decoding
+[       OK ] test_uint8_decoding
+[ RUN      ] test_uint16_decoding
+[       OK ] test_uint16_decoding
+[ RUN      ] test_uint32_decoding
+[       OK ] test_uint32_decoding
+[ RUN      ] test_uint64_decoding
+[       OK ] test_uint64_decoding
+[ RUN      ] test_negint8_embedded_decoding
+[       OK ] test_negint8_embedded_decoding
+[ RUN      ] test_negint8_decoding
+[       OK ] test_negint8_decoding
+[ RUN      ] test_negint16_decoding
+[       OK ] test_negint16_decoding
+[ RUN      ] test_negint32_decoding
+[       OK ] test_negint32_decoding
+[ RUN      ] test_negint64_decoding
+[       OK ] test_negint64_decoding
+[ RUN      ] test_bstring_embedded_int8_decoding
+[       OK ] test_bstring_embedded_int8_decoding
+[ RUN      ] test_bstring_int8_decoding
+[       OK ] test_bstring_int8_decoding
+[ RUN      ] test_bstring_int8_empty_decoding
+[       OK ] test_bstring_int8_empty_decoding
+[ RUN      ] test_bstring_int16_decoding
+[       OK ] test_bstring_int16_decoding
+[ RUN      ] test_bstring_int32_decoding
+[       OK ] test_bstring_int32_decoding
+[ RUN      ] test_bstring_int64_decoding
+[       OK ] test_bstring_int64_decoding
+[ RUN      ] test_bstring_indef_decoding_1
+[       OK ] test_bstring_indef_decoding_1
+[ RUN      ] test_bstring_indef_decoding_2
+[       OK ] test_bstring_indef_decoding_2
+[ RUN      ] test_bstring_indef_decoding_3
+[       OK ] test_bstring_indef_decoding_3
+[ RUN      ] test_string_embedded_int8_decoding
+[       OK ] test_string_embedded_int8_decoding
+[ RUN      ] test_string_int8_decoding
+[       OK ] test_string_int8_decoding
+[ RUN      ] test_string_int8_empty_decoding
+[       OK ] test_string_int8_empty_decoding
+[ RUN      ] test_string_int16_decoding
+[       OK ] test_string_int16_decoding
+[ RUN      ] test_string_int32_decoding
+[       OK ] test_string_int32_decoding
+[ RUN      ] test_string_int64_decoding
+[       OK ] test_string_int64_decoding
+[ RUN      ] test_string_indef_decoding_1
+[       OK ] test_string_indef_decoding_1
+[ RUN      ] test_string_indef_decoding_2
+[       OK ] test_string_indef_decoding_2
+[ RUN      ] test_string_indef_decoding_3
+[       OK ] test_string_indef_decoding_3
+[ RUN      ] test_array_embedded_int8_decoding
+[       OK ] test_array_embedded_int8_decoding
+[ RUN      ] test_array_int8_decoding
+[       OK ] test_array_int8_decoding
+[ RUN      ] test_array_int16_decoding
+[       OK ] test_array_int16_decoding
+[ RUN      ] test_array_int32_decoding
+[       OK ] test_array_int32_decoding
+[ RUN      ] test_array_int64_decoding
+[       OK ] test_array_int64_decoding
+[ RUN      ] test_array_of_arrays_decoding
+[       OK ] test_array_of_arrays_decoding
+[ RUN      ] test_indef_array_decoding_1
+[       OK ] test_indef_array_decoding_1
+[ RUN      ] test_map_embedded_int8_decoding
+[       OK ] test_map_embedded_int8_decoding
+[ RUN      ] test_map_int8_decoding
+[       OK ] test_map_int8_decoding
+[ RUN      ] test_map_int16_decoding
+[       OK ] test_map_int16_decoding
+[ RUN      ] test_map_int32_decoding
+[       OK ] test_map_int32_decoding
+[ RUN      ] test_map_int64_decoding
+[       OK ] test_map_int64_decoding
+[ RUN      ] test_indef_map_decoding_1
+[       OK ] test_indef_map_decoding_1
+[ RUN      ] test_embedded_tag_decoding
+[       OK ] test_embedded_tag_decoding
+[ RUN      ] test_int8_tag_decoding
+[       OK ] test_int8_tag_decoding
+[ RUN      ] test_int16_tag_decoding
+[       OK ] test_int16_tag_decoding
+[ RUN      ] test_int32_tag_decoding
+[       OK ] test_int32_tag_decoding
+[ RUN      ] test_int64_tag_decoding
+[       OK ] test_int64_tag_decoding
+[ RUN      ] test_reserved_byte_decoding
+[       OK ] test_reserved_byte_decoding
+[ RUN      ] test_float2_decoding
+[       OK ] test_float2_decoding
+[ RUN      ] test_float4_decoding
+[       OK ] test_float4_decoding
+[ RUN      ] test_float8_decoding
+[       OK ] test_float8_decoding
+[ RUN      ] test_false_decoding
+[       OK ] test_false_decoding
+[ RUN      ] test_true_decoding
+[       OK ] test_true_decoding
+[ RUN      ] test_null_decoding
+[       OK ] test_null_decoding
+[ RUN      ] test_undef_decoding
+[       OK ] test_undef_decoding
+[==========] tests: 55 test(s) run.
+[  PASSED  ] 55 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"cbor_stream_decode_test" end time: Feb 08 20:44 CET
+"cbor_stream_decode_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/26 Testing: copy_test
+9/26 Test: copy_test
+Command: "/Users/pavel/libcbor/cmake-build/test/copy_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"copy_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 59 test(s).
+[ RUN      ] test_uints
+[       OK ] test_uints
+[ RUN      ] test_negints
+[       OK ] test_negints
+[ RUN      ] test_def_bytestring
+[       OK ] test_def_bytestring
+[ RUN      ] test_indef_bytestring
+[       OK ] test_indef_bytestring
+[ RUN      ] test_def_string
+[       OK ] test_def_string
+[ RUN      ] test_indef_string
+[       OK ] test_indef_string
+[ RUN      ] test_def_array
+[       OK ] test_def_array
+[ RUN      ] test_indef_array
+[       OK ] test_indef_array
+[ RUN      ] test_def_map
+[       OK ] test_def_map
+[ RUN      ] test_indef_map
+[       OK ] test_indef_map
+[ RUN      ] test_tag
+[       OK ] test_tag
+[ RUN      ] test_ctrls
+[       OK ] test_ctrls
+[ RUN      ] test_floats
+[       OK ] test_floats
+[ RUN      ] test_alloc_failure_simple
+[       OK ] test_alloc_failure_simple
+[ RUN      ] test_bytestring_alloc_failure
+[       OK ] test_bytestring_alloc_failure
+[ RUN      ] test_bytestring_chunk_alloc_failure
+[       OK ] test_bytestring_chunk_alloc_failure
+[ RUN      ] test_bytestring_chunk_append_failure
+[       OK ] test_bytestring_chunk_append_failure
+[ RUN      ] test_bytestring_second_chunk_alloc_failure
+[       OK ] test_bytestring_second_chunk_alloc_failure
+[ RUN      ] test_string_alloc_failure
+[       OK ] test_string_alloc_failure
+[ RUN      ] test_string_chunk_alloc_failure
+[       OK ] test_string_chunk_alloc_failure
+[ RUN      ] test_string_chunk_append_failure
+[       OK ] test_string_chunk_append_failure
+[ RUN      ] test_string_second_chunk_alloc_failure
+[       OK ] test_string_second_chunk_alloc_failure
+[ RUN      ] test_array_alloc_failure
+[       OK ] test_array_alloc_failure
+[ RUN      ] test_array_item_alloc_failure
+[       OK ] test_array_item_alloc_failure
+[ RUN      ] test_array_push_failure
+[       OK ] test_array_push_failure
+[ RUN      ] test_array_second_item_alloc_failure
+[       OK ] test_array_second_item_alloc_failure
+[ RUN      ] test_map_alloc_failure
+[       OK ] test_map_alloc_failure
+[ RUN      ] test_map_key_alloc_failure
+[       OK ] test_map_key_alloc_failure
+[ RUN      ] test_map_value_alloc_failure
+[       OK ] test_map_value_alloc_failure
+[ RUN      ] test_map_add_failure
+[       OK ] test_map_add_failure
+[ RUN      ] test_map_second_key_failure
+[       OK ] test_map_second_key_failure
+[ RUN      ] test_tag_item_alloc_failure
+[       OK ] test_tag_item_alloc_failure
+[ RUN      ] test_tag_alloc_failure
+[       OK ] test_tag_alloc_failure
+[ RUN      ] test_definite_uints
+[       OK ] test_definite_uints
+[ RUN      ] test_definite_negints
+[       OK ] test_definite_negints
+[ RUN      ] test_definite_bytestring
+[       OK ] test_definite_bytestring
+[ RUN      ] test_definite_bytestring_alloc_failure
+[       OK ] test_definite_bytestring_alloc_failure
+[ RUN      ] test_definite_indef_bytestring
+[       OK ] test_definite_indef_bytestring
+[ RUN      ] test_definite_indef_bytestring_chunk_length_overflow
+[       OK ] test_definite_indef_bytestring_chunk_length_overflow
+[ RUN      ] test_definite_string
+[       OK ] test_definite_string
+[ RUN      ] test_definite_indef_string
+[       OK ] test_definite_indef_string
+[ RUN      ] test_definite_indef_string_chunk_length_overflow
+[       OK ] test_definite_indef_string_chunk_length_overflow
+[ RUN      ] test_definite_string_alloc_failure
+[       OK ] test_definite_string_alloc_failure
+[ RUN      ] test_definite_array
+[       OK ] test_definite_array
+[ RUN      ] test_definite_indef_array
+[       OK ] test_definite_indef_array
+[ RUN      ] test_definite_indef_array_nested
+[       OK ] test_definite_indef_array_nested
+[ RUN      ] test_definite_array_alloc_failure
+[       OK ] test_definite_array_alloc_failure
+[ RUN      ] test_definite_array_item_alloc_failure
+[       OK ] test_definite_array_item_alloc_failure
+[ RUN      ] test_definite_map
+[       OK ] test_definite_map
+[ RUN      ] test_definite_indef_map
+[       OK ] test_definite_indef_map
+[ RUN      ] test_definite_indef_map_nested
+[       OK ] test_definite_indef_map_nested
+[ RUN      ] test_definite_map_alloc_failure
+[       OK ] test_definite_map_alloc_failure
+[ RUN      ] test_definite_map_key_alloc_failure
+[       OK ] test_definite_map_key_alloc_failure
+[ RUN      ] test_definite_map_value_alloc_failure
+[       OK ] test_definite_map_value_alloc_failure
+[ RUN      ] test_definite_tag
+[       OK ] test_definite_tag
+[ RUN      ] test_definite_tag_nested
+[       OK ] test_definite_tag_nested
+[ RUN      ] test_definite_tag_alloc_failure
+[       OK ] test_definite_tag_alloc_failure
+[ RUN      ] test_definite_ctrls
+[       OK ] test_definite_ctrls
+[ RUN      ] test_definite_floats
+[       OK ] test_definite_floats
+[==========] tests: 59 test(s) run.
+[  PASSED  ] 59 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"copy_test" end time: Feb 08 20:44 CET
+"copy_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/26 Testing: float_ctrl_encoders_test
+10/26 Test: float_ctrl_encoders_test
+Command: "/Users/pavel/libcbor/cmake-build/test/float_ctrl_encoders_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"float_ctrl_encoders_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 9 test(s).
+[ RUN      ] test_bools
+[       OK ] test_bools
+[ RUN      ] test_null
+[       OK ] test_null
+[ RUN      ] test_undef
+[       OK ] test_undef
+[ RUN      ] test_break
+[       OK ] test_break
+[ RUN      ] test_half
+[       OK ] test_half
+[ RUN      ] test_float
+[       OK ] test_float
+[ RUN      ] test_double
+[       OK ] test_double
+[ RUN      ] test_half_special
+[       OK ] test_half_special
+[ RUN      ] test_half_infinity
+[       OK ] test_half_infinity
+[==========] tests: 9 test(s) run.
+[  PASSED  ] 9 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"float_ctrl_encoders_test" end time: Feb 08 20:44 CET
+"float_ctrl_encoders_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/26 Testing: float_ctrl_test
+11/26 Test: float_ctrl_test
+Command: "/Users/pavel/libcbor/cmake-build/test/float_ctrl_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"float_ctrl_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 8 test(s).
+[ RUN      ] test_float2
+[       OK ] test_float2
+[ RUN      ] test_float4
+[       OK ] test_float4
+[ RUN      ] test_float8
+[       OK ] test_float8
+[ RUN      ] test_null
+[       OK ] test_null
+[ RUN      ] test_undef
+[       OK ] test_undef
+[ RUN      ] test_bool
+[       OK ] test_bool
+[ RUN      ] test_float_ctrl_creation
+[       OK ] test_float_ctrl_creation
+[ RUN      ] test_ctrl_on_float
+[       OK ] test_ctrl_on_float
+[==========] tests: 8 test(s) run.
+[  PASSED  ] 8 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"float_ctrl_test" end time: Feb 08 20:44 CET
+"float_ctrl_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/26 Testing: fuzz_test
+12/26 Test: fuzz_test
+Command: "/Users/pavel/libcbor/cmake-build/test/fuzz_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"fuzz_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 1 test(s).
+[ RUN      ] fuzz
+Fuzzing 256 rounds of up to 2048 bytes with seed 1770579887
+Successfully fuzzed through 512 kB of data
+[       OK ] fuzz
+[==========] tests: 1 test(s) run.
+[  PASSED  ] 1 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"fuzz_test" end time: Feb 08 20:44 CET
+"fuzz_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/26 Testing: map_encoders_test
+13/26 Test: map_encoders_test
+Command: "/Users/pavel/libcbor/cmake-build/test/map_encoders_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"map_encoders_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 3 test(s).
+[ RUN      ] test_embedded_map_start
+[       OK ] test_embedded_map_start
+[ RUN      ] test_map_start
+[       OK ] test_map_start
+[ RUN      ] test_indef_map_start
+[       OK ] test_indef_map_start
+[==========] tests: 3 test(s) run.
+[  PASSED  ] 3 test(s).
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"map_encoders_test" end time: Feb 08 20:44 CET
+"map_encoders_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/26 Testing: map_test
+14/26 Test: map_test
+Command: "/Users/pavel/libcbor/cmake-build/test/map_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"map_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 13 test(s).
+[ RUN      ] test_empty_map
+[       OK ] test_empty_map
+[ RUN      ] test_simple_map
+[       OK ] test_simple_map
+[ RUN      ] test_indef_simple_map
+[       OK ] test_indef_simple_map
+[ RUN      ] test_def_nested_map
+[       OK ] test_def_nested_map
+[ RUN      ] test_streamed_key_map
+[       OK ] test_streamed_key_map
+[ RUN      ] test_streamed_kv_map
+[       OK ] test_streamed_kv_map
+[ RUN      ] test_streamed_streamed_kv_map
+[       OK ] test_streamed_streamed_kv_map
+[ RUN      ] test_map_add_full
+[       OK ] test_map_add_full
+[ RUN      ] test_map_add_too_big_to_realloc
+[       OK ] test_map_add_too_big_to_realloc
+[ RUN      ] test_map_creation
+[       OK ] test_map_creation
+[ RUN      ] test_map_add
+[       OK ] test_map_add
+[ RUN      ] test_indef_map_decode
+[       OK ] test_indef_map_decode
+[ RUN      ] test_break_in_def_map_decode
+[       OK ] test_break_in_def_map_decode
+[==========] tests: 13 test(s) run.
+[  PASSED  ] 13 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"map_test" end time: Feb 08 20:44 CET
+"map_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/26 Testing: memory_utils_test
+15/26 Test: memory_utils_test
+Command: "/Users/pavel/libcbor/cmake-build/test/memory_utils_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"memory_utils_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 4 test(s).
+[ RUN      ] test_safe_multiply
+[       OK ] test_safe_multiply
+[ RUN      ] test_safe_add
+[       OK ] test_safe_add
+[ RUN      ] test_safe_signalling_add
+[       OK ] test_safe_signalling_add
+[ RUN      ] test_realloc_multiple
+[       OK ] test_realloc_multiple
+[==========] tests: 4 test(s) run.
+[  PASSED  ] 4 test(s).
+<end of output>
+Test time =   0.07 sec
+----------------------------------------------------------
+Test Passed.
+"memory_utils_test" end time: Feb 08 20:44 CET
+"memory_utils_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/26 Testing: negint_encoders_test
+16/26 Test: negint_encoders_test
+Command: "/Users/pavel/libcbor/cmake-build/test/negint_encoders_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"negint_encoders_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 6 test(s).
+[ RUN      ] test_embedded_negint8
+[       OK ] test_embedded_negint8
+[ RUN      ] test_negint8
+[       OK ] test_negint8
+[ RUN      ] test_negint16
+[       OK ] test_negint16
+[ RUN      ] test_negint32
+[       OK ] test_negint32
+[ RUN      ] test_negint64
+[       OK ] test_negint64
+[ RUN      ] test_unspecified
+[       OK ] test_unspecified
+[==========] tests: 6 test(s) run.
+[  PASSED  ] 6 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"negint_encoders_test" end time: Feb 08 20:44 CET
+"negint_encoders_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/26 Testing: negint_test
+17/26 Test: negint_test
+Command: "/Users/pavel/libcbor/cmake-build/test/negint_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"negint_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 6 test(s).
+[ RUN      ] test_very_short_int
+[       OK ] test_very_short_int
+[ RUN      ] test_short_int
+[       OK ] test_short_int
+[ RUN      ] test_half_int
+[       OK ] test_half_int
+[ RUN      ] test_int
+[       OK ] test_int
+[ RUN      ] test_long_int
+[       OK ] test_long_int
+[ RUN      ] test_int_creation
+[       OK ] test_int_creation
+[==========] tests: 6 test(s) run.
+[  PASSED  ] 6 test(s).
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"negint_test" end time: Feb 08 20:44 CET
+"negint_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/26 Testing: pretty_printer_test
+18/26 Test: pretty_printer_test
+Command: "/Users/pavel/libcbor/cmake-build/test/pretty_printer_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"pretty_printer_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 13 test(s).
+[ RUN      ] test_uint
+[       OK ] test_uint
+[ RUN      ] test_negint
+[       OK ] test_negint
+[ RUN      ] test_definite_bytestring
+[       OK ] test_definite_bytestring
+[ RUN      ] test_indefinite_bytestring
+[       OK ] test_indefinite_bytestring
+[ RUN      ] test_definite_string
+[       OK ] test_definite_string
+[ RUN      ] test_indefinite_string
+[       OK ] test_indefinite_string
+[ RUN      ] test_multibyte_string
+[       OK ] test_multibyte_string
+[ RUN      ] test_definite_array
+[       OK ] test_definite_array
+[ RUN      ] test_indefinite_array
+[       OK ] test_indefinite_array
+[ RUN      ] test_definite_map
+[       OK ] test_definite_map
+[ RUN      ] test_indefinite_map
+[       OK ] test_indefinite_map
+[ RUN      ] test_tag
+[       OK ] test_tag
+[ RUN      ] test_floats
+[       OK ] test_floats
+[==========] tests: 13 test(s) run.
+[  PASSED  ] 13 test(s).
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"pretty_printer_test" end time: Feb 08 20:44 CET
+"pretty_printer_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/26 Testing: stack_over_limit_test
+19/26 Test: stack_over_limit_test
+Command: "/Users/pavel/libcbor/cmake-build/test/stack_over_limit_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"stack_over_limit_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 1 test(s).
+[ RUN      ] test_stack_over_limit
+[       OK ] test_stack_over_limit
+[==========] tests: 1 test(s) run.
+[  PASSED  ] 1 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"stack_over_limit_test" end time: Feb 08 20:44 CET
+"stack_over_limit_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/26 Testing: string_encoders_test
+20/26 Test: string_encoders_test
+Command: "/Users/pavel/libcbor/cmake-build/test/string_encoders_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"string_encoders_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 3 test(s).
+[ RUN      ] test_embedded_string_start
+[       OK ] test_embedded_string_start
+[ RUN      ] test_string_start
+[       OK ] test_string_start
+[ RUN      ] test_indef_string_start
+[       OK ] test_indef_string_start
+[==========] tests: 3 test(s) run.
+[  PASSED  ] 3 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"string_encoders_test" end time: Feb 08 20:44 CET
+"string_encoders_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+21/26 Testing: string_test
+21/26 Test: string_test
+Command: "/Users/pavel/libcbor/cmake-build/test/string_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"string_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 16 test(s).
+[ RUN      ] test_empty_string
+[       OK ] test_empty_string
+[ RUN      ] test_short_string
+[       OK ] test_short_string
+[ RUN      ] test_short_multibyte_string
+[       OK ] test_short_multibyte_string
+[ RUN      ] test_int8_string
+[       OK ] test_int8_string
+[ RUN      ] test_int16_string
+[       OK ] test_int16_string
+[ RUN      ] test_int32_string
+[       OK ] test_int32_string
+[ RUN      ] test_int64_string
+[       OK ] test_int64_string
+[ RUN      ] test_short_indef_string
+[       OK ] test_short_indef_string
+[ RUN      ] test_invalid_utf
+[       OK ] test_invalid_utf
+[ RUN      ] test_inline_creation
+[       OK ] test_inline_creation
+[ RUN      ] test_string_creation
+[       OK ] test_string_creation
+[ RUN      ] test_string_add_chunk
+[       OK ] test_string_add_chunk
+[ RUN      ] test_add_chunk_reallocation_overflow
+[       OK ] test_add_chunk_reallocation_overflow
+[ RUN      ] test_set_handle
+[       OK ] test_set_handle
+[ RUN      ] test_set_handle_multibyte_codepoint
+[       OK ] test_set_handle_multibyte_codepoint
+[ RUN      ] test_set_handle_invalid_utf
+[       OK ] test_set_handle_invalid_utf
+[==========] tests: 16 test(s) run.
+[  PASSED  ] 16 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"string_test" end time: Feb 08 20:44 CET
+"string_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+22/26 Testing: tag_encoders_test
+22/26 Test: tag_encoders_test
+Command: "/Users/pavel/libcbor/cmake-build/test/tag_encoders_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"tag_encoders_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 2 test(s).
+[ RUN      ] test_embedded_tag
+[       OK ] test_embedded_tag
+[ RUN      ] test_tag
+[       OK ] test_tag
+[==========] tests: 2 test(s) run.
+[  PASSED  ] 2 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"tag_encoders_test" end time: Feb 08 20:44 CET
+"tag_encoders_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+23/26 Testing: tag_test
+23/26 Test: tag_test
+Command: "/Users/pavel/libcbor/cmake-build/test/tag_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"tag_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 13 test(s).
+[ RUN      ] test_refcounting
+[       OK ] test_refcounting
+[ RUN      ] test_embedded_tag
+[       OK ] test_embedded_tag
+[ RUN      ] test_int8_tag
+[       OK ] test_int8_tag
+[ RUN      ] test_int16_tag
+[       OK ] test_int16_tag
+[ RUN      ] test_int32_tag
+[       OK ] test_int32_tag
+[ RUN      ] test_int64_tag
+[       OK ] test_int64_tag
+[ RUN      ] test_nested_tag
+[       OK ] test_nested_tag
+[ RUN      ] test_all_tag_values_supported
+[       OK ] test_all_tag_values_supported
+[ RUN      ] test_build_tag
+[       OK ] test_build_tag
+[ RUN      ] test_build_tag_failure
+[       OK ] test_build_tag_failure
+[ RUN      ] test_set_item_replaces_previous
+[       OK ] test_set_item_replaces_previous
+[ RUN      ] test_tag_item_null
+[       OK ] test_tag_item_null
+[ RUN      ] test_tag_creation
+[       OK ] test_tag_creation
+[==========] tests: 13 test(s) run.
+[  PASSED  ] 13 test(s).
+<end of output>
+Test time =   0.09 sec
+----------------------------------------------------------
+Test Passed.
+"tag_test" end time: Feb 08 20:44 CET
+"tag_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+24/26 Testing: uint_encoders_test
+24/26 Test: uint_encoders_test
+Command: "/Users/pavel/libcbor/cmake-build/test/uint_encoders_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"uint_encoders_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 6 test(s).
+[ RUN      ] test_embedded_uint8
+[       OK ] test_embedded_uint8
+[ RUN      ] test_uint8
+[       OK ] test_uint8
+[ RUN      ] test_uint16
+[       OK ] test_uint16
+[ RUN      ] test_uint32
+[       OK ] test_uint32
+[ RUN      ] test_uint64
+[       OK ] test_uint64
+[ RUN      ] test_unspecified
+[       OK ] test_unspecified
+[==========] tests: 6 test(s) run.
+[  PASSED  ] 6 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"uint_encoders_test" end time: Feb 08 20:44 CET
+"uint_encoders_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+25/26 Testing: uint_test
+25/26 Test: uint_test
+Command: "/Users/pavel/libcbor/cmake-build/test/uint_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"uint_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 10 test(s).
+[ RUN      ] test_very_short_int
+[       OK ] test_very_short_int
+[ RUN      ] test_short_int
+[       OK ] test_short_int
+[ RUN      ] test_half_int
+[       OK ] test_half_int
+[ RUN      ] test_int
+[       OK ] test_int
+[ RUN      ] test_long_int
+[       OK ] test_long_int
+[ RUN      ] test_incomplete_data
+[       OK ] test_incomplete_data
+[ RUN      ] test_refcounting
+[       OK ] test_refcounting
+[ RUN      ] test_empty_input
+[       OK ] test_empty_input
+[ RUN      ] test_inline_creation
+[       OK ] test_inline_creation
+[ RUN      ] test_int_creation
+[       OK ] test_int_creation
+[==========] tests: 10 test(s) run.
+[  PASSED  ] 10 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"uint_test" end time: Feb 08 20:44 CET
+"uint_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+26/26 Testing: unicode_test
+26/26 Test: unicode_test
+Command: "/Users/pavel/libcbor/cmake-build/test/unicode_test"
+Directory: /Users/pavel/libcbor/cmake-build/test
+"unicode_test" start time: Feb 08 20:44 CET
+Output:
+----------------------------------------------------------
+[==========] tests: Running 2 test(s).
+[ RUN      ] test_missing_bytes
+[       OK ] test_missing_bytes
+[ RUN      ] test_invalid_sequence
+[       OK ] test_invalid_sequence
+[==========] tests: 2 test(s) run.
+[  PASSED  ] 2 test(s).
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"unicode_test" end time: Feb 08 20:44 CET
+"unicode_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Feb 08 20:44 CET

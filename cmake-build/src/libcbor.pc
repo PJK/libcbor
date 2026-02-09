@@ -1,0 +1,11 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: libcbor
+Description: libcbor - CBOR protocol implementation
+URL: https://github.com/PJK/libcbor
+Version: 0.13.0
+Libs: -L${libdir} -lcbor
+Cflags: -I${includedir}

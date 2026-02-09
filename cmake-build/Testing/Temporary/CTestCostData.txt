@@ -1,0 +1,27 @@
+array_encoders_test 19 0.0277668
+array_test 21 0.00170137
+bad_inputs_test 19 0.0019552
+bytestring_encoders_test 19 0.00189012
+bytestring_test 19 0.00201387
+callbacks_test 19 0.00194934
+cbor_serialize_test 20 0.00201131
+cbor_stream_decode_test 19 0.00190076
+copy_test 20 0.00191625
+float_ctrl_encoders_test 19 0.00195249
+float_ctrl_test 19 0.00203885
+fuzz_test 19 0.002351
+map_encoders_test 19 0.00242693
+map_test 19 0.00225038
+memory_utils_test 19 0.00373974
+negint_encoders_test 19 0.00233225
+negint_test 19 0.00288205
+pretty_printer_test 19 0.00259059
+stack_over_limit_test 19 0.002245
+string_encoders_test 19 0.00202152
+string_test 19 0.00203999
+tag_encoders_test 19 0.00202107
+tag_test 19 0.0046512
+uint_encoders_test 19 0.00198593
+uint_test 19 0.00202271
+unicode_test 19 0.00212424
+---
