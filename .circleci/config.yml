@@ -214,17 +214,26 @@ jobs:
       shell: 'bash.exe'
     steps:
       - checkout
-      - run:
-          name: Disable Windows Defender real-time monitoring (best-effort)
-          command: |
-            powershell -Command 'Set-MpPreference -DisableRealtimeMonitoring $true' || \
-            net stop WinDefend || \
-            echo "Could not disable Defender, continuing anyway"
       - run: choco install cmake -y
-      - run: git clone https://git.cryptomilk.org/projects/cmocka.git
-      - run: cd cmocka && git checkout tags/cmocka-1.1.5 
-      - run: /c/Program\ Files/Cmake/bin/cmake -S cmocka -B cmocka_build
-      - run: /c/Program\ Files/Cmake/bin/cmake --build cmocka_build
+      - restore_cache:
+          keys:
+            - cmocka-win-v1-1.1.5
+      - run:
+          name: Build cmocka (skipped if cached)
+          command: |
+            if [ -d cmocka_build/src/Debug ]; then
+              echo "Using cached cmocka build"
+            else
+              git clone https://git.cryptomilk.org/projects/cmocka.git
+              cd cmocka && git checkout tags/cmocka-1.1.5 && cd ..
+              /c/Program\ Files/Cmake/bin/cmake -S cmocka -B cmocka_build
+              /c/Program\ Files/Cmake/bin/cmake --build cmocka_build
+            fi
+      - save_cache:
+          key: cmocka-win-v1-1.1.5
+          paths:
+            - cmocka
+            - cmocka_build
       - run: /c/Program\ Files/Cmake/bin/cmake -S . -B libcbor_build -DWITH_TESTS=ON -DWITH_EXAMPLES=ON -DCMOCKA_INCLUDE_DIR=cmocka/include -DCMOCKA_LIBRARIES=$(pwd)/cmocka_build/src/Debug/cmocka.lib
       - run: /c/Program\ Files/Cmake/bin/cmake --build libcbor_build
       - run: >
