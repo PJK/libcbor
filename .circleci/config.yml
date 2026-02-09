@@ -214,6 +214,12 @@ jobs:
       shell: 'bash.exe'
     steps:
       - checkout
+      - run:
+          name: Disable Windows Defender real-time monitoring (best-effort)
+          command: |
+            powershell -Command 'Set-MpPreference -DisableRealtimeMonitoring $true' || \
+            net stop WinDefend || \
+            echo "Could not disable Defender, continuing anyway"
       - run: choco install cmake -y
       - run: git clone https://git.cryptomilk.org/projects/cmocka.git
       - run: cd cmocka && git checkout tags/cmocka-1.1.5 
