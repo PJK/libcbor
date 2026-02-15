@@ -17,6 +17,8 @@
 #include <cjson/cJSON.h>
 #include <float.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "cbor.h"
 #include "cbor/internal/builder_callbacks.h"
@@ -68,21 +70,21 @@ void cjson_cbor_stream_decode(cJSON* source,
       return;
     }
     case cJSON_Number: {
-      // This is stupid -- ints and doubles cannot are not distinguished
+      // cJSON does not distinguish ints from doubles; use a heuristic
       if (fabs(source->valuedouble - source->valueint) > DBL_EPSILON) {
         callbacks->float4(context, source->valuedouble);
       } else {
-        // XXX: This is not portable
+        // Note: valueint range is limited to int on some platforms
         if (source->valueint >= 0) {
           callbacks->uint64(context, source->valueint);
         } else {
-          callbacks->negint64(context, source->valueint + 1);
+          callbacks->negint64(context, (uint64_t)(-1 - source->valueint));
         }
       }
       return;
     }
     case cJSON_String: {
-      // XXX: Assume cJSON handled unicode correctly
+      // Assuming cJSON handled unicode correctly
       callbacks->string(context, (unsigned char*)source->valuestring,
                         strlen(source->valuestring));
       return;
@@ -124,7 +126,10 @@ int main(int argc, char* argv[]) {
   size_t length = (size_t)ftell(f);
   fseek(f, 0, SEEK_SET);
   char* json_buffer = malloc(length + 1);
-  fread(json_buffer, length, 1, f);
+  if (fread(json_buffer, length, 1, f) != 1) {
+    fprintf(stderr, "Failed to read input\n");
+    exit(1);
+  }
   json_buffer[length] = '\0';
 
   /* Convert between JSON and CBOR */

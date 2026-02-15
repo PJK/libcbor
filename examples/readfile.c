@@ -27,7 +27,10 @@ int main(int argc, char* argv[]) {
   size_t length = (size_t)ftell(f);
   fseek(f, 0, SEEK_SET);
   unsigned char* buffer = malloc(length);
-  fread(buffer, length, 1, f);
+  if (fread(buffer, length, 1, f) != 1) {
+    fprintf(stderr, "Failed to read input\n");
+    exit(1);
+  }
 
   /* Assuming `buffer` contains `length` bytes of input data */
   struct cbor_load_result result;

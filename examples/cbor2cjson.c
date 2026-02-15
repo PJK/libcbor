@@ -21,7 +21,7 @@ cJSON* cbor_to_cjson(cbor_item_t* item) {
     case CBOR_TYPE_UINT:
       return cJSON_CreateNumber(cbor_get_int(item));
     case CBOR_TYPE_NEGINT:
-      return cJSON_CreateNumber(-1 - cbor_get_int(item));
+      return cJSON_CreateNumber(-1.0 - (double)cbor_get_int(item));
     case CBOR_TYPE_BYTESTRING:
       // cJSON only handles null-terminated string -- binary data would have to
       // be escaped
@@ -41,25 +41,28 @@ cJSON* cbor_to_cjson(cbor_item_t* item) {
     case CBOR_TYPE_ARRAY: {
       cJSON* result = cJSON_CreateArray();
       for (size_t i = 0; i < cbor_array_size(item); i++) {
-        cJSON_AddItemToArray(result,
-                             cbor_to_cjson(cbor_move(cbor_array_get(item, i))));
+        cbor_item_t* element = cbor_array_get(item, i);
+        cJSON_AddItemToArray(result, cbor_to_cjson(element));
+        cbor_decref(&element);
       }
       return result;
     }
     case CBOR_TYPE_MAP: {
       cJSON* result = cJSON_CreateObject();
       for (size_t i = 0; i < cbor_map_size(item); i++) {
-        char* key = malloc(128);
-        snprintf(key, 128, "Surrogate key %zu", i);
-        // JSON only support string keys
+        char* key;
+        // JSON only supports string keys
         if (cbor_isa_string(cbor_map_handle(item)[i].key) &&
             cbor_string_is_definite(cbor_map_handle(item)[i].key)) {
           size_t key_length = cbor_string_length(cbor_map_handle(item)[i].key);
-          if (key_length > 127) key_length = 127;
-          // Null-terminated madness
+          key = malloc(key_length + 1);
           memcpy(key, cbor_string_handle(cbor_map_handle(item)[i].key),
                  key_length);
           key[key_length] = 0;
+        } else {
+          // Non-string key; generate a placeholder
+          key = malloc(32);
+          snprintf(key, 32, "surrogate_%zu", i);
         }
 
         cJSON_AddItemToObject(result, key,
@@ -95,7 +98,10 @@ int main(int argc, char* argv[]) {
   size_t length = (size_t)ftell(f);
   fseek(f, 0, SEEK_SET);
   unsigned char* buffer = malloc(length);
-  fread(buffer, length, 1, f);
+  if (fread(buffer, length, 1, f) != 1) {
+    fprintf(stderr, "Failed to read input\n");
+    exit(1);
+  }
 
   /* Assuming `buffer` contains `length` bytes of input data */
   struct cbor_load_result result;

@@ -42,7 +42,10 @@ int main(int argc, char* argv[]) {
   size_t length = (size_t)ftell(f);
   fseek(f, 0, SEEK_SET);
   unsigned char* buffer = malloc(length);
-  fread(buffer, length, 1, f);
+  if (fread(buffer, length, 1, f) != 1) {
+    fprintf(stderr, "Failed to read input\n");
+    exit(1);
+  }
 
   struct cbor_callbacks callbacks = cbor_empty_callbacks;
   struct cbor_decoder_result decode_result;
@@ -51,6 +54,10 @@ int main(int argc, char* argv[]) {
   while (bytes_read < length) {
     decode_result = cbor_stream_decode(buffer + bytes_read, length - bytes_read,
                                        &callbacks, NULL);
+    if (decode_result.status == CBOR_DECODER_ERROR) {
+      fprintf(stderr, "Error at byte %zu\n", bytes_read);
+      break;
+    }
     bytes_read += decode_result.read;
   }
 

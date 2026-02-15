@@ -65,7 +65,12 @@ void read_cbor_sequence(const char* filename) {
     return;
   }
 
-  fread(buffer, 1, file_size, file);
+  if (fread(buffer, 1, file_size, file) != file_size) {
+    fprintf(stderr, "Error: Failed to read file\n");
+    free(buffer);
+    fclose(file);
+    return;
+  }
   fclose(file);
 
   struct cbor_load_result result;
