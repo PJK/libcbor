@@ -226,7 +226,7 @@ jobs:
             else
               git clone https://git.cryptomilk.org/projects/cmocka.git
               cd cmocka && git checkout tags/cmocka-1.1.5 && cd ..
-              cat > _build_cmocka.bat << 'BEOF'
+              cat > _build_cmocka.bat \<< 'BEOF'
             @echo off
             set "VSWHERE=C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
             for /f "usebackq delims=" %%i in (`"%VSWHERE%" -latest -property installationPath`) do set "VSDIR=%%i"
@@ -244,7 +244,7 @@ jobs:
       - run:
           name: Configure, build, and test libcbor
           command: |
-            cat > _build_libcbor.bat << 'BEOF'
+            cat > _build_libcbor.bat \<< 'BEOF'
             @echo off
             set "VSWHERE=C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
             for /f "usebackq delims=" %%i in (`"%VSWHERE%" -latest -property installationPath`) do set "VSDIR=%%i"
