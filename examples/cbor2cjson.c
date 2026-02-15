@@ -62,6 +62,7 @@ cJSON* cbor_to_cjson(cbor_item_t* item) {
           key[key_length] = 0;
         } else {
           // Non-string key; generate a placeholder
+          // "surrogate_" (10) + max uint64 digits (20) + NUL
           key = malloc(32);
           if (!key) return NULL;
           snprintf(key, 32, "surrogate_%zu", i);
