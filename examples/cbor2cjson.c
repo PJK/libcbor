@@ -56,12 +56,14 @@ cJSON* cbor_to_cjson(cbor_item_t* item) {
             cbor_string_is_definite(cbor_map_handle(item)[i].key)) {
           size_t key_length = cbor_string_length(cbor_map_handle(item)[i].key);
           key = malloc(key_length + 1);
+          if (!key) return NULL;
           memcpy(key, cbor_string_handle(cbor_map_handle(item)[i].key),
                  key_length);
           key[key_length] = 0;
         } else {
           // Non-string key; generate a placeholder
           key = malloc(32);
+          if (!key) return NULL;
           snprintf(key, 32, "surrogate_%zu", i);
         }
 
