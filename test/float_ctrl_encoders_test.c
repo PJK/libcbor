@@ -6,6 +6,7 @@
  */
 
 #include <math.h>
+#include <string.h>
 #include "assertions.h"
 #include "cbor.h"
 
@@ -99,9 +100,13 @@ static void test_half(void** _state _CBOR_UNUSED) {
   assert_half_float_codec_identity();
 
   /* Smaller than the smallest and even the magnitude cannot be represented,
-     round off to zero */
+     round off to zero. Sign bit is preserved. */
   assert_size_equal(3, cbor_encode_half(1e-25f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x00, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  assert_size_equal(3, cbor_encode_half(-1e-25f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x80, 0x00}), 3);
   assert_half_float_codec_identity();
 
   assert_size_equal(3, cbor_encode_half(1.1920928955078125e-7, buffer, 512));
@@ -118,12 +123,33 @@ static void test_half(void** _state _CBOR_UNUSED) {
 }
 
 static void test_half_special(void** _state _CBOR_UNUSED) {
+  /* NAN is typically a quiet NaN with zero payload; encodes to the canonical
+   * half-precision quiet NaN. */
   assert_size_equal(3, cbor_encode_half(NAN, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x00}), 3);
   assert_half_float_codec_identity();
 
+  /* nanf("2") has payload 2 (in the low bits of the mantissa), which falls
+   * entirely in the bottom 13 bits that cannot be represented in half
+   * precision. The top 10 mantissa bits are 10_0000_0000 (just the quiet
+   * bit), so the encoded form is the same as NAN. */
   assert_size_equal(3, cbor_encode_half(nanf("2"), buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  /* Negative NaN: sign bit must be preserved. */
+  assert_size_equal(3, cbor_encode_half(-NAN, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0xFE, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  /* NaN with payload bits in the top 10 of the mantissa: payload is
+   * preserved in half precision. Bit pattern 0x7FC02000 has the quiet bit
+   * (bit 22) and bit 13 set; after >> 13 the half mantissa is 0x201. */
+  float nan_with_payload;
+  uint32_t nan_bits = 0x7FC02000u;
+  memcpy(&nan_with_payload, &nan_bits, sizeof(nan_with_payload));
+  assert_size_equal(3, cbor_encode_half(nan_with_payload, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x01}), 3);
   assert_half_float_codec_identity();
 }
 

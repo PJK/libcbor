@@ -56,13 +56,24 @@ float _cbor_decode_half(unsigned char* halfp) {
   int half = (halfp[0] << 8) + halfp[1];
   int exp = (half >> 10) & 0x1f;
   int mant = half & 0x3ff;
+  if (exp == 31 && mant != 0) {
+    /* NaN: reconstruct as a single-precision NaN, preserving the sign bit and
+     * the 10-bit half-precision payload by placing it in the top 10 bits of
+     * the 23-bit single-precision mantissa. This ensures round-trip fidelity
+     * with cbor_encode_half's NaN encoding. */
+    union _cbor_float_helper helper = {
+        .as_uint = ((uint32_t)(half & 0x8000) << 16) | /* sign */
+                   0x7F800000u |                       /* exponent (all 1s) */
+                   ((uint32_t)mant << 13)};            /* payload */
+    return helper.as_float;
+  }
   double val;
   if (exp == 0)
     val = ldexp(mant, -24);
   else if (exp != 31)
     val = ldexp(mant + 1024, exp - 25);
   else
-    val = mant == 0 ? INFINITY : NAN;
+    val = INFINITY; /* exp == 31, mant == 0: the NaN case is handled above */
   return (float)(half & 0x8000 ? -val : val);
 }
 
