@@ -122,29 +122,46 @@ static void test_half(void** _state _CBOR_UNUSED) {
   assert_half_float_codec_identity();
 }
 
-static void test_half_special(void** _state _CBOR_UNUSED) {
-  /* NAN is typically a quiet NaN with zero payload; encodes to the canonical
-   * half-precision quiet NaN. */
-  assert_size_equal(3, cbor_encode_half(NAN, buffer, 512));
-  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x00}), 3);
+/* Check that buffer holds a valid half-precision CBOR NaN with the expected
+ * sign (0 = positive, non-zero = negative), then verify encode/decode
+ * round-trip. The exact payload bits are not checked because the C NAN
+ * constant has platform-specific bit patterns (e.g. MIPS legacy NaN). */
+static void assert_half_nan_and_roundtrip(int negative) {
+  /* CBOR additional info 0xF9 = half-precision float */
+  assert_int_equal(buffer[0], 0xF9);
+  /* Sign bit */
+  if (negative) {
+    assert_true(buffer[1] & 0x80);
+  } else {
+    assert_false(buffer[1] & 0x80);
+  }
+  /* All five exponent bits must be set (= 0x1F) for NaN/Inf */
+  assert_true((buffer[1] & 0x7C) == 0x7C);
+  /* Mantissa must be non-zero to distinguish NaN from Infinity */
+  assert_true((buffer[1] & 0x03) || buffer[2]);
   assert_half_float_codec_identity();
+}
 
-  /* nanf("2") has payload 2 (in the low bits of the mantissa), which falls
-   * entirely in the bottom 13 bits that cannot be represented in half
-   * precision. The top 10 mantissa bits are 10_0000_0000 (just the quiet
-   * bit), so the encoded form is the same as NAN. */
+static void test_half_special(void** _state _CBOR_UNUSED) {
+  /* The C NAN constant has platform-specific bits (e.g. MIPS legacy NaN
+   * uses bit 22 = 0 for quiet NaN, opposite of IEEE 754-2008). We only
+   * check that the result is a structurally valid half-precision NaN and
+   * that it round-trips correctly. */
+  assert_size_equal(3, cbor_encode_half(NAN, buffer, 512));
+  assert_half_nan_and_roundtrip(0);
+
   assert_size_equal(3, cbor_encode_half(nanf("2"), buffer, 512));
-  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x00}), 3);
-  assert_half_float_codec_identity();
+  assert_half_nan_and_roundtrip(0);
 
   /* Negative NaN: sign bit must be preserved. */
   assert_size_equal(3, cbor_encode_half(-NAN, buffer, 512));
-  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0xFE, 0x00}), 3);
-  assert_half_float_codec_identity();
+  assert_half_nan_and_roundtrip(1);
 
   /* NaN with payload bits in the top 10 of the mantissa: payload is
-   * preserved in half precision. Bit pattern 0x7FC02000 has the quiet bit
-   * (bit 22) and bit 13 set; after >> 13 the half mantissa is 0x201. */
+   * preserved in half precision. Bit pattern 0x7FC02000 has the IEEE quiet
+   * bit (bit 22) and bit 13 set; after >> 13 the half mantissa is 0x201.
+   * This specific bit pattern is used (rather than a C NaN constant) to get
+   * deterministic results across platforms. */
   float nan_with_payload;
   uint32_t nan_bits = 0x7FC02000u;
   memcpy(&nan_with_payload, &nan_bits, sizeof(nan_with_payload));
