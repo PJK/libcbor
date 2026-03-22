@@ -117,7 +117,8 @@ _CBOR_NODISCARD CBOR_EXPORT struct cbor_pair* cbor_map_handle(
 /** Look up a value in a map by key using a caller-supplied equality function
  *
  * Scans the map linearly and returns the first value whose key compares equal
- * to \p key under \p eq. This is O(n) in the number of entries.
+ * to \p key under \p eq. Makes at most n calls to \p eq, where n is the number
+ * of entries (fewer if a match is found early).
  *
  * The equality function is intentionally parameterized. Most applications
  * constrain their map keys to a single type (e.g., text strings or small
