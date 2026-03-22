@@ -240,19 +240,19 @@ struct cbor_decoder_result {
   /** The decoding status */
   enum cbor_decoder_status status;
 
-  /** Number of bytes in the input buffer needed to resume parsing
+  /** Number of bytes needed in the input buffer to make progress
    *
-   * Set to 0 unless the result status is #CBOR_DECODER_NEDATA. If it is, then:
-   *  - If at least one byte was passed, #required will be set to the minimum
-   *    number of bytes needed to invoke a decoded callback on the current
-   *    prefix.
+   * Set to 0 unless the result status is #CBOR_DECODER_NEDATA. When it is:
+   *  - #required is the total number of bytes that must be present at the
+   *    start of the buffer before calling #cbor_stream_decode again will
+   *    invoke a callback. The caller should accumulate bytes until at least
+   *    #required bytes are available, then retry from the same position.
    *
-   *    For example: Attempting to decode a 1B buffer containing `0x19` will
-   *    set #required to 3 as `0x19` signals a 2B integer item, so we need at
-   *    least 3B to continue (the `0x19` MTB byte and two bytes of data needed
-   *    to invoke #cbor_callbacks.uint16).
+   *    For example: A 1B buffer containing `0x19` (a 2B uint16 item) will
+   *    set #required to 3 — the MTB byte plus two bytes of data.
    *
-   *  - If there was no data at all, #read will always be set to 1
+   *  - If the buffer was empty (source_size == 0), #required is set to 1
+   *    since at least the initial MTB byte is needed.
    */
   size_t required;
 };
