@@ -23,9 +23,6 @@ Next
   - Signature: `cbor_map_get(map, key, eq)` — pass any equality predicate, e.g. `cbor_structurally_equal`
   - Parameterised equality allows type-specific comparators or custom data-model semantics without library changes
   - See also: #96
-- [Enable LeakSanitizer (LSan) as part of `-DSANITIZE=ON` on Linux; enable sanitizers in macOS CI](https://github.com/PJK/libcbor/pull/XXX)
-  - LSan is automatically included via ASan on Linux; Apple's LLVM does not support LSan so it is excluded on macOS
-  - A new `build-and-test-sanitized` CircleCI job runs Clang with all sanitizers enabled on every PR
 - [Add `cbor_structurally_equal` for encoding-level item comparison](https://github.com/PJK/libcbor/pull/408)
   - Compares two items structurally: encoding width, definite-vs-indefinite length, chunk boundaries, and map entry order all count
   - Runs in O(n) time in the encoded byte size with no additional allocations
