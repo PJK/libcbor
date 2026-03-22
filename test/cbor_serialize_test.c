@@ -487,7 +487,12 @@ static void test_serialize_half(void** _state _CBOR_UNUSED) {
   cbor_set_float2(item, NAN);
 
   assert_size_equal(3, cbor_serialize(item, buffer, 512));
-  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7E, 0x00}), 3);
+  /* The C NAN constant has platform-specific bits (e.g. MIPS legacy NaN).
+   * Check structural validity: CBOR half marker, all exponent bits set,
+   * non-zero mantissa (distinguishes NaN from Infinity). */
+  assert_int_equal(buffer[0], 0xF9);
+  assert_true((buffer[1] & 0x7C) == 0x7C);
+  assert_true((buffer[1] & 0x03) || buffer[2]);
   assert_size_equal(cbor_serialized_size(item), 3);
   cbor_decref(&item);
 }

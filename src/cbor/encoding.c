@@ -139,8 +139,17 @@ size_t cbor_encode_half(float value, unsigned char* buffer,
       val & 0x7FFFFFu; /* 0b0000_0000_0111_1111_1111_1111_1111_1111 */
   if (exp == 0xFF) {   /* Infinity or NaNs */
     if (isnan(value)) {
-      // Note: Values of signaling NaNs are discarded. See `cbor_encode_single`.
-      res = (uint16_t)0x007e00;
+      /* Preserve the sign bit and NaN payload. The top 10 bits of the 23-bit
+       * single-precision mantissa map directly onto the 10-bit half-precision
+       * mantissa. If the payload fits entirely in the bottom 13 bits (which
+       * cannot be represented in half precision), fall back to a quiet NaN
+       * to avoid accidentally producing an infinity encoding (mantissa == 0).
+       * Note: signaling NaN payloads are preserved on a best-effort basis;
+       * some CPUs canonicalize them to quiet NaNs when loaded into registers.
+       * See https://github.com/PJK/libcbor/issues/215 */
+      uint16_t half_mant = (uint16_t)(mant >> 13u);
+      if (half_mant == 0) half_mant = 0x0200u; /* quiet NaN fallback */
+      res = (uint16_t)((val & 0x80000000u) >> 16u | 0x7C00u | half_mant);
     } else {
       // If the mantissa is non-zero, we have a NaN, but those are handled
       // above. See
@@ -156,10 +165,10 @@ size_t cbor_encode_half(float value, unsigned char* buffer,
 
     // Now we know that 2^exp <= 0 logically
     if (logical_exp < -24) {
-      /* No unambiguous representation exists, this float is not a half float
-         and is too small to be represented using a half, round off to zero.
-         Consistent with the reference implementation. */
-      res = 0;
+      /* Too small to represent even as a half-precision subnormal; round to
+       * zero. The sign bit is preserved so that small negative values round
+       * to negative zero rather than positive zero. */
+      res = (uint16_t)((val & 0x80000000u) >> 16u);
     } else if (logical_exp < -14) {
       /* Offset the remaining decimal places by shifting the significand, the
          value is lost. This is an implementation decision that works around the
