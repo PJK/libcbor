@@ -18,6 +18,42 @@ When building custom sets of callbacks, feel free to start from
 .. doxygenvariable:: cbor_empty_callbacks
 
 
+Handling failures in callbacks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Callbacks receive no return value, so there is no built-in channel to signal
+failure back to :func:`cbor_stream_decode`. Any error that occurs inside a
+callback — including allocation failures, validation errors, or application-level
+rejections — must be tracked by the callback itself, typically via a flag in the
+``context`` struct passed to :func:`cbor_stream_decode`:
+
+.. code-block:: c
+
+    struct my_context {
+        bool failed;
+        /* ... */
+    };
+
+    void my_string_callback(void *context, cbor_data data, uint64_t length) {
+        struct my_context *ctx = context;
+        if (length > MAX_ALLOWED) {
+            ctx->failed = true;
+            return;
+        }
+        char *copy = malloc(length);
+        if (copy == NULL) {
+            ctx->failed = true;
+            return;
+        }
+        /* ... */
+    }
+
+After each call to :func:`cbor_stream_decode`, check the flag before
+continuing. Note that :func:`cbor_load` handles allocation failures internally —
+the ``CBOR_ERR_MEMERROR`` result code is set when a builder callback fails to
+allocate memory.
+
+
 Callback types definition
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

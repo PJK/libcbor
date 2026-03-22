@@ -81,7 +81,7 @@ cbor_item_t* cbor_load(cbor_data source, size_t source_size,
           break;
         }
       case CBOR_DECODER_NEDATA:
-        /* Data length doesn't match MTB expectation */
+        /* Not enough data to complete the current item */
         {
           result->error.code = CBOR_ERR_NOTENOUGHDATA;
           goto error;
