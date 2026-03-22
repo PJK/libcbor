@@ -406,8 +406,8 @@ CBOR_EXPORT cbor_item_t* cbor_move(cbor_item_t* item);
  * Neither \p item1 nor \p item2 may be `NULL`. Passing `NULL` is a
  * programming error and will trigger an assertion failure in debug builds.
  *
- * @param item1[borrow] First item; must not be `NULL`
- * @param item2[borrow] Second item; must not be `NULL`
+ * @param item1 First item; must not be `NULL`
+ * @param item2 Second item; must not be `NULL`
  * @return `true` if \p item1 and \p item2 are structurally equal
  */
 _CBOR_NODISCARD

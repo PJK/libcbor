@@ -142,13 +142,13 @@ _CBOR_NODISCARD CBOR_EXPORT struct cbor_pair* cbor_map_handle(
  *    cbor_decref(&key);
  * \endrst
  *
- * @param map[borrow]  A map item; must not be `NULL`
- * @param key[borrow]  The key to search for; must not be `NULL`
- * @param eq           Equality predicate, called as `eq(candidate_key, key)`;
- *                     must not be `NULL`
- * @return[transfer] The first matching value with its reference count
- *         incremented by one, or `NULL` if no key matched. The caller is
- *         responsible for releasing the returned item with #cbor_decref.
+ * @param map  A map item; must not be `NULL`
+ * @param key  The key to search for; must not be `NULL`
+ * @param eq   Equality predicate, called as `eq(candidate_key, key)`;
+ *             must not be `NULL`
+ * @return The first matching value with its reference count incremented by
+ *         one, or `NULL` if no key matched. The caller is responsible for
+ *         releasing the returned item with #cbor_decref.
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_map_get(
     const cbor_item_t* map, const cbor_item_t* key,
