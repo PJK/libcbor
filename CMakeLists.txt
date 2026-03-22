@@ -103,12 +103,11 @@ else()
       "${CMAKE_C_FLAGS_DEBUG} \
             -fsanitize=undefined -fsanitize=address \
             -fsanitize=bounds -fsanitize=alignment")
-    # LSan is not supported on Apple platforms (it's integrated into ASan on
-    # Linux but Apple's LLVM drops standalone LSan support entirely)
-    if(NOT APPLE)
-      set(CMAKE_C_FLAGS_DEBUG
-        "${CMAKE_C_FLAGS_DEBUG} -fsanitize=leak")
-    endif()
+    # Note: LeakSanitizer (LSan) is automatically enabled by ASan on Linux
+    # x86_64/aarch64 (detect_leaks=1 by default). Adding -fsanitize=leak
+    # explicitly would link a second LSan runtime alongside ASan's bundled one
+    # and cause crashes. Apple's LLVM does not support LSan at all.
+    # https://clang.llvm.org/docs/LeakSanitizer.html
   endif()
 
   set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-g")
