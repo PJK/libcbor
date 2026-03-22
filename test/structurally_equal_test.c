@@ -478,6 +478,85 @@ static void test_cross_type(void** state _CBOR_UNUSED) {
   cbor_decref(&d);
 }
 
+/* -------------------------------------------------------------------------
+ * Additional coverage tests
+ * These target specific branches that the cases above do not reach.
+ * ---------------------------------------------------------------------- */
+
+static void test_bytestring_indefinite_unequal_chunks(
+    void** state _CBOR_UNUSED) {
+  /* Same chunk count, different content: exercises the return-false path
+   * inside the indefinite bytestring chunk loop. */
+  cbor_item_t* a = cbor_new_indefinite_bytestring();
+  cbor_item_t* b = cbor_new_indefinite_bytestring();
+  assert_true(cbor_bytestring_add_chunk(
+      a, cbor_move(cbor_build_bytestring((cbor_mutable_data) "ab", 2))));
+  assert_true(cbor_bytestring_add_chunk(
+      b, cbor_move(cbor_build_bytestring((cbor_mutable_data) "xy", 2))));
+  assert_false(cbor_structurally_equal(a, b));
+  cbor_decref(&a);
+  cbor_decref(&b);
+}
+
+static void test_string_indefinite_unequal_chunks(void** state _CBOR_UNUSED) {
+  /* Same chunk count, different content: exercises the return-false path
+   * inside the indefinite string chunk loop. */
+  cbor_item_t* a = cbor_new_indefinite_string();
+  cbor_item_t* b = cbor_new_indefinite_string();
+  assert_true(cbor_string_add_chunk(a, cbor_move(cbor_build_string("hello"))));
+  assert_true(cbor_string_add_chunk(b, cbor_move(cbor_build_string("world"))));
+  assert_false(cbor_structurally_equal(a, b));
+  cbor_decref(&a);
+  cbor_decref(&b);
+}
+
+static void test_array_different_size(void** state _CBOR_UNUSED) {
+  cbor_item_t* a = cbor_new_definite_array(1);
+  assert_true(cbor_array_push(a, cbor_move(cbor_build_uint8(1))));
+  cbor_item_t* b = cbor_new_definite_array(2);
+  assert_true(cbor_array_push(b, cbor_move(cbor_build_uint8(1))));
+  assert_true(cbor_array_push(b, cbor_move(cbor_build_uint8(2))));
+  assert_false(cbor_structurally_equal(a, b));
+  cbor_decref(&a);
+  cbor_decref(&b);
+}
+
+static void test_map_different_size(void** state _CBOR_UNUSED) {
+  cbor_item_t* a = cbor_new_definite_map(1);
+  assert_true(cbor_map_add(
+      a, (struct cbor_pair){.key = cbor_move(cbor_build_uint8(0)),
+                            .value = cbor_move(cbor_build_uint8(0))}));
+  cbor_item_t* b = cbor_new_definite_map(2);
+  assert_true(cbor_map_add(
+      b, (struct cbor_pair){.key = cbor_move(cbor_build_uint8(0)),
+                            .value = cbor_move(cbor_build_uint8(0))}));
+  assert_true(cbor_map_add(
+      b, (struct cbor_pair){.key = cbor_move(cbor_build_uint8(1)),
+                            .value = cbor_move(cbor_build_uint8(1))}));
+  assert_false(cbor_structurally_equal(a, b));
+  cbor_decref(&a);
+  cbor_decref(&b);
+}
+
+static void test_tag_both_null_item(void** state _CBOR_UNUSED) {
+  /* Tags whose tagged item has not been set yet: both NULL → equal. */
+  cbor_item_t* a = cbor_new_tag(1);
+  cbor_item_t* b = cbor_new_tag(1);
+  assert_true(cbor_structurally_equal(a, b));
+  cbor_decref(&a);
+  cbor_decref(&b);
+}
+
+static void test_tag_one_null_item(void** state _CBOR_UNUSED) {
+  /* One tag has a tagged item, the other does not → not equal. */
+  cbor_item_t* a = cbor_new_tag(1);
+  cbor_item_t* b = cbor_build_tag(1, cbor_move(cbor_build_uint8(0)));
+  assert_false(cbor_structurally_equal(a, b));
+  assert_false(cbor_structurally_equal(b, a));
+  cbor_decref(&a);
+  cbor_decref(&b);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       /* Integers */
@@ -524,6 +603,13 @@ int main(void) {
       /* General */
       cmocka_unit_test(test_reflexivity),
       cmocka_unit_test(test_cross_type),
+      /* Coverage */
+      cmocka_unit_test(test_bytestring_indefinite_unequal_chunks),
+      cmocka_unit_test(test_string_indefinite_unequal_chunks),
+      cmocka_unit_test(test_array_different_size),
+      cmocka_unit_test(test_map_different_size),
+      cmocka_unit_test(test_tag_both_null_item),
+      cmocka_unit_test(test_tag_one_null_item),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
