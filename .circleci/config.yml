@@ -226,13 +226,7 @@ jobs:
       - checkout
       - run: bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       - run: brew install cmocka cmake
-      - run: >
-          cmake -DWITH_TESTS=ON \
-            -DWITH_EXAMPLES=ON \
-            -DCMAKE_BUILD_TYPE=Debug \
-            -DSANITIZE=ON \
-            .
-      - run: make -j 8 VERBOSE=1
+      - build-sanitized
       - test
 
   
