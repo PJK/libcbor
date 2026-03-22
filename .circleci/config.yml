@@ -42,6 +42,28 @@ commands:
             -DCMAKE_BUILD_TYPE=Release \
             .
       - run: make -j 16 VERBOSE=1
+  run-linkage-tests:
+    steps:
+      - run:
+          name: Linkage test (static)
+          command: |
+            BUILD=$(mktemp -d) INST=$(mktemp -d) LB=$(mktemp -d)
+            cmake -S . -B "$BUILD" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="$INST"
+            cmake --build "$BUILD" --parallel
+            cmake --install "$BUILD"
+            cmake -S test/linkage -B "$LB" -DCMAKE_PREFIX_PATH="$INST"
+            cmake --build "$LB"
+            ctest --test-dir "$LB" -VV
+      - run:
+          name: Linkage test (shared)
+          command: |
+            BUILD=$(mktemp -d) INST=$(mktemp -d) LB=$(mktemp -d)
+            cmake -S . -B "$BUILD" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX="$INST"
+            cmake --build "$BUILD" --parallel
+            cmake --install "$BUILD"
+            cmake -S test/linkage -B "$LB" -DCMAKE_PREFIX_PATH="$INST"
+            cmake --build "$LB"
+            LD_LIBRARY_PATH="$INST/lib" ctest --test-dir "$LB" -VV
   test:
     steps:
       - run: ctest -VV --output-junit ctest_out.xml
@@ -100,6 +122,7 @@ jobs:
             cat Testing/Temporary/MemoryChecker*
             exit 1
           fi;
+      - run-linkage-tests
 
   build-and-test-clang:
     machine:
@@ -113,6 +136,7 @@ jobs:
       - linux-setup
       - build
       - test
+      - run-linkage-tests
 
   build-and-test-32b:
     machine:
@@ -257,6 +281,16 @@ jobs:
             BEOF
             cmd //c _build_libcbor.bat
 
+  linkage-test:
+    machine:
+      <<: *default-machine
+    environment:
+      TOOLCHAIN_PACKAGES: g++
+    steps:
+      - checkout
+      - linux-setup
+      - run-linkage-tests
+
   build-and-test-mips: &dockcross-job
     docker:
       - image: dockcross/linux-mips-lts
@@ -297,6 +331,7 @@ workflows:
       - build-and-test-mipsel
       - build-and-test-riscv64
       - build-bazel
+      - linkage-test
       - llvm-coverage
       # OSX builds are expensive, run only on master
       - build-and-test-osx:
