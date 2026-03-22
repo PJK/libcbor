@@ -54,12 +54,21 @@ int main(int argc, char* argv[]) {
   while (bytes_read < length) {
     decode_result = cbor_stream_decode(buffer + bytes_read, length - bytes_read,
                                        &callbacks, NULL);
-    if (decode_result.status == CBOR_DECODER_ERROR) {
-      fprintf(stderr, "Error at byte %zu\n", bytes_read);
-      break;
+    switch (decode_result.status) {
+      case CBOR_DECODER_FINISHED:
+        bytes_read += decode_result.read;
+        break;
+      case CBOR_DECODER_NEDATA:
+        // The input was fully loaded into memory, so NEDATA means the data is
+        // truncated.
+        fprintf(stderr, "Truncated data at byte %zu\n", bytes_read);
+        goto done;
+      case CBOR_DECODER_ERROR:
+        fprintf(stderr, "Error at byte %zu\n", bytes_read);
+        goto done;
     }
-    bytes_read += decode_result.read;
   }
+done:
 
   free(buffer);
   fclose(f);
