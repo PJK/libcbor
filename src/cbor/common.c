@@ -165,3 +165,129 @@ cbor_item_t* cbor_move(cbor_item_t* item) {
   item->refcount--;
   return item;
 }
+
+bool cbor_structurally_equal(const cbor_item_t* item1,
+                             const cbor_item_t* item2) {
+  CBOR_ASSERT(item1 != NULL);
+  CBOR_ASSERT(item2 != NULL);
+  if (item1->type != item2->type) return false;
+
+  switch (item1->type) {
+    case CBOR_TYPE_UINT:
+    case CBOR_TYPE_NEGINT: {
+      /* Encoding width (CBOR_INT_8/16/32/64) is part of structural identity */
+      if (cbor_int_get_width(item1) != cbor_int_get_width(item2)) return false;
+      /* Compare the raw data bytes that back the integer value */
+      static const size_t int_widths[] = {1, 2, 4, 8};
+      return memcmp(item1->data, item2->data,
+                    int_widths[cbor_int_get_width(item1)]) == 0;
+    }
+
+    case CBOR_TYPE_BYTESTRING: {
+      /* Definite vs. indefinite encoding is structurally distinct */
+      if (cbor_bytestring_is_definite(item1) !=
+          cbor_bytestring_is_definite(item2))
+        return false;
+      if (cbor_bytestring_is_definite(item1)) {
+        if (cbor_bytestring_length(item1) != cbor_bytestring_length(item2))
+          return false;
+        return memcmp(item1->data, item2->data,
+                      cbor_bytestring_length(item1)) == 0;
+      } else {
+        /* Indefinite: chunk count and each chunk must match structurally */
+        size_t count = cbor_bytestring_chunk_count(item1);
+        if (count != cbor_bytestring_chunk_count(item2)) return false;
+        cbor_item_t** c1 = cbor_bytestring_chunks_handle(item1);
+        cbor_item_t** c2 = cbor_bytestring_chunks_handle(item2);
+        for (size_t i = 0; i < count; i++)
+          if (!cbor_structurally_equal(c1[i], c2[i])) return false;
+        return true;
+      }
+    }
+
+    case CBOR_TYPE_STRING: {
+      /* Definite vs. indefinite encoding is structurally distinct */
+      if (cbor_string_is_definite(item1) != cbor_string_is_definite(item2))
+        return false;
+      if (cbor_string_is_definite(item1)) {
+        if (cbor_string_length(item1) != cbor_string_length(item2))
+          return false;
+        return memcmp(item1->data, item2->data, cbor_string_length(item1)) == 0;
+      } else {
+        /* Indefinite: chunk boundaries are part of the structure */
+        size_t count = cbor_string_chunk_count(item1);
+        if (count != cbor_string_chunk_count(item2)) return false;
+        cbor_item_t** c1 = cbor_string_chunks_handle(item1);
+        cbor_item_t** c2 = cbor_string_chunks_handle(item2);
+        for (size_t i = 0; i < count; i++)
+          if (!cbor_structurally_equal(c1[i], c2[i])) return false;
+        return true;
+      }
+    }
+
+    case CBOR_TYPE_ARRAY: {
+      /* Definite vs. indefinite encoding is structurally distinct */
+      if (cbor_array_is_definite(item1) != cbor_array_is_definite(item2))
+        return false;
+      size_t size = cbor_array_size(item1);
+      if (size != cbor_array_size(item2)) return false;
+      cbor_item_t** h1 = cbor_array_handle(item1);
+      cbor_item_t** h2 = cbor_array_handle(item2);
+      for (size_t i = 0; i < size; i++)
+        if (!cbor_structurally_equal(h1[i], h2[i])) return false;
+      return true;
+    }
+
+    case CBOR_TYPE_MAP: {
+      /* Definite vs. indefinite encoding is structurally distinct */
+      if (cbor_map_is_definite(item1) != cbor_map_is_definite(item2))
+        return false;
+      size_t size = cbor_map_size(item1);
+      if (size != cbor_map_size(item2)) return false;
+      /*
+       * Structural equality for maps is positional: pair at index i in item1
+       * must match pair at index i in item2 (both key and value). This reflects
+       * the encoded byte order. Use cbor_map_handle to avoid refcount churn.
+       */
+      struct cbor_pair* p1 = cbor_map_handle(item1);
+      struct cbor_pair* p2 = cbor_map_handle(item2);
+      for (size_t i = 0; i < size; i++)
+        if (!cbor_structurally_equal(p1[i].key, p2[i].key) ||
+            !cbor_structurally_equal(p1[i].value, p2[i].value))
+          return false;
+      return true;
+    }
+
+    case CBOR_TYPE_TAG: {
+      if (cbor_tag_value(item1) != cbor_tag_value(item2)) return false;
+      /* Access the tagged item directly to avoid refcount churn */
+      cbor_item_t* t1 = item1->metadata.tag_metadata.tagged_item;
+      cbor_item_t* t2 = item2->metadata.tag_metadata.tagged_item;
+      if (t1 == NULL && t2 == NULL) return true;
+      if (t1 == NULL || t2 == NULL) return false;
+      return cbor_structurally_equal(t1, t2);
+    }
+
+    case CBOR_TYPE_FLOAT_CTRL: {
+      /* Encoding width (CBOR_FLOAT_0/16/32/64) is part of structural identity
+       */
+      if (cbor_float_get_width(item1) != cbor_float_get_width(item2))
+        return false;
+      if (cbor_float_ctrl_is_ctrl(item1)) {
+        /* Simple/ctrl values: compare control byte */
+        return cbor_ctrl_value(item1) == cbor_ctrl_value(item2);
+      } else {
+        /*
+         * Floats: bitwise comparison of the stored representation. This treats
+         * distinct NaN payloads as distinct values, consistent with structural
+         * equality. Widths CBOR_FLOAT_16 and CBOR_FLOAT_32 are both backed by
+         * 4 bytes (C float); CBOR_FLOAT_64 is backed by 8 bytes (C double).
+         */
+        size_t sz = (cbor_float_get_width(item1) == CBOR_FLOAT_64) ? 8 : 4;
+        return memcmp(item1->data, item2->data, sz) == 0;
+      }
+    }
+  }
+  /* Unreachable: all enum values are handled above */
+  return false; /* LCOV_EXCL_LINE */
+}

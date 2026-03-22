@@ -13,6 +13,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "cbor/cbor_export.h"
 #include "cbor/configuration.h"
@@ -359,6 +360,59 @@ CBOR_EXPORT size_t cbor_refcount(const cbor_item_t* item);
  */
 _CBOR_NODISCARD
 CBOR_EXPORT cbor_item_t* cbor_move(cbor_item_t* item);
+
+/** Compares two items for structural (encoding-level) equality
+ *
+ * Two items are structurally equal when they would produce identical bytes
+ * if serialized by a correct CBOR encoder that preserves the in-memory
+ * representation. Every aspect of the encoding counts:
+ *
+ * - **Major type**: `CBOR_TYPE_UINT` and `CBOR_TYPE_NEGINT` are distinct even
+ *   if the argument bytes happen to be the same.
+ * - **Integer encoding width**: `cbor_build_uint8(1)` and
+ * `cbor_build_uint16(1)` are *not* structurally equal, even though both
+ * represent the integer 1. Use the integer value accessors (`cbor_get_uint64`
+ * etc.) if you need value-level comparison.
+ * - **Definite vs. indefinite length**: a definite-length array and an
+ *   indefinite-length array with the same elements are *not* structurally
+ * equal.
+ * - **Chunk boundaries**: two indefinite bytestrings or strings that carry the
+ *   same bytes but split them across a different number of chunks are *not*
+ *   structurally equal.
+ * - **Map entry order**: maps are compared positionally — entry at index i in
+ *   \p item1 must match entry at index i in \p item2. Maps that carry the same
+ *   key-value pairs in a different order are *not* structurally equal. (CBOR
+ *   maps are unordered in the data model; for data-model equality see RFC 8949
+ *   §5.6.1.)
+ * - **Float encoding width**: `cbor_build_float2(1.5)` and
+ *   `cbor_build_float4(1.5)` are *not* structurally equal.
+ * - **NaN payload**: floating-point NaN values with different bit patterns are
+ *   *not* structurally equal.
+ * - **Tag number**: tags with different tag numbers are *not* structurally
+ * equal.
+ *
+ * Runs in time linear in the encoded byte size of the items and performs no
+ * additional memory allocations.
+ *
+ * \rst
+ * .. note::
+ *   This function implements *structural* equality, not the data-model equality
+ *   defined by RFC 8949. In the CBOR data model, encoding width is invisible
+ *   and maps are unordered sets of key-value pairs. If you need data-model
+ *   equality (e.g., ``uint8(1) == uint64(1)``), you must implement it on top
+ *   of this library.
+ * \endrst
+ *
+ * Neither \p item1 nor \p item2 may be `NULL`. Passing `NULL` is a
+ * programming error and will trigger an assertion failure in debug builds.
+ *
+ * @param item1[borrow] First item; must not be `NULL`
+ * @param item2[borrow] Second item; must not be `NULL`
+ * @return `true` if \p item1 and \p item2 are structurally equal
+ */
+_CBOR_NODISCARD
+CBOR_EXPORT bool cbor_structurally_equal(const cbor_item_t* item1,
+                                         const cbor_item_t* item2);
 
 #ifdef __cplusplus
 }
