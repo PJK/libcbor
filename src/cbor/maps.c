@@ -123,3 +123,17 @@ struct cbor_pair* cbor_map_handle(const cbor_item_t* item) {
   CBOR_ASSERT(cbor_isa_map(item));
   return (struct cbor_pair*)item->data;
 }
+
+cbor_item_t* cbor_map_get(const cbor_item_t* map, const cbor_item_t* key,
+                          bool (*eq)(const cbor_item_t*, const cbor_item_t*)) {
+  CBOR_ASSERT(cbor_isa_map(map));
+  CBOR_ASSERT(key != NULL);
+  CBOR_ASSERT(eq != NULL);
+  struct cbor_pair* pairs = cbor_map_handle(map);
+  for (size_t i = 0; i < cbor_map_size(map); i++) {
+    if (eq(pairs[i].key, key)) {
+      return cbor_incref(pairs[i].value);
+    }
+  }
+  return NULL;
+}

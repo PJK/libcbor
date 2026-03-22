@@ -19,6 +19,10 @@ Next
 - [Modernize CMake build: use `project(VERSION ...)`, replace `add_definitions()` with target-scoped `target_compile_definitions()`, remove redundant `include_directories()`](https://github.com/PJK/libcbor/pull/402)
 - [Replace global `CMAKE_C_FLAGS` mutations with target-scoped `target_compile_options()` via an INTERFACE library, and simplify LTO configuration](https://github.com/PJK/libcbor/pull/403)
 - [Fix Windows CI: propagate `_CRT_SECURE_NO_WARNINGS` to examples/tests, restrict LTO to Release builds, parallelize Windows CI build](https://github.com/PJK/libcbor/pull/404)
+- [Add `cbor_map_get` for key-based map lookup with a caller-supplied equality function](https://github.com/PJK/libcbor/pull/409)
+  - Signature: `cbor_map_get(map, key, eq)` — pass any equality predicate, e.g. `cbor_structurally_equal`
+  - Parameterised equality allows type-specific comparators or custom data-model semantics without library changes
+  - See also: #96
 - [Add `cbor_structurally_equal` for encoding-level item comparison](https://github.com/PJK/libcbor/pull/408)
   - Compares two items structurally: encoding width, definite-vs-indefinite length, chunk boundaries, and map entry order all count
   - Runs in O(n) time in the encoded byte size with no additional allocations
