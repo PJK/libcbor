@@ -103,6 +103,12 @@ else()
       "${CMAKE_C_FLAGS_DEBUG} \
             -fsanitize=undefined -fsanitize=address \
             -fsanitize=bounds -fsanitize=alignment")
+    # LSan is not supported on Apple platforms (it's integrated into ASan on
+    # Linux but Apple's LLVM drops standalone LSan support entirely)
+    if(NOT APPLE)
+      set(CMAKE_C_FLAGS_DEBUG
+        "${CMAKE_C_FLAGS_DEBUG} -fsanitize=leak")
+    endif()
   endif()
 
   set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-g")

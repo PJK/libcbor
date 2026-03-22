@@ -35,6 +35,15 @@ commands:
             -DCOVERAGE="${CMAKE_COVERAGE:='OFF'}" \
             .
       - run: make -j 16 VERBOSE=1
+  build-sanitized:
+    steps:
+      - run: >
+          cmake -DWITH_TESTS=ON \
+            -DWITH_EXAMPLES=ON \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DSANITIZE=ON \
+            .
+      - run: make -j 16 VERBOSE=1
   build-release:
     steps:
       - run: >
@@ -112,6 +121,19 @@ jobs:
       - checkout
       - linux-setup
       - build
+      - test
+
+  build-and-test-sanitized:
+    machine:
+      <<: *default-machine
+    environment:
+      TOOLCHAIN_PACKAGES: clang
+      CC: clang
+      CXX: clang++
+    steps:
+      - checkout
+      - linux-setup
+      - build-sanitized
       - test
 
   build-and-test-32b:
@@ -204,7 +226,13 @@ jobs:
       - checkout
       - run: bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       - run: brew install cmocka cmake
-      - build
+      - run: >
+          cmake -DWITH_TESTS=ON \
+            -DWITH_EXAMPLES=ON \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DSANITIZE=ON \
+            .
+      - run: make -j 8 VERBOSE=1
       - test
 
   
@@ -289,6 +317,7 @@ workflows:
       - static-test
       - build-and-test
       - build-and-test-clang
+      - build-and-test-sanitized
       - build-and-test-32b
       - build-and-test-release-clang
       - build-and-test-arm
