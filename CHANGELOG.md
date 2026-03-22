@@ -27,6 +27,11 @@ Next
   - Compares two items structurally: encoding width, definite-vs-indefinite length, chunk boundaries, and map entry order all count
   - Runs in O(n) time in the encoded byte size with no additional allocations
   - See also: #96
+- BREAKING: [Fix NaN encoding in `cbor_encode_half` to preserve sign and payload bits](https://github.com/PJK/libcbor/pull/412)
+  - Previously, all NaN values were encoded as `0x7E00` (positive quiet NaN, zero payload). Now the sign bit and the top 10 mantissa bits are preserved in the half-precision encoding.
+  - `_cbor_decode_half` now reconstructs the NaN bit pattern faithfully, enabling encode/decode round-trips. Previously it always returned the C `NAN` constant.
+  - Very small normal floats that previously rounded to `+0` now round to `±0` depending on their sign.
+  - Clients that relied on all NaNs normalising to `0x7E00` will see different output. See #215.
 
 0.13.0 (2025-08-30)
 ---------------------
