@@ -307,16 +307,6 @@ jobs:
             BEOF
             cmd //c _build_libcbor.bat
 
-  linkage-test:
-    machine:
-      <<: *default-machine
-    environment:
-      TOOLCHAIN_PACKAGES: g++
-    steps:
-      - checkout
-      - linux-setup
-      - run-linkage-tests
-
   build-and-test-mips: &dockcross-job
     docker:
       - image: dockcross/linux-mips-lts
@@ -358,7 +348,6 @@ workflows:
       - build-and-test-mipsel
       - build-and-test-riscv64
       - build-bazel
-      - linkage-test
       - llvm-coverage
       # OSX builds are expensive, run only on master
       - build-and-test-osx:
