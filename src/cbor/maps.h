@@ -114,6 +114,46 @@ _CBOR_NODISCARD CBOR_EXPORT bool cbor_map_is_indefinite(
 _CBOR_NODISCARD CBOR_EXPORT struct cbor_pair* cbor_map_handle(
     const cbor_item_t* item);
 
+/** Look up a value in a map by key using a caller-supplied equality function
+ *
+ * Scans the map linearly and returns the first value whose key compares equal
+ * to \p key under \p eq. Makes at most n calls to \p eq, where n is the number
+ * of entries (fewer if a match is found early).
+ *
+ * The equality function is intentionally parameterized. Most applications
+ * constrain their map keys to a single type (e.g., text strings or small
+ * integers), which lets them implement a cheaper, type-specific comparator
+ * instead of a fully generic one. The parameter also allows callers to plug
+ * in any desired semantics — structural equality via
+ * #cbor_structurally_equal, a data-model comparator that ignores encoding
+ * width, a case-insensitive string comparator, etc. — without the library
+ * having to anticipate every use case.
+ *
+ * \rst
+ * .. code-block:: c
+ *
+ *    // Look up a text-string key using structural equality
+ *    cbor_item_t *key = cbor_build_string("alg");
+ *    cbor_item_t *value = cbor_map_get(map, key, cbor_structurally_equal);
+ *    if (value != NULL) {
+ *        // use value ...
+ *        cbor_decref(&value);
+ *    }
+ *    cbor_decref(&key);
+ * \endrst
+ *
+ * @param map  A map item; must not be `NULL`
+ * @param key  The key to search for; must not be `NULL`
+ * @param eq   Equality predicate, called as `eq(candidate_key, key)`;
+ *             must not be `NULL`
+ * @return The first matching value with its reference count incremented by
+ *         one, or `NULL` if no key matched. The caller is responsible for
+ *         releasing the returned item with #cbor_decref.
+ */
+_CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_map_get(
+    const cbor_item_t* map, const cbor_item_t* key,
+    bool (*eq)(const cbor_item_t*, const cbor_item_t*));
+
 #ifdef __cplusplus
 }
 #endif

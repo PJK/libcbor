@@ -48,6 +48,27 @@ Reading data
 ~~~~~~~~~~~~~
 
 .. doxygenfunction:: cbor_map_handle
+.. doxygenfunction:: cbor_map_get
+
+.. note::
+
+   The equality function passed to :func:`cbor_map_get` is intentionally
+   parameterized. Most applications constrain their map keys to a single
+   type (e.g., always text strings, or always small integers), so a
+   type-specific comparator can be both simpler and faster than a fully
+   generic one.  The parameter also lets callers choose between structural
+   equality (:func:`cbor_structurally_equal`) and any data-model or
+   application-level semantics they need — the library does not need to
+   anticipate every use case.
+
+   Examples of equality functions that can be passed:
+
+   * :func:`cbor_structurally_equal` — encoding-level identity; encoding
+     width, definite/indefinite, and map entry order all count.
+   * A custom integer comparator that ignores encoding width, so that
+     ``uint8(1)`` and ``uint64(1)`` are treated as the same key.
+   * A text-string comparator that skips the type check, useful when the
+     protocol guarantees that all keys are text strings.
 
 Creating new items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
