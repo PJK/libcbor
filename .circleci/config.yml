@@ -134,6 +134,10 @@ jobs:
       - checkout
       - linux-setup
       - build-sanitized
+      # Ubuntu 22.04 raises mmap_rnd_bits to 28, which conflicts with ASan's
+      # fixed shadow memory offsets and causes random startup crashes.
+      # https://github.com/google/sanitizers/issues/1716
+      - run: sudo sysctl -w kernel.randomize_va_space=0
       - test
 
   build-and-test-32b:
