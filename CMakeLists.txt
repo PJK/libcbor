@@ -103,6 +103,11 @@ else()
       "${CMAKE_C_FLAGS_DEBUG} \
             -fsanitize=undefined -fsanitize=address \
             -fsanitize=bounds -fsanitize=alignment")
+    # Note: LeakSanitizer (LSan) is automatically enabled by ASan on Linux
+    # x86_64/aarch64 (detect_leaks=1 by default). Adding -fsanitize=leak
+    # explicitly would link a second LSan runtime alongside ASan's bundled one
+    # and cause crashes. Apple's LLVM does not support LSan at all.
+    # https://clang.llvm.org/docs/LeakSanitizer.html
   endif()
 
   set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-g")
