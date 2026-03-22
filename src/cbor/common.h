@@ -391,6 +391,9 @@ CBOR_EXPORT cbor_item_t* cbor_move(cbor_item_t* item);
  * - **Tag number**: tags with different tag numbers are *not* structurally
  * equal.
  *
+ * Runs in time linear in the encoded byte size of the items and performs no
+ * additional memory allocations.
+ *
  * \rst
  * .. note::
  *   This function implements *structural* equality, not the data-model equality

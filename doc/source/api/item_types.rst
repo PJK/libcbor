@@ -69,3 +69,8 @@ Comparing items
    If you need data-model equality (e.g. ``uint8(1) == uint64(1)``),
    you must implement it on top of this library using the value
    accessors (``cbor_get_uint64``, etc.).
+
+   **Complexity**: because structural equality short-circuits on the first
+   mismatch and otherwise visits each byte of data exactly once, the
+   runtime is *O(n)* in the encoded byte size of the items being compared.
+   No additional memory is allocated.
