@@ -48,7 +48,7 @@ commands:
           name: Linkage test (static)
           command: |
             BUILD=$(mktemp -d) INST=$(mktemp -d) LB=$(mktemp -d)
-            cmake -S . -B "$BUILD" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="$INST"
+            cmake -S . -B "$BUILD" -DCMAKE_BUILD_TYPE=Debug -DSANITIZE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="$INST"
             cmake --build "$BUILD" --parallel
             cmake --install "$BUILD"
             cmake -S test/linkage -B "$LB" -DCMAKE_PREFIX_PATH="$INST"
@@ -58,7 +58,7 @@ commands:
           name: Linkage test (shared)
           command: |
             BUILD=$(mktemp -d) INST=$(mktemp -d) LB=$(mktemp -d)
-            cmake -S . -B "$BUILD" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX="$INST"
+            cmake -S . -B "$BUILD" -DCMAKE_BUILD_TYPE=Debug -DSANITIZE=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX="$INST"
             cmake --build "$BUILD" --parallel
             cmake --install "$BUILD"
             cmake -S test/linkage -B "$LB" -DCMAKE_PREFIX_PATH="$INST"
