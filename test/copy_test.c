@@ -268,6 +268,20 @@ static void test_definite_bytestring_alloc_failure(void** _state _CBOR_UNUSED) {
   cbor_decref(&item);
 }
 
+static void test_definite_bytestring_item_alloc_failure(
+    void** _state _CBOR_UNUSED) {
+  item = cbor_new_indefinite_bytestring();
+  assert_true(cbor_bytestring_add_chunk(
+      item, cbor_move(cbor_build_bytestring((cbor_data) "abc", 3))));
+
+  // combined_data malloc succeeds, cbor_new_definite_bytestring fails
+  WITH_MOCK_MALLOC({ assert_null(cbor_copy_definite(item)); }, 2, MALLOC,
+                   MALLOC_FAIL);
+  assert_size_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
 static void test_definite_string(void** _state _CBOR_UNUSED) {
   item = cbor_build_string("abc");
   assert_memory_equal(cbor_string_handle(copy = cbor_copy_definite(item)),
@@ -295,6 +309,19 @@ static void test_definite_string_alloc_failure(void** _state _CBOR_UNUSED) {
   assert_true(cbor_string_add_chunk(item, cbor_move(cbor_build_string("abc"))));
 
   WITH_FAILING_MALLOC({ assert_null(cbor_copy_definite(item)); });
+  assert_size_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
+static void test_definite_string_item_alloc_failure(
+    void** _state _CBOR_UNUSED) {
+  item = cbor_new_indefinite_string();
+  assert_true(cbor_string_add_chunk(item, cbor_move(cbor_build_string("abc"))));
+
+  // combined_data malloc succeeds, cbor_new_definite_string fails
+  WITH_MOCK_MALLOC({ assert_null(cbor_copy_definite(item)); }, 2, MALLOC,
+                   MALLOC_FAIL);
   assert_size_equal(cbor_refcount(item), 1);
 
   cbor_decref(&item);
@@ -546,6 +573,34 @@ static void test_alloc_failure_simple(void** _state _CBOR_UNUSED) {
   WITH_FAILING_MALLOC({ assert_null(cbor_copy(item)); });
   assert_size_equal(cbor_refcount(item), 1);
 
+  cbor_decref(&item);
+}
+
+static void test_negint8_alloc_failure(void** _state _CBOR_UNUSED) {
+  item = cbor_build_negint8(10);
+  WITH_FAILING_MALLOC({ assert_null(cbor_copy(item)); });
+  assert_size_equal(cbor_refcount(item), 1);
+  cbor_decref(&item);
+}
+
+static void test_negint16_alloc_failure(void** _state _CBOR_UNUSED) {
+  item = cbor_build_negint16(10);
+  WITH_FAILING_MALLOC({ assert_null(cbor_copy(item)); });
+  assert_size_equal(cbor_refcount(item), 1);
+  cbor_decref(&item);
+}
+
+static void test_negint32_alloc_failure(void** _state _CBOR_UNUSED) {
+  item = cbor_build_negint32(10);
+  WITH_FAILING_MALLOC({ assert_null(cbor_copy(item)); });
+  assert_size_equal(cbor_refcount(item), 1);
+  cbor_decref(&item);
+}
+
+static void test_negint64_alloc_failure(void** _state _CBOR_UNUSED) {
+  item = cbor_build_negint64(10);
+  WITH_FAILING_MALLOC({ assert_null(cbor_copy(item)); });
+  assert_size_equal(cbor_refcount(item), 1);
   cbor_decref(&item);
 }
 
@@ -808,6 +863,10 @@ int main(void) {
       cmocka_unit_test(test_ctrls),
       cmocka_unit_test(test_floats),
       cmocka_unit_test(test_alloc_failure_simple),
+      cmocka_unit_test(test_negint8_alloc_failure),
+      cmocka_unit_test(test_negint16_alloc_failure),
+      cmocka_unit_test(test_negint32_alloc_failure),
+      cmocka_unit_test(test_negint64_alloc_failure),
       cmocka_unit_test(test_bytestring_alloc_failure),
       cmocka_unit_test(test_bytestring_chunk_alloc_failure),
       cmocka_unit_test(test_bytestring_chunk_append_failure),
@@ -831,12 +890,14 @@ int main(void) {
       cmocka_unit_test(test_definite_negints),
       cmocka_unit_test(test_definite_bytestring),
       cmocka_unit_test(test_definite_bytestring_alloc_failure),
+      cmocka_unit_test(test_definite_bytestring_item_alloc_failure),
       cmocka_unit_test(test_definite_indef_bytestring),
       cmocka_unit_test(test_definite_indef_bytestring_chunk_length_overflow),
       cmocka_unit_test(test_definite_string),
       cmocka_unit_test(test_definite_indef_string),
       cmocka_unit_test(test_definite_indef_string_chunk_length_overflow),
       cmocka_unit_test(test_definite_string_alloc_failure),
+      cmocka_unit_test(test_definite_string_item_alloc_failure),
       cmocka_unit_test(test_definite_array),
       cmocka_unit_test(test_definite_indef_array),
       cmocka_unit_test(test_definite_indef_array_nested),
