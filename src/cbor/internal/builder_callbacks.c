@@ -122,7 +122,9 @@ void _cbor_builder_append(cbor_item_t* item,
   } while (0)
 
 // Check that the length fits into size_t. If not, we cannot possibly allocate
-// the required memory and should fail fast.
+// the required memory and should fail fast. On 64-bit platforms size_t and
+// uint64_t are the same width so this check is always false; it guards against
+// oversized values on 32-bit platforms where SIZE_MAX < UINT64_MAX.
 #define CHECK_LENGTH(ctx, length)  \
   do {                             \
     if (length > SIZE_MAX) {       \
@@ -321,6 +323,12 @@ void cbor_builder_indef_map_start_callback(void* context) {
 void cbor_builder_map_start_callback(void* context, uint64_t size) {
   struct _cbor_decoder_context* ctx = context;
   CHECK_LENGTH(ctx, size);
+  // Each map entry requires two subitems (key + value). Guard against
+  // overflow in size * 2 before it is used as the subitems count.
+  if (size > SIZE_MAX / 2) {
+    ctx->creation_failed = true;
+    return;
+  }
   cbor_item_t* res = cbor_new_definite_map(size);
   CHECK_RES(ctx, res);
   if (size > 0) {
