@@ -138,6 +138,7 @@ static cbor_item_t* _cbor_copy_int(cbor_item_t* item, bool negative) {
       break;
   }
 
+  if (res == NULL) return NULL;
   if (negative) cbor_mark_negint(res);
 
   return res;
@@ -334,6 +335,10 @@ cbor_item_t* cbor_copy_definite(cbor_item_t* item) {
         }
 
         cbor_item_t* res = cbor_new_definite_bytestring();
+        if (res == NULL) {
+          _cbor_free(combined_data);
+          return NULL;
+        }
         cbor_bytestring_set_handle(res, combined_data, total_length);
         return res;
       }
@@ -365,6 +370,10 @@ cbor_item_t* cbor_copy_definite(cbor_item_t* item) {
         }
 
         cbor_item_t* res = cbor_new_definite_string();
+        if (res == NULL) {
+          _cbor_free(combined_data);
+          return NULL;
+        }
         cbor_string_set_handle(res, combined_data, total_length);
         return res;
       }
