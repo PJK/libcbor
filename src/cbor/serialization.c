@@ -141,9 +141,11 @@ size_t cbor_serialized_size(const cbor_item_t* item) {
       return map_size;
     }
     case CBOR_TYPE_TAG: {
+      cbor_item_t* tagged = cbor_tag_item(item);
+      if (tagged == NULL) return 0;
       return _cbor_safe_signaling_add(
           _cbor_encoded_header_size(cbor_tag_value(item)),
-          cbor_serialized_size(cbor_move(cbor_tag_item(item))));
+          cbor_serialized_size(cbor_move(tagged)));
     }
     case CBOR_TYPE_FLOAT_CTRL:
       CBOR_ASSERT(cbor_float_get_width(item) >= CBOR_FLOAT_0 &&
@@ -368,8 +370,10 @@ size_t cbor_serialize_tag(const cbor_item_t* item, unsigned char* buffer,
   size_t written = cbor_encode_tag(cbor_tag_value(item), buffer, buffer_size);
   if (written == 0) return 0;
 
-  size_t item_written = cbor_serialize(cbor_move(cbor_tag_item(item)),
-                                       buffer + written, buffer_size - written);
+  cbor_item_t* tagged = cbor_tag_item(item);
+  if (tagged == NULL) return 0;
+  size_t item_written = cbor_serialize(cbor_move(tagged), buffer + written,
+                                       buffer_size - written);
   if (item_written == 0) return 0;
   return written + item_written;
 }

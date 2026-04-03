@@ -162,6 +162,7 @@ void cbor_intermediate_decref(cbor_item_t* item) { cbor_decref(&item); }
 size_t cbor_refcount(const cbor_item_t* item) { return item->refcount; }
 
 cbor_item_t* cbor_move(cbor_item_t* item) {
+  if (item == NULL) return NULL;
   item->refcount--;
   return item;
 }
