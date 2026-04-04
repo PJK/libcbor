@@ -26,6 +26,31 @@
  */
 
 /*
+ * To accurately track current live bytes we need to know the size of each
+ * allocation when it is freed or reallocated. The C standard does not expose
+ * this, but most platforms provide a query function:
+ *
+ *   macOS / BSD : malloc_size()   from <malloc/malloc.h>
+ *   Linux/glibc : malloc_usable_size() from <malloc.h>
+ *
+ * When available we use these to subtract the correct amount in free() and to
+ * account for the old allocation in realloc(), making allocated_bytes track
+ * current live bytes rather than a monotonically increasing peak.
+ *
+ * Without them we fall back to a conservative approximation: the budget only
+ * grows (frees are not subtracted) and realloc adds the new size on top of the
+ * old one. The budget therefore over-counts, causing cbor_load to fail sooner
+ * than strictly necessary, but it is still a safe upper bound.
+ */
+#if defined(__APPLE__)
+#include <malloc/malloc.h>
+#define ALLOC_SIZE(ptr) malloc_size(ptr)
+#elif defined(__linux__) && defined(__GLIBC__)
+#include <malloc.h>
+#define ALLOC_SIZE(ptr) malloc_usable_size(ptr)
+#endif
+
+/*
  * Total memory budget for all libcbor allocations combined. Adjust to suit
  * your application and expected input size.
  *
@@ -39,24 +64,39 @@ static size_t allocated_bytes = 0;
 static void* capping_malloc(size_t size) {
   if (size > MAX_TOTAL_SIZE - allocated_bytes) return NULL;
   void* ptr = malloc(size);
+#ifdef ALLOC_SIZE
+  if (ptr != NULL) allocated_bytes += ALLOC_SIZE(ptr);
+#else
   if (ptr != NULL) allocated_bytes += size;
+#endif
   return ptr;
 }
 
 static void* capping_realloc(void* ptr, size_t size) {
-  /* We don't track the old size, so treat realloc conservatively:
-   * only check that size fits within the remaining budget. */
+#ifdef ALLOC_SIZE
+  /* Subtract the old allocation before checking the budget. */
+  size_t old_size = ptr != NULL ? ALLOC_SIZE(ptr) : 0;
+  if (size > MAX_TOTAL_SIZE - allocated_bytes + old_size) return NULL;
+  void* new_ptr = realloc(ptr, size);
+  if (new_ptr != NULL) {
+    allocated_bytes -= old_size;
+    allocated_bytes += ALLOC_SIZE(new_ptr);
+  }
+#else
+  /* Without ALLOC_SIZE we cannot subtract the old allocation: treat realloc
+   * as a fresh allocation added on top of the existing budget. */
   if (size > MAX_TOTAL_SIZE - allocated_bytes) return NULL;
   void* new_ptr = realloc(ptr, size);
   if (new_ptr != NULL) allocated_bytes += size;
+#endif
   return new_ptr;
 }
 
 static void capping_free(void* ptr) {
+#ifdef ALLOC_SIZE
+  if (ptr != NULL) allocated_bytes -= ALLOC_SIZE(ptr);
+#endif
   free(ptr);
-  /* We don't track individual allocation sizes, so we cannot subtract from
-   * allocated_bytes on free. The budget therefore measures peak usage, not
-   * current live bytes. */
 }
 
 void usage(void) {
