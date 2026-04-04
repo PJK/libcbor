@@ -1,7 +1,28 @@
 Decoding
 =============================
 
-The following diagram illustrates the relationship among different parts of libcbor from the decoding standpoint.
+libcbor provides two decoding interfaces:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 40 40
+
+   * -
+     - Default (:func:`cbor_load`)
+     - Streaming (:func:`cbor_stream_decode`)
+   * - **How it works**
+     - Decodes a complete CBOR item and returns a ``cbor_item_t`` tree.
+     - Fires a callback for each decoded primitive, string chunk, or collection
+       boundary (e.g. ``array_start``, ``uint8``, ``indef_break``). The caller
+       handles nesting and builds whatever structure it needs.
+   * - **Allocation**
+     - Allocates the full ``cbor_item_t`` tree; use :func:`cbor_decref` to free.
+     - No allocation by the library. The callback receives raw values; storage
+       is entirely the caller's responsibility.
+   * - **When to use**
+     - Most applications. Simple and self-contained.
+     - Large or streaming inputs, memory-constrained environments, or when
+       mapping directly to a custom data structure without an intermediate tree.
 
 .. graphviz::
    :align: center
