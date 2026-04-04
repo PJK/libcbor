@@ -41,12 +41,12 @@ decode complete libcbor data items
 .. warning::
 
    ``cbor_load`` pre-allocates storage for definite-length collections (arrays
-   and maps) whose size is declared in the CBOR header. A crafted input can
-   declare a collection of up to 2\ :sup:`64`\−1 elements in as few as 9 bytes,
-   triggering an allocation of many gigabytes before any element data is
-   read. ``malloc`` will normally refuse such a request and ``cbor_load``
-   will return ``CBOR_ERR_MEMERROR``, but on platforms with memory overcommit
-   (Linux by default) the allocation may appear to succeed.
+   and maps) sized by the element count declared in the CBOR header. The
+   declared count can be up to 2\ :sup:`64`\−1, so ``cbor_load`` will attempt
+   to allocate whatever the header says before reading any element data.
+   ``malloc`` will normally refuse an unreasonably large request and
+   ``cbor_load`` will return ``CBOR_ERR_MEMERROR``, but on platforms with
+   memory overcommit (Linux by default) the allocation may appear to succeed.
 
    Applications that parse untrusted CBOR data should install a capping
    allocator via :func:`cbor_set_allocs` to bound the total memory that

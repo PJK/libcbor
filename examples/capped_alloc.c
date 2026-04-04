@@ -13,10 +13,10 @@
  * Illustrates how to use cbor_set_allocs to cap the memory that cbor_load
  * may consume when parsing untrusted data.
  *
- * A CBOR input can declare a definite-length array or map with up to
- * 2^64-1 elements in as few as 9 bytes. cbor_load pre-allocates storage
- * for all declared elements before reading any of them, so a crafted input
- * can request many gigabytes of memory from a tiny payload.
+ * cbor_load pre-allocates storage for definite-length arrays and maps sized
+ * by the element count declared in the CBOR header. The declared count can
+ * be up to 2^64-1, so cbor_load will attempt to allocate whatever the
+ * header says before reading any element data.
  *
  * Installing a capping malloc via cbor_set_allocs causes cbor_load to
  * return CBOR_ERR_MEMERROR instead of attempting an oversized allocation.
