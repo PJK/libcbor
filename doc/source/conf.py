@@ -31,6 +31,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 # ones.
 extensions = [
     'breathe',
+    'sphinx.ext.graphviz',
     'sphinx.ext.mathjax',
     'sphinx.ext.autodoc',
     'sphinx.ext.ifconfig',
