@@ -8,10 +8,17 @@ If you have specific requirements, you should consider rolling your own driver f
 Using custom allocator
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-*libcbor* gives you the ability to provide your own implementations of ``malloc``, ``realloc``, and ``free``. 
-This can be useful if you are using a custom allocator throughout your application, 
-or if you want to implement custom policies (e.g. tighter restrictions on the amount of allocated memory).
+*libcbor* gives you the ability to provide your own implementations of ``malloc``, ``realloc``, and ``free``.
+This is useful if you are using a custom allocator throughout your application, or if you want to enforce
+memory limits when parsing untrusted data.
 
+.. note::
+
+   A capping allocator is the recommended way to bound memory consumption in ``cbor_load``. Because
+   definite-length arrays and maps pre-allocate storage for the declared number of elements, a crafted
+   input can trigger a very large allocation before any element data is read. A ``malloc`` wrapper that
+   returns ``NULL`` above a chosen threshold causes ``cbor_load`` to return ``CBOR_ERR_MEMERROR`` cleanly
+   rather than attempting the allocation.
 
 .. code-block:: c
 

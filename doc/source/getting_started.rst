@@ -61,20 +61,42 @@ A handful of configuration flags can be passed to `cmake`. The following table l
      - Build as a shared library
      - ``OFF``
      - ``ON``, ``OFF``
-   * - ``HUGE_FUZZ``
-     - :doc:`Fuzz test </tests>` with 8GB of data
+   * - ``WITH_TESTS``
+     - Build unit tests (requires CMocka; see :doc:`development`)
      - ``OFF``
      - ``ON``, ``OFF``
-   * - ``SANE_MALLOC``
-     - Assume ``malloc`` will refuse unreasonable allocations
-     - ``OFF``
+   * - ``WITH_EXAMPLES``
+     - Build examples
+     - ``ON``
      - ``ON``, ``OFF``
    * - ``COVERAGE``
      - Generate test coverage instrumentation
      - ``OFF``
      - ``ON``, ``OFF``
-   * - ``WITH_TESTS``
-     - Build unit tests (see :doc:`development`)
+   * - ``SANITIZE``
+     - Enable AddressSanitizer and compatible sanitizers in Debug builds
+     - ``ON``
+     - ``ON``, ``OFF``
+
+The following options are **test-only**: they only affect test behaviour and have no effect on the library itself. They require ``WITH_TESTS=ON``.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Option
+     - Meaning
+     - Default
+     - Possible values
+   * - ``HUGE_FUZZ``
+     - Run the :doc:`fuzz test </tests>` against 8 GB of data instead of the default smaller corpus. Slow; only useful for release validation.
+     - ``OFF``
+     - ``ON``, ``OFF``
+   * - ``SANE_MALLOC``
+     - Enable tests that assert ``cbor_load`` returns ``CBOR_ERR_MEMERROR`` for crafted inputs that declare enormous collections. These tests only pass on platforms where ``malloc`` refuses unreasonably large requests. Disable on Linux with memory overcommit enabled, where ``malloc`` succeeds for requests it cannot actually fulfil.
+     - ``OFF``
+     - ``ON``, ``OFF``
+   * - ``PRINT_FUZZ``
+     - Print each input processed by the fuzz test to stdout. Only useful for fuzz test debugging.
      - ``OFF``
      - ``ON``, ``OFF``
 

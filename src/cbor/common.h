@@ -144,6 +144,14 @@ CBOR_EXPORT extern _cbor_free_t _cbor_free;
  * By default, libcbor will use the standard library `malloc`, `realloc`,
  * and `free`.
  *
+ * A custom allocator is the intended mechanism for limiting memory
+ * consumption when parsing untrusted CBOR data. Because definite-length
+ * collections pre-allocate storage sized by the declared element count,
+ * a crafted input can request a very large allocation before any element
+ * data is read. A capping `custom_malloc` that returns NULL above a chosen
+ * threshold will cause `cbor_load` to return `CBOR_ERR_MEMERROR` instead of
+ * attempting the allocation.
+ *
  * \rst
  * .. warning::
  *   This function modifies the global state and should
