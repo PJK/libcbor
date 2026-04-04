@@ -24,6 +24,10 @@ libcbor provides two decoding interfaces:
      - Large or streaming inputs, memory-constrained environments, or when
        mapping directly to a custom data structure without an intermediate tree.
 
+:func:`cbor_load` is implemented on top of :func:`cbor_stream_decode` — it
+installs its own internal callbacks that build the ``cbor_item_t`` tree as
+events arrive.
+
 .. graphviz::
    :align: center
 
