@@ -26,23 +26,37 @@
  */
 
 /*
- * Maximum size for any single allocation made by libcbor. This caps the
- * pre-allocation for definite-length collections: an array or map with N
- * elements pre-allocates N * sizeof(pointer), so this limit constrains
- * the largest collection that can be decoded in one shot.
+ * Total memory budget for all libcbor allocations combined. Adjust to suit
+ * your application and expected input size.
  *
- * Adjust to suit your application and expected input size.
+ * Note: this global counter is not thread-safe. If you use libcbor from
+ * multiple threads, guard it with a mutex or use a per-thread budget.
  */
-#define MAX_ALLOC_SIZE (8 * 1024 * 1024) /* 8 MiB */
+#define MAX_TOTAL_SIZE (8 * 1024 * 1024) /* 8 MiB */
+
+static size_t allocated_bytes = 0;
 
 static void* capping_malloc(size_t size) {
-  if (size > MAX_ALLOC_SIZE) return NULL;
-  return malloc(size);
+  if (size > MAX_TOTAL_SIZE - allocated_bytes) return NULL;
+  void* ptr = malloc(size);
+  if (ptr != NULL) allocated_bytes += size;
+  return ptr;
 }
 
 static void* capping_realloc(void* ptr, size_t size) {
-  if (size > MAX_ALLOC_SIZE) return NULL;
-  return realloc(ptr, size);
+  /* We don't track the old size, so treat realloc conservatively:
+   * only check that size fits within the remaining budget. */
+  if (size > MAX_TOTAL_SIZE - allocated_bytes) return NULL;
+  void* new_ptr = realloc(ptr, size);
+  if (new_ptr != NULL) allocated_bytes += size;
+  return new_ptr;
+}
+
+static void capping_free(void* ptr) {
+  free(ptr);
+  /* We don't track individual allocation sizes, so we cannot subtract from
+   * allocated_bytes on free. The budget therefore measures peak usage, not
+   * current live bytes. */
 }
 
 void usage(void) {
@@ -54,7 +68,7 @@ int main(int argc, char* argv[]) {
   if (argc != 2) usage();
 
   /* Install the capping allocator before any cbor_load calls. */
-  cbor_set_allocs(capping_malloc, capping_realloc, free);
+  cbor_set_allocs(capping_malloc, capping_realloc, capping_free);
 
   FILE* f = fopen(argv[1], "rb");
   if (f == NULL) usage();
@@ -80,11 +94,9 @@ int main(int argc, char* argv[]) {
             "Failed to decode CBOR near byte %zu: ", result.error.position);
     switch (result.error.code) {
       case CBOR_ERR_MEMERROR:
-        fprintf(
-            stderr,
-            "allocation failed or exceeded the %d MiB per-allocation "
-            "cap -- input may contain a malicious large-collection header\n",
-            MAX_ALLOC_SIZE / (1024 * 1024));
+        fprintf(stderr,
+                "allocation failed or exceeded the %d MiB total budget\n",
+                MAX_TOTAL_SIZE / (1024 * 1024));
         break;
       case CBOR_ERR_NODATA:
         fprintf(stderr, "empty input\n");

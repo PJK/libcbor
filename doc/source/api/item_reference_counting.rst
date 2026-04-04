@@ -22,20 +22,21 @@ memory limits when parsing untrusted data.
 
 .. code-block:: c
 
-   #define MAX_ALLOC_SIZE (8 * 1024 * 1024)  /* 8 MiB */
+   /* Note: not thread-safe; guard allocated_bytes with a mutex if needed */
+   #define MAX_TOTAL_SIZE (8 * 1024 * 1024)  /* 8 MiB */
+   static size_t allocated_bytes = 0;
 
    static void* capping_malloc(size_t size) {
-     if (size > MAX_ALLOC_SIZE) return NULL;
-     return malloc(size);
+     if (size > MAX_TOTAL_SIZE - allocated_bytes) return NULL;
+     void* ptr = malloc(size);
+     if (ptr != NULL) allocated_bytes += size;
+     return ptr;
    }
 
-   static void* capping_realloc(void* ptr, size_t size) {
-     if (size > MAX_ALLOC_SIZE) return NULL;
-     return realloc(ptr, size);
-   }
+   /* ... matching capping_realloc and free; see examples/capped_alloc.c */
 
    /* Install before any cbor_load calls */
-   cbor_set_allocs(capping_malloc, capping_realloc, free);
+   cbor_set_allocs(capping_malloc, capping_realloc, capping_free);
 
 .. doxygenfunction:: cbor_set_allocs
 
