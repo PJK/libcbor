@@ -8,14 +8,35 @@ If you have specific requirements, you should consider rolling your own driver f
 Using custom allocator
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-*libcbor* gives you the ability to provide your own implementations of ``malloc``, ``realloc``, and ``free``. 
-This can be useful if you are using a custom allocator throughout your application, 
-or if you want to implement custom policies (e.g. tighter restrictions on the amount of allocated memory).
+*libcbor* gives you the ability to provide your own implementations of ``malloc``, ``realloc``, and ``free``.
+This is useful if you are using a custom allocator throughout your application, or if you want to enforce
+memory limits when parsing untrusted data.
 
+.. note::
+
+   A capping allocator is the recommended way to bound memory consumption in ``cbor_load``. Because
+   definite-length arrays and maps pre-allocate storage for the declared number of elements, a crafted
+   input can trigger a very large allocation before any element data is read. A ``malloc`` wrapper that
+   returns ``NULL`` above a chosen threshold causes ``cbor_load`` to return ``CBOR_ERR_MEMERROR`` cleanly
+   rather than attempting the allocation. See :doc:`/getting_started` for a complete example.
 
 .. code-block:: c
 
-	cbor_set_allocs(malloc, realloc, free);
+   /* Note: not thread-safe; guard allocated_bytes with a mutex if needed */
+   #define MAX_TOTAL_SIZE (8 * 1024 * 1024)  /* 8 MiB */
+   static size_t allocated_bytes = 0;
+
+   static void* capping_malloc(size_t size) {
+     if (size > MAX_TOTAL_SIZE - allocated_bytes) return NULL;
+     void* ptr = malloc(size);
+     if (ptr != NULL) allocated_bytes += size;
+     return ptr;
+   }
+
+   /* ... matching capping_realloc and free; see examples/capped_alloc.c */
+
+   /* Install before any cbor_load calls */
+   cbor_set_allocs(capping_malloc, capping_realloc, capping_free);
 
 .. doxygenfunction:: cbor_set_allocs
 

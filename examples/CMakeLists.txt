@@ -22,6 +22,9 @@ target_link_libraries(cbor_sequence cbor cbor_project_options)
 add_executable(crash_course crash_course.c)
 target_link_libraries(crash_course cbor cbor_project_options)
 
+add_executable(capped_alloc capped_alloc.c)
+target_link_libraries(capped_alloc cbor cbor_project_options)
+
 find_package(CJSON)
 
 if(CJSON_FOUND)
