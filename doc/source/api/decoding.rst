@@ -50,7 +50,8 @@ decode complete libcbor data items
 
    Applications that parse untrusted CBOR data should install a capping
    allocator via :func:`cbor_set_allocs` to bound the total memory that
-   ``cbor_load`` may consume. Alternatively, use the streaming decoder
+   ``cbor_load`` may consume (see ``examples/capped_alloc.c`` for a
+   self-contained example). Alternatively, use the streaming decoder
    (:doc:`streaming_decoding`) which gives the application full control over
    memory allocation for each decoded item.
 

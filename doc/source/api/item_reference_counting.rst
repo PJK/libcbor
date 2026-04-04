@@ -18,11 +18,24 @@ memory limits when parsing untrusted data.
    definite-length arrays and maps pre-allocate storage for the declared number of elements, a crafted
    input can trigger a very large allocation before any element data is read. A ``malloc`` wrapper that
    returns ``NULL`` above a chosen threshold causes ``cbor_load`` to return ``CBOR_ERR_MEMERROR`` cleanly
-   rather than attempting the allocation.
+   rather than attempting the allocation. See :doc:`/getting_started` for a complete example.
 
 .. code-block:: c
 
-	cbor_set_allocs(malloc, realloc, free);
+   #define MAX_ALLOC_SIZE (8 * 1024 * 1024)  /* 8 MiB */
+
+   static void* capping_malloc(size_t size) {
+     if (size > MAX_ALLOC_SIZE) return NULL;
+     return malloc(size);
+   }
+
+   static void* capping_realloc(void* ptr, size_t size) {
+     if (size > MAX_ALLOC_SIZE) return NULL;
+     return realloc(ptr, size);
+   }
+
+   /* Install before any cbor_load calls */
+   cbor_set_allocs(capping_malloc, capping_realloc, free);
 
 .. doxygenfunction:: cbor_set_allocs
 

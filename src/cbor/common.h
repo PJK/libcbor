@@ -150,7 +150,8 @@ CBOR_EXPORT extern _cbor_free_t _cbor_free;
  * a crafted input can request a very large allocation before any element
  * data is read. A capping `custom_malloc` that returns NULL above a chosen
  * threshold will cause `cbor_load` to return `CBOR_ERR_MEMERROR` instead of
- * attempting the allocation.
+ * attempting the allocation. See `examples/capped_alloc.c` for a
+ * self-contained demonstration.
  *
  * \rst
  * .. warning::
