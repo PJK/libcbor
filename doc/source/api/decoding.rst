@@ -5,24 +5,28 @@ libcbor provides two decoding interfaces:
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 40 40
+   :widths: 30 35 35
 
    * -
      - Default (:func:`cbor_load`)
      - Streaming (:func:`cbor_stream_decode`)
-   * - **How it works**
-     - Decodes a complete CBOR item and returns a ``cbor_item_t`` tree.
-     - Fires a callback for each decoded primitive, string chunk, or collection
-       boundary (e.g. ``array_start``, ``uint8``, ``indef_break``). The caller
-       handles nesting and builds whatever structure it needs.
-   * - **Allocation**
-     - Allocates the full ``cbor_item_t`` tree; use :func:`cbor_decref` to free.
-     - No allocation by the library. The callback receives raw values; storage
-       is entirely the caller's responsibility.
-   * - **When to use**
-     - Most applications. Simple and self-contained.
-     - Large or streaming inputs, memory-constrained environments, or when
-       mapping directly to a custom data structure without an intermediate tree.
+   * - **Returns**
+     - A fully-built ``cbor_item_t`` tree.
+     - Nothing. Fires callbacks as items are decoded.
+   * - **Callbacks**
+     - None. Results available after the call returns.
+     - One callback per primitive, string chunk, or collection boundary
+       (e.g. ``array_start``, ``uint8``, ``string_chunk``).
+   * - **Nesting**
+     - Handled by the library.
+     - Caller's responsibility.
+   * - **Memory**
+     - Allocates the ``cbor_item_t`` tree. Free with :func:`cbor_decref`.
+     - No library allocations.
+   * - **Best for**
+     - Most applications.
+     - Large inputs, memory-constrained environments, or mapping directly
+       to custom data structures.
 
 :func:`cbor_load` is implemented on top of :func:`cbor_stream_decode` — it
 installs its own internal callbacks that build the ``cbor_item_t`` tree as
