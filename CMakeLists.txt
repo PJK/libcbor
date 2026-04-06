@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(libcbor VERSION 0.13.0 LANGUAGES C CXX)
+project(libcbor VERSION 0.14.0 LANGUAGES C CXX)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
   "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/")
 include(CTest)
