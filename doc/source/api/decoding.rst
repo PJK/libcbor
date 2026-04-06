@@ -8,8 +8,11 @@ libcbor provides two decoding interfaces:
    :widths: 30 35 35
 
    * -
-     - Default (:func:`cbor_load`)
-     - Streaming (:func:`cbor_stream_decode`)
+     - Default
+     - Streaming
+   * - **Function**
+     - :func:`cbor_load`
+     - :func:`cbor_stream_decode`
    * - **Returns**
      - A fully-built ``cbor_item_t`` tree.
      - Nothing. Fires callbacks as items are decoded.
