@@ -36,6 +36,7 @@ libcbor provides two decoding interfaces:
    * - **Best for**
      - - Trusted or size-bounded inputs.
        - General data manipulation and inspection.
+       - Simple use cases.
      - - Large or unbounded inputs.
        - Memory-constrained environments.
        - Mapping to custom data structures.
