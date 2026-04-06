@@ -72,18 +72,18 @@ call.
    - **Definite-length arrays and maps** — storage for the declared element count.
    - **Definite-length strings and bytestrings** — a buffer for the declared byte length.
 
-   All of these lengths can be up to 2\ :sup:`64`\−1, so ``cbor_load`` will
-   attempt to allocate whatever the header declares.
-   ``malloc`` will normally refuse an unreasonably large request and
-   ``cbor_load`` will return ``CBOR_ERR_MEMERROR``, but on platforms with
-   memory overcommit (Linux by default) the allocation may appear to succeed.
+   All declared lengths can be up to 2\ :sup:`64`\−1. ``malloc`` will normally
+   refuse an unreasonably large request and ``cbor_load`` will return
+   ``CBOR_ERR_MEMERROR``, but on platforms with memory overcommit (Linux by
+   default) the allocation may appear to succeed.
 
-   Applications that parse untrusted CBOR data should install a capping
-   allocator via :func:`cbor_set_allocs` to bound the total memory that
-   ``cbor_load`` may consume (see ``examples/capped_alloc.c`` for a
-   self-contained example). Alternatively, use the streaming decoder
-   (:doc:`streaming_decoding`) which gives the application full control over
-   memory allocation for each decoded item.
+   Mitigations:
+
+   - Install a capping allocator via :func:`cbor_set_allocs` to bound total
+     memory consumption (see ``examples/capped_alloc.c`` for a self-contained
+     example).
+   - Use the streaming decoder (:doc:`streaming_decoding`), which gives the
+     application full control over memory allocation for each decoded item.
 
 .. doxygenfunction:: cbor_load
 
