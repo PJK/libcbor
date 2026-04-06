@@ -7,6 +7,7 @@ Next
 
 - [Document large-allocation risk in `cbor_load` and clarify test-only CMake flags](https://github.com/PJK/libcbor/pull/422)
 - [Fix NULL dereference in `cbor_copy`/`cbor_copy_definite` on allocation failure](https://github.com/PJK/libcbor/pull/419) (reported by [Benjamin608608](https://github.com/Benjamin608608))
+- [Explicitly guard against `size * 2` overflow in `cbor_builder_map_start_callback`](https://github.com/PJK/libcbor/pull/421) (reported by [Benjamin608608](https://github.com/Benjamin608608))
 - [Only generate CMake coverage build targets when explicitly enabled](https://github.com/PJK/libcbor/issues/383)
 - [Fix CMake feature macro names and ensure `_CBOR_NODISCARD` is defined with `[[nodiscard]]`](https://github.com/PJK/libcbor/pull/385)
 - [Fix integer overflow in `cbor_copy_definite()` when accumulating indefinite bytestring/string chunk lengths](https://github.com/PJK/libcbor/pull/387)
