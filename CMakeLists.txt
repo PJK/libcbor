@@ -27,14 +27,17 @@ option(WITH_TESTS "[TEST] Build unit tests (requires CMocka)" OFF)
 
 option(WITH_EXAMPLES "Build examples" ON)
 
-option(HUGE_FUZZ "[TEST] Fuzz through 8GB of data in the test.\
-       Do not use with memory instrumentation!"  OFF)
+option(HUGE_FUZZ
+  "[TEST] Run the fuzz test against 8GB of data instead of the default \
+smaller corpus. Do not use with memory instrumentation." OFF)
 
 option(SANE_MALLOC
-  "[TEST] Assume that malloc will not allocate multi-GB blocks.\
-       Tests only, platform specific"  OFF)
+  "[TEST] Enable tests that assert cbor_load returns CBOR_ERR_MEMERROR for \
+crafted inputs that declare enormous collections. Only enable on platforms \
+where malloc refuses unreasonably large requests (i.e. NOT Linux with \
+overcommit). Has no effect on the library itself." OFF)
 
-option(PRINT_FUZZ "[TEST] Print the fuzzer input" OFF)
+option(PRINT_FUZZ "[TEST] Print each input processed by the fuzz test to stdout." OFF)
 
 option(SANITIZE "Enable ASan & a few compatible sanitizers in Debug mode" ON)
 
