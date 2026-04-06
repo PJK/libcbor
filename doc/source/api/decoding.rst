@@ -66,16 +66,17 @@ call.
 
 .. warning::
 
-   ``cbor_load`` allocates memory sized by the lengths declared in the CBOR
-   header, before reading the corresponding data. This applies to:
+   ``cbor_load`` allocates memory sized by lengths declared in the CBOR header
+   before reading the corresponding data:
 
    - **Definite-length arrays and maps** — storage for the declared element count.
    - **Definite-length strings and bytestrings** — a buffer for the declared byte length.
 
-   All declared lengths can be up to 2\ :sup:`64`\−1. ``malloc`` will normally
-   refuse an unreasonably large request and ``cbor_load`` will return
-   ``CBOR_ERR_MEMERROR``, but on platforms with memory overcommit (Linux by
-   default) the allocation may appear to succeed.
+   All of these lengths are encoded as a 64-bit integer, so ``cbor_load`` may
+   attempt an allocation of up to 2\ :sup:`64`\−1 bytes before any payload data
+   is read. ``malloc`` will normally refuse such a request and ``cbor_load``
+   will return ``CBOR_ERR_MEMERROR``, but on platforms with memory overcommit
+   (Linux by default) the allocation may silently appear to succeed.
 
    Mitigations:
 
