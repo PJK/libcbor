@@ -66,10 +66,14 @@ call.
 
 .. warning::
 
-   ``cbor_load`` pre-allocates storage for definite-length collections (arrays
-   and maps) sized by the element count declared in the CBOR header. The
-   declared count can be up to 2\ :sup:`64`\−1, so ``cbor_load`` will attempt
-   to allocate whatever the header says before reading any element data.
+   ``cbor_load`` allocates memory sized by the lengths declared in the CBOR
+   header, before reading the corresponding data. This applies to:
+
+   - **Definite-length arrays and maps** — storage for the declared element count.
+   - **Definite-length strings and bytestrings** — a buffer for the declared byte length.
+
+   All of these lengths can be up to 2\ :sup:`64`\−1, so ``cbor_load`` will
+   attempt to allocate whatever the header declares.
    ``malloc`` will normally refuse an unreasonably large request and
    ``cbor_load`` will return ``CBOR_ERR_MEMERROR``, but on platforms with
    memory overcommit (Linux by default) the allocation may appear to succeed.
