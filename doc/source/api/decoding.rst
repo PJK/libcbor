@@ -1,59 +1,104 @@
 Decoding
 =============================
 
-The following diagram illustrates the relationship among different parts of libcbor from the decoding standpoint.
+libcbor provides two decoding interfaces:
 
-::
+.. rst-class:: fixed-table
 
-    ┌──────────────────────────────────────────────────────────────────────────────────────────────┐
-    │                                                                                              │
-    │                                      Client application                                      │
-    │                                                                                              │
-    │                                                 ┌────────────────────────────────────────────┘
-    │                                                 │                     ↕
-    │                                                 │ ┌──────────────────────────────────────────┐
-    │                                                 │ │                                          │
-    │                                                 │ │          Manipulation routines           │
-    │                                                 │ │                                          │
-    │           ┌─────────────────────────────────────┘ └──────────────────────────────────────────┘
-    │           │     ↑    ↑                  ↑                              ↑
-    │           │     │    │    ┌─────────────╫──────────┬───────────────────┴─┐
-    │           │     │   CDS   │             ║          │                     │
-    │           │     │    │   PDS            ║         PDS                   PDS
-    │           │     ↓    ↓    ↓             ↓          ↓                     ↓
-    │           │ ┌─────────────────┐   ┌────────────────────┐   ┌────────────────────────────┐
-    │           │ │                 │   │                    │   │                            │
-    │           │ │  Custom driver  │ ↔ │  Streaming driver  │ ↔ │       Default driver       │ ↔ CD
-    │           │ │                 │   │                    │   │                            │
-    └───────────┘ └─────────────────┘   └────────────────────┘   └────────────────────────────┘
-          ↕                ↕                        ↕                           ↕
-    ┌──────────────────────────────────────────────────────────────────────────────────────────────┐
-    │                                                                                              │
-    │                            Stateless event─driven decoder                                    │
-    │                                                                                              │
-    └──────────────────────────────────────────────────────────────────────────────────────────────┘
+.. list-table::
+   :header-rows: 1
+   :widths: 20 40 40
 
-                  (PDS = Provided Data Structures, CDS = Custom Data Structures)
+   * -
+     - Default
+     - Streaming
+   * - **Function**
+     - :func:`cbor_load`
+     - :func:`cbor_stream_decode`
+   * - **Returns**
+     - A fully-built ``cbor_item_t`` tree.
+     - Nothing. Fires a callback for each decoded value.
+   * - **Callbacks**
+     - None. Results available after the call returns.
+     - One callback per primitive, string chunk, or
+       collection boundary (e.g. ``array_start``,
+       ``uint8``, ``string_chunk``).
+   * - **Nesting**
+     - Handled by the library.
+     - Caller's responsibility. Nested structures
+       (e.g. arrays containing maps) require the
+       caller to maintain an explicit stack to track
+       the current depth and accumulate children.
+   * - **Memory**
+     - Allocates the ``cbor_item_t`` tree.
+       Free with :func:`cbor_decref`.
+     - No library allocations.
+   * - **Best for**
+     - - Trusted or size-bounded inputs.
+       - General data manipulation and inspection.
+       - Simple use cases.
+     - - Large or unbounded inputs.
+       - Memory-constrained environments.
+       - Mapping to custom data structures.
+       - Known, restricted schemas.
 
-This section will deal with the API that is labeled as the "Default driver" in the diagram. That is, routines that
-decode complete libcbor data items
+:func:`cbor_load` is implemented on top of :func:`cbor_stream_decode` — it
+installs its own internal callbacks that build the ``cbor_item_t`` tree as
+events arrive.
+
+.. graphviz::
+   :align: center
+
+   digraph decoding {
+       graph [rankdir=TB, nodesep=1.4, ranksep=0.8, fontname="Helvetica"]
+       node  [shape=box, style="filled,rounded", fontname="Helvetica", margin="0.3,0.15"]
+       edge  [color="#555555", fontname="Helvetica", fontsize=10]
+
+       client    [label="Client application",                   fillcolor="#AED6F1"]
+       cbor_load [label="cbor_load",                            fillcolor="#FAD7A0"]
+       streaming [label="cbor_stream_decode",                   fillcolor="#FAD7A0"]
+       item      [label="cbor_item_t",                          fillcolor="#A9DFBF"]
+       manip     [label="Manipulation routines\n(cbor_item_t API)", fillcolor="#D2B4DE"]
+
+       { rank=same; cbor_load; streaming }
+       { rank=same; item; manip }
+
+       client -> cbor_load [label=" bytes "]
+       client -> streaming [label=" bytes + callbacks "]
+
+       cbor_load -> streaming [label=" internal callbacks ",
+                               style=dashed, constraint=false]
+       cbor_load -> item
+
+       item:e -> manip:w [style=dashed, dir=both, constraint=false,
+                          label=" use items "]
+   }
+
+This section covers the **Default driver** — :func:`cbor_load` and related
+routines that decode a complete CBOR input into a ``cbor_item_t`` tree in one
+call.
 
 .. warning::
 
-   ``cbor_load`` pre-allocates storage for definite-length collections (arrays
-   and maps) sized by the element count declared in the CBOR header. The
-   declared count can be up to 2\ :sup:`64`\−1, so ``cbor_load`` will attempt
-   to allocate whatever the header says before reading any element data.
-   ``malloc`` will normally refuse an unreasonably large request and
-   ``cbor_load`` will return ``CBOR_ERR_MEMERROR``, but on platforms with
-   memory overcommit (Linux by default) the allocation may appear to succeed.
+   ``cbor_load`` allocates memory sized by lengths declared in the CBOR header
+   before reading the corresponding data:
 
-   Applications that parse untrusted CBOR data should install a capping
-   allocator via :func:`cbor_set_allocs` to bound the total memory that
-   ``cbor_load`` may consume (see ``examples/capped_alloc.c`` for a
-   self-contained example). Alternatively, use the streaming decoder
-   (:doc:`streaming_decoding`) which gives the application full control over
-   memory allocation for each decoded item.
+   - **Definite-length arrays and maps** — storage for the declared element count.
+   - **Definite-length strings and bytestrings** — a buffer for the declared byte length.
+
+   All of these lengths are encoded as a 64-bit integer, so ``cbor_load`` may
+   attempt an allocation of up to 2\ :sup:`64`\−1 bytes before any payload data
+   is read. ``malloc`` will normally refuse such a request and ``cbor_load``
+   will return ``CBOR_ERR_MEMERROR``, but on platforms with memory overcommit
+   (Linux by default) the allocation may silently appear to succeed.
+
+   Mitigations:
+
+   - Install a capping allocator via :func:`cbor_set_allocs` to bound total
+     memory consumption (see ``examples/capped_alloc.c`` for a self-contained
+     example).
+   - Use the streaming decoder (:doc:`streaming_decoding`), which gives the
+     application full control over memory allocation for each decoded item.
 
 .. doxygenfunction:: cbor_load
 
