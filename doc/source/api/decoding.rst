@@ -25,15 +25,21 @@ libcbor provides two decoding interfaces:
        ``uint8``, ``string_chunk``).
    * - **Nesting**
      - Handled by the library.
-     - Caller's responsibility.
+     - Caller's responsibility. Nested structures
+       (e.g. arrays containing maps) require the
+       caller to maintain an explicit stack to track
+       the current depth and accumulate children.
    * - **Memory**
      - Allocates the ``cbor_item_t`` tree.
        Free with :func:`cbor_decref`.
      - No library allocations.
    * - **Best for**
-     - Most applications.
-     - Large inputs, memory-constrained environments,
-       or mapping directly to custom data structures.
+     - - Trusted or size-bounded inputs.
+       - General data manipulation and inspection.
+     - - Large or unbounded inputs.
+       - Memory-constrained environments.
+       - Mapping to custom data structures.
+       - Known, restricted schemas.
 
 :func:`cbor_load` is implemented on top of :func:`cbor_stream_decode` — it
 installs its own internal callbacks that build the ``cbor_item_t`` tree as
