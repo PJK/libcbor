@@ -36,38 +36,28 @@ events arrive.
    :align: center
 
    digraph decoding {
-       graph [rankdir=TB, nodesep=1.0, ranksep=0.8, fontname="Helvetica"]
+       graph [rankdir=TB, nodesep=1.4, ranksep=0.8, fontname="Helvetica"]
        node  [shape=box, style="filled,rounded", fontname="Helvetica", margin="0.3,0.15"]
        edge  [color="#555555", fontname="Helvetica", fontsize=10]
 
-       client    [label="Client application",              fillcolor="#AED6F1"]
+       client    [label="Client application",                   fillcolor="#AED6F1"]
+       cbor_load [label="cbor_load",                            fillcolor="#FAD7A0"]
+       streaming [label="cbor_stream_decode",                   fillcolor="#FAD7A0"]
+       item      [label="cbor_item_t",                          fillcolor="#A9DFBF"]
        manip     [label="Manipulation routines\n(cbor_item_t API)", fillcolor="#D2B4DE"]
-       stateless [label="Stateless event-driven decoder",  fillcolor="#A9DFBF"]
 
-       subgraph cluster_drivers {
-           label="Decoder interface — choose one"
-           fontname="Helvetica"
-           fontsize=11
-           style=dashed
-           color="#888888"
-           node [fillcolor="#FAD7A0"]
-           custom    [label="Custom driver\n(client-defined callbacks)"]
-           streaming [label="Streaming driver\n(event callbacks → cbor_item_t)"]
-           default   [label="Default driver\n(cbor_load → cbor_item_t)"]
-       }
+       { rank=same; cbor_load; streaming }
+       { rank=same; item; manip }
 
-       { rank=same; client; manip }
+       client -> cbor_load [label=" bytes "]
+       client -> streaming [label=" bytes + callbacks "]
 
-       client -> custom
-       client -> streaming
-       client -> default
+       cbor_load -> streaming [label=" internal callbacks ",
+                               style=dashed, constraint=false]
+       cbor_load -> item
 
-       custom    -> stateless
-       streaming -> stateless
-       default   -> stateless
-
-       client:e -> manip:w [style=dashed, dir=both, constraint=false,
-                            label="use decoded items"]
+       item:e -> manip:w [style=dashed, dir=both, constraint=false,
+                          label=" use items "]
    }
 
 This section covers the **Default driver** — :func:`cbor_load` and related
