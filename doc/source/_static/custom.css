@@ -1,0 +1,13 @@
+/* Force fixed-layout wrapping on the decoder comparison table.
+ * The RTD theme wraps all tables in .wy-table-responsive which enables
+ * horizontal scrolling and prevents word-wrap from taking effect. */
+table.fixed-table {
+    table-layout: fixed;
+    width: 100%;
+}
+table.fixed-table th,
+table.fixed-table td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}

@@ -3,10 +3,11 @@ Decoding
 
 libcbor provides two decoding interfaces:
 
+.. rst-class:: fixed-table
+
 .. list-table::
    :header-rows: 1
    :widths: 20 40 40
-   :width: 100%
 
    * -
      - Default
