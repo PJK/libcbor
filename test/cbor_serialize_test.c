@@ -466,6 +466,20 @@ static void test_serialize_tags(void** _state _CBOR_UNUSED) {
   cbor_decref(&one);
 }
 
+static void test_serialized_size_tag_no_item(void** _state _CBOR_UNUSED) {
+  cbor_item_t* item = cbor_new_tag(21);
+  // cbor_tag_item returns NULL, cbor_move(NULL) crashes without the fix
+  assert_size_equal(cbor_serialized_size(item), 0);
+  cbor_decref(&item);
+}
+
+static void test_serialize_tag_no_item(void** _state _CBOR_UNUSED) {
+  cbor_item_t* item = cbor_new_tag(21);
+  // cbor_tag_item returns NULL, cbor_move(NULL) crashes without the fix
+  assert_size_equal(cbor_serialize(item, buffer, 512), 0);
+  cbor_decref(&item);
+}
+
 static void test_serialize_tags_no_space(void** _state _CBOR_UNUSED) {
   cbor_item_t* item = cbor_new_tag(21);
   cbor_item_t* one = cbor_build_uint8(1);
@@ -731,6 +745,8 @@ int main(void) {
       cmocka_unit_test(test_serialize_indefinite_map),
       cmocka_unit_test(test_serialize_map_no_space),
       cmocka_unit_test(test_serialize_tags),
+      cmocka_unit_test(test_serialized_size_tag_no_item),
+      cmocka_unit_test(test_serialize_tag_no_item),
       cmocka_unit_test(test_serialize_tags_no_space),
       cmocka_unit_test(test_serialize_half),
       cmocka_unit_test(test_serialize_single),
