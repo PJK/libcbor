@@ -189,6 +189,22 @@ static void test_array_creation(void** _state _CBOR_UNUSED) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_array()); });
 }
 
+static void test_new_definite_array_zero(void** _state _CBOR_UNUSED) {
+  // Only one malloc (for the item), no allocation for zero-size data.
+  // This verifies the fix for platforms where malloc(0) returns NULL.
+  WITH_MOCK_MALLOC(
+      {
+        cbor_item_t* array = cbor_new_definite_array(0);
+        assert_non_null(array);
+        assert_true(cbor_isa_array(array));
+        assert_true(cbor_array_is_definite(array));
+        assert_size_equal(cbor_array_size(array), 0);
+        assert_size_equal(cbor_array_allocated(array), 0);
+        cbor_decref(&array);
+      },
+      1, MALLOC);
+}
+
 static void test_array_push(void** _state _CBOR_UNUSED) {
   WITH_MOCK_MALLOC(
       {
@@ -234,6 +250,7 @@ int main(void) {
       cmocka_unit_test(test_array_creation),
       cmocka_unit_test(test_array_push),
       cmocka_unit_test(test_indef_array_decode),
+      cmocka_unit_test(test_new_definite_array_zero),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);

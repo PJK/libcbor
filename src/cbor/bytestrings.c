@@ -61,10 +61,12 @@ cbor_item_t* cbor_new_indefinite_bytestring(void) {
 cbor_item_t* cbor_build_bytestring(cbor_data handle, size_t length) {
   cbor_item_t* item = cbor_new_definite_bytestring();
   _CBOR_NOTNULL(item);
-  void* content = _cbor_malloc(length);
-  _CBOR_DEPENDENT_NOTNULL(item, content);
-  memcpy(content, handle, length);
-  cbor_bytestring_set_handle(item, content, length);
+  if (length > 0) {
+    void* content = _cbor_malloc(length);
+    _CBOR_DEPENDENT_NOTNULL(item, content);
+    memcpy(content, handle, length);
+    cbor_bytestring_set_handle(item, content, length);
+  }
   return item;
 }
 

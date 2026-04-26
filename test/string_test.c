@@ -255,6 +255,32 @@ static void test_string_creation(void** _state _CBOR_UNUSED) {
                    MALLOC_FAIL);
 }
 
+static void test_build_empty_string(void** _state _CBOR_UNUSED) {
+  // Only one malloc (for the item), no allocation for zero-length data.
+  // This verifies the fix for platforms where malloc(0) returns NULL.
+  WITH_MOCK_MALLOC(
+      {
+        cbor_item_t* str = cbor_build_string("");
+        assert_non_null(str);
+        assert_true(cbor_isa_string(str));
+        assert_true(cbor_string_is_definite(str));
+        assert_size_equal(cbor_string_length(str), 0);
+        cbor_decref(&str);
+      },
+      1, MALLOC);
+
+  WITH_MOCK_MALLOC(
+      {
+        cbor_item_t* str = cbor_build_stringn("", 0);
+        assert_non_null(str);
+        assert_true(cbor_isa_string(str));
+        assert_true(cbor_string_is_definite(str));
+        assert_size_equal(cbor_string_length(str), 0);
+        cbor_decref(&str);
+      },
+      1, MALLOC);
+}
+
 static void test_string_add_chunk(void** _state _CBOR_UNUSED) {
   WITH_MOCK_MALLOC(
       {
@@ -356,6 +382,7 @@ int main(void) {
       cmocka_unit_test(test_set_handle),
       cmocka_unit_test(test_set_handle_multibyte_codepoint),
       cmocka_unit_test(test_set_handle_invalid_utf),
+      cmocka_unit_test(test_build_empty_string),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

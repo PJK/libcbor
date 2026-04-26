@@ -45,20 +45,24 @@ cbor_item_t* cbor_build_string(const char* val) {
   cbor_item_t* item = cbor_new_definite_string();
   _CBOR_NOTNULL(item);
   size_t len = strlen(val);
-  unsigned char* handle = _cbor_malloc(len);
-  _CBOR_DEPENDENT_NOTNULL(item, handle);
-  memcpy(handle, val, len);
-  cbor_string_set_handle(item, handle, len);
+  if (len > 0) {
+    unsigned char* handle = _cbor_malloc(len);
+    _CBOR_DEPENDENT_NOTNULL(item, handle);
+    memcpy(handle, val, len);
+    cbor_string_set_handle(item, handle, len);
+  }
   return item;
 }
 
 cbor_item_t* cbor_build_stringn(const char* val, size_t length) {
   cbor_item_t* item = cbor_new_definite_string();
   _CBOR_NOTNULL(item);
-  unsigned char* handle = _cbor_malloc(length);
-  _CBOR_DEPENDENT_NOTNULL(item, handle);
-  memcpy(handle, val, length);
-  cbor_string_set_handle(item, handle, length);
+  if (length > 0) {
+    unsigned char* handle = _cbor_malloc(length);
+    _CBOR_DEPENDENT_NOTNULL(item, handle);
+    memcpy(handle, val, length);
+    cbor_string_set_handle(item, handle, length);
+  }
   return item;
 }
 

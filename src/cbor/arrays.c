@@ -102,11 +102,14 @@ cbor_item_t** cbor_array_handle(const cbor_item_t* item) {
 cbor_item_t* cbor_new_definite_array(size_t size) {
   cbor_item_t* item = _cbor_malloc(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
-  cbor_item_t** data = _cbor_alloc_multiple(sizeof(cbor_item_t*), size);
-  _CBOR_DEPENDENT_NOTNULL(item, data);
 
-  for (size_t i = 0; i < size; i++) {
-    data[i] = NULL;
+  cbor_item_t** data = NULL;
+  if (size > 0) {
+    data = _cbor_alloc_multiple(sizeof(cbor_item_t*), size);
+    _CBOR_DEPENDENT_NOTNULL(item, data);
+    for (size_t i = 0; i < size; i++) {
+      data[i] = NULL;
+    }
   }
 
   *item = (cbor_item_t){

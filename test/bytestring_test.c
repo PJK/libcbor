@@ -337,6 +337,22 @@ static void test_bytestring_creation(void** _state _CBOR_UNUSED) {
                    MALLOC_FAIL);
 }
 
+static void test_build_empty_bytestring(void** _state _CBOR_UNUSED) {
+  // Only one malloc (for the item), no allocation for zero-length data.
+  // This verifies the fix for platforms where malloc(0) returns NULL.
+  unsigned char bytes[] = {0};
+  WITH_MOCK_MALLOC(
+      {
+        cbor_item_t* bs = cbor_build_bytestring(bytes, 0);
+        assert_non_null(bs);
+        assert_true(cbor_isa_bytestring(bs));
+        assert_true(cbor_bytestring_is_definite(bs));
+        assert_size_equal(cbor_bytestring_length(bs), 0);
+        cbor_decref(&bs);
+      },
+      1, MALLOC);
+}
+
 static void test_bytestring_add_chunk(void** _state _CBOR_UNUSED) {
   unsigned char bytes[] = {0, 0, 0xFF, 0xAB};
   WITH_MOCK_MALLOC(
@@ -376,6 +392,7 @@ int main(void) {
       cmocka_unit_test(test_add_chunk_reallocation_overflow),
       cmocka_unit_test(test_bytestring_creation),
       cmocka_unit_test(test_bytestring_add_chunk),
+      cmocka_unit_test(test_build_empty_bytestring),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

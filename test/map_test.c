@@ -264,6 +264,22 @@ static void test_break_in_def_map_decode(void** _state _CBOR_UNUSED) {
   assert_size_equal(res.error.position, 7);
 }
 
+static void test_new_definite_map_zero(void** _state _CBOR_UNUSED) {
+  // Only one malloc (for the item), no allocation for zero-size data.
+  // This verifies the fix for platforms where malloc(0) returns NULL.
+  WITH_MOCK_MALLOC(
+      {
+        cbor_item_t* map = cbor_new_definite_map(0);
+        assert_non_null(map);
+        assert_true(cbor_isa_map(map));
+        assert_true(cbor_map_is_definite(map));
+        assert_size_equal(cbor_map_size(map), 0);
+        assert_size_equal(cbor_map_allocated(map), 0);
+        cbor_decref(&map);
+      },
+      1, MALLOC);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_empty_map),
@@ -279,6 +295,7 @@ int main(void) {
       cmocka_unit_test(test_map_add),
       cmocka_unit_test(test_indef_map_decode),
       cmocka_unit_test(test_break_in_def_map_decode),
+      cmocka_unit_test(test_new_definite_map_zero),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

@@ -22,14 +22,19 @@ cbor_item_t* cbor_new_definite_map(size_t size) {
   cbor_item_t* item = _cbor_malloc(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
 
+  void* data = NULL;
+  if (size > 0) {
+    data = _cbor_alloc_multiple(sizeof(struct cbor_pair), size);
+    _CBOR_DEPENDENT_NOTNULL(item, data);
+  }
+
   *item = (cbor_item_t){
       .refcount = 1,
       .type = CBOR_TYPE_MAP,
       .metadata = {.map_metadata = {.allocated = size,
                                     .type = _CBOR_METADATA_DEFINITE,
                                     .end_ptr = 0}},
-      .data = _cbor_alloc_multiple(sizeof(struct cbor_pair), size)};
-  _CBOR_DEPENDENT_NOTNULL(item, item->data);
+      .data = data};
 
   return item;
 }
