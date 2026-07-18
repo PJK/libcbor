@@ -314,7 +314,15 @@ CBOR_EXPORT bool cbor_is_undef(const cbor_item_t* item);
  * @param item Reference to an item
  * @return The input \p item
  */
-CBOR_EXPORT cbor_item_t* cbor_incref(cbor_item_t* item);
+static inline cbor_item_t* cbor_incref(cbor_item_t* item) {
+  item->refcount++;
+  return item;
+}
+
+/** Slow path of #cbor_decref: performs the actual deallocation once the
+ * reference count reaches zero. Do not call directly; use #cbor_decref.
+ */
+CBOR_EXPORT void _cbor_decref_free(cbor_item_t* item);
 
 /** Decreases the item's reference count by one, deallocating the item if
  * needed
@@ -324,7 +332,14 @@ CBOR_EXPORT cbor_item_t* cbor_incref(cbor_item_t* item);
  *
  * @param item Reference to an item. Will be set to `NULL` if deallocated
  */
-CBOR_EXPORT void cbor_decref(cbor_item_t** item);
+static inline void cbor_decref(cbor_item_t** item_ref) {
+  cbor_item_t* item = *item_ref;
+  CBOR_ASSERT(item->refcount > 0);
+  if (--item->refcount == 0) {
+    _cbor_decref_free(item);
+    *item_ref = NULL;
+  }
+}
 
 /** Decreases the item's reference count by one, deallocating the item if
  * needed
