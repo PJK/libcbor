@@ -79,9 +79,6 @@ commands:
       - store_test_results:
           path: ctest_out.xml
 
-orbs:
-  codecov: codecov/codecov@3.2.2
-
 jobs:
   static-test:
     machine: &default-machine
@@ -124,7 +121,11 @@ jobs:
       - build
       - test
       - run: ctest -T Coverage
-      - codecov/upload
+      - run:
+          name: Upload coverage to Codecov
+          command: |
+            pip install --user codecov-cli
+            ~/.local/bin/codecovcli --auto-load-params-from CircleCI upload-process --fail-on-error || true
       - run: ctest --output-on-failure -T memcheck | tee memcheck.out
       - run: >
           if grep -q 'Memory Leak\|IPW\|Uninitialized Memory Conditional\|Uninitialized Memory Read' memcheck.out; then
