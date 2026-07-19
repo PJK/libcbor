@@ -312,8 +312,8 @@ CBOR_EXPORT bool cbor_is_undef(const cbor_item_t* item);
  * This function can be used to extend reference counting to client code.
  *
  * Defined `static inline` so the single-instruction increment is emitted
- * directly at the call site — meaningful for DOM-building hot loops where
- * every constructed item touches the refcount.
+ * directly at the call site — meaningful for hot loops that build
+ * #cbor_item_t trees, where every constructed item touches the refcount.
  *
  * @param item Reference to an item
  * @return The input \p item
