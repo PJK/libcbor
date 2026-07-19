@@ -311,10 +311,26 @@ CBOR_EXPORT bool cbor_is_undef(const cbor_item_t* item);
  *
  * This function can be used to extend reference counting to client code.
  *
+ * Defined `static inline` so the single-instruction increment is emitted
+ * directly at the call site — meaningful for hot loops that build
+ * #cbor_item_t trees, where every constructed item touches the refcount.
+ *
  * @param item Reference to an item
  * @return The input \p item
  */
-CBOR_EXPORT cbor_item_t* cbor_incref(cbor_item_t* item);
+static inline cbor_item_t* cbor_incref(cbor_item_t* item) {
+  item->refcount++;
+  return item;
+}
+
+/** Slow path of #cbor_decref: performs the actual deallocation once the
+ * reference count reaches zero. Do not call directly; use #cbor_decref.
+ *
+ * Split from #cbor_decref so the fast path (decrement + zero check) can
+ * inline while the recursive free logic — which dominates code size —
+ * stays out of line.
+ */
+CBOR_EXPORT void _cbor_decref_free(cbor_item_t* item);
 
 /** Decreases the item's reference count by one, deallocating the item if
  * needed
@@ -322,9 +338,20 @@ CBOR_EXPORT cbor_item_t* cbor_incref(cbor_item_t* item);
  * In case the item is deallocated, the reference count of all items this
  * item references will also be #cbor_decref 'ed recursively.
  *
+ * The fast path (decrement, check for zero) is `static inline`; only the
+ * uncommon deallocation branch calls into #_cbor_decref_free. This keeps
+ * every non-final decref a couple of instructions at the call site.
+ *
  * @param item Reference to an item. Will be set to `NULL` if deallocated
  */
-CBOR_EXPORT void cbor_decref(cbor_item_t** item);
+static inline void cbor_decref(cbor_item_t** item_ref) {
+  cbor_item_t* item = *item_ref;
+  CBOR_ASSERT(item->refcount > 0);
+  if (--item->refcount == 0) {
+    _cbor_decref_free(item);
+    *item_ref = NULL;
+  }
+}
 
 /** Decreases the item's reference count by one, deallocating the item if
  * needed
