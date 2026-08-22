@@ -10,7 +10,7 @@ commands:
   build-with-cmocka-from-source:
     # For whatever reason, cmocka find stopped working on dockercross at some point.
     steps:
-      - run: git clone https://github.com/clibs/cmocka.git ~/cmocka
+      - run: git clone --branch cmocka-1.1.5 --depth 1 https://github.com/clibs/cmocka.git ~/cmocka
       - run: >
           cd $(mktemp -d /tmp/build.XXXX) &&
           cmake ~/cmocka &&
@@ -173,7 +173,7 @@ jobs:
       - run: sudo apt-get update
       - run: sudo NEEDRESTART_MODE=l apt-get install -y cmake gcc-multilib g++-multilib libc6-dev-i386
       # Make cmocka from source w/ 32b setup
-      - run: git clone https://github.com/clibs/cmocka.git ~/cmocka
+      - run: git clone --branch cmocka-1.1.5 --depth 1 https://github.com/clibs/cmocka.git ~/cmocka
       - run: >
           cd $(mktemp -d /tmp/build.XXXX) &&
           cmake ~/cmocka -DCMAKE_TOOLCHAIN_FILE=~/cmocka/cmake/Toolchain-cross-m32.cmake &&
