@@ -10,7 +10,7 @@ commands:
   build-with-cmocka-from-source:
     # For whatever reason, cmocka find stopped working on dockercross at some point.
     steps:
-      - run: git clone https://git.cryptomilk.org/projects/cmocka.git ~/cmocka
+      - run: git clone https://github.com/clibs/cmocka.git ~/cmocka
       - run: >
           cd $(mktemp -d /tmp/build.XXXX) &&
           cmake ~/cmocka &&
@@ -173,7 +173,7 @@ jobs:
       - run: sudo apt-get update
       - run: sudo NEEDRESTART_MODE=l apt-get install -y cmake gcc-multilib g++-multilib libc6-dev-i386
       # Make cmocka from source w/ 32b setup
-      - run: git clone https://git.cryptomilk.org/projects/cmocka.git ~/cmocka
+      - run: git clone https://github.com/clibs/cmocka.git ~/cmocka
       - run: >
           cd $(mktemp -d /tmp/build.XXXX) &&
           cmake ~/cmocka -DCMAKE_TOOLCHAIN_FILE=~/cmocka/cmake/Toolchain-cross-m32.cmake &&
@@ -237,7 +237,7 @@ jobs:
       - checkout
       - linux-setup
       - run: sudo apt install apt-transport-https curl gnupg
-      - run: curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
+      - run: curl -fsSL https://storage.googleapis.com/bazel-apt/doc/apt-key.pub.gpg | gpg --dearmor > bazel.gpg
       - run: sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
       - run: echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
       - run: sudo apt update
@@ -276,7 +276,7 @@ jobs:
             if [ -f cmocka_build/src/cmocka.lib ]; then
               echo "Using cached cmocka build"
             else
-              git clone https://git.cryptomilk.org/projects/cmocka.git
+              git clone https://github.com/clibs/cmocka.git
               cd cmocka && git checkout tags/cmocka-1.1.5 && cd ..
               cat > _build_cmocka.bat \<< 'BEOF'
             @echo off
