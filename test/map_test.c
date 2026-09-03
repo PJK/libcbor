@@ -218,6 +218,26 @@ static void test_map_creation(void** _state _CBOR_UNUSED) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_map()); });
 }
 
+// On some platforms, malloc(0) returns NULL even though the allocation
+// itself didn't fail; there is nothing to indicate an error there since a
+// zero-size map never needs to look at its (non-existent) backing storage.
+static void* malloc_returning_null_for_zero_size(size_t size) {
+  if (size == 0) return NULL;
+  return malloc(size);
+}
+
+static void test_definite_map_zero_size_malloc_null(
+    void** _state _CBOR_UNUSED) {
+  cbor_set_allocs(malloc_returning_null_for_zero_size, realloc, free);
+  cbor_item_t* empty = cbor_new_definite_map(0);
+  cbor_set_allocs(malloc, realloc, free);
+
+  assert_non_null(empty);
+  assert_size_equal(cbor_map_size(empty), 0);
+  assert_size_equal(cbor_map_allocated(empty), 0);
+  cbor_decref(&empty);
+}
+
 static void test_map_add(void** _state _CBOR_UNUSED) {
   WITH_MOCK_MALLOC(
       {
@@ -276,6 +296,7 @@ int main(void) {
       cmocka_unit_test(test_map_add_full),
       cmocka_unit_test(test_map_add_too_big_to_realloc),
       cmocka_unit_test(test_map_creation),
+      cmocka_unit_test(test_definite_map_zero_size_malloc_null),
       cmocka_unit_test(test_map_add),
       cmocka_unit_test(test_indef_map_decode),
       cmocka_unit_test(test_break_in_def_map_decode),

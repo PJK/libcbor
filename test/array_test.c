@@ -189,6 +189,26 @@ static void test_array_creation(void** _state _CBOR_UNUSED) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_array()); });
 }
 
+// On some platforms, malloc(0) returns NULL even though the allocation
+// itself didn't fail; there is nothing to indicate an error there since a
+// zero-size array never needs to look at its (non-existent) backing storage.
+static void* array_malloc_returning_null_for_zero_size(size_t size) {
+  if (size == 0) return NULL;
+  return malloc(size);
+}
+
+static void test_definite_array_zero_size_malloc_null(
+    void** _state _CBOR_UNUSED) {
+  cbor_set_allocs(array_malloc_returning_null_for_zero_size, realloc, free);
+  cbor_item_t* empty = cbor_new_definite_array(0);
+  cbor_set_allocs(malloc, realloc, free);
+
+  assert_non_null(empty);
+  assert_size_equal(cbor_array_size(empty), 0);
+  assert_size_equal(cbor_array_allocated(empty), 0);
+  cbor_decref(&empty);
+}
+
 static void test_array_push(void** _state _CBOR_UNUSED) {
   WITH_MOCK_MALLOC(
       {
@@ -232,6 +252,7 @@ int main(void) {
       cmocka_unit_test(test_array_replace),
       cmocka_unit_test(test_array_push_overflow),
       cmocka_unit_test(test_array_creation),
+      cmocka_unit_test(test_definite_array_zero_size_malloc_null),
       cmocka_unit_test(test_array_push),
       cmocka_unit_test(test_indef_array_decode),
   };

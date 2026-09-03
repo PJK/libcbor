@@ -5,6 +5,7 @@ Template:
 Next
 ---------------------
 
+- [Don't fail on `malloc(0)` returning `NULL` when building zero-size definite maps/arrays](https://github.com/PJK/libcbor/pull/437) (reported by [hglee](https://github.com/hglee))
 - ABI BREAKING: [Inline `cbor_incref` and `cbor_decref` fast paths](https://github.com/PJK/libcbor/pull/434)
   - `cbor_incref` and `cbor_decref` are now `static inline` in `cbor/common.h`; the deallocation branch of `cbor_decref` moved into a new exported helper `_cbor_decref_free`. Source-compatible — same signatures and semantics — but the two symbols are no longer exported from the shared library, so binaries relying on their extern resolution (including `dlsym`) will fail to link against the new `.so`. Rebuilding against the updated headers is sufficient.
 

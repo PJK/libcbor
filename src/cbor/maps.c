@@ -22,14 +22,20 @@ cbor_item_t* cbor_new_definite_map(size_t size) {
   cbor_item_t* item = _cbor_malloc(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
 
+  // malloc(0) is allowed to return NULL even on success, so for a
+  // zero-size map we skip the allocation (and the NULL check) entirely
+  // rather than treating that as an allocation failure.
   *item = (cbor_item_t){
       .refcount = 1,
       .type = CBOR_TYPE_MAP,
       .metadata = {.map_metadata = {.allocated = size,
                                     .type = _CBOR_METADATA_DEFINITE,
                                     .end_ptr = 0}},
-      .data = _cbor_alloc_multiple(sizeof(struct cbor_pair), size)};
-  _CBOR_DEPENDENT_NOTNULL(item, item->data);
+      .data = size == 0 ? NULL
+                        : _cbor_alloc_multiple(sizeof(struct cbor_pair), size)};
+  if (size > 0) {
+    _CBOR_DEPENDENT_NOTNULL(item, item->data);
+  }
 
   return item;
 }
