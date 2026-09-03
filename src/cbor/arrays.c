@@ -102,8 +102,15 @@ cbor_item_t** cbor_array_handle(const cbor_item_t* item) {
 cbor_item_t* cbor_new_definite_array(size_t size) {
   cbor_item_t* item = _cbor_malloc(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
-  cbor_item_t** data = _cbor_alloc_multiple(sizeof(cbor_item_t*), size);
-  _CBOR_DEPENDENT_NOTNULL(item, data);
+
+  // malloc(0) is allowed to return NULL even on success, so for a
+  // zero-size array we skip the allocation (and the NULL check) entirely
+  // rather than treating that as an allocation failure.
+  cbor_item_t** data =
+      size == 0 ? NULL : _cbor_alloc_multiple(sizeof(cbor_item_t*), size);
+  if (size > 0) {
+    _CBOR_DEPENDENT_NOTNULL(item, data);
+  }
 
   for (size_t i = 0; i < size; i++) {
     data[i] = NULL;
