@@ -180,6 +180,42 @@ static void test_half_infinity(void** _state _CBOR_UNUSED) {
   assert_half_float_codec_identity();
 }
 
+/* Finite values whose magnitude is too large for half precision (the
+ * largest finite half is 65504) must saturate to +-Infinity rather than
+ * producing a wrong finite value or a NaN. Before this test was added,
+ * cbor_encode_half computed an exponent field wider than the 5 bits half
+ * precision has room for, so the extra bits bled into the sign bit and
+ * mantissa, silently corrupting the result instead of raising it to
+ * infinity. */
+static void test_half_overflow_to_infinity(void** _state _CBOR_UNUSED) {
+  /* Comfortably past the largest finite half (65504), well clear of the
+   * round-to-nearest boundary at 65520. */
+  assert_size_equal(3, cbor_encode_half(70000.0f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7C, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  assert_size_equal(3, cbor_encode_half(-70000.0f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0xFC, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  assert_size_equal(3, cbor_encode_half(100000.0f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7C, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  assert_size_equal(3, cbor_encode_half(-100000.0f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0xFC, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  /* The largest finite single-precision float. */
+  assert_size_equal(3, cbor_encode_half(3.4028234663852886e+38f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7C, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  assert_size_equal(3, cbor_encode_half(-3.4028234663852886e+38f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0xFC, 0x00}), 3);
+  assert_half_float_codec_identity();
+}
+
 static void test_float(void** _state _CBOR_UNUSED) {
   assert_size_equal(5, cbor_encode_single(3.4028234663852886e+38, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xFA, 0x7F, 0x7F, 0xFF, 0xFF}),
@@ -241,6 +277,7 @@ int main(void) {
       cmocka_unit_test(test_half),          cmocka_unit_test(test_float),
       cmocka_unit_test(test_double),        cmocka_unit_test(test_half_special),
       cmocka_unit_test(test_half_infinity),
+      cmocka_unit_test(test_half_overflow_to_infinity),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
