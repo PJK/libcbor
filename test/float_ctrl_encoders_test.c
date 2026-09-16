@@ -188,8 +188,21 @@ static void test_half_infinity(void** _state _CBOR_UNUSED) {
  * mantissa, silently corrupting the result instead of raising it to
  * infinity. */
 static void test_half_overflow_to_infinity(void** _state _CBOR_UNUSED) {
-  /* Comfortably past the largest finite half (65504), well clear of the
-   * round-to-nearest boundary at 65520. */
+  /* The normal-number path truncates the significand, so anything in
+   * [65504, 65536) still encodes as the largest finite half. 65536 is the
+   * first value whose exponent no longer fits. */
+  assert_size_equal(3, cbor_encode_half(65535.0f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7B, 0xFF}), 3);
+  assert_half_float_codec_identity();
+
+  assert_size_equal(3, cbor_encode_half(65536.0f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7C, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  assert_size_equal(3, cbor_encode_half(-65536.0f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0xFC, 0x00}), 3);
+  assert_half_float_codec_identity();
+
   assert_size_equal(3, cbor_encode_half(70000.0f, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7C, 0x00}), 3);
   assert_half_float_codec_identity();
@@ -272,10 +285,14 @@ static void test_double(void** _state _CBOR_UNUSED) {
 
 int main(void) {
   const struct CMUnitTest tests[] = {
-      cmocka_unit_test(test_bools),         cmocka_unit_test(test_null),
-      cmocka_unit_test(test_undef),         cmocka_unit_test(test_break),
-      cmocka_unit_test(test_half),          cmocka_unit_test(test_float),
-      cmocka_unit_test(test_double),        cmocka_unit_test(test_half_special),
+      cmocka_unit_test(test_bools),
+      cmocka_unit_test(test_null),
+      cmocka_unit_test(test_undef),
+      cmocka_unit_test(test_break),
+      cmocka_unit_test(test_half),
+      cmocka_unit_test(test_float),
+      cmocka_unit_test(test_double),
+      cmocka_unit_test(test_half_special),
       cmocka_unit_test(test_half_infinity),
       cmocka_unit_test(test_half_overflow_to_infinity),
   };

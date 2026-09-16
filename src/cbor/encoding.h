@@ -112,6 +112,9 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_encode_undef(unsigned char*, size_t);
  *     is cut off to represent the 'magnitude' of the input, by which we
  *     mean (-1)^{signbit} x 1.0e{exponent}. The value in the significand is
  * lost.
+ *   - If the logical value of the exponent is > 15 (i.e. the magnitude is
+ *     >= 65536, beyond the largest finite half-float 65504), the output is
+ *     infinity with the sign bit preserved
  *   - In all other cases, the sign bit, the exponent, and 10 most significant
  * bits of the significand are kept
  *

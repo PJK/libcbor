@@ -5,6 +5,8 @@ Template:
 Next
 ---------------------
 
+- [Fix `cbor_encode_half` producing corrupted output for values outside the half-precision range](https://github.com/PJK/libcbor/pull/439) (by [afonsojanu](https://github.com/afonsojanu))
+  - Finite inputs with magnitude >= 65536 previously overflowed the 5-bit exponent field into the sign and mantissa bits, silently encoding an unrelated finite value or a NaN (e.g. `100000.0f` encoded as NaN, `1e30f` as `-12.6172`). Such values now saturate to signed infinity, consistent with `INFINITY` inputs
 - ABI BREAKING: [Inline `cbor_incref` and `cbor_decref` fast paths](https://github.com/PJK/libcbor/pull/434)
   - `cbor_incref` and `cbor_decref` are now `static inline` in `cbor/common.h`; the deallocation branch of `cbor_decref` moved into a new exported helper `_cbor_decref_free`. Source-compatible — same signatures and semantics — but the two symbols are no longer exported from the shared library, so binaries relying on their extern resolution (including `dlsym`) will fail to link against the new `.so`. Rebuilding against the updated headers is sufficient.
 
