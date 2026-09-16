@@ -1,11 +1,11 @@
 Template:
 
-- [Fix issue X in feature Y](https://github.com/PJK/libcbor/pull/XXX) (by [YYY](https://github.com/YYY))
+- [Fix issue X in feature Y](https://github.com/PJK/libcbor/pull/445) (by [YYY](https://github.com/YYY))
 
 Next
 ---------------------
 
-- BREAKING: [Decoders now accept all well-formed simple values](https://github.com/PJK/libcbor/pull/XXX)
+- BREAKING: [Decoders now accept all well-formed simple values](https://github.com/PJK/libcbor/pull/445)
   - Previously, `cbor_load` and `cbor_stream_decode` rejected the unassigned simple values 0 to 19 (`0xE0` to `0xF3`) and 32 to 255 (`0xF8 0x20` to `0xF8 0xFF`) with `CBOR_ERR_MALFORMATED` / `CBOR_DECODER_ERROR`, even though RFC 8949 Section 3.3 defines them as well-formed and `cbor_build_ctrl` could already produce them. They are now decoded into ctrl items readable through `cbor_ctrl_value`. `0xF8` followed by a byte below `0x20` remains a well-formedness error as specified
   - New `simple_value` member appended to `struct cbor_callbacks` and a matching `cbor_null_simple_value_callback` no-op. Callback sets that leave the new member `NULL` (e.g. existing designated initializers that do not mention it) keep the previous behavior and reject these values; set it to receive them. Positional initializers and code that sizes the struct must be updated
   - Discovered by running the [CBOR Working Group test vectors](https://github.com/cbor-wg/cbor-test-vectors) (`rfc8949-appendixA/mt7-simple`)
