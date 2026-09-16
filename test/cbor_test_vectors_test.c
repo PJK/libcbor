@@ -199,10 +199,16 @@ static bool integer_magnitude(cbor_item_t* item, unsigned char** magnitude,
     return true;
   }
   if (cbor_isa_tag(item) &&
-      (cbor_tag_value(item) == 2 || cbor_tag_value(item) == 3) &&
-      cbor_isa_bytestring(cbor_tag_item(item))) {
+      (cbor_tag_value(item) == 2 || cbor_tag_value(item) == 3)) {
+    // cbor_tag_item returns a new reference
+    cbor_item_t* content = cbor_tag_item(item);
+    if (!cbor_isa_bytestring(content)) {
+      cbor_decref(&content);
+      return false;
+    }
     size_t raw_length;
-    unsigned char* raw = flatten(cbor_tag_item(item), &raw_length);
+    unsigned char* raw = flatten(content, &raw_length);
+    cbor_decref(&content);
     size_t skip = 0;
     while (skip < raw_length && raw[skip] == 0) skip++;
     *length = raw_length - skip;
@@ -269,9 +275,16 @@ static bool value_equal(cbor_item_t* a, cbor_item_t* b) {
       }
       return true;
     }
-    case CBOR_TYPE_TAG:
-      return cbor_tag_value(a) == cbor_tag_value(b) &&
-             value_equal(cbor_tag_item(a), cbor_tag_item(b));
+    case CBOR_TYPE_TAG: {
+      if (cbor_tag_value(a) != cbor_tag_value(b)) return false;
+      // cbor_tag_item returns a new reference
+      cbor_item_t* content_a = cbor_tag_item(a);
+      cbor_item_t* content_b = cbor_tag_item(b);
+      bool equal = value_equal(content_a, content_b);
+      cbor_decref(&content_a);
+      cbor_decref(&content_b);
+      return equal;
+    }
     case CBOR_TYPE_FLOAT_CTRL: {
       if (cbor_is_float(a) != cbor_is_float(b)) return false;
       if (!cbor_is_float(a)) return cbor_ctrl_value(a) == cbor_ctrl_value(b);
@@ -357,7 +370,7 @@ static const char* run_vector(cbor_item_t* vector, bool file_fail) {
       free(hex);
       outcome = failure;
     }
-    free(buffer);
+    _cbor_free(buffer);
   }
   cbor_decref(&item);
   return outcome;
