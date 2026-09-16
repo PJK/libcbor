@@ -5,6 +5,10 @@ Template:
 Next
 ---------------------
 
+- BREAKING: [Do not allocate zero-byte buffers for empty items, fixing creation and decoding failures on platforms and custom allocators where `malloc(0)` returns `NULL`](https://github.com/PJK/libcbor/pull/437) (by [afonsojanu](https://github.com/afonsojanu), reported by [hglee](https://github.com/hglee) in [#427](https://github.com/PJK/libcbor/issues/427))
+  - Affected `cbor_new_definite_array(0)`, `cbor_new_definite_map(0)`, `cbor_build_bytestring(_, 0)`, `cbor_build_string("")`, `cbor_build_stringn(_, 0)`, `cbor_copy_definite` of indefinite strings with no data, and `cbor_load`/`cbor_stream_decode` (via the builder) for any input containing an empty string, bytestring, array, or map
+  - `cbor_array_handle`, `cbor_map_handle`, `cbor_bytestring_handle`, and `cbor_string_handle` now return `NULL` for empty definite items on all platforms (previously an implementation-defined `malloc(0)` result, non-`NULL` on glibc/macOS). The pointer was never valid to dereference; code that asserted it was non-`NULL` or passed it to `memcpy` & co. with a zero length must be adjusted
+  - Custom `free` implementations installed via `cbor_set_allocs` must accept `NULL` (as the standard `free` does); it is now passed for every empty item that is deallocated
 - [Fix `cbor_encode_half` producing corrupted output for values outside the half-precision range](https://github.com/PJK/libcbor/pull/439) (by [afonsojanu](https://github.com/afonsojanu))
   - Finite inputs with magnitude >= 65536 previously overflowed the 5-bit exponent field into the sign and mantissa bits, silently encoding an unrelated finite value or a NaN (e.g. `100000.0f` encoded as NaN, `1e30f` as `-12.6172`). Such values now saturate to signed infinity, consistent with `INFINITY` inputs
 - ABI BREAKING: [Inline `cbor_incref` and `cbor_decref` fast paths](https://github.com/PJK/libcbor/pull/434)

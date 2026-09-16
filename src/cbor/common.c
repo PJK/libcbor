@@ -182,6 +182,8 @@ bool cbor_structurally_equal(const cbor_item_t* item1,
       if (cbor_bytestring_is_definite(item1)) {
         if (cbor_bytestring_length(item1) != cbor_bytestring_length(item2))
           return false;
+        // Empty bytestrings may have a NULL handle
+        if (cbor_bytestring_length(item1) == 0) return true;
         return memcmp(item1->data, item2->data,
                       cbor_bytestring_length(item1)) == 0;
       } else {
@@ -203,6 +205,8 @@ bool cbor_structurally_equal(const cbor_item_t* item1,
       if (cbor_string_is_definite(item1)) {
         if (cbor_string_length(item1) != cbor_string_length(item2))
           return false;
+        // Empty strings may have a NULL handle
+        if (cbor_string_length(item1) == 0) return true;
         return memcmp(item1->data, item2->data, cbor_string_length(item1)) == 0;
       } else {
         /* Indefinite: chunk boundaries are part of the structure */

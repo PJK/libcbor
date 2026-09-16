@@ -95,6 +95,9 @@ CBOR_EXPORT bool cbor_array_is_indefinite(const cbor_item_t* item);
  *
  * @param item An array item
  * @return An array of #cbor_item_t pointers of size #cbor_array_size.
+ * @return `NULL` if the array is empty (no storage is allocated for
+ * zero-size arrays; the pointer must not be dereferenced while
+ * #cbor_array_size is 0)
  */
 _CBOR_NODISCARD
 CBOR_EXPORT cbor_item_t** cbor_array_handle(const cbor_item_t* item);

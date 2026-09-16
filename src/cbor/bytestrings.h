@@ -54,8 +54,8 @@ CBOR_EXPORT bool cbor_bytestring_is_indefinite(const cbor_item_t* item);
  *
  * @param item A definite byte string
  * @return The address of the underlying binary data
- * @return `NULL` if no data have been assigned
- * yet.
+ * @return `NULL` if no data have been assigned yet or if the byte string is
+ * empty (no storage is allocated for zero-length data)
  */
 _CBOR_NODISCARD
 CBOR_EXPORT cbor_mutable_data cbor_bytestring_handle(const cbor_item_t* item);
@@ -66,7 +66,7 @@ CBOR_EXPORT cbor_mutable_data cbor_bytestring_handle(const cbor_item_t* item);
  * @param data The memory block. The caller gives up the ownership of the block.
  * libcbor will deallocate it when appropriate using the `free` implementation
  * configured using #cbor_set_allocs
- * @param length Length of the data block
+ * @param length Length of the data block. If 0, `data` may be `NULL`
  */
 CBOR_EXPORT void cbor_bytestring_set_handle(
     cbor_item_t* item, cbor_mutable_data CBOR_RESTRICT_POINTER data,

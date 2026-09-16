@@ -87,3 +87,8 @@ error:
   fail();
   return NULL;
 }
+
+void* malloc_null_for_zero_size(size_t size) {
+  if (size == 0) return NULL;
+  return malloc(size);
+}

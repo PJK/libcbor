@@ -218,6 +218,37 @@ static void test_map_creation(void** _state _CBOR_UNUSED) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_map()); });
 }
 
+static void test_definite_map_zero_size_malloc_null(
+    void** _state _CBOR_UNUSED) {
+  WITH_MALLOC_NULL_FOR_ZERO_SIZE({
+    cbor_item_t* empty = cbor_new_definite_map(0);
+    assert_non_null(empty);
+    assert_size_equal(cbor_map_size(empty), 0);
+    assert_size_equal(cbor_map_allocated(empty), 0);
+    assert_null(cbor_map_handle(empty));
+    // Nothing fits in an empty definite map
+    cbor_item_t* one = cbor_build_uint8(1);
+    assert_false(
+        cbor_map_add(empty, (struct cbor_pair){.key = one, .value = one}));
+    cbor_decref(&one);
+    cbor_decref(&empty);
+
+    // Decoding, serializing, and copying an empty definite map
+    struct cbor_load_result res;
+    cbor_item_t* decoded = cbor_load((cbor_data) "\xA0", 1, &res);
+    assert_non_null(decoded);
+    assert_size_equal(cbor_map_size(decoded), 0);
+    unsigned char buffer[8];
+    assert_size_equal(cbor_serialize(decoded, buffer, 8), 1);
+    assert_memory_equal(buffer, "\xA0", 1);
+    cbor_item_t* copy = cbor_copy(decoded);
+    assert_non_null(copy);
+    assert_true(cbor_structurally_equal(decoded, copy));
+    cbor_decref(&copy);
+    cbor_decref(&decoded);
+  });
+}
+
 static void test_map_add(void** _state _CBOR_UNUSED) {
   WITH_MOCK_MALLOC(
       {
@@ -276,6 +307,7 @@ int main(void) {
       cmocka_unit_test(test_map_add_full),
       cmocka_unit_test(test_map_add_too_big_to_realloc),
       cmocka_unit_test(test_map_creation),
+      cmocka_unit_test(test_definite_map_zero_size_malloc_null),
       cmocka_unit_test(test_map_add),
       cmocka_unit_test(test_indef_map_decode),
       cmocka_unit_test(test_break_in_def_map_decode),

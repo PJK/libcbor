@@ -110,6 +110,8 @@ _CBOR_NODISCARD CBOR_EXPORT bool cbor_map_is_indefinite(
  * @param item A map
  * @return Array of #cbor_map_size pairs. Manipulation is possible as long as
  * references remain valid.
+ * @return `NULL` if the map is empty (no storage is allocated for zero-size
+ * maps; the pointer must not be dereferenced while #cbor_map_size is 0)
  */
 _CBOR_NODISCARD CBOR_EXPORT struct cbor_pair* cbor_map_handle(
     const cbor_item_t* item);

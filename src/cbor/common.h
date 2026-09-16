@@ -165,6 +165,11 @@ CBOR_EXPORT extern _cbor_free_t _cbor_free;
  *   `realloc` implementation must correctly support `NULL`
  *   reallocation (see e.g. http://en.cppreference.com/w/c/memory/realloc)
  *
+ * .. note::
+ *   `free` implementation must accept `NULL` as a no-op (as the standard
+ *   `free` does). libcbor does not allocate storage for empty items and
+ *   will pass their `NULL` data pointer to `free` when they are deallocated.
+ *
  * \endrst
  *
  * @param custom_malloc malloc implementation

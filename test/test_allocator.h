@@ -36,4 +36,15 @@ void* instrumented_realloc(void* ptr, size_t size);
 
 #define WITH_FAILING_MALLOC(block) WITH_MOCK_MALLOC(block, 1, MALLOC_FAIL)
 
+// malloc(0) is allowed to return NULL (C99 7.20.3). Some platforms and custom
+// allocators do so; this simulates that behavior.
+void* malloc_null_for_zero_size(size_t size);
+
+#define WITH_MALLOC_NULL_FOR_ZERO_SIZE(block)                  \
+  do {                                                         \
+    cbor_set_allocs(malloc_null_for_zero_size, realloc, free); \
+    block;                                                     \
+    cbor_set_allocs(malloc, realloc, free);                    \
+  } while (0)
+
 #endif  // TEST_ALLOCATOR_H_

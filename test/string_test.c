@@ -255,6 +255,53 @@ static void test_string_creation(void** _state _CBOR_UNUSED) {
                    MALLOC_FAIL);
 }
 
+static void test_string_zero_length_malloc_null(void** _state _CBOR_UNUSED) {
+  WITH_MALLOC_NULL_FOR_ZERO_SIZE({
+    // Building
+    cbor_item_t* empty = cbor_build_string("");
+    assert_non_null(empty);
+    assert_size_equal(cbor_string_length(empty), 0);
+    assert_size_equal(cbor_string_codepoint_count(empty), 0);
+    assert_null(cbor_string_handle(empty));
+    cbor_item_t* empty_n = cbor_build_stringn("", 0);
+    assert_non_null(empty_n);
+    assert_true(cbor_structurally_equal(empty, empty_n));
+    cbor_decref(&empty_n);
+
+    // Decoding a definite empty string
+    struct cbor_load_result res;
+    cbor_item_t* decoded = cbor_load((cbor_data) "\x60", 1, &res);
+    assert_non_null(decoded);
+    assert_size_equal(cbor_string_length(decoded), 0);
+    assert_true(cbor_structurally_equal(empty, decoded));
+
+    // Serializing
+    unsigned char buffer[8];
+    assert_size_equal(cbor_serialize(decoded, buffer, 8), 1);
+    assert_memory_equal(buffer, "\x60", 1);
+
+    // Copying
+    cbor_item_t* copy = cbor_copy(decoded);
+    assert_non_null(copy);
+    assert_true(cbor_structurally_equal(decoded, copy));
+
+    cbor_decref(&copy);
+    cbor_decref(&decoded);
+    cbor_decref(&empty);
+
+    // Decoding an indefinite string with an empty chunk and combining it
+    cbor_item_t* indef = cbor_load((cbor_data) "\x7F\x60\xFF", 3, &res);
+    assert_non_null(indef);
+    assert_size_equal(cbor_string_chunk_count(indef), 1);
+    cbor_item_t* combined = cbor_copy_definite(indef);
+    assert_non_null(combined);
+    assert_true(cbor_string_is_definite(combined));
+    assert_size_equal(cbor_string_length(combined), 0);
+    cbor_decref(&combined);
+    cbor_decref(&indef);
+  });
+}
+
 static void test_string_add_chunk(void** _state _CBOR_UNUSED) {
   WITH_MOCK_MALLOC(
       {
@@ -351,6 +398,7 @@ int main(void) {
       cmocka_unit_test(test_invalid_utf),
       cmocka_unit_test(test_inline_creation),
       cmocka_unit_test(test_string_creation),
+      cmocka_unit_test(test_string_zero_length_malloc_null),
       cmocka_unit_test(test_string_add_chunk),
       cmocka_unit_test(test_add_chunk_reallocation_overflow),
       cmocka_unit_test(test_set_handle),

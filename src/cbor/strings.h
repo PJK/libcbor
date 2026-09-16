@@ -65,7 +65,8 @@ _CBOR_NODISCARD CBOR_EXPORT bool cbor_string_is_indefinite(
  *
  * @param item A definite string
  * @return The address of the underlying string.
- * @return `NULL` if no data have been assigned yet.
+ * @return `NULL` if no data have been assigned yet or if the string is empty
+ * (no storage is allocated for zero-length data)
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_mutable_data
 cbor_string_handle(const cbor_item_t* item);
@@ -85,7 +86,7 @@ cbor_string_handle(const cbor_item_t* item);
  * @param item A definite string
  * @param data The memory block. The caller gives up the ownership of the block.
  * libcbor will deallocate it when appropriate using its free function
- * @param length Length of the data block
+ * @param length Length of the data block. If 0, `data` may be `NULL`
  */
 CBOR_EXPORT void cbor_string_set_handle(
     cbor_item_t* item, cbor_mutable_data CBOR_RESTRICT_POINTER data,
