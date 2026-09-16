@@ -92,11 +92,12 @@ jobs:
       - run: cppcheck --inline-suppr --error-exitcode=1 .
       - run: bash clang-format.sh --verbose
       - run: >
-          if ! $(git diff-index --quiet HEAD); then
+          if ! git diff-index --quiet HEAD; then
             echo "Code formatting doesn't conform to clang-format"
             echo "Please run clang-format.sh, commit the diff, and push to re-run CI"
             echo "Excerpt of the diff follows"
             git diff | head -n 20
+            exit 1
           fi
       - run: >
           if doxygen Doxyfile | grep 'warning: '; then
