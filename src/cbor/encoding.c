@@ -177,6 +177,15 @@ size_t cbor_encode_half(float value, unsigned char* buffer,
             ((uint16_t)(1u << (24u + logical_exp)) +
              (uint16_t)(((mant >> (-logical_exp - 2)) + 1) >>
                         1));  // Round half away from zero for simplicity
+    } else if (logical_exp > 15) {
+      /* Too large to represent as a half-precision number (the largest
+       * finite half is 65504). Without this check, the exponent bits below
+       * would overflow past the 5-bit exponent field and corrupt the sign
+       * and mantissa bits, silently producing an unrelated finite value or
+       * a NaN instead of a correctly rounded result. Saturate to signed
+       * infinity instead, which is what other half-precision converters do
+       * for out-of-range finite inputs. */
+      res = (uint16_t)((val & 0x80000000u) >> 16u | 0x7C00u);
     } else {
       res = (uint16_t)((val & 0x80000000u) >> 16u |
                        ((((uint8_t)logical_exp) + 15u) << 10u) |

@@ -180,6 +180,55 @@ static void test_half_infinity(void** _state _CBOR_UNUSED) {
   assert_half_float_codec_identity();
 }
 
+/* Finite values whose magnitude is too large for half precision (the
+ * largest finite half is 65504) must saturate to +-Infinity rather than
+ * producing a wrong finite value or a NaN. Before this test was added,
+ * cbor_encode_half computed an exponent field wider than the 5 bits half
+ * precision has room for, so the extra bits bled into the sign bit and
+ * mantissa, silently corrupting the result instead of raising it to
+ * infinity. */
+static void test_half_overflow_to_infinity(void** _state _CBOR_UNUSED) {
+  /* The normal-number path truncates the significand, so anything in
+   * [65504, 65536) still encodes as the largest finite half. 65536 is the
+   * first value whose exponent no longer fits. */
+  assert_size_equal(3, cbor_encode_half(65535.0f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7B, 0xFF}), 3);
+  assert_half_float_codec_identity();
+
+  assert_size_equal(3, cbor_encode_half(65536.0f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7C, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  assert_size_equal(3, cbor_encode_half(-65536.0f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0xFC, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  assert_size_equal(3, cbor_encode_half(70000.0f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7C, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  assert_size_equal(3, cbor_encode_half(-70000.0f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0xFC, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  assert_size_equal(3, cbor_encode_half(100000.0f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7C, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  assert_size_equal(3, cbor_encode_half(-100000.0f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0xFC, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  /* The largest finite single-precision float. */
+  assert_size_equal(3, cbor_encode_half(3.4028234663852886e+38f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0x7C, 0x00}), 3);
+  assert_half_float_codec_identity();
+
+  assert_size_equal(3, cbor_encode_half(-3.4028234663852886e+38f, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF9, 0xFC, 0x00}), 3);
+  assert_half_float_codec_identity();
+}
+
 static void test_float(void** _state _CBOR_UNUSED) {
   assert_size_equal(5, cbor_encode_single(3.4028234663852886e+38, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xFA, 0x7F, 0x7F, 0xFF, 0xFF}),
@@ -236,11 +285,16 @@ static void test_double(void** _state _CBOR_UNUSED) {
 
 int main(void) {
   const struct CMUnitTest tests[] = {
-      cmocka_unit_test(test_bools),         cmocka_unit_test(test_null),
-      cmocka_unit_test(test_undef),         cmocka_unit_test(test_break),
-      cmocka_unit_test(test_half),          cmocka_unit_test(test_float),
-      cmocka_unit_test(test_double),        cmocka_unit_test(test_half_special),
+      cmocka_unit_test(test_bools),
+      cmocka_unit_test(test_null),
+      cmocka_unit_test(test_undef),
+      cmocka_unit_test(test_break),
+      cmocka_unit_test(test_half),
+      cmocka_unit_test(test_float),
+      cmocka_unit_test(test_double),
+      cmocka_unit_test(test_half_special),
       cmocka_unit_test(test_half_infinity),
+      cmocka_unit_test(test_half_overflow_to_infinity),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }
