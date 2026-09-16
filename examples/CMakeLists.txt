@@ -28,12 +28,17 @@ target_link_libraries(capped_alloc cbor cbor_project_options)
 find_package(CJSON)
 
 if(CJSON_FOUND)
+  # The cJSON include directory is typically a shared prefix such as
+  # /usr/include or /opt/homebrew/include. If a system-wide libcbor is also
+  # installed there, a plain -I would make its (possibly stale) cbor.h shadow
+  # the in-tree headers. SYSTEM emits -isystem, which is searched after all
+  # -I paths, so the headers from the cbor target always take precedence.
   add_executable(cjson2cbor cjson2cbor.c)
-  target_include_directories(cjson2cbor PUBLIC ${CJSON_INCLUDE_DIRS})
+  target_include_directories(cjson2cbor SYSTEM PRIVATE ${CJSON_INCLUDE_DIRS})
   target_link_libraries(cjson2cbor cbor cbor_project_options ${CJSON_LIBRARY})
 
   add_executable(cbor2cjson cbor2cjson.c)
-  target_include_directories(cbor2cjson PUBLIC ${CJSON_INCLUDE_DIRS})
+  target_include_directories(cbor2cjson SYSTEM PRIVATE ${CJSON_INCLUDE_DIRS})
   target_link_libraries(cbor2cjson cbor cbor_project_options ${CJSON_LIBRARY})
 endif()
 
