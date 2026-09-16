@@ -238,7 +238,10 @@ size_t cbor_serialize_bytestring(const cbor_item_t* item, unsigned char* buffer,
     size_t length = cbor_bytestring_length(item);
     size_t written = cbor_encode_bytestring_start(length, buffer, buffer_size);
     if (written > 0 && (buffer_size - written >= length)) {
-      memcpy(buffer + written, cbor_bytestring_handle(item), length);
+      // Empty bytestrings may have a NULL handle
+      if (length > 0) {
+        memcpy(buffer + written, cbor_bytestring_handle(item), length);
+      }
       return written + length;
     }
     return 0;
@@ -270,7 +273,10 @@ size_t cbor_serialize_string(const cbor_item_t* item, unsigned char* buffer,
     size_t length = cbor_string_length(item);
     size_t written = cbor_encode_string_start(length, buffer, buffer_size);
     if (written && (buffer_size - written >= length)) {
-      memcpy(buffer + written, cbor_string_handle(item), length);
+      // Empty strings may have a NULL handle
+      if (length > 0) {
+        memcpy(buffer + written, cbor_string_handle(item), length);
+      }
       return written + length;
     }
     return 0;

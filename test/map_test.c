@@ -218,24 +218,35 @@ static void test_map_creation(void** _state _CBOR_UNUSED) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_indefinite_map()); });
 }
 
-// On some platforms, malloc(0) returns NULL even though the allocation
-// itself didn't fail; there is nothing to indicate an error there since a
-// zero-size map never needs to look at its (non-existent) backing storage.
-static void* malloc_returning_null_for_zero_size(size_t size) {
-  if (size == 0) return NULL;
-  return malloc(size);
-}
-
 static void test_definite_map_zero_size_malloc_null(
     void** _state _CBOR_UNUSED) {
-  cbor_set_allocs(malloc_returning_null_for_zero_size, realloc, free);
-  cbor_item_t* empty = cbor_new_definite_map(0);
-  cbor_set_allocs(malloc, realloc, free);
+  WITH_MALLOC_NULL_FOR_ZERO_SIZE({
+    cbor_item_t* empty = cbor_new_definite_map(0);
+    assert_non_null(empty);
+    assert_size_equal(cbor_map_size(empty), 0);
+    assert_size_equal(cbor_map_allocated(empty), 0);
+    assert_null(cbor_map_handle(empty));
+    // Nothing fits in an empty definite map
+    cbor_item_t* one = cbor_build_uint8(1);
+    assert_false(
+        cbor_map_add(empty, (struct cbor_pair){.key = one, .value = one}));
+    cbor_decref(&one);
+    cbor_decref(&empty);
 
-  assert_non_null(empty);
-  assert_size_equal(cbor_map_size(empty), 0);
-  assert_size_equal(cbor_map_allocated(empty), 0);
-  cbor_decref(&empty);
+    // Decoding, serializing, and copying an empty definite map
+    struct cbor_load_result res;
+    cbor_item_t* decoded = cbor_load((cbor_data) "\xA0", 1, &res);
+    assert_non_null(decoded);
+    assert_size_equal(cbor_map_size(decoded), 0);
+    unsigned char buffer[8];
+    assert_size_equal(cbor_serialize(decoded, buffer, 8), 1);
+    assert_memory_equal(buffer, "\xA0", 1);
+    cbor_item_t* copy = cbor_copy(decoded);
+    assert_non_null(copy);
+    assert_true(cbor_structurally_equal(decoded, copy));
+    cbor_decref(&copy);
+    cbor_decref(&decoded);
+  });
 }
 
 static void test_map_add(void** _state _CBOR_UNUSED) {

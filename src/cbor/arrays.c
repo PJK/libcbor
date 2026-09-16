@@ -103,12 +103,11 @@ cbor_item_t* cbor_new_definite_array(size_t size) {
   cbor_item_t* item = _cbor_malloc(sizeof(cbor_item_t));
   _CBOR_NOTNULL(item);
 
-  // malloc(0) is allowed to return NULL even on success, so for a
-  // zero-size array we skip the allocation (and the NULL check) entirely
-  // rather than treating that as an allocation failure.
-  cbor_item_t** data =
-      size == 0 ? NULL : _cbor_alloc_multiple(sizeof(cbor_item_t*), size);
+  // malloc(0) may legitimately return NULL, so do not allocate (or check) for
+  // an empty array. The data pointer is never dereferenced while size == 0.
+  cbor_item_t** data = NULL;
   if (size > 0) {
+    data = _cbor_alloc_multiple(sizeof(cbor_item_t*), size);
     _CBOR_DEPENDENT_NOTNULL(item, data);
   }
 

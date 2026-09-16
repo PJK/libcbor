@@ -5,7 +5,9 @@ Template:
 Next
 ---------------------
 
-- [Don't fail on `malloc(0)` returning `NULL` when building zero-size definite maps/arrays](https://github.com/PJK/libcbor/pull/437) (reported by [hglee](https://github.com/hglee))
+- [Do not allocate zero-byte buffers for empty items, fixing creation and decoding failures on platforms and custom allocators where `malloc(0)` returns `NULL`](https://github.com/PJK/libcbor/pull/437) (by [afonsojanu](https://github.com/afonsojanu), reported by [hglee](https://github.com/hglee) in [#427](https://github.com/PJK/libcbor/issues/427))
+  - Affected `cbor_new_definite_array(0)`, `cbor_new_definite_map(0)`, `cbor_build_bytestring(_, 0)`, `cbor_build_string("")`, `cbor_build_stringn(_, 0)`, `cbor_copy_definite` of indefinite strings with no data, and `cbor_load`/`cbor_stream_decode` (via the builder) for any input containing an empty string, bytestring, array, or map
+  - Note: `cbor_array_handle`, `cbor_map_handle`, `cbor_bytestring_handle`, and `cbor_string_handle` now return `NULL` for empty definite items on all platforms (previously an implementation-defined `malloc(0)` result, non-`NULL` on glibc/macOS). The pointer was never valid to dereference; only code that asserted it was non-`NULL` or passed it to `memcpy` & co. with a zero length is affected
 - ABI BREAKING: [Inline `cbor_incref` and `cbor_decref` fast paths](https://github.com/PJK/libcbor/pull/434)
   - `cbor_incref` and `cbor_decref` are now `static inline` in `cbor/common.h`; the deallocation branch of `cbor_decref` moved into a new exported helper `_cbor_decref_free`. Source-compatible — same signatures and semantics — but the two symbols are no longer exported from the shared library, so binaries relying on their extern resolution (including `dlsym`) will fail to link against the new `.so`. Rebuilding against the updated headers is sufficient.
 

@@ -337,6 +337,49 @@ static void test_bytestring_creation(void** _state _CBOR_UNUSED) {
                    MALLOC_FAIL);
 }
 
+static void test_bytestring_zero_length_malloc_null(
+    void** _state _CBOR_UNUSED) {
+  WITH_MALLOC_NULL_FOR_ZERO_SIZE({
+    // Building
+    cbor_item_t* empty = cbor_build_bytestring((cbor_data) "", 0);
+    assert_non_null(empty);
+    assert_size_equal(cbor_bytestring_length(empty), 0);
+    assert_null(cbor_bytestring_handle(empty));
+
+    // Decoding a definite empty bytestring
+    struct cbor_load_result res;
+    cbor_item_t* decoded = cbor_load((cbor_data) "\x40", 1, &res);
+    assert_non_null(decoded);
+    assert_size_equal(cbor_bytestring_length(decoded), 0);
+    assert_true(cbor_structurally_equal(empty, decoded));
+
+    // Serializing
+    unsigned char buffer[8];
+    assert_size_equal(cbor_serialize(decoded, buffer, 8), 1);
+    assert_memory_equal(buffer, "\x40", 1);
+
+    // Copying
+    cbor_item_t* copy = cbor_copy(decoded);
+    assert_non_null(copy);
+    assert_true(cbor_structurally_equal(decoded, copy));
+
+    cbor_decref(&copy);
+    cbor_decref(&decoded);
+    cbor_decref(&empty);
+
+    // Decoding an indefinite bytestring with an empty chunk and combining it
+    cbor_item_t* indef = cbor_load((cbor_data) "\x5F\x40\xFF", 3, &res);
+    assert_non_null(indef);
+    assert_size_equal(cbor_bytestring_chunk_count(indef), 1);
+    cbor_item_t* combined = cbor_copy_definite(indef);
+    assert_non_null(combined);
+    assert_true(cbor_bytestring_is_definite(combined));
+    assert_size_equal(cbor_bytestring_length(combined), 0);
+    cbor_decref(&combined);
+    cbor_decref(&indef);
+  });
+}
+
 static void test_bytestring_add_chunk(void** _state _CBOR_UNUSED) {
   unsigned char bytes[] = {0, 0, 0xFF, 0xAB};
   WITH_MOCK_MALLOC(
@@ -375,6 +418,7 @@ int main(void) {
       cmocka_unit_test(test_inline_creation),
       cmocka_unit_test(test_add_chunk_reallocation_overflow),
       cmocka_unit_test(test_bytestring_creation),
+      cmocka_unit_test(test_bytestring_zero_length_malloc_null),
       cmocka_unit_test(test_bytestring_add_chunk),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);

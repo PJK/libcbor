@@ -217,13 +217,17 @@ void cbor_builder_byte_string_callback(void* context, cbor_data data,
                                        uint64_t length) {
   struct _cbor_decoder_context* ctx = context;
   CHECK_LENGTH(ctx, length);
-  unsigned char* new_handle = _cbor_malloc(length);
-  if (new_handle == NULL) {
-    ctx->creation_failed = true;
-    return;
+  // malloc(0) may legitimately return NULL, so do not allocate for an empty
+  // chunk; the handle will be NULL and never dereferenced.
+  unsigned char* new_handle = NULL;
+  if (length > 0) {
+    new_handle = _cbor_malloc(length);
+    if (new_handle == NULL) {
+      ctx->creation_failed = true;
+      return;
+    }
+    memcpy(new_handle, data, length);
   }
-
-  memcpy(new_handle, data, length);
   cbor_item_t* new_chunk = cbor_new_definite_bytestring();
 
   if (new_chunk == NULL) {
@@ -258,14 +262,17 @@ void cbor_builder_string_callback(void* context, cbor_data data,
                                   uint64_t length) {
   struct _cbor_decoder_context* ctx = context;
   CHECK_LENGTH(ctx, length);
-
-  unsigned char* new_handle = _cbor_malloc(length);
-  if (new_handle == NULL) {
-    ctx->creation_failed = true;
-    return;
+  // malloc(0) may legitimately return NULL, so do not allocate for an empty
+  // chunk; the handle will be NULL and never dereferenced.
+  unsigned char* new_handle = NULL;
+  if (length > 0) {
+    new_handle = _cbor_malloc(length);
+    if (new_handle == NULL) {
+      ctx->creation_failed = true;
+      return;
+    }
+    memcpy(new_handle, data, length);
   }
-
-  memcpy(new_handle, data, length);
   cbor_item_t* new_chunk = cbor_new_definite_string();
   if (new_chunk == NULL) {
     _cbor_free(new_handle);
