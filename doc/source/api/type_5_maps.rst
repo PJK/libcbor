@@ -14,6 +14,16 @@ Maps are explicitly created or decoded as definite or indefinite and will be enc
 
 .. warning:: Any CBOR data item is a legal map key (not just strings).
 
+.. warning::
+
+  libcbor does not enforce key uniqueness. Maps with duplicate keys are
+  accepted by the decoders and can be created through the API, even though
+  `RFC 8949 Section 5.3.1 <https://www.rfc-editor.org/rfc/rfc8949#section-5.3.1>`_
+  considers them invalid. If your protocol requires unique keys, check for
+  duplicates after decoding (e.g. by comparing keys with
+  :func:`cbor_structurally_equal`). See :ref:`decoder-validity` for the
+  general policy.
+
 ==================================  =====================================================================================
 Corresponding :type:`cbor_type`     ``CBOR_TYPE_MAP``
 Number of allocations (definite)    Two plus any manipulations with the data
