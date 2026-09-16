@@ -18,7 +18,8 @@
  *
  * Known deviations are listed in expected_failures below. An expected
  * failure that starts passing fails the test so that the list is kept
- * current. */
+ * current, unless it is marked platform_dependent, in which case either
+ * outcome is accepted. */
 
 #include <math.h>
 #include <stdio.h>
@@ -37,36 +38,55 @@ struct expected_failure {
   const char* description;  // Vector description, exact match
   const char* encoded;      // Lowercase hex of `encoded`, exact match
   const char* reason;
+  // The vector fails on some platforms only; passing is not an error
+  bool platform_dependent;
 };
 
 /* Keep this list sorted by file, then by encoded */
 static const struct expected_failure expected_failures[] = {
     {"rfc8949/bad.cbor", "utf8: invalid utf8", "62c0ae",
      "Invalid UTF-8 is a validity error (RFC 8949 5.3.1), not a "
-     "well-formedness error; libcbor decoders check well-formedness only"},
+     "well-formedness error; libcbor decoders check well-formedness only",
+     false},
     {"rfc8949/bad.cbor", "date: unexpected object instead of string",
      "c0a1616100",
      "Tag content type is a validity error (RFC 8949 5.3.2); libcbor does "
-     "not understand tag semantics"},
+     "not understand tag semantics",
+     false},
     {"rfc8949/bad.cbor", "date: unexpected object instead of offset",
      "c1a1616100",
      "Tag content type is a validity error (RFC 8949 5.3.2); libcbor does "
-     "not understand tag semantics"},
+     "not understand tag semantics",
+     false},
+    // Half-precision signaling NaNs: the payload is preserved on a best-effort
+    // basis. On FPUs that quiet signaling NaNs when loading them into a
+    // register (x87, i.e. 32-bit x86), the round trip sets the quiet bit.
+    // See cbor_encode_half and https://github.com/PJK/libcbor/issues/215
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "f97d1f", "Signaling NaN", true},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "f97d43", "Signaling NaN", true},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "f97df6", "Signaling NaN", true},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "f9fde9", "Signaling NaN", true},
     // Single- and double-precision NaN payloads are canonicalized on encoding
     // (see cbor_encode_single, cbor_encode_double), so the round trip does not
     // preserve them
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fa7fa3f553", "NaN payload"},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fa7fa86197", "NaN payload"},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fa7fbec01b", "NaN payload"},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "faffbd3eb2", "NaN payload"},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "faffca24fe", "NaN payload"},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "faffddb719", "NaN payload"},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fb7ff47eaa6bb744df", "NaN payload"},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fb7ff50c32fdc0b06d", "NaN payload"},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fb7ff7d8037701b83c", "NaN payload"},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fbfff7a7d642e1b3ff", "NaN payload"},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fbfff9449fd767f03e", "NaN payload"},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fbfffbb6e3314b47ad", "NaN payload"},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fa7fa3f553", "NaN payload", false},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fa7fa86197", "NaN payload", false},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fa7fbec01b", "NaN payload", false},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "faffbd3eb2", "NaN payload", false},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "faffca24fe", "NaN payload", false},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "faffddb719", "NaN payload", false},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fb7ff47eaa6bb744df", "NaN payload",
+     false},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fb7ff50c32fdc0b06d", "NaN payload",
+     false},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fb7ff7d8037701b83c", "NaN payload",
+     false},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fbfff7a7d642e1b3ff", "NaN payload",
+     false},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fbfff9449fd767f03e", "NaN payload",
+     false},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fbfffbb6e3314b47ad", "NaN payload",
+     false},
 };
 
 /* Per-test bookkeeping */
@@ -74,12 +94,14 @@ static int vectors_run;
 static int unexpected_failures;
 static int unexpected_passes;
 static int expected_failures_seen;
+static int platform_dependent_passes;
 
 static void reset_counters(void) {
   vectors_run = 0;
   unexpected_failures = 0;
   unexpected_passes = 0;
   expected_failures_seen = 0;
+  platform_dependent_passes = 0;
 }
 
 static unsigned char* read_file(const char* relative_path, size_t* length) {
@@ -419,11 +441,15 @@ static void run_suite(const char* file) {
       print_message("FAIL %s: \"%s\" [%s]: %s\n", file, description,
                     encoded_hex, failure);
     } else if (failure == NULL && expected != NULL) {
-      unexpected_passes++;
-      print_message(
-          "UNEXPECTED PASS %s: \"%s\" [%s]: remove it from "
-          "expected_failures (listed reason: %s)\n",
-          file, description, encoded_hex, expected->reason);
+      if (expected->platform_dependent) {
+        platform_dependent_passes++;
+      } else {
+        unexpected_passes++;
+        print_message(
+            "UNEXPECTED PASS %s: \"%s\" [%s]: remove it from "
+            "expected_failures (listed reason: %s)\n",
+            file, description, encoded_hex, expected->reason);
+      }
     } else if (failure != NULL) {
       expected_failures_seen++;
     }
@@ -439,8 +465,9 @@ static void run_suite(const char* file) {
 static void run_suites(const char* const* files, size_t count) {
   reset_counters();
   for (size_t i = 0; i < count; i++) run_suite(files[i]);
-  print_message("%d vectors, %d expected failures\n", vectors_run,
-                expected_failures_seen);
+  print_message(
+      "%d vectors, %d expected failures, %d platform-dependent passes\n",
+      vectors_run, expected_failures_seen, platform_dependent_passes);
   assert_true(vectors_run > 0);
   if (unexpected_failures > 0 || unexpected_passes > 0) {
     print_error("%d unexpected failures, %d unexpected passes\n",
