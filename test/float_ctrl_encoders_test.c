@@ -259,26 +259,20 @@ static void test_half_overflow_to_infinity(void** _state _CBOR_UNUSED) {
   assert_half_float_codec_identity();
 }
 
-/* Check that buffer holds a valid single-precision CBOR NaN with the expected
- * sign, then verify that decoding and encoding it again reproduces the bytes.
- * The exact payload bits are not checked because the C NAN constant has
- * platform-specific bit patterns (e.g. MIPS legacy NaN). */
-static void assert_single_nan_and_roundtrip(int negative) {
+/* Check that buffer holds a single-precision CBOR NaN with the given sign
+ * bit (0x80 or 0x00), then verify that decoding and encoding it again
+ * reproduces the bytes. The payload bits are not checked because the C NAN
+ * constant has platform-specific bit patterns (e.g. MIPS legacy NaN). */
+static void assert_single_nan_and_roundtrip(unsigned char sign_bit) {
   assert_int_equal(buffer[0], 0xFA);
-  if (negative) {
-    assert_true(buffer[1] & 0x80);
-  } else {
-    assert_false(buffer[1] & 0x80);
-  }
-  /* All eight exponent bits set */
-  assert_true((buffer[1] & 0x7F) == 0x7F && (buffer[2] & 0x80));
-  /* Non-zero mantissa distinguishes NaN from Infinity */
-  assert_true((buffer[2] & 0x7F) || buffer[3] || buffer[4]);
+  assert_int_equal(buffer[1] & 0x80, sign_bit);
 
   struct cbor_load_result res;
   cbor_item_t* item = cbor_load(buffer, 5, &res);
   assert_non_null(item);
   assert_true(cbor_float_get_width(item) == CBOR_FLOAT_32);
+  assert_true(isnan(cbor_float_get_float4(item)));
+
   unsigned char secondary_buffer[5];
   assert_size_equal(
       5, cbor_encode_single(cbor_float_get_float4(item), secondary_buffer, 5));
@@ -286,23 +280,16 @@ static void assert_single_nan_and_roundtrip(int negative) {
   cbor_decref(&item);
 }
 
-static void assert_double_nan_and_roundtrip(int negative) {
+static void assert_double_nan_and_roundtrip(unsigned char sign_bit) {
   assert_int_equal(buffer[0], 0xFB);
-  if (negative) {
-    assert_true(buffer[1] & 0x80);
-  } else {
-    assert_false(buffer[1] & 0x80);
-  }
-  /* All eleven exponent bits set */
-  assert_true((buffer[1] & 0x7F) == 0x7F && (buffer[2] & 0xF0) == 0xF0);
-  /* Non-zero mantissa distinguishes NaN from Infinity */
-  assert_true((buffer[2] & 0x0F) || buffer[3] || buffer[4] || buffer[5] ||
-              buffer[6] || buffer[7] || buffer[8]);
+  assert_int_equal(buffer[1] & 0x80, sign_bit);
 
   struct cbor_load_result res;
   cbor_item_t* item = cbor_load(buffer, 9, &res);
   assert_non_null(item);
   assert_true(cbor_float_get_width(item) == CBOR_FLOAT_64);
+  assert_true(isnan(cbor_float_get_float8(item)));
+
   unsigned char secondary_buffer[9];
   assert_size_equal(
       9, cbor_encode_double(cbor_float_get_float8(item), secondary_buffer, 9));
@@ -316,13 +303,13 @@ static void test_float(void** _state _CBOR_UNUSED) {
                       5);
 
   assert_size_equal(5, cbor_encode_single(NAN, buffer, 512));
-  assert_single_nan_and_roundtrip(0);
+  assert_single_nan_and_roundtrip(0x00);
 
   assert_size_equal(5, cbor_encode_single(nanf("3"), buffer, 512));
-  assert_single_nan_and_roundtrip(0);
+  assert_single_nan_and_roundtrip(0x00);
 
   assert_size_equal(5, cbor_encode_single(-NAN, buffer, 512));
-  assert_single_nan_and_roundtrip(1);
+  assert_single_nan_and_roundtrip(0x80);
 
   /* Quiet NaN with a payload: bit 22 (quiet) plus payload bits. Built from
    * a bit pattern rather than a C NaN constant for deterministic results
@@ -333,7 +320,7 @@ static void test_float(void** _state _CBOR_UNUSED) {
   assert_size_equal(5, cbor_encode_single(nan_with_payload, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xFA, 0xFF, 0xC1, 0x23, 0x45}),
                       5);
-  assert_single_nan_and_roundtrip(1);
+  assert_single_nan_and_roundtrip(0x80);
 
   assert_size_equal(5, cbor_encode_single(strtof("Inf", NULL), buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xFA, 0x7F, 0x80, 0x00, 0x00}),
@@ -352,13 +339,13 @@ static void test_double(void** _state _CBOR_UNUSED) {
       9);
 
   assert_size_equal(9, cbor_encode_double(nan(""), buffer, 512));
-  assert_double_nan_and_roundtrip(0);
+  assert_double_nan_and_roundtrip(0x00);
 
   assert_size_equal(9, cbor_encode_double(nan("3"), buffer, 512));
-  assert_double_nan_and_roundtrip(0);
+  assert_double_nan_and_roundtrip(0x00);
 
   assert_size_equal(9, cbor_encode_double(-nan(""), buffer, 512));
-  assert_double_nan_and_roundtrip(1);
+  assert_double_nan_and_roundtrip(0x80);
 
   /* Quiet NaN with a payload: bit 51 (quiet) plus payload bits. Built from
    * a bit pattern rather than a C NaN constant for deterministic results
@@ -371,7 +358,7 @@ static void test_double(void** _state _CBOR_UNUSED) {
       buffer,
       ((unsigned char[]){0xFB, 0xFF, 0xF8, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC}),
       9);
-  assert_double_nan_and_roundtrip(1);
+  assert_double_nan_and_roundtrip(0x80);
 
   assert_size_equal(9, cbor_encode_double(strtod("Inf", NULL), buffer, 512));
   assert_memory_equal(
