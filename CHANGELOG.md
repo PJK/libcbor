@@ -1,6 +1,6 @@
 Template:
 
-- [Fix issue X in feature Y](https://github.com/PJK/libcbor/pull/445) (by [YYY](https://github.com/YYY))
+- [Fix issue X in feature Y](https://github.com/PJK/libcbor/pull/XXX) (by [YYY](https://github.com/YYY))
 
 Next
 ---------------------
