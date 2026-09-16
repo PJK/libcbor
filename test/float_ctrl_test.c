@@ -88,6 +88,49 @@ static void test_undef(void** _state _CBOR_UNUSED) {
   assert_null(float_ctrl);
 }
 
+unsigned char simple_value_data[][2] = {
+    {0xE0, 0x00}, {0xF3, 0x00}, {0xF8, 0x20}, {0xF8, 0xFF}};
+size_t simple_value_lengths[] = {1, 1, 2, 2};
+uint8_t simple_values[] = {0, 19, 32, 255};
+
+/* Unassigned simple values are well-formed and must round-trip */
+static void test_simple_values(void** _state _CBOR_UNUSED) {
+  for (size_t i = 0; i < 4; i++) {
+    float_ctrl = cbor_load(simple_value_data[i], simple_value_lengths[i], &res);
+    assert_non_null(float_ctrl);
+    assert_size_equal(res.read, simple_value_lengths[i]);
+    assert_true(cbor_isa_float_ctrl(float_ctrl));
+    assert_true(cbor_float_ctrl_is_ctrl(float_ctrl));
+    assert_true(cbor_float_get_width(float_ctrl) == CBOR_FLOAT_0);
+    assert_false(cbor_is_bool(float_ctrl));
+    assert_false(cbor_is_null(float_ctrl));
+    assert_false(cbor_is_undef(float_ctrl));
+    assert_int_equal(cbor_ctrl_value(float_ctrl), simple_values[i]);
+
+    unsigned char buffer[2];
+    assert_size_equal(cbor_serialize(float_ctrl, buffer, 2),
+                      simple_value_lengths[i]);
+    assert_memory_equal(buffer, simple_value_data[i], simple_value_lengths[i]);
+
+    cbor_decref(&float_ctrl);
+    assert_null(float_ctrl);
+  }
+}
+
+static void test_simple_value_alloc_failure(void** _state _CBOR_UNUSED) {
+  WITH_FAILING_MALLOC({
+    assert_null(cbor_load(simple_value_data[0], 1, &res));
+    assert_true(res.error.code == CBOR_ERR_MEMERROR);
+  });
+}
+
+/* 0xF8 followed by a byte below 0x20 is not well-formed */
+unsigned char reserved_simple_value_data[] = {0xF8, 0x1F};
+static void test_reserved_simple_value(void** _state _CBOR_UNUSED) {
+  assert_null(cbor_load(reserved_simple_value_data, 2, &res));
+  assert_true(res.error.code == CBOR_ERR_MALFORMATED);
+}
+
 unsigned char bool_data[] = {0xF4, 0xF5};
 
 static void test_bool(void** _state _CBOR_UNUSED) {
@@ -152,6 +195,9 @@ int main(void) {
       cmocka_unit_test(test_float8),
       cmocka_unit_test(test_null),
       cmocka_unit_test(test_undef),
+      cmocka_unit_test(test_simple_values),
+      cmocka_unit_test(test_simple_value_alloc_failure),
+      cmocka_unit_test(test_reserved_simple_value),
       cmocka_unit_test(test_bool),
       cmocka_unit_test(test_float_ctrl_creation),
       cmocka_unit_test(test_ctrl_on_float),

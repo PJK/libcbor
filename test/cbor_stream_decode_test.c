@@ -667,6 +667,52 @@ static void test_undef_decoding(void** _state _CBOR_UNUSED) {
   assert_decoder_result(1, CBOR_DECODER_FINISHED, decode(undef_data, 1));
 }
 
+unsigned char simple_value_0_data[] = {0xE0};
+static void test_simple_value_0_decoding(void** _state _CBOR_UNUSED) {
+  assert_simple_value(0);
+  assert_decoder_result(1, CBOR_DECODER_FINISHED,
+                        decode(simple_value_0_data, 1));
+}
+
+unsigned char simple_value_19_data[] = {0xF3};
+static void test_simple_value_19_decoding(void** _state _CBOR_UNUSED) {
+  assert_simple_value(19);
+  assert_decoder_result(1, CBOR_DECODER_FINISHED,
+                        decode(simple_value_19_data, 1));
+}
+
+unsigned char simple_value_32_data[] = {0xF8, 0x20};
+static void test_simple_value_32_decoding(void** _state _CBOR_UNUSED) {
+  assert_simple_value(32);
+  assert_decoder_result(2, CBOR_DECODER_FINISHED,
+                        decode(simple_value_32_data, 2));
+
+  assert_minimum_input_size(2, simple_value_32_data);
+}
+
+unsigned char simple_value_255_data[] = {0xF8, 0xFF};
+static void test_simple_value_255_decoding(void** _state _CBOR_UNUSED) {
+  assert_simple_value(255);
+  assert_decoder_result(2, CBOR_DECODER_FINISHED,
+                        decode(simple_value_255_data, 2));
+}
+
+/* RFC 8949 Section 3.3: 0xF8 followed by a byte below 0x20 is not
+ * well-formed. Values 0..23 must use the one-byte encoding and 24..31 are
+ * reserved. */
+unsigned char simple_value_two_byte_0_data[] = {0xF8, 0x00};
+unsigned char simple_value_two_byte_23_data[] = {0xF8, 0x17};
+unsigned char simple_value_24_data[] = {0xF8, 0x18};
+unsigned char simple_value_31_data[] = {0xF8, 0x1F};
+static void test_simple_value_reserved_decoding(void** _state _CBOR_UNUSED) {
+  assert_decoder_result(0, CBOR_DECODER_ERROR,
+                        decode(simple_value_two_byte_0_data, 2));
+  assert_decoder_result(0, CBOR_DECODER_ERROR,
+                        decode(simple_value_two_byte_23_data, 2));
+  assert_decoder_result(0, CBOR_DECODER_ERROR, decode(simple_value_24_data, 2));
+  assert_decoder_result(0, CBOR_DECODER_ERROR, decode(simple_value_31_data, 2));
+}
+
 #define stream_test(f) cmocka_unit_test_teardown(f, clean_up_stream_assertions)
 
 int main(void) {
@@ -738,6 +784,12 @@ int main(void) {
       stream_test(test_false_decoding),
       stream_test(test_true_decoding),
       stream_test(test_null_decoding),
-      stream_test(test_undef_decoding)};
+      stream_test(test_undef_decoding),
+
+      stream_test(test_simple_value_0_decoding),
+      stream_test(test_simple_value_19_decoding),
+      stream_test(test_simple_value_32_decoding),
+      stream_test(test_simple_value_255_decoding),
+      stream_test(test_simple_value_reserved_decoding)};
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

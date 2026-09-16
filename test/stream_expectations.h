@@ -50,6 +50,7 @@ enum test_expectation {
   BOOL_EQ,
   NIL,
   UNDEF,
+  SIMPLE_VALUE_EQ,
   INDEF_BREAK /* Expect "Break" */
 };
 
@@ -112,6 +113,7 @@ void assert_double(double);
 void assert_bool(bool);
 void assert_nil(void); /* assert_null already exists */
 void assert_undef(void);
+void assert_simple_value(uint8_t);
 
 void assert_indef_break(void);
 
@@ -148,5 +150,6 @@ void indef_break_callback(void*);
 void bool_callback(void*, bool);
 void null_callback(void*);
 void undef_callback(void*);
+void simple_value_callback(void*, uint8_t);
 
 #endif

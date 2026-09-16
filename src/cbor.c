@@ -47,7 +47,8 @@ cbor_item_t* cbor_load(cbor_data source, size_t source_size,
       .float2 = &cbor_builder_float2_callback,
       .float4 = &cbor_builder_float4_callback,
       .float8 = &cbor_builder_float8_callback,
-      .indef_break = &cbor_builder_indef_break_callback};
+      .indef_break = &cbor_builder_indef_break_callback,
+      .simple_value = &cbor_builder_simple_value_callback};
 
   if (source_size == 0) {
     result->error.code = CBOR_ERR_NODATA;
