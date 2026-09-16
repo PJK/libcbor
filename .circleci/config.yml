@@ -100,7 +100,7 @@ jobs:
             exit 1
           fi
       - run: >
-          if doxygen Doxyfile | grep 'warning: '; then
+          if doxygen Doxyfile 2>&1 | grep 'warning: '; then
             echo "Doxygen warning (see above) -- misformatted docs?"
             exit 1
           fi
