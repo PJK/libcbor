@@ -29,6 +29,36 @@ static void test_undef(void** _state _CBOR_UNUSED) {
   assert_memory_equal(buffer, ((unsigned char[]){0xF7}), 1);
 }
 
+static void test_simple_values(void** _state _CBOR_UNUSED) {
+  // 0..23 use the one-byte encoding
+  assert_size_equal(1, cbor_encode_ctrl(0, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xE0}), 1);
+  assert_size_equal(1, cbor_encode_ctrl(19, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF3}), 1);
+  assert_size_equal(1, cbor_encode_ctrl(20, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF4}), 1);
+  assert_size_equal(1, cbor_encode_ctrl(23, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF7}), 1);
+
+  // 32..255 use the two-byte encoding
+  assert_size_equal(2, cbor_encode_ctrl(32, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF8, 0x20}), 2);
+  assert_size_equal(2, cbor_encode_ctrl(255, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF8, 0xFF}), 2);
+
+  // 24..31 are reserved by RFC 8949 and have no well-formed encoding. The
+  // encoder does not reject them; this pins the current (ill-formed) output
+  // so that any change is deliberate.
+  assert_size_equal(2, cbor_encode_ctrl(24, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF8, 0x18}), 2);
+  assert_size_equal(2, cbor_encode_ctrl(31, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF8, 0x1F}), 2);
+
+  // Insufficient buffer
+  assert_size_equal(0, cbor_encode_ctrl(0, buffer, 0));
+  assert_size_equal(0, cbor_encode_ctrl(32, buffer, 1));
+}
+
 static void test_break(void** _state _CBOR_UNUSED) {
   assert_size_equal(1, cbor_encode_break(buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xFF}), 1);
@@ -288,6 +318,7 @@ int main(void) {
       cmocka_unit_test(test_bools),
       cmocka_unit_test(test_null),
       cmocka_unit_test(test_undef),
+      cmocka_unit_test(test_simple_values),
       cmocka_unit_test(test_break),
       cmocka_unit_test(test_half),
       cmocka_unit_test(test_float),

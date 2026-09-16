@@ -76,6 +76,8 @@ void cbor_builder_undefined_callback(void*);
 
 void cbor_builder_boolean_callback(void*, bool);
 
+void cbor_builder_simple_value_callback(void*, uint8_t);
+
 void cbor_builder_indef_break_callback(void*);
 
 #ifdef __cplusplus

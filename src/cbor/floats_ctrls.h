@@ -227,7 +227,10 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_float8(double value);
 
 /** Constructs a ctrl item
  *
- * @param value the value to use
+ * @param value the value to use. Any simple value in the range 0 to 255 is
+ * accepted, but 24 to 31 are reserved by RFC 8949 and have no well-formed
+ * encoding; the resulting item will serialize, but decoders (including
+ * libcbor's own) will reject the output
  * @return Reference to the new ctrl item. The item's reference count is
  * initialized to one.
  * @return `NULL` if memory allocation fails

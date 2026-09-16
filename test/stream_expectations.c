@@ -282,6 +282,17 @@ void undef_callback(void* _context _CBOR_UNUSED) {
   current_expectation++;
 }
 
+void assert_simple_value(uint8_t value) {
+  assertions_queue[queue_size++] =
+      (struct test_assertion){SIMPLE_VALUE_EQ, {.int8 = value}};
+}
+
+void simple_value_callback(void* _context _CBOR_UNUSED, uint8_t actual) {
+  assert_true(current().expectation == SIMPLE_VALUE_EQ);
+  assert_true(current().data.int8 == actual);
+  current_expectation++;
+}
+
 const struct cbor_callbacks asserting_callbacks = {
     .uint8 = &uint8_callback,
     .uint16 = &uint16_callback,
@@ -314,7 +325,8 @@ const struct cbor_callbacks asserting_callbacks = {
     .undefined = &undef_callback,
     .boolean = &bool_callback,
     .null = &null_callback,
-    .indef_break = &indef_break_callback};
+    .indef_break = &indef_break_callback,
+    .simple_value = &simple_value_callback};
 
 struct cbor_decoder_result decode(cbor_data source, size_t source_size) {
   int last_expectation = current_expectation;

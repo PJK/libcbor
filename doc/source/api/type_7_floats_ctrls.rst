@@ -3,6 +3,20 @@ Type 7 – Floats & control tokens
 
 This type combines two completely unrelated types of items -- floating point numbers and special values such as true, false, null, etc. We refer to these special values as 'control values' or 'ctrls' for short throughout the code.
 
+Simple values
+~~~~~~~~~~~~~~
+
+`RFC 8949 Section 3.3 <https://www.rfc-editor.org/rfc/rfc8949#section-3.3>`_ defines
+simple values 0 to 255, of which only ``false`` (20), ``true`` (21), ``null`` (22),
+and ``undefined`` (23) are assigned. *libcbor* represents all of them as ctrl items:
+:func:`cbor_ctrl_value` returns the raw value, and :func:`cbor_is_bool`,
+:func:`cbor_is_null`, and :func:`cbor_is_undef` identify the assigned ones.
+
+The unassigned values 0 to 19 and 32 to 255 are well-formed and are decoded and
+encoded as-is. Values 24 to 31 are reserved and cannot be represented in well-formed
+CBOR; the decoders reject them, and :func:`cbor_build_ctrl` will produce an encoding
+that other decoders will reject as well.
+
 Just like integers, they have different possible width (resulting in different value ranges and precisions).
 
 .. doxygenenum:: cbor_float_width

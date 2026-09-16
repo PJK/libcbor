@@ -105,6 +105,21 @@ struct cbor_callbacks {
 
   /** Indefinite item break */
   cbor_simple_callback indef_break;
+
+  /** Simple value other than false, true, null, and undefined
+   *
+   * Invoked for the unassigned simple values 0 to 19 (encoded as a single
+   * byte 0xE0 to 0xF3) and 32 to 255 (encoded as 0xF8 followed by the value).
+   * Values 24 to 31 (0xF8 followed by a byte below 0x20) are not well-formed
+   * and are reported as a decoding error instead
+   * (`RFC 8949 Section 3.3
+   * <https://www.rfc-editor.org/rfc/rfc8949#section-3.3>`_).
+   *
+   * Like every other member, this must not be `NULL`. Callback sets written
+   * before this member existed must be updated; use
+   * #cbor_null_simple_value_callback to ignore these values.
+   */
+  cbor_int8_callback simple_value;
 };
 
 /** Dummy callback implementation - does nothing */
@@ -178,6 +193,9 @@ CBOR_EXPORT void cbor_null_boolean_callback(void*, bool);
 
 /** Dummy callback implementation - does nothing */
 CBOR_EXPORT void cbor_null_indef_break_callback(void*);
+
+/** Dummy callback implementation - does nothing */
+CBOR_EXPORT void cbor_null_simple_value_callback(void*, uint8_t);
 
 /** Dummy callback bundle - does nothing */
 CBOR_EXPORT extern const struct cbor_callbacks cbor_empty_callbacks;

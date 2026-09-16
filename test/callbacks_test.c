@@ -29,6 +29,17 @@ static void test_default_callbacks(void** _state _CBOR_UNUSED) {
   }
 }
 
+unsigned char simple_values_data[] = {0x82, 0xE0, 0xF8, 0xFF};
+static void test_default_simple_value_callback(void** _state _CBOR_UNUSED) {
+  size_t read = 0;
+  while (read < 4) {
+    struct cbor_decoder_result result = cbor_stream_decode(
+        simple_values_data + read, 4 - read, &cbor_empty_callbacks, NULL);
+    assert_true(result.status == CBOR_DECODER_FINISHED);
+    read += result.read;
+  }
+}
+
 unsigned char bytestring_data[] = {0x01, 0x02, 0x03};
 static void test_builder_byte_string_callback_append(
     void** _state _CBOR_UNUSED) {
@@ -415,6 +426,7 @@ static void test_invalid_state_indef_break(void** _state _CBOR_UNUSED) {
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_default_callbacks),
+      cmocka_unit_test(test_default_simple_value_callback),
       cmocka_unit_test(test_builder_byte_string_callback_append),
       cmocka_unit_test(test_builder_byte_string_callback_append_alloc_failure),
       cmocka_unit_test(

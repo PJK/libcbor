@@ -74,6 +74,9 @@ void cbor_null_boolean_callback(void* _ctx _CBOR_UNUSED,
 
 void cbor_null_indef_break_callback(void* _ctx _CBOR_UNUSED) {}
 
+void cbor_null_simple_value_callback(void* _ctx _CBOR_UNUSED,
+                                     uint8_t _CBOR_UNUSED _val) {}
+
 CBOR_EXPORT const struct cbor_callbacks cbor_empty_callbacks = {
     /* Type 0 - Unsigned integers */
     .uint8 = cbor_null_uint8_callback,
@@ -118,4 +121,7 @@ CBOR_EXPORT const struct cbor_callbacks cbor_empty_callbacks = {
 
     /* Shared indefinites */
     .indef_break = cbor_null_indef_break_callback,
+
+    /* Type 7 - Simple values other than false, true, null, and undefined */
+    .simple_value = cbor_null_simple_value_callback,
 };

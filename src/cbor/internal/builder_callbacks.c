@@ -422,6 +422,13 @@ void cbor_builder_undefined_callback(void* context) {
   _cbor_builder_append(res, ctx);
 }
 
+void cbor_builder_simple_value_callback(void* context, uint8_t value) {
+  struct _cbor_decoder_context* ctx = context;
+  cbor_item_t* res = cbor_build_ctrl(value);
+  CHECK_RES(ctx, res);
+  _cbor_builder_append(res, ctx);
+}
+
 void cbor_builder_boolean_callback(void* context, bool value) {
   struct _cbor_decoder_context* ctx = context;
   cbor_item_t* res = cbor_build_bool(value);
