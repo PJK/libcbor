@@ -10,6 +10,7 @@
 
 #include "assertions.h"
 #include "cbor.h"
+#include "test_allocator.h"
 
 void assert_describe_result(cbor_item_t* item, char* expected_result) {
 #if CBOR_PRETTY_PRINTER
@@ -54,6 +55,17 @@ static void test_definite_bytestring(void** _state _CBOR_UNUSED) {
   cbor_decref(&item);
 }
 
+static void test_empty_definite_bytestring(void** _state _CBOR_UNUSED) {
+  WITH_MALLOC_NULL_FOR_ZERO_SIZE({
+    cbor_item_t* item = cbor_build_bytestring((cbor_data) "", 0);
+    assert_describe_result(
+        item,
+        "[CBOR_TYPE_BYTESTRING] Definite, Length: 0B, Data:\n"
+        "    \n");
+    cbor_decref(&item);
+  });
+}
+
 static void test_indefinite_bytestring(void** _state _CBOR_UNUSED) {
   unsigned char data[] = {0x01, 0x02, 0x03};
   cbor_item_t* item = cbor_new_indefinite_bytestring();
@@ -79,6 +91,17 @@ static void test_definite_string(void** _state _CBOR_UNUSED) {
       "[CBOR_TYPE_STRING] Definite, Length: 6B, Codepoints: 6, Data:\n"
       "    Hello!\n");
   cbor_decref(&item);
+}
+
+static void test_empty_definite_string(void** _state _CBOR_UNUSED) {
+  WITH_MALLOC_NULL_FOR_ZERO_SIZE({
+    cbor_item_t* item = cbor_build_string("");
+    assert_describe_result(
+        item,
+        "[CBOR_TYPE_STRING] Definite, Length: 0B, Codepoints: 0, Data:\n"
+        "    \n");
+    cbor_decref(&item);
+  });
 }
 
 static void test_indefinite_string(void** _state _CBOR_UNUSED) {
@@ -190,8 +213,10 @@ int main(void) {
       cmocka_unit_test(test_uint),
       cmocka_unit_test(test_negint),
       cmocka_unit_test(test_definite_bytestring),
+      cmocka_unit_test(test_empty_definite_bytestring),
       cmocka_unit_test(test_indefinite_bytestring),
       cmocka_unit_test(test_definite_string),
+      cmocka_unit_test(test_empty_definite_string),
       cmocka_unit_test(test_indefinite_string),
       cmocka_unit_test(test_multibyte_string),
       cmocka_unit_test(test_definite_array),
