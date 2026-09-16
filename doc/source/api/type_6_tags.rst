@@ -10,7 +10,12 @@ Please consult the official `IANA repository of CBOR tags <https://www.iana.org/
 Please note that libcbor does *not* understand the semantics of tags and will
 process all `well-formed <https://datatracker.ietf.org/doc/html/rfc8949#name-terminology>`_
 tags regardless of whether they are valid with respect to the data they are
-applied to.
+applied to. For example, tag 0 (standard date/time string) applied to a map
+will be decoded without error, even though
+`RFC 8949 Section 5.3.2 <https://www.rfc-editor.org/rfc/rfc8949#section-5.3.2>`_
+considers it invalid. Applications that rely on a tag's meaning should check
+the type of :func:`cbor_tag_item` themselves. See :ref:`decoder-validity` for
+the general policy.
 
 ==================================  ======================================================
 Corresponding :type:`cbor_type`     ``CBOR_TYPE_TAG``

@@ -78,6 +78,67 @@ This section covers the **Default driver** — :func:`cbor_load` and related
 routines that decode a complete CBOR input into a ``cbor_item_t`` tree in one
 call.
 
+.. _decoder-validity:
+
+Well-formedness and validity
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`RFC 8949 <https://www.rfc-editor.org/rfc/rfc8949#section-1.2>`_ distinguishes
+two levels of correctness for a CBOR data item:
+
+- **Well-formed**: the item follows the syntactic structure of CBOR — the
+  initial bytes, argument, and any implied byte strings or nested data
+  items are all present and consistent
+  (`Section 3 <https://www.rfc-editor.org/rfc/rfc8949#section-3>`_).
+- **Valid**: the item is well-formed *and* satisfies the semantic
+  restrictions of
+  `Section 5.3 <https://www.rfc-editor.org/rfc/rfc8949#section-5.3>`_,
+  e.g. text strings are valid UTF-8, maps have no duplicate keys, and
+  tag content has the type the tag requires.
+
+Both libcbor decoders — :func:`cbor_load` and :func:`cbor_stream_decode` —
+**check well-formedness only**. Any well-formed input is decoded successfully;
+validity is left to the application, which is the only party that knows the
+protocol's requirements
+(`Section 5.4 <https://www.rfc-editor.org/rfc/rfc8949#section-5.4>`_).
+Concretely, the decoders will accept:
+
+.. rst-class:: fixed-table
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 30 40
+
+   * - Input
+     - RFC 8949
+     - How to check
+   * - Text string that is not valid UTF-8,
+       e.g. ``0x62 0xC0 0xAE``
+     - `5.3.1 <https://www.rfc-editor.org/rfc/rfc8949#section-5.3.1>`_
+     - :func:`cbor_string_codepoint_count` returns ``0``;
+       see :doc:`type_3_strings`
+   * - Map with duplicate keys,
+       e.g. ``{1: 2, 1: 3}``
+     - `5.3.1 <https://www.rfc-editor.org/rfc/rfc8949#section-5.3.1>`_
+     - Iterate :func:`cbor_map_handle` and compare keys with
+       :func:`cbor_structurally_equal`; see :doc:`type_5_maps`
+   * - Tag whose content has an inadmissible type,
+       e.g. tag 1 (epoch date) applied to a map
+     - `5.3.2 <https://www.rfc-editor.org/rfc/rfc8949#section-5.3.2>`_
+     - Inspect :func:`cbor_tag_value` and :func:`cbor_tag_item`;
+       see :doc:`type_6_tags`
+
+Inputs that are not well-formed — truncated data, reserved additional
+information values, unexpected ``break`` codes, indefinite-length strings with
+chunks of the wrong type, etc. — are rejected with a :type:`cbor_error_code`
+describing the problem.
+
+Note that the terminology in the CBOR working group's
+`test vectors <https://github.com/cbor-wg/cbor-test-vectors>`_ and similar
+suites does not always make this distinction. Test cases that expect a
+decoder to *fail* on well-formed but invalid input are not applicable to
+libcbor's decoders as designed.
+
 .. warning::
 
    ``cbor_load`` allocates memory sized by lengths declared in the CBOR header
