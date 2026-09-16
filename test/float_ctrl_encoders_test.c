@@ -259,18 +259,68 @@ static void test_half_overflow_to_infinity(void** _state _CBOR_UNUSED) {
   assert_half_float_codec_identity();
 }
 
+/* Check that buffer holds a single-precision CBOR NaN with the given sign
+ * bit (0x80 or 0x00), then verify that decoding and encoding it again
+ * reproduces the bytes. The payload bits are not checked because the C NAN
+ * constant has platform-specific bit patterns (e.g. MIPS legacy NaN). */
+static void assert_single_nan_and_roundtrip(unsigned char sign_bit) {
+  assert_int_equal(buffer[0], 0xFA);
+  assert_int_equal(buffer[1] & 0x80, sign_bit);
+
+  struct cbor_load_result res;
+  cbor_item_t* item = cbor_load(buffer, 5, &res);
+  assert_non_null(item);
+  assert_true(cbor_float_get_width(item) == CBOR_FLOAT_32);
+  assert_true(isnan(cbor_float_get_float4(item)));
+
+  unsigned char secondary_buffer[5];
+  assert_size_equal(
+      5, cbor_encode_single(cbor_float_get_float4(item), secondary_buffer, 5));
+  assert_memory_equal(buffer, secondary_buffer, 5);
+  cbor_decref(&item);
+}
+
+static void assert_double_nan_and_roundtrip(unsigned char sign_bit) {
+  assert_int_equal(buffer[0], 0xFB);
+  assert_int_equal(buffer[1] & 0x80, sign_bit);
+
+  struct cbor_load_result res;
+  cbor_item_t* item = cbor_load(buffer, 9, &res);
+  assert_non_null(item);
+  assert_true(cbor_float_get_width(item) == CBOR_FLOAT_64);
+  assert_true(isnan(cbor_float_get_float8(item)));
+
+  unsigned char secondary_buffer[9];
+  assert_size_equal(
+      9, cbor_encode_double(cbor_float_get_float8(item), secondary_buffer, 9));
+  assert_memory_equal(buffer, secondary_buffer, 9);
+  cbor_decref(&item);
+}
+
 static void test_float(void** _state _CBOR_UNUSED) {
   assert_size_equal(5, cbor_encode_single(3.4028234663852886e+38, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xFA, 0x7F, 0x7F, 0xFF, 0xFF}),
                       5);
 
   assert_size_equal(5, cbor_encode_single(NAN, buffer, 512));
-  assert_memory_equal(buffer, ((unsigned char[]){0xFA, 0x7F, 0xC0, 0x00, 0x00}),
-                      5);
+  assert_single_nan_and_roundtrip(0x00);
 
   assert_size_equal(5, cbor_encode_single(nanf("3"), buffer, 512));
-  assert_memory_equal(buffer, ((unsigned char[]){0xFA, 0x7F, 0xC0, 0x00, 0x00}),
+  assert_single_nan_and_roundtrip(0x00);
+
+  assert_size_equal(5, cbor_encode_single(-NAN, buffer, 512));
+  assert_single_nan_and_roundtrip(0x80);
+
+  /* Quiet NaN with a payload: bit 22 (quiet) plus payload bits. Built from
+   * a bit pattern rather than a C NaN constant for deterministic results
+   * across platforms. */
+  float nan_with_payload;
+  uint32_t nan_bits = 0xFFC12345u;
+  memcpy(&nan_with_payload, &nan_bits, sizeof(nan_with_payload));
+  assert_size_equal(5, cbor_encode_single(nan_with_payload, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xFA, 0xFF, 0xC1, 0x23, 0x45}),
                       5);
+  assert_single_nan_and_roundtrip(0x80);
 
   assert_size_equal(5, cbor_encode_single(strtof("Inf", NULL), buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0xFA, 0x7F, 0x80, 0x00, 0x00}),
@@ -289,16 +339,26 @@ static void test_double(void** _state _CBOR_UNUSED) {
       9);
 
   assert_size_equal(9, cbor_encode_double(nan(""), buffer, 512));
-  assert_memory_equal(
-      buffer,
-      ((unsigned char[]){0xFB, 0x7F, 0xF8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}),
-      9);
+  assert_double_nan_and_roundtrip(0x00);
 
   assert_size_equal(9, cbor_encode_double(nan("3"), buffer, 512));
+  assert_double_nan_and_roundtrip(0x00);
+
+  assert_size_equal(9, cbor_encode_double(-nan(""), buffer, 512));
+  assert_double_nan_and_roundtrip(0x80);
+
+  /* Quiet NaN with a payload: bit 51 (quiet) plus payload bits. Built from
+   * a bit pattern rather than a C NaN constant for deterministic results
+   * across platforms. */
+  double nan_with_payload;
+  uint64_t nan_bits = 0xFFF8123456789ABCull;
+  memcpy(&nan_with_payload, &nan_bits, sizeof(nan_with_payload));
+  assert_size_equal(9, cbor_encode_double(nan_with_payload, buffer, 512));
   assert_memory_equal(
       buffer,
-      ((unsigned char[]){0xFB, 0x7F, 0xF8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}),
+      ((unsigned char[]){0xFB, 0xFF, 0xF8, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC}),
       9);
+  assert_double_nan_and_roundtrip(0x80);
 
   assert_size_equal(9, cbor_encode_double(strtod("Inf", NULL), buffer, 512));
   assert_memory_equal(

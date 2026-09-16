@@ -118,20 +118,26 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_encode_undef(unsigned char*, size_t);
  *   - In all other cases, the sign bit, the exponent, and 10 most significant
  * bits of the significand are kept
  *
- * Note: Signaling NaNs are encoded as a standard, "quiet" NaN.
+ * Note: NaN sign and the top 10 bits of the payload are preserved. Signaling
+ * NaN payloads are preserved on a best-effort basis: some CPUs quiet them
+ * when the value passes through a floating point register.
  */
 _CBOR_NODISCARD CBOR_EXPORT size_t cbor_encode_half(float, unsigned char*,
                                                     size_t);
 /** Encodes a single precision float
  *
- * Note: Signaling NaNs are encoded as a standard, "quiet" NaN.
+ * The IEEE 754 bit pattern is preserved, including the sign and payload of
+ * NaNs. Signaling NaN payloads are preserved on a best-effort basis: some
+ * CPUs quiet them when the value passes through a floating point register.
  */
 _CBOR_NODISCARD CBOR_EXPORT size_t cbor_encode_single(float, unsigned char*,
                                                       size_t);
 
 /** Encodes a double precision float
  *
- * Note: Signaling NaNs are encoded as a standard, "quiet" NaN.
+ * The IEEE 754 bit pattern is preserved, including the sign and payload of
+ * NaNs. Signaling NaN payloads are preserved on a best-effort basis: some
+ * CPUs quiet them when the value passes through a floating point register.
  */
 _CBOR_NODISCARD CBOR_EXPORT size_t cbor_encode_double(double, unsigned char*,
                                                       size_t);
