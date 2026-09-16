@@ -8,6 +8,22 @@ There is a comprehensive test suite employing CMocka_. You can run all of them u
 
 .. _CMocka: http://cmocka.org/
 
+CBOR Working Group test vectors
+-------------------------------
+
+The `test vectors maintained by the IETF CBOR Working Group <https://github.com/cbor-wg/cbor-test-vectors>`_
+are vendored in ``test/data/cbor-test-vectors`` and run by ``cbor_test_vectors_test``.
+Every vector is decoded with :func:`cbor_load`, compared against the expected
+value, and re-serialized; vectors that are not well-formed must be rejected. See
+the ``README.md`` in the data directory for the container format and the pinned
+upstream revision.
+
+The few vectors that *libcbor* deliberately does not satisfy -- well-formed but
+invalid inputs (see :ref:`decoder-validity`) and NaN payloads, which are
+canonicalized on encoding -- are listed with their rationale in
+``test/cbor_test_vectors_test.c``. The test fails if any of them starts passing,
+so the list stays current.
+
 Testing for memory leaks
 ------------------------
 

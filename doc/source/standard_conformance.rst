@@ -3,6 +3,8 @@ IETF standard conformance
 
 *libcbor* is, generally speaking, a very faithful implementation of `IETF RFC 8949 (STD 94) <https://www.rfc-editor.org/info/std94>`_. There are, however, some limitations related to the numerical range and precision available in portable C99.
 
+Conformance is continuously checked against the `CBOR Working Group test vectors <https://github.com/cbor-wg/cbor-test-vectors>`_, see :doc:`tests`.
+
 Bytestring length
 -------------------
 There is no explicit limitation of indefinite length byte strings. [#]_ *libcbor* will not handle byte strings with more chunks than the maximum value of :type:`size_t`. On any sane platform, such string would not fit in the memory anyway. It is, however, possible to process arbitrarily long strings and byte strings using the streaming decoder.
