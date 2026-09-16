@@ -554,6 +554,27 @@ static void test_serialize_long_ctrl(void** _state _CBOR_UNUSED) {
   cbor_decref(&item);
 }
 
+static void test_serialize_unassigned_ctrl(void** _state _CBOR_UNUSED) {
+  // Unassigned simple values on both sides of the one-byte/two-byte boundary
+  cbor_item_t* item = cbor_build_ctrl(0);
+  assert_size_equal(1, cbor_serialize(item, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xE0}), 1);
+  assert_size_equal(cbor_serialized_size(item), 1);
+  cbor_decref(&item);
+
+  item = cbor_build_ctrl(19);
+  assert_size_equal(1, cbor_serialize(item, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF3}), 1);
+  assert_size_equal(cbor_serialized_size(item), 1);
+  cbor_decref(&item);
+
+  item = cbor_build_ctrl(32);
+  assert_size_equal(2, cbor_serialize(item, buffer, 512));
+  assert_memory_equal(buffer, ((unsigned char[]){0xF8, 0x20}), 2);
+  assert_size_equal(cbor_serialized_size(item), 2);
+  cbor_decref(&item);
+}
+
 static void test_auto_serialize(void** _state _CBOR_UNUSED) {
   cbor_item_t* item = cbor_new_definite_array(4);
   for (size_t i = 0; i < 4; i++) {
@@ -753,6 +774,7 @@ int main(void) {
       cmocka_unit_test(test_serialize_double),
       cmocka_unit_test(test_serialize_ctrl),
       cmocka_unit_test(test_serialize_long_ctrl),
+      cmocka_unit_test(test_serialize_unassigned_ctrl),
       cmocka_unit_test(test_auto_serialize),
       cmocka_unit_test(test_auto_serialize_no_size),
       cmocka_unit_test(test_auto_serialize_too_large),
