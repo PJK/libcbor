@@ -40,18 +40,6 @@ static void test_default_simple_value_callback(void** _state _CBOR_UNUSED) {
   }
 }
 
-/* Callback sets that do not set simple_value keep the previous behavior */
-static void test_missing_simple_value_callback(void** _state _CBOR_UNUSED) {
-  struct cbor_callbacks callbacks = cbor_empty_callbacks;
-  callbacks.simple_value = NULL;
-  unsigned char one_byte[] = {0xE0};
-  unsigned char two_byte[] = {0xF8, 0x20};
-  assert_true(cbor_stream_decode(one_byte, 1, &callbacks, NULL).status ==
-              CBOR_DECODER_ERROR);
-  assert_true(cbor_stream_decode(two_byte, 2, &callbacks, NULL).status ==
-              CBOR_DECODER_ERROR);
-}
-
 unsigned char bytestring_data[] = {0x01, 0x02, 0x03};
 static void test_builder_byte_string_callback_append(
     void** _state _CBOR_UNUSED) {
@@ -439,7 +427,6 @@ int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_default_callbacks),
       cmocka_unit_test(test_default_simple_value_callback),
-      cmocka_unit_test(test_missing_simple_value_callback),
       cmocka_unit_test(test_builder_byte_string_callback_append),
       cmocka_unit_test(test_builder_byte_string_callback_append_alloc_failure),
       cmocka_unit_test(

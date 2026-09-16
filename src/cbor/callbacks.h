@@ -115,9 +115,9 @@ struct cbor_callbacks {
    * (`RFC 8949 Section 3.3
    * <https://www.rfc-editor.org/rfc/rfc8949#section-3.3>`_).
    *
-   * If this member is `NULL`, such input is reported as a decoding error
-   * rather than dereferencing the missing callback. This preserves the
-   * previous behavior for callback sets that do not initialize the member.
+   * Like every other member, this must not be `NULL`. Callback sets written
+   * before this member existed must be updated; use
+   * #cbor_null_simple_value_callback to ignore these values.
    */
   cbor_int8_callback simple_value;
 };

@@ -538,11 +538,6 @@ struct cbor_decoder_result cbor_stream_decode(
     case 0xF3:
       /* Simple value 0..19, unassigned but well-formed */
       {
-        if (callbacks->simple_value == NULL) {
-          /* Callback sets predating the simple_value member get the previous
-           * behavior (rejection) rather than a NULL dereference */
-          return (struct cbor_decoder_result){.status = CBOR_DECODER_ERROR};
-        }
         callbacks->simple_value(context, (uint8_t)(*source - 0xE0));
         return result;
       }
@@ -575,12 +570,10 @@ struct cbor_decoder_result cbor_stream_decode(
       {
         if (claim_bytes(1, source_size, &result)) {
           uint8_t value = source[1];
-          if (value < 32 || callbacks->simple_value == NULL) {
+          if (value < 32) {
             /* RFC 8949 Section 3.3: 0xF8 followed by a byte below 0x20 is not
              * well-formed (values 0..23 have a one-byte encoding, 24..31 are
-             * reserved). Callback sets predating the simple_value member get
-             * the previous behavior (rejection) rather than a NULL dereference
-             */
+             * reserved) */
             return (struct cbor_decoder_result){.status = CBOR_DECODER_ERROR};
           }
           callbacks->simple_value(context, value);
