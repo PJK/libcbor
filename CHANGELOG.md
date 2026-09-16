@@ -5,7 +5,7 @@ Template:
 Next
 ---------------------
 
-- BREAKING: [`cbor_encode_single` and `cbor_encode_double` now preserve NaN sign and payload bits](https://github.com/PJK/libcbor/pull/XXX)
+- BREAKING: [`cbor_encode_single` and `cbor_encode_double` now preserve NaN sign and payload bits](https://github.com/PJK/libcbor/pull/447)
   - Previously, every NaN was encoded as the canonical quiet NaN (`0x7FC00000` / `0x7FF8000000000000`), discarding the sign and payload. The bit pattern is now copied verbatim, matching `cbor_encode_half` since 0.14.0 ([#412](https://github.com/PJK/libcbor/pull/412)) and making decode/encode round trips of NaNs lossless at all three widths
   - As with half-floats, signaling NaN payloads are preserved on a best-effort basis: some CPUs (x87) set the quiet bit when the value passes through a register
   - Clients that relied on NaNs normalizing to the canonical encoding will see different output
