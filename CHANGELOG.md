@@ -5,7 +5,7 @@ Template:
 Next
 ---------------------
 
-- [Run the CBOR Working Group test vectors as part of the test suite](https://github.com/PJK/libcbor/pull/XXX)
+- [Run the CBOR Working Group test vectors as part of the test suite](https://github.com/PJK/libcbor/pull/446)
   - The `.cbor` containers from <https://github.com/cbor-wg/cbor-test-vectors> (BSD-2-Clause) are vendored in `test/data/cbor-test-vectors`; 1381 vectors, of which 15 known deviations (validity checks and NaN payloads) are listed as expected failures in `test/cbor_test_vectors_test.c`
 - BREAKING: [Decoders now accept all well-formed simple values](https://github.com/PJK/libcbor/pull/445)
   - Previously, `cbor_load` and `cbor_stream_decode` rejected the unassigned simple values 0 to 19 (`0xE0` to `0xF3`) and 32 to 255 (`0xF8 0x20` to `0xF8 0xFF`) with `CBOR_ERR_MALFORMATED` / `CBOR_DECODER_ERROR`, even though RFC 8949 Section 3.3 defines them as well-formed and `cbor_build_ctrl` could already produce them. They are now decoded into ctrl items readable through `cbor_ctrl_value`. `0xF8` followed by a byte below `0x20` remains a well-formedness error as specified
