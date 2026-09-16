@@ -5,8 +5,12 @@ Template:
 Next
 ---------------------
 
+- BREAKING: [`cbor_encode_single` and `cbor_encode_double` now preserve NaN sign and payload bits](https://github.com/PJK/libcbor/pull/XXX)
+  - Previously, every NaN was encoded as the canonical quiet NaN (`0x7FC00000` / `0x7FF8000000000000`), discarding the sign and payload. The bit pattern is now copied verbatim, matching `cbor_encode_half` since 0.14.0 ([#412](https://github.com/PJK/libcbor/pull/412)) and making decode/encode round trips of NaNs lossless at all three widths
+  - As with half-floats, signaling NaN payloads are preserved on a best-effort basis: some CPUs (x87) set the quiet bit when the value passes through a register
+  - Clients that relied on NaNs normalizing to the canonical encoding will see different output
 - [Run the CBOR Working Group test vectors as part of the test suite](https://github.com/PJK/libcbor/pull/446)
-  - The `.cbor` containers from <https://github.com/cbor-wg/cbor-test-vectors> (BSD-2-Clause) are vendored in `test/data/cbor-test-vectors`; 1381 vectors, of which 15 known deviations (validity checks and single/double NaN payloads) are listed as expected failures in `test/cbor_test_vectors_test.c`, plus 4 half-float signaling NaNs whose payload survives the round trip only on FPUs that do not quiet them
+  - The `.cbor` containers from <https://github.com/cbor-wg/cbor-test-vectors> (BSD-2-Clause) are vendored in `test/data/cbor-test-vectors`; 1381 vectors, of which 3 known deviations (validity checks) are listed as expected failures in `test/cbor_test_vectors_test.c`, plus 12 signaling NaNs whose payload survives the round trip only on FPUs that do not quiet them
 - BREAKING: [Decoders now accept all well-formed simple values](https://github.com/PJK/libcbor/pull/445)
   - Previously, `cbor_load` and `cbor_stream_decode` rejected the unassigned simple values 0 to 19 (`0xE0` to `0xF3`) and 32 to 255 (`0xF8 0x20` to `0xF8 0xFF`) with `CBOR_ERR_MALFORMATED` / `CBOR_DECODER_ERROR`, even though RFC 8949 Section 3.3 defines them as well-formed and `cbor_build_ctrl` could already produce them. They are now decoded into ctrl items readable through `cbor_ctrl_value`. `0xF8` followed by a byte below `0x20` remains a well-formedness error as specified
   - New `simple_value` member appended to `struct cbor_callbacks` and a matching `cbor_null_simple_value_callback` no-op. Like all other members, it must be set: existing callback sets that do not initialize it (e.g. designated initializers that predate the member) will dereference `NULL` on such input. Use `cbor_null_simple_value_callback` to ignore these values, or start from `cbor_empty_callbacks`

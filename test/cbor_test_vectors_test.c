@@ -58,35 +58,27 @@ static const struct expected_failure expected_failures[] = {
      "Tag content type is a validity error (RFC 8949 5.3.2); libcbor does "
      "not understand tag semantics",
      false},
-    // Half-precision signaling NaNs: the payload is preserved on a best-effort
-    // basis. On FPUs that quiet signaling NaNs when loading them into a
-    // register (x87, i.e. 32-bit x86), the round trip sets the quiet bit.
-    // See cbor_encode_half and https://github.com/PJK/libcbor/issues/215
+    // Signaling NaNs: the payload is preserved on a best-effort basis. On
+    // FPUs that quiet signaling NaNs when loading them into a register (x87,
+    // i.e. 32-bit x86), the round trip sets the quiet bit. See
+    // cbor_encode_half, cbor_encode_single, and
+    // https://github.com/PJK/libcbor/issues/215
     {"spike/spike.cbor", "DLO/PS/CDE/LDE", "f97d1f", "Signaling NaN", true},
     {"spike/spike.cbor", "DLO/PS/CDE/LDE", "f97d43", "Signaling NaN", true},
     {"spike/spike.cbor", "DLO/PS/CDE/LDE", "f97df6", "Signaling NaN", true},
     {"spike/spike.cbor", "DLO/PS/CDE/LDE", "f9fde9", "Signaling NaN", true},
-    // Single- and double-precision NaN payloads are canonicalized on encoding
-    // (see cbor_encode_single, cbor_encode_double), so the round trip does not
-    // preserve them
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fa7fa3f553", "NaN payload", false},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fa7fa86197", "NaN payload", false},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fa7fbec01b", "NaN payload", false},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "faffbd3eb2", "NaN payload", false},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "faffca24fe", "NaN payload", false},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "faffddb719", "NaN payload", false},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fb7ff47eaa6bb744df", "NaN payload",
-     false},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fb7ff50c32fdc0b06d", "NaN payload",
-     false},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fb7ff7d8037701b83c", "NaN payload",
-     false},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fbfff7a7d642e1b3ff", "NaN payload",
-     false},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fbfff9449fd767f03e", "NaN payload",
-     false},
-    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fbfffbb6e3314b47ad", "NaN payload",
-     false},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fa7fa3f553", "Signaling NaN", true},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fa7fa86197", "Signaling NaN", true},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fa7fbec01b", "Signaling NaN", true},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "faffbd3eb2", "Signaling NaN", true},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fb7ff47eaa6bb744df",
+     "Signaling NaN", true},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fb7ff50c32fdc0b06d",
+     "Signaling NaN", true},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fb7ff7d8037701b83c",
+     "Signaling NaN", true},
+    {"spike/spike.cbor", "DLO/PS/CDE/LDE", "fbfff7a7d642e1b3ff",
+     "Signaling NaN", true},
 };
 
 /* Per-test bookkeeping */
