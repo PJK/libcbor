@@ -347,7 +347,7 @@ CBOR_EXPORT void _cbor_decref_free(cbor_item_t* item);
  * uncommon deallocation branch calls into #_cbor_decref_free. This keeps
  * every non-final decref a couple of instructions at the call site.
  *
- * @param item Reference to an item. Will be set to `NULL` if deallocated
+ * @param item_ref Reference to an item. Will be set to `NULL` if deallocated
  */
 static inline void cbor_decref(cbor_item_t** item_ref) {
   cbor_item_t* item = *item_ref;
