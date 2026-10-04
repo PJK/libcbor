@@ -53,3 +53,11 @@ Fuzz testing
 -----------------
 
 Every release is tested using a fuzz test. In this test, a huge buffer filled with random data is passed to the decoder. We require that it either succeeds or fail with a sensible error, without leaking any memory. This is intended to simulate real-world situations where data received from the network are CBOR-decoded before any further processing.
+
+Each input is also replayed with every allocation failing in turn, including
+``realloc`` calls. These runs must return ``CBOR_ERR_MEMERROR`` and release all
+allocations made before the failure. A fixed nested input containing every item
+type exercises container growth and partial cleanup on every run, independent
+of the random seed.
+The test accepts an optional random seed (for example, ``test/fuzz_test 42``)
+to reproduce a run.
