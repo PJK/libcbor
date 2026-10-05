@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(libcbor VERSION 0.14.0 LANGUAGES C CXX)
+project(libcbor VERSION 0.14.0 LANGUAGES C)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
   "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/")
 include(CTest)
@@ -24,6 +24,11 @@ set(CBOR_MAX_STACK_SIZE
   CACHE STRING "maximum size for decoding context stack")
 
 option(WITH_TESTS "[TEST] Build unit tests (requires CMocka)" OFF)
+
+# Before CMake 3.12, GenerateExportHeader also requires a C++ compiler.
+if(WITH_TESTS OR CMAKE_VERSION VERSION_LESS "3.12")
+  enable_language(CXX)
+endif()
 
 option(WITH_EXAMPLES "Build examples" ON)
 

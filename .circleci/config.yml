@@ -54,6 +54,13 @@ commands:
   run-linkage-tests:
     steps:
       - run:
+          name: C-only build
+          command: |
+            BUILD=$(mktemp -d)
+            cmake -S test/c-only -B "$BUILD" -DCMAKE_BUILD_TYPE=Debug -DSANITIZE=OFF
+            cmake --build "$BUILD" --parallel
+            ctest --test-dir "$BUILD" -VV
+      - run:
           name: Linkage test (static)
           command: |
             BUILD=$(mktemp -d) INST=$(mktemp -d) LB=$(mktemp -d)
