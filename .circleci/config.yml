@@ -54,27 +54,22 @@ commands:
   run-linkage-tests:
     steps:
       - run:
-          name: C-only build
-          command: |
-            BUILD=$(mktemp -d)
-            cmake -S test/c-only -B "$BUILD" -DCMAKE_BUILD_TYPE=Debug -DSANITIZE=OFF
-            cmake --build "$BUILD" --parallel
-            ctest --test-dir "$BUILD" -VV
-      - run:
-          name: Linkage test (static)
+          name: Linkage test (static, C-only toolchain)
           command: |
             BUILD=$(mktemp -d) INST=$(mktemp -d) LB=$(mktemp -d)
-            cmake -S . -B "$BUILD" -DCMAKE_BUILD_TYPE=Debug -DSANITIZE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="$INST"
+            # Building without tests must not require a C++ compiler
+            cmake -S . -B "$BUILD" -DCMAKE_BUILD_TYPE=Debug -DSANITIZE=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="$INST" -DCMAKE_CXX_COMPILER=/nonexistent
             cmake --build "$BUILD" --parallel
             cmake --install "$BUILD"
             cmake -S test/linkage -B "$LB" -DCMAKE_PREFIX_PATH="$INST"
             cmake --build "$LB"
             ctest --test-dir "$LB" -VV
       - run:
-          name: Linkage test (shared)
+          name: Linkage test (shared, C-only toolchain)
           command: |
             BUILD=$(mktemp -d) INST=$(mktemp -d) LB=$(mktemp -d)
-            cmake -S . -B "$BUILD" -DCMAKE_BUILD_TYPE=Debug -DSANITIZE=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX="$INST"
+            # Building without tests must not require a C++ compiler
+            cmake -S . -B "$BUILD" -DCMAKE_BUILD_TYPE=Debug -DSANITIZE=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX="$INST" -DCMAKE_CXX_COMPILER=/nonexistent
             cmake --build "$BUILD" --parallel
             cmake --install "$BUILD"
             cmake -S test/linkage -B "$LB" -DCMAKE_PREFIX_PATH="$INST"

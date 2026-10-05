@@ -5,7 +5,8 @@ Template:
 Next
 ---------------------
 
-- Allow the library and examples to build with a C-only toolchain when using CMake 3.12 or newer and disabling the optional test suite
+- [Allow building the library and examples without a C++ compiler when tests are disabled](https://github.com/PJK/libcbor/pull/449) (by [fhgffy](https://github.com/fhgffy))
+  - Requires CMake 3.12 or newer. Older CMake versions and `WITH_TESTS=ON` still need a C++ compiler
 - [Replay fuzz test inputs with allocation failures](https://github.com/PJK/libcbor/pull/438) (by [Alb3e3](https://github.com/Alb3e3)), checking decoder error reporting and cleanup for every `malloc` and `realloc` failure ([#86](https://github.com/PJK/libcbor/issues/86))
 - BREAKING: [`cbor_encode_single` and `cbor_encode_double` now preserve NaN sign and payload bits](https://github.com/PJK/libcbor/pull/447)
   - Previously, every NaN was encoded as the canonical quiet NaN (`0x7FC00000` / `0x7FF8000000000000`), discarding the sign and payload. The bit pattern is now copied verbatim, matching `cbor_encode_half` since 0.14.0 ([#412](https://github.com/PJK/libcbor/pull/412)) and making decode/encode round trips of NaNs lossless at all three widths
