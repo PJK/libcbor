@@ -32,6 +32,9 @@ Prerequisites:
  - CMake_ 3.5 or newer (might also be called ``cmakesetup``, ``cmake-gui`` or ``ccmake`` depending on the installed version and system)
  - C build system CMake can target (make, Apple Xcode, MinGW, ...)
 
+A C++ compiler is also required when building the optional test suite or using
+CMake older than 3.12 (whose ``GenerateExportHeader`` module requires C++).
+
 .. _CMake: http://cmake.org/
 
 **Configuration options**
@@ -62,7 +65,7 @@ A handful of configuration flags can be passed to `cmake`. The following table l
      - ``OFF``
      - ``ON``, ``OFF``
    * - ``WITH_TESTS``
-     - Build unit tests (requires CMocka; see :doc:`development`)
+     - Build unit tests (requires CMocka and a C++ compiler; see :doc:`development`)
      - ``OFF``
      - ``ON``, ``OFF``
    * - ``WITH_EXAMPLES``
