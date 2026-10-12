@@ -1,61 +1,80 @@
+#include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
-#include <unordered_map>
 
 #include "cbor.h"
 
 static size_t allocated_mem = 0;
-static std::unordered_map<void*, size_t> allocated_len_map;
 static constexpr size_t kMemoryLimit = 1 << 30;
 
+// Each block keeps its size in a header in front of the returned pointer.
+// A side table would allocate on insert, and a std::bad_alloc thrown from
+// inside libcbor's allocator would terminate the process instead of
+// returning NULL.
+struct alignas(std::max_align_t) BlockHeader {
+    size_t size;
+    size_t magic;
+};
+static constexpr size_t kBlockMagic = 0x63626f72;
+
+static BlockHeader *header_of(void *ptr) {
+    BlockHeader *header = static_cast<BlockHeader *>(ptr) - 1;
+    if (header->magic != kBlockMagic) {
+        abort();
+    }
+    return header;
+}
+
 void *limited_malloc(size_t size) {
-    if (size + allocated_mem > kMemoryLimit) {
+    if (size > kMemoryLimit - allocated_mem) {
         return nullptr;
     }
     if (size == 0) {
         return nullptr;
     }
-    void* m = malloc(size);
-    if (m != nullptr) {
-        allocated_mem += size;
-        allocated_len_map[m] = size;
+    BlockHeader *header =
+        static_cast<BlockHeader *>(malloc(sizeof(BlockHeader) + size));
+    if (header == nullptr) {
+        return nullptr;
     }
-    return m;
+    header->size = size;
+    header->magic = kBlockMagic;
+    allocated_mem += size;
+    return header + 1;
 }
 
 void limited_free(void *ptr) {
-    if (ptr != NULL && allocated_len_map.find(ptr) == allocated_len_map.end()) {
-        abort();
+    if (ptr == NULL) {
+        return;
     }
-    free(ptr);
-    if (ptr != NULL) {
-        allocated_mem -= allocated_len_map[ptr];
-        allocated_len_map.erase(ptr);
-    }
+    BlockHeader *header = header_of(ptr);
+    allocated_mem -= header->size;
+    header->magic = 0;
+    free(header);
 }
 
 void *limited_realloc(void *ptr, size_t size) {
-    if (ptr != NULL && allocated_len_map.find(ptr) == allocated_len_map.end()) {
-        abort();
-    }
     if (ptr == NULL) {
         return limited_malloc(size);
     }
-    long delta = (long) size - allocated_len_map[ptr];
-    if (delta + allocated_mem > kMemoryLimit) {
+    BlockHeader *header = header_of(ptr);
+    if (size == 0) {
+        limited_free(ptr);
         return nullptr;
     }
-    void* new_ptr = realloc(ptr, size);
-    if (size > 0 && new_ptr == nullptr) {
+    size_t old_size = header->size;
+    if (size > kMemoryLimit - (allocated_mem - old_size)) {
         return nullptr;
     }
-    allocated_mem += delta;
-    allocated_len_map.erase(ptr);
-    if (size > 0) {
-        allocated_len_map[new_ptr] = size;
+    BlockHeader *new_header = static_cast<BlockHeader *>(
+        realloc(header, sizeof(BlockHeader) + size));
+    if (new_header == nullptr) {
+        return nullptr;
     }
-    return new_ptr;
+    new_header->size = size;
+    allocated_mem = allocated_mem - old_size + size;
+    return new_header + 1;
 }
 
 struct State {
