@@ -16,6 +16,12 @@ struct alignas(std::max_align_t) BlockHeader {
     size_t size;
     size_t magic;
 };
+// Written into every header by limited_malloc and checked by header_of, so
+// that freeing or reallocating a pointer the shim did not hand out (from plain
+// malloc, into the middle of a block, or already freed) aborts. limited_free
+// clears it to catch double frees. This is a cheap stand-in for an exact
+// lookup; under ASan the out-of-bounds or freed header read is reported
+// first. The value is "cbor" in ASCII.
 static constexpr size_t kBlockMagic = 0x63626f72;
 
 static BlockHeader *header_of(void *ptr) {
@@ -101,6 +107,13 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
             cbor_decref(&copied);
         }
         cbor_decref(&item);
+    }
+    // Everything allocated for this input must be returned by now. Otherwise
+    // the budget shrinks with every run until allocations start failing. This
+    // also catches blocks released with plain free(), which LeakSanitizer
+    // cannot see.
+    if (allocated_mem != 0) {
+        abort();
     }
     return 0;
 }
