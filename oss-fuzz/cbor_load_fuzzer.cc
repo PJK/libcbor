@@ -47,6 +47,8 @@ void *limited_malloc(size_t size) {
     header->size = size;
     header->magic = kBlockMagic;
     allocated_mem += size;
+    // The block is returned past its header; cppcheck reads that as a leak.
+    // cppcheck-suppress memleak
     return header + 1;
 }
 
@@ -80,6 +82,7 @@ void *limited_realloc(void *ptr, size_t size) {
     }
     new_header->size = size;
     allocated_mem = allocated_mem - old_size + size;
+    // cppcheck-suppress memleak
     return new_header + 1;
 }
 
