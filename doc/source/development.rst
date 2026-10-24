@@ -93,6 +93,7 @@ Non-goals
 Development dependencies
 ---------------------------
 - `CMocka <http://cmocka.org/>`_ (testing)
+- A C++ compiler (test suite only)
 - `Python <https://www.python.org/>`_ and `pip <https://pypi.python.org/pypi/pip>`_ (Sphinx platform)
 - `Doxygen <http://www.stack.nl/~dimitri/doxygen/>`_
 - `Sphinx <http://sphinx-doc.org/>`_ (documentation)
