@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2014-2020 Pavel Kalvoda <me@pavelkalvoda.com>
+ * SPDX-License-Identifier: MIT
+ */
+
 #ifndef STREAM_EXPECTATIONS_H_
 #define STREAM_EXPECTATIONS_H_
 

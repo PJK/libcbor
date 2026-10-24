@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2014-2020 Pavel Kalvoda <me@pavelkalvoda.com>
+# SPDX-License-Identifier: MIT
 
 # Guides my forgetful self through the release process.
 # Usage: release.sh 0.42.0

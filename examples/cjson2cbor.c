@@ -1,8 +1,8 @@
 /*
  * Contributed by Jacob Teplitsky <jacob.teplitsky@ericsson.com>
  *
- * libcbor is free software; you can redistribute it and/or modify
- * it under the terms of the MIT license. See LICENSE for details.
+ * SPDX-FileCopyrightText: libcbor contributors
+ * SPDX-License-Identifier: MIT
  */
 
 /**

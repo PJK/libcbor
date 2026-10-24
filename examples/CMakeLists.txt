@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2014-2020 Pavel Kalvoda <me@pavelkalvoda.com>
+# SPDX-License-Identifier: MIT
+
 add_executable(readfile readfile.c)
 target_link_libraries(readfile cbor cbor_project_options)
 

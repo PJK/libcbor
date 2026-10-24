@@ -1,3 +1,7 @@
+/*
+ * SPDX-FileCopyrightText: libcbor contributors
+ * SPDX-License-Identifier: MIT
+ */
 
 #ifndef CBOR_EXPORT_H
 #define CBOR_EXPORT_H

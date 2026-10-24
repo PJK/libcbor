@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: libcbor contributors
+ * SPDX-License-Identifier: MIT
+ */
+
 #ifndef HELLO_H_
 #define HELLO_H_
 

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2014-2020 Pavel Kalvoda <me@pavelkalvoda.com>
+# SPDX-License-Identifier: MIT
 
 # Usage: ./clang-format.sh <extra arguments>
 

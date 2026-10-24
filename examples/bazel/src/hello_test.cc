@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: libcbor contributors
+ * SPDX-License-Identifier: MIT
+ */
+
 #include "src/hello.h"
 #include "cbor.h"
 

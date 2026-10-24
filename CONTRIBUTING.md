@@ -33,6 +33,8 @@ If you do not receive a response in a few weeks, feel free to ping the PR or iss
 
 C++ code: `./clang-format.sh`.
 
+New files: start with an SPDX header (copy one from an existing file of the same type) or add the file to `REUSE.toml`. Check with [`reuse lint`](https://reuse.software/).
+
 Function Doxygen strings:
 ```c
 /** An example short description 

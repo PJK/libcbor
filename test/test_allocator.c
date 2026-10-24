@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2014-2020 Pavel Kalvoda <me@pavelkalvoda.com>
+ * SPDX-License-Identifier: MIT
+ */
+
 #include "test_allocator.h"
 
 #ifdef HAS_EXECINFO

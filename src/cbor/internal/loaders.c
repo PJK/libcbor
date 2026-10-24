@@ -1,8 +1,6 @@
 /*
- * Copyright (c) 2014-2020 Pavel Kalvoda <me@pavelkalvoda.com>
- *
- * libcbor is free software; you can redistribute it and/or modify
- * it under the terms of the MIT license. See LICENSE for details.
+ * SPDX-FileCopyrightText: 2014-2020 Pavel Kalvoda <me@pavelkalvoda.com>
+ * SPDX-License-Identifier: MIT
  */
 
 #include "loaders.h"
@@ -49,7 +47,13 @@ uint64_t _cbor_load_uint64(const unsigned char* source) {
 #endif
 }
 
-/* As per https://www.rfc-editor.org/rfc/rfc8949.html#name-half-precision */
+/* SPDX-SnippetBegin
+ * SPDX-SnippetCopyrightText: 2013 IETF Trust, Carsten Bormann, Paul Hoffman
+ * SPDX-License-Identifier: BSD-2-Clause
+ *
+ * Adapted from the half-precision decoder in RFC 7049 (now RFC 8949),
+ * Appendix D: https://www.rfc-editor.org/rfc/rfc8949.html#name-half-precision
+ */
 float _cbor_decode_half(unsigned char* halfp) {
   // TODO: Broken if we are not on IEEE 754
   // (https://github.com/PJK/libcbor/issues/336)
@@ -76,6 +80,7 @@ float _cbor_decode_half(unsigned char* halfp) {
     val = INFINITY; /* exp == 31, mant == 0: the NaN case is handled above */
   return (float)(half & 0x8000 ? -val : val);
 }
+/* SPDX-SnippetEnd */
 
 float _cbor_load_half(cbor_data source) {
   /* Discard const */

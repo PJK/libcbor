@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2014-2020 Pavel Kalvoda <me@pavelkalvoda.com>
+# SPDX-License-Identifier: MIT
+
 module(name = "libcbor")
 
 bazel_dep(name = "rules_cc", version = "0.2.14")

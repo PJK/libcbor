@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: libcbor contributors
+ * SPDX-License-Identifier: MIT
+ */
+
 #include "assertions.h"
 #include "cbor.h"
 
