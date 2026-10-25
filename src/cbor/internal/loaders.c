@@ -6,7 +6,6 @@
  */
 
 #include "loaders.h"
-#include <math.h>
 #include <string.h>
 
 uint8_t _cbor_load_uint8(cbor_data source) { return (uint8_t)*source; }
@@ -49,32 +48,39 @@ uint64_t _cbor_load_uint64(const unsigned char* source) {
 #endif
 }
 
-/* As per https://www.rfc-editor.org/rfc/rfc8949.html#name-half-precision */
+/* Converts an IEEE 754 binary16 value to binary32, which represents every
+ * binary16 value exactly, by moving its fields into place: the sign bit, the
+ * exponent rebiased from 15 to 127, and the 10-bit fraction as the top of the
+ * 23-bit fraction. Binary32 represents binary16 subnormals as normal numbers,
+ * so those are normalized first. Infinities and NaNs keep their sign and
+ * payload, which matches cbor_encode_half and makes NaNs round-trip. */
 float _cbor_decode_half(unsigned char* halfp) {
   // TODO: Broken if we are not on IEEE 754
   // (https://github.com/PJK/libcbor/issues/336)
-  int half = (halfp[0] << 8) + halfp[1];
-  int exp = (half >> 10) & 0x1f;
-  int mant = half & 0x3ff;
-  if (exp == 31 && mant != 0) {
-    /* NaN: reconstruct as a single-precision NaN, preserving the sign bit and
-     * the 10-bit half-precision payload by placing it in the top 10 bits of
-     * the 23-bit single-precision mantissa. This ensures round-trip fidelity
-     * with cbor_encode_half's NaN encoding. */
-    union _cbor_float_helper helper = {
-        .as_uint = ((uint32_t)(half & 0x8000) << 16) | /* sign */
-                   0x7F800000u |                       /* exponent (all 1s) */
-                   ((uint32_t)mant << 13)};            /* payload */
-    return helper.as_float;
-  }
-  double val;
-  if (exp == 0)
-    val = ldexp(mant, -24);
-  else if (exp != 31)
-    val = ldexp(mant + 1024, exp - 25);
-  else
-    val = INFINITY; /* exp == 31, mant == 0: the NaN case is handled above */
-  return (float)(half & 0x8000 ? -val : val);
+  uint16_t half = (uint16_t)(halfp[0] << 8 | halfp[1]);
+  uint32_t sign = (uint32_t)(half & 0x8000u) << 16;
+  uint32_t exponent = (half >> 10) & 0x1Fu;
+  uint32_t fraction = half & 0x3FFu;
+
+  if (exponent == 0x1F) {
+    /* Infinity or NaN */
+    exponent = 0xFF;
+  } else if (exponent != 0) {
+    exponent += 127 - 15;
+  } else if (fraction != 0) {
+    /* Subnormal: shift the leading one into the implicit bit, adjusting the
+     * exponent of the smallest normal number (2^-14) to match */
+    exponent = 127 - 14;
+    while (!(fraction & 0x400u)) {
+      fraction <<= 1;
+      exponent--;
+    }
+    fraction &= 0x3FFu;
+  } /* Otherwise zero: the exponent and the fraction are zero, too */
+
+  union _cbor_float_helper helper = {.as_uint = sign | (exponent << 23) |
+                                                (fraction << 13)};
+  return helper.as_float;
 }
 
 float _cbor_load_half(cbor_data source) {
