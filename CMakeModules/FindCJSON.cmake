@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2014-2026 Pavel Kalvoda <me@pavelkalvoda.com>
+# SPDX-License-Identifier: MIT
+
 include (LibFindMacros)
 
 find_path(CJSON_INCLUDE_DIR NAMES cjson/cJSON.h)

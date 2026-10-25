@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2014-2026 Pavel Kalvoda <me@pavelkalvoda.com>
+ * SPDX-License-Identifier: MIT
+ */
+
 #ifndef TEST_ALLOCATOR_H_
 #define TEST_ALLOCATOR_H_
 

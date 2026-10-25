@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2014-2026 Pavel Kalvoda <me@pavelkalvoda.com>
+ * SPDX-License-Identifier: MIT
+ */
+
 // Headers needed by cmocka -- must be imported first
 #include <setjmp.h>
 #include <stdarg.h>

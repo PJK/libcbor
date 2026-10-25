@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2014-2026 Pavel Kalvoda <me@pavelkalvoda.com>
+# SPDX-License-Identifier: MIT
+
 file(GLOB TESTS "*_test.c")
 
 find_package(CMocka REQUIRED)

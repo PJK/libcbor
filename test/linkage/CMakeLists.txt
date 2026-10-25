@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2014-2026 Pavel Kalvoda <me@pavelkalvoda.com>
+# SPDX-License-Identifier: MIT
+
 cmake_minimum_required(VERSION 3.5)
 project(libcbor_linkage_test C)
 

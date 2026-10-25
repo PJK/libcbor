@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2014-2026 Pavel Kalvoda <me@pavelkalvoda.com>
+ * SPDX-License-Identifier: MIT
+ */
+
 #ifndef LIBCBOR_CONFIGURATION_H
 #define LIBCBOR_CONFIGURATION_H
 

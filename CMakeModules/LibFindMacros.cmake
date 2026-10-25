@@ -1,11 +1,10 @@
 #    Fetched from https://github.com/JonathanSalwan/Triton/blob/master/CMakeModules/LibFindMacros.cmake
 #
-#    Copyright:
-#
-#    * Jonathan Salwan (Quarkslab)
-#    * Pierrick Brunet (Quarkslab)
-#    * Romain Thomas (Quarkslab)
-#    * Florent Saudel (Bordeaux University)
+#    SPDX-FileCopyrightText: Jonathan Salwan (Quarkslab)
+#    SPDX-FileCopyrightText: Pierrick Brunet (Quarkslab)
+#    SPDX-FileCopyrightText: Romain Thomas (Quarkslab)
+#    SPDX-FileCopyrightText: Florent Saudel (Bordeaux University)
+#    SPDX-License-Identifier: Apache-2.0
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.

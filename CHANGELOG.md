@@ -5,6 +5,9 @@ Template:
 Next
 ---------------------
 
+- [Declare copyright and license information in SPDX form, following the REUSE specification](https://github.com/PJK/libcbor/pull/452) ([#430](https://github.com/PJK/libcbor/issues/430))
+  - Source headers now carry `SPDX-FileCopyrightText` and `SPDX-License-Identifier` tags; data, documentation, and configuration files are covered by `REUSE.toml`; license texts are in `LICENSES/`
+  - libcbor remains MIT-licensed. Third-party parts are now labeled explicitly: the vendored CBOR WG test vectors (BSD-2-Clause), `FindCMocka.cmake` (BSD-3-Clause), `LibFindMacros.cmake` and `oss-fuzz/build.sh` (Apache-2.0), and `JoinPaths.cmake` (MIT OR CC0-1.0)
 - [Reimplement half-precision float decoding without the RFC 7049 reference code](https://github.com/PJK/libcbor/pull/453)
   - The previous implementation was the BSD-2-Clause reference decoder from RFC 7049 Appendix D. The new one builds the single-precision bit pattern directly
 - [Allow building the library and examples without a C++ compiler when tests are disabled](https://github.com/PJK/libcbor/pull/451) (by [fhgffy](https://github.com/fhgffy))

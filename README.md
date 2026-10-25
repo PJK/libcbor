@@ -131,7 +131,7 @@ Kudos to all the [contributors](https://github.com/PJK/libcbor/graphs/contributo
 
 The MIT License (MIT)
 
-Copyright (c) Pavel Kalvoda, 2014-2020
+Copyright (c) Pavel Kalvoda, 2014-2026
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

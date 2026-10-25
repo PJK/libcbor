@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2014-2026 Pavel Kalvoda <me@pavelkalvoda.com>
+ * SPDX-License-Identifier: MIT
+ */
+
 #include "stream_expectations.h"
 
 struct test_assertion assertions_queue[MAX_QUEUE_ITEMS];

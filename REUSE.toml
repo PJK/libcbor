@@ -1,0 +1,36 @@
+# Licensing information for files that cannot carry an SPDX header (data,
+# images) or where one would be noise (documentation, CI and editor
+# configuration). Source files declare their license in a header instead.
+# See https://reuse.software/spec/ and run `reuse lint` to check compliance.
+version = 1
+
+[[annotations]]
+path = [
+    ".circleci/**",
+    ".cirrus.yml",
+    ".clang-format",
+    ".github/**",
+    ".gitignore",
+    ".gitmodules",
+    ".readthedocs.yaml",
+    ".vscode/**",
+    "**.md",
+    "codecov.yml",
+    "doc/**",
+    "Doxyfile",
+    "examples/data/**",
+    "test/data/**",
+]
+SPDX-FileCopyrightText = "2014-2026 Pavel Kalvoda <me@pavelkalvoda.com>"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = "examples/bazel/README.md"
+SPDX-FileCopyrightText = "libcbor contributors"
+SPDX-License-Identifier = "MIT"
+
+# Vendored from https://github.com/cbor-wg/cbor-test-vectors
+[[annotations]]
+path = "test/data/cbor-test-vectors/**"
+SPDX-FileCopyrightText = "2017 IETF CBOR WG"
+SPDX-License-Identifier = "BSD-2-Clause"
