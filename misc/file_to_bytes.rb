@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# SPDX-FileCopyrightText: 2014-2020 Pavel Kalvoda <me@pavelkalvoda.com>
+# SPDX-FileCopyrightText: 2014-2026 Pavel Kalvoda <me@pavelkalvoda.com>
 # SPDX-License-Identifier: MIT
 
 lst = (ARGV.empty? ? STDIN.read : IO.binread(ARGV[0])).bytes.map {|_| '0x%02X' % _ }

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2014-2020 Pavel Kalvoda <me@pavelkalvoda.com>
+ * SPDX-FileCopyrightText: 2014-2026 Pavel Kalvoda <me@pavelkalvoda.com>
  * SPDX-FileCopyrightText: 2008-2009 Bjoern Hoehrmann <bjoern@hoehrmann.de>
  * SPDX-License-Identifier: MIT
  */
