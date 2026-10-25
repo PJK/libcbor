@@ -251,6 +251,12 @@ struct cbor_decoder_result {
    *
    *  - If the buffer was empty (source_size == 0), #required is set to 1
    *    since at least the initial MTB byte is needed.
+   *
+   *  - If the total does not fit into `size_t`, #required is set to `SIZE_MAX`.
+   *    Such an item declares more data than the address space can hold, so the
+   *    claim can never be satisfied and retrying will not help. This is only
+   *    possible for 8B lengths, and on platforms where `size_t` is narrower
+   *    than 8 bytes also for shorter ones.
    */
   size_t required;
 };

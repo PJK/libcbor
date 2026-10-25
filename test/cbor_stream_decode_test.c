@@ -190,6 +190,54 @@ static void test_bstring_int64_decoding(void** _state _CBOR_UNUSED) {
 }
 #endif
 
+// The claim is larger than the address space, so the total number of bytes
+// required overflows `size_t` and is reported as `SIZE_MAX`
+unsigned char bstring_overflowing_length_data[] = {0x5B, 0xFF, 0xFF, 0xFF, 0xFF,
+                                                   0xFF, 0xFF, 0xFF, 0xFF};
+static void test_bstring_overflowing_length_decoding(
+    void** _state _CBOR_UNUSED) {
+  assert_decoder_result_nedata(
+      /* expected_bytes_required= */ SIZE_MAX,
+      decode(bstring_overflowing_length_data, 9));
+}
+
+#ifndef EIGHT_BYTE_SIZE_T
+// Lengths that do not fit into `size_t` must not be truncated to a claim that
+// the buffer can satisfy: the callback would get a length that is not backed by
+// the data. Only reachable when `size_t` is narrower than 8 bytes.
+unsigned char bstring_length_over_size_max_data[] = {
+    0x5B, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
+    0x00, 0x05, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE /* 5 of the 0x100000005 bytes */};
+static void test_bstring_length_over_size_max_decoding(
+    void** _state _CBOR_UNUSED) {
+  assert_decoder_result_nedata(
+      /* expected_bytes_required= */ SIZE_MAX,
+      decode(bstring_length_over_size_max_data,
+             sizeof(bstring_length_over_size_max_data)));
+}
+
+unsigned char string_length_over_size_max_data[] = {
+    0x7B, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
+    0x00, 0x05, 'h',  'e',  'l',  'l',  'o' /* 5 of the 0x100000005 bytes */};
+static void test_string_length_over_size_max_decoding(
+    void** _state _CBOR_UNUSED) {
+  assert_decoder_result_nedata(
+      /* expected_bytes_required= */ SIZE_MAX,
+      decode(string_length_over_size_max_data,
+             sizeof(string_length_over_size_max_data)));
+}
+
+// A 4B length already exceeds the address space here, so the total overflows
+unsigned char bstring_int32_overflowing_length_data[] = {0x5A, 0xFF, 0xFF, 0xFF,
+                                                         0xFF};
+static void test_bstring_int32_overflowing_length_decoding(
+    void** _state _CBOR_UNUSED) {
+  assert_decoder_result_nedata(
+      /* expected_bytes_required= */ SIZE_MAX,
+      decode(bstring_int32_overflowing_length_data, 5));
+}
+#endif
+
 unsigned char bstring_indef_1_data[] = {0x5F, 0x40 /* Empty byte string */,
                                         0xFF};
 static void test_bstring_indef_decoding_1(void** _state _CBOR_UNUSED) {
@@ -736,6 +784,12 @@ int main(void) {
       stream_test(test_bstring_int32_decoding),
 #ifdef EIGHT_BYTE_SIZE_T
       stream_test(test_bstring_int64_decoding),
+#endif
+      stream_test(test_bstring_overflowing_length_decoding),
+#ifndef EIGHT_BYTE_SIZE_T
+      stream_test(test_bstring_length_over_size_max_decoding),
+      stream_test(test_string_length_over_size_max_decoding),
+      stream_test(test_bstring_int32_overflowing_length_decoding),
 #endif
       stream_test(test_bstring_indef_decoding_1),
       stream_test(test_bstring_indef_decoding_2),

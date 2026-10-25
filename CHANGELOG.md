@@ -36,6 +36,14 @@ Next
 - ABI BREAKING: [Inline `cbor_incref` and `cbor_decref` fast paths](https://github.com/PJK/libcbor/pull/434)
   - `cbor_incref` and `cbor_decref` are now `static inline` in `cbor/common.h`; the deallocation branch of `cbor_decref` moved into a new exported helper `_cbor_decref_free`. Source-compatible — same signatures and semantics — but the two symbols are no longer exported from the shared library, so binaries relying on their extern resolution (including `dlsym`) will fail to link against the new `.so`. Rebuilding against the updated headers is sufficient.
 
+0.14.1 (2026-11-14)
+---------------------
+
+- SECURITY: Fix two bugs in `cbor_stream_decode` bounds checks for string and byte string lengths (reported by [Tajwarbot](https://github.com/Tajwarbot))
+  - [GHSA-frh9-3gqx-pqg2](https://github.com/PJK/libcbor/security/advisories/GHSA-frh9-3gqx-pqg2): On platforms where `size_t` is narrower than 8 bytes, 8B lengths (`0x5B`, `0x7B`) were truncated before being checked against the input buffer, while the callback received the original 64-bit length. A callback that processed `length` bytes in 64-bit arithmetic could read past the end of the buffer. Affected 0.9.0 and newer; `cbor_load` was never affected
+  - [GHSA-pj89-8hch-p7vp](https://github.com/PJK/libcbor/security/advisories/GHSA-pj89-8hch-p7vp): `cbor_decoder_result.required` overflowed for very large declared lengths, so it could come back smaller than the number of bytes already provided. Clients following the documented "accumulate `required` bytes, then retry" loop could spin forever. Affected 0.8.0 and newer, on all platforms
+  - `required` now saturates at `SIZE_MAX`, which signals a claim that the address space can never satisfy
+
 0.14.0 (2026-04-07)
 ---------------------
 

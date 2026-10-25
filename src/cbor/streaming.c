@@ -10,17 +10,24 @@
 // enough bytes `provided` and return true, or set the `result` to an error
 // state and return false.
 //
-static bool claim_bytes(size_t required, size_t provided,
+// `required` is a `uint64_t` since it may come from an 8B length that does not
+// fit into `size_t`; such a claim can never be satisfied.
+static bool claim_bytes(uint64_t required, size_t provided,
                         struct cbor_decoder_result* result) {
   // Safe from underflow: read is only incremented on successful claims
   CBOR_ASSERT(result->read <= provided);
-  if (required > (provided - result->read)) {
-    result->required = required + result->read;
+  if (required > provided - result->read) {
+    // Saturate instead of overflowing: a total that does not fit into `size_t`
+    // can never be provided
+    result->required = required > SIZE_MAX - result->read
+                           ? SIZE_MAX
+                           : (size_t)required + result->read;
     result->read = 0;
     result->status = CBOR_DECODER_NEDATA;
     return false;
   } else {
-    result->read += required;
+    // `required <= provided - read`, so the cast cannot truncate
+    result->read += (size_t)required;
     result->required = 0;
     return true;
   }
