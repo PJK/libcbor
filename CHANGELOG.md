@@ -5,6 +5,8 @@ Template:
 Next
 ---------------------
 
+- [Reimplement half-precision float decoding without the RFC 7049 reference code](https://github.com/PJK/libcbor/pull/453)
+  - The previous implementation was the BSD-2-Clause reference decoder from RFC 7049 Appendix D. The new one builds the single-precision bit pattern directly; decoded values are unchanged for all 2^16 inputs, which are now tested exhaustively
 - [Allow building the library and examples without a C++ compiler when tests are disabled](https://github.com/PJK/libcbor/pull/451) (by [fhgffy](https://github.com/fhgffy))
   - Requires CMake 3.12 or newer. Older CMake versions and `WITH_TESTS=ON` still need a C++ compiler
 - [Replay fuzz test inputs with allocation failures](https://github.com/PJK/libcbor/pull/438) (by [Alb3e3](https://github.com/Alb3e3)), checking decoder error reporting and cleanup for every `malloc` and `realloc` failure ([#86](https://github.com/PJK/libcbor/issues/86))
