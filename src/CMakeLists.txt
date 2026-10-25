@@ -24,7 +24,6 @@ set(SOURCES
     cbor/ints.c)
 
 include(JoinPaths)
-include(CheckFunctionExists)
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
 if(NOT DEFINED CMAKE_MACOSX_RPATH)
@@ -66,12 +65,6 @@ target_include_directories(cbor PUBLIC
 set_target_properties(cbor PROPERTIES EXPORT_NAME libcbor)
 # For vendored builds
 add_library(libcbor::libcbor ALIAS cbor)
-
-# Explicitly link math.h if necessary
-check_function_exists(ldexp LDEXP_AVAILABLE)
-if(NOT LDEXP_AVAILABLE)
-  target_link_libraries(cbor m)
-endif()
 
 include(GenerateExportHeader)
 generate_export_header(cbor EXPORT_FILE_NAME
