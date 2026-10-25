@@ -5,6 +5,8 @@ Template:
 Next
 ---------------------
 
+- [Stop linking the math library](https://github.com/PJK/libcbor/pull/455)
+  - libcbor no longer calls `ldexp` ([#453](https://github.com/PJK/libcbor/pull/453)), so the build no longer checks for it or links `-lm` where `ldexp` is not in libc ([#169](https://github.com/PJK/libcbor/issues/169)). Code that relied on libcbor to pull in libm must link it itself
 - [Declare copyright and license information in SPDX form, following the REUSE specification](https://github.com/PJK/libcbor/pull/452) ([#430](https://github.com/PJK/libcbor/issues/430))
   - Source headers now carry `SPDX-FileCopyrightText` and `SPDX-License-Identifier` tags; data, documentation, and configuration files are covered by `REUSE.toml`; license texts are in `LICENSES/`
   - libcbor remains MIT-licensed. Third-party parts are now labeled explicitly: the vendored CBOR WG test vectors (BSD-2-Clause), `FindCMocka.cmake` (BSD-3-Clause), `LibFindMacros.cmake` and `oss-fuzz/build.sh` (Apache-2.0), and `JoinPaths.cmake` (MIT OR CC0-1.0)

@@ -39,6 +39,11 @@ if(CJSON_FOUND)
   add_executable(cjson2cbor cjson2cbor.c)
   target_include_directories(cjson2cbor SYSTEM PRIVATE ${CJSON_INCLUDE_DIRS})
   target_link_libraries(cjson2cbor cbor cbor_project_options ${CJSON_LIBRARY})
+  # For fabs
+  find_library(MATH_LIBRARY m)
+  if(MATH_LIBRARY)
+    target_link_libraries(cjson2cbor ${MATH_LIBRARY})
+  endif()
 
   add_executable(cbor2cjson cbor2cjson.c)
   target_include_directories(cbor2cjson SYSTEM PRIVATE ${CJSON_INCLUDE_DIRS})
