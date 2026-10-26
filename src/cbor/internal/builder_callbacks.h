@@ -22,6 +22,15 @@ struct _cbor_decoder_context {
   bool syntax_error;
   cbor_item_t* root;
   struct _cbor_stack* stack;
+  /** Size of the whole input */
+  size_t source_size;
+  /** Input bytes left, starting at the item being decoded */
+  size_t remaining;
+  /**
+   * Bytes the open definite containers still need, beyond the item in
+   * progress in each. See `_cbor_claim_budget`.
+   */
+  uint64_t owed;
 };
 
 /** Internal helper: Append item to the top of the stack while handling errors.
