@@ -56,13 +56,18 @@ cbor_item_t* cbor_load(cbor_data source, size_t source_size,
 
   /* Target for callbacks */
   struct _cbor_decoder_context context = (struct _cbor_decoder_context){
-      .stack = &stack, .creation_failed = false, .syntax_error = false};
+      .stack = &stack,
+      .creation_failed = false,
+      .syntax_error = false,
+      .source_size = source_size,
+      .owed = 0};
   struct cbor_decoder_result decode_result;
   *result =
       (struct cbor_load_result){.read = 0, .error = {.code = CBOR_ERR_NONE}};
 
   do {
     if (source_size > result->read) { /* Check for overflows */
+      context.remaining = source_size - result->read;
       decode_result =
           cbor_stream_decode(source + result->read, source_size - result->read,
                              &callbacks, &context);
