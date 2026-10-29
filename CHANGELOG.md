@@ -5,9 +5,7 @@ Template:
 Next
 ---------------------
 
-- [Document that `cbor_item_t` arguments must be valid, non-`NULL` items unless stated otherwise, and check it in Debug builds](https://github.com/PJK/libcbor/pull/460) ([#457](https://github.com/PJK/libcbor/issues/457))
-  - Debug builds now assert non-`NULL` items in `cbor_array_push`, `cbor_array_set`, `cbor_array_replace`, `cbor_map_add` (key and value), and `cbor_tag_set_item`/`cbor_build_tag`; that `cbor_array_set` and `cbor_array_replace` are given an array; and that `cbor_string_add_chunk` is given a definite string chunk, matching `cbor_bytestring_add_chunk`. Release builds are unchanged
-  - `cbor_move` is now documented to accept `NULL`, which it has done since 0.14.0
+- [Document that item arguments must be valid and non-`NULL` unless stated otherwise, and assert it in Debug builds](https://github.com/PJK/libcbor/pull/460) ([#457](https://github.com/PJK/libcbor/issues/457))
 - BREAKING: [Stop exporting the internal `_cbor_map_add_key` and `_cbor_map_add_value`](https://github.com/PJK/libcbor/pull/459) ([#458](https://github.com/PJK/libcbor/issues/458)); use `cbor_map_add` instead
 - [Stop linking the math library](https://github.com/PJK/libcbor/pull/455)
   - libcbor no longer calls `ldexp` ([#453](https://github.com/PJK/libcbor/pull/453)), so the build no longer checks for it or links `-lm` where `ldexp` is not in libc ([#169](https://github.com/PJK/libcbor/issues/169)). Code that relied on libcbor to pull in libm must link it itself
