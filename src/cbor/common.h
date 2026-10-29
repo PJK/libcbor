@@ -394,8 +394,9 @@ CBOR_EXPORT size_t cbor_refcount(const cbor_item_t* item);
  *   reference count afterwards, the memory will be leaked.
  * \endrst
  *
- * @param item Reference to an item
- * @return the item with reference count decreased by one
+ * @param item Reference to an item, or `NULL`.
+ * @return the item with reference count decreased by one, or `NULL` if
+ * \p item is `NULL`
  */
 _CBOR_NODISCARD
 CBOR_EXPORT cbor_item_t* cbor_move(cbor_item_t* item);

@@ -5,6 +5,7 @@ Template:
 Next
 ---------------------
 
+- [Document that item arguments must be valid and non-`NULL` unless stated otherwise, and assert it in Debug builds](https://github.com/PJK/libcbor/pull/460) ([#457](https://github.com/PJK/libcbor/issues/457))
 - BREAKING: [Stop exporting the internal `_cbor_map_add_key` and `_cbor_map_add_value`](https://github.com/PJK/libcbor/pull/459) ([#458](https://github.com/PJK/libcbor/issues/458)); use `cbor_map_add` instead
 - [Stop linking the math library](https://github.com/PJK/libcbor/pull/455)
   - libcbor no longer calls `ldexp` ([#453](https://github.com/PJK/libcbor/pull/453)), so the build no longer checks for it or links `-lm` where `ldexp` is not in libc ([#169](https://github.com/PJK/libcbor/issues/169)). Code that relied on libcbor to pull in libm must link it itself

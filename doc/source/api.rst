@@ -10,6 +10,10 @@ The data API is centered around :type:`cbor_item_t`, a generic handle for any CB
 
 The single most important thing to keep in mind is: :type:`cbor_item_t` **is an opaque type and should only be manipulated using the appropriate functions!** Think of it as an object.
 
+.. _valid-items:
+
+Unless a function's documentation explicitly states otherwise, every :type:`cbor_item_t` pointer passed to *libcbor* must reference a valid, live item of the type the function expects. In particular, ``NULL`` is not accepted. Where ``NULL`` is meaningful, the documentation says so (for example, :func:`cbor_tag_item` may return ``NULL``, and :func:`cbor_move` accepts it). Passing anything else results in undefined behavior: Debug builds check some of these preconditions with assertions, release builds do not check them.
+
 The *libcbor* API closely follows the semantics outlined by `CBOR standard <https://www.rfc-editor.org/rfc/rfc8949.html>`_. This part of the documentation provides a short overview of the CBOR constructs, as well as a general introduction to the *libcbor* API. Remaining reference can be found in the following files structured by data types.
 
 The API is designed to allow both very tight control & flexibility and general convenience with sane defaults. [#]_ For example, client with very specific requirements (constrained environment, custom application protocol built on top of CBOR, etc.) may choose to take full control (and responsibility) of memory and data structures management by interacting directly with the decoder. Other clients might want to take control of specific aspects (streamed collections, hash maps storage), but leave other responsibilities to *libcbor*. More general clients might prefer to be abstracted away from all aforementioned details and only be presented complete data structures.

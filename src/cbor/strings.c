@@ -91,6 +91,8 @@ size_t cbor_string_chunk_count(const cbor_item_t* item) {
 bool cbor_string_add_chunk(cbor_item_t* item, cbor_item_t* chunk) {
   CBOR_ASSERT(cbor_isa_string(item));
   CBOR_ASSERT(cbor_string_is_indefinite(item));
+  CBOR_ASSERT(cbor_isa_string(chunk));
+  CBOR_ASSERT(cbor_string_is_definite(chunk));
   struct cbor_indefinite_string_data* data =
       (struct cbor_indefinite_string_data*)item->data;
   if (data->chunk_count == data->chunk_capacity) {

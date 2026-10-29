@@ -17,7 +17,7 @@ Binary queries
 
 Alternatively, there are functions to query each particular type.
 
-.. warning:: Passing an invalid :type:`cbor_item_t` reference to any of these functions results in undefined behavior.
+.. warning:: Passing an invalid :type:`cbor_item_t` reference to any of these functions results in undefined behavior. See :ref:`valid items <valid-items>`.
 
 .. doxygenfunction:: cbor_isa_uint
 .. doxygenfunction:: cbor_isa_negint
