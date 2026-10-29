@@ -5,7 +5,7 @@ Template:
 Next
 ---------------------
 
-- BREAKING: Stop exporting `_cbor_map_add_key` and `_cbor_map_add_value` ([#458](https://github.com/PJK/libcbor/issues/458))
+- BREAKING: [Stop exporting `_cbor_map_add_key` and `_cbor_map_add_value`](https://github.com/PJK/libcbor/pull/459) ([#458](https://github.com/PJK/libcbor/issues/458))
   - Both are internal helpers for building a map one key and value at a time, and corrupt memory when called out of order. Their declarations moved from `cbor/maps.h` to `cbor/internal/map_utils.h`, and the shared library no longer exports them. Use `cbor_map_add` instead
   - Debug builds now assert that `_cbor_map_add_value` follows `_cbor_map_add_key`
 - [Stop linking the math library](https://github.com/PJK/libcbor/pull/455)
