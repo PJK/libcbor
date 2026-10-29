@@ -4,6 +4,7 @@
  */
 
 #include "maps.h"
+#include "internal/map_utils.h"
 #include "internal/memory_utils.h"
 
 size_t cbor_map_size(const cbor_item_t* item) {
@@ -99,6 +100,9 @@ bool _cbor_map_add_key(cbor_item_t* item, cbor_item_t* key) {
 
 bool _cbor_map_add_value(cbor_item_t* item, cbor_item_t* value) {
   CBOR_ASSERT(cbor_isa_map(item));
+  // _cbor_map_add_key must have left a pair with no value yet
+  CBOR_ASSERT(cbor_map_size(item) > 0);
+  CBOR_ASSERT(cbor_map_handle(item)[cbor_map_size(item) - 1].value == NULL);
   cbor_incref(value);
   cbor_map_handle(item)[
       /* Move one back since we are assuming _add_key (which increased the ptr)

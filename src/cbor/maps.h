@@ -64,30 +64,6 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_indefinite_map(void);
 _CBOR_NODISCARD CBOR_EXPORT bool cbor_map_add(cbor_item_t* item,
                                               struct cbor_pair pair);
 
-/** Add a key to the map
- *
- * Sets the value to `NULL`. Internal API.
- *
- * @param item A map
- * @param key The key, Its reference count will be be increased by one.
- * @return `true` on success, `false` if either reallocation failed or the
- * preallocated storage is full
- */
-_CBOR_NODISCARD CBOR_EXPORT bool _cbor_map_add_key(cbor_item_t* item,
-                                                   cbor_item_t* key);
-
-/** Add a value to the map
- *
- * Assumes that #_cbor_map_add_key has been called. Internal API.
- *
- * @param item A map
- * @param value The value. Its reference count will be be increased by one.
- * @return `true` on success, `false` if either reallocation failed or the
- * preallocated storage is full
- */
-_CBOR_NODISCARD CBOR_EXPORT bool _cbor_map_add_value(cbor_item_t* item,
-                                                     cbor_item_t* value);
-
 /** Is this map definite?
  *
  * @param item A map
