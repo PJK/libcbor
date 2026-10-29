@@ -5,6 +5,7 @@ Template:
 Next
 ---------------------
 
+- BREAKING: [Stop exporting the internal `_cbor_map_add_key` and `_cbor_map_add_value`](https://github.com/PJK/libcbor/pull/459) ([#458](https://github.com/PJK/libcbor/issues/458)); use `cbor_map_add` instead
 - [Stop linking the math library](https://github.com/PJK/libcbor/pull/455)
   - libcbor no longer calls `ldexp` ([#453](https://github.com/PJK/libcbor/pull/453)), so the build no longer checks for it or links `-lm` where `ldexp` is not in libc ([#169](https://github.com/PJK/libcbor/issues/169)). Code that relied on libcbor to pull in libm must link it itself
 - [Declare copyright and license information in SPDX form, following the REUSE specification](https://github.com/PJK/libcbor/pull/452) ([#430](https://github.com/PJK/libcbor/issues/430))

@@ -15,6 +15,7 @@
 #include "../maps.h"
 #include "../strings.h"
 #include "../tags.h"
+#include "map_utils.h"
 #include "unicode.h"
 
 // `_cbor_builder_append` takes ownership of `item`. If adding the item to
