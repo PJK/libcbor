@@ -115,6 +115,8 @@ bool _cbor_map_add_value(cbor_item_t* item, cbor_item_t* value) {
 // TODO: Add a more convenient API like add(item, key, val)
 bool cbor_map_add(cbor_item_t* item, struct cbor_pair pair) {
   CBOR_ASSERT(cbor_isa_map(item));
+  CBOR_ASSERT(pair.key != NULL);
+  CBOR_ASSERT(pair.value != NULL);
   if (!_cbor_map_add_key(item, pair.key)) return false;
   return _cbor_map_add_value(item, pair.value);
 }

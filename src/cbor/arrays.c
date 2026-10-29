@@ -27,6 +27,8 @@ cbor_item_t* cbor_array_get(const cbor_item_t* item, size_t index) {
 }
 
 bool cbor_array_set(cbor_item_t* item, size_t index, cbor_item_t* value) {
+  CBOR_ASSERT(cbor_isa_array(item));
+  CBOR_ASSERT(value != NULL);
   if (index == item->metadata.array_metadata.end_ptr) {
     return cbor_array_push(item, value);
   } else if (index < item->metadata.array_metadata.end_ptr) {
@@ -37,6 +39,8 @@ bool cbor_array_set(cbor_item_t* item, size_t index, cbor_item_t* value) {
 }
 
 bool cbor_array_replace(cbor_item_t* item, size_t index, cbor_item_t* value) {
+  CBOR_ASSERT(cbor_isa_array(item));
+  CBOR_ASSERT(value != NULL);
   if (index >= item->metadata.array_metadata.end_ptr) return false;
   /* We cannot use cbor_array_get as that would increase the refcount */
   cbor_intermediate_decref(((cbor_item_t**)item->data)[index]);
@@ -46,6 +50,7 @@ bool cbor_array_replace(cbor_item_t* item, size_t index, cbor_item_t* value) {
 
 bool cbor_array_push(cbor_item_t* array, cbor_item_t* pushee) {
   CBOR_ASSERT(cbor_isa_array(array));
+  CBOR_ASSERT(pushee != NULL);
   struct _cbor_array_metadata* metadata =
       (struct _cbor_array_metadata*)&array->metadata;
   cbor_item_t** data = (cbor_item_t**)array->data;
