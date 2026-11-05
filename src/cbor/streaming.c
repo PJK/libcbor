@@ -15,6 +15,18 @@ static bool claim_bytes(size_t required, size_t provided,
   // Safe from underflow: read is only incremented on successful claims
   CBOR_ASSERT(result->read <= provided);
   if (required > (provided - result->read)) {
+    /* The item cannot be satisfied from the current buffer; report the total
+     * number of bytes needed. Guard the addition: with an attacker-controlled
+     * definite length close to SIZE_MAX, `required + result->read` could wrap
+     * around and report a bogus small (possibly zero) `required` along with
+     * CBOR_DECODER_NEDATA. Such an item can never fit into any buffer, so
+     * report a hard error instead. */
+    if (required > SIZE_MAX - result->read) {
+      result->read = 0;
+      result->required = 0;
+      result->status = CBOR_DECODER_ERROR;
+      return false;
+    }
     result->required = required + result->read;
     result->read = 0;
     result->status = CBOR_DECODER_NEDATA;
