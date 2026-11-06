@@ -47,7 +47,7 @@ void assert_decoder_result_nedata(size_t expected_bytes_required,
 
 void assert_minimum_input_size(size_t expected, cbor_data data) {
   for (size_t available = 1; available < expected; available++) {
-    assert_decoder_result_nedata(expected, decode(data, 1));
+    assert_decoder_result_nedata(expected, decode(data, available));
   }
 }
 

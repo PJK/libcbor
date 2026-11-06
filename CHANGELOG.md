@@ -5,6 +5,7 @@ Template:
 Next
 ---------------------
 
+- Fix the streaming decoder minimum-input test helper to check each truncated prefix.
 - [Document that item arguments must be valid and non-`NULL` unless stated otherwise, and assert it in Debug builds](https://github.com/PJK/libcbor/pull/460) ([#457](https://github.com/PJK/libcbor/issues/457))
 - BREAKING: [Stop exporting the internal `_cbor_map_add_key` and `_cbor_map_add_value`](https://github.com/PJK/libcbor/pull/459) ([#458](https://github.com/PJK/libcbor/issues/458)); use `cbor_map_add` instead
 - [Stop linking the math library](https://github.com/PJK/libcbor/pull/455)
