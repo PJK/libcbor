@@ -313,8 +313,8 @@ static void test_string_int64_decoding(void** _state _CBOR_UNUSED) {
 /* Declared length 0xFFFFFFFFFFFFFFF7: the total needed size
  * (length + 9 bytes of header) wraps around SIZE_MAX. Must be a hard error,
  * not NEDATA with a bogus `required` of 0. */
-unsigned char string_int64_overflow_data[] = {
-    0x7B, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xF7, 'a'};
+unsigned char string_int64_overflow_data[] = {0x7B, 0xFF, 0xFF, 0xFF, 0xFF,
+                                              0xFF, 0xFF, 0xFF, 0xF7, 'a'};
 static void test_string_int64_length_overflow(void** _state _CBOR_UNUSED) {
   assert_decoder_result(0, CBOR_DECODER_ERROR,
                         decode(string_int64_overflow_data, 10));
@@ -322,16 +322,16 @@ static void test_string_int64_length_overflow(void** _state _CBOR_UNUSED) {
 
 /* Declared length 0xFFFFFFFFFFFFFFF6 sums with the 9 header bytes to exactly
  * SIZE_MAX: no wrap, still reported as NEDATA with required == SIZE_MAX. */
-unsigned char string_int64_saturating_data[] = {
-    0x7B, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xF6, 'a'};
+unsigned char string_int64_saturating_data[] = {0x7B, 0xFF, 0xFF, 0xFF, 0xFF,
+                                                0xFF, 0xFF, 0xFF, 0xF6, 'a'};
 static void test_string_int64_length_saturating(void** _state _CBOR_UNUSED) {
   assert_decoder_result_nedata(/* expected_bytes_required= */ SIZE_MAX,
                                decode(string_int64_saturating_data, 10));
 }
 
 /* Same overflow shape on the byte string (0x5B) arm. */
-unsigned char bytestring_int64_overflow_data[] = {
-    0x5B, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xF7, 'a'};
+unsigned char bytestring_int64_overflow_data[] = {0x5B, 0xFF, 0xFF, 0xFF, 0xFF,
+                                                  0xFF, 0xFF, 0xFF, 0xF7, 'a'};
 static void test_bytestring_int64_length_overflow(void** _state _CBOR_UNUSED) {
   assert_decoder_result(0, CBOR_DECODER_ERROR,
                         decode(bytestring_int64_overflow_data, 10));
