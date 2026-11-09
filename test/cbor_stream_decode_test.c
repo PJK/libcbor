@@ -309,6 +309,33 @@ static void test_string_int64_decoding(void** _state _CBOR_UNUSED) {
   assert_decoder_result_nedata(/* expected_bytes_required= */ 9 + 4294967296,
                                decode(string_int64_data, 9));
 }
+
+/* Declared length 0xFFFFFFFFFFFFFFF7: the total needed size
+ * (length + 9 bytes of header) wraps around SIZE_MAX. Must be a hard error,
+ * not NEDATA with a bogus `required` of 0. */
+unsigned char string_int64_overflow_data[] = {0x7B, 0xFF, 0xFF, 0xFF, 0xFF,
+                                              0xFF, 0xFF, 0xFF, 0xF7, 'a'};
+static void test_string_int64_length_overflow(void** _state _CBOR_UNUSED) {
+  assert_decoder_result(0, CBOR_DECODER_ERROR,
+                        decode(string_int64_overflow_data, 10));
+}
+
+/* Declared length 0xFFFFFFFFFFFFFFF6 sums with the 9 header bytes to exactly
+ * SIZE_MAX: no wrap, still reported as NEDATA with required == SIZE_MAX. */
+unsigned char string_int64_saturating_data[] = {0x7B, 0xFF, 0xFF, 0xFF, 0xFF,
+                                                0xFF, 0xFF, 0xFF, 0xF6, 'a'};
+static void test_string_int64_length_saturating(void** _state _CBOR_UNUSED) {
+  assert_decoder_result_nedata(/* expected_bytes_required= */ SIZE_MAX,
+                               decode(string_int64_saturating_data, 10));
+}
+
+/* Same overflow shape on the byte string (0x5B) arm. */
+unsigned char bytestring_int64_overflow_data[] = {0x5B, 0xFF, 0xFF, 0xFF, 0xFF,
+                                                  0xFF, 0xFF, 0xFF, 0xF7, 'a'};
+static void test_bytestring_int64_length_overflow(void** _state _CBOR_UNUSED) {
+  assert_decoder_result(0, CBOR_DECODER_ERROR,
+                        decode(bytestring_int64_overflow_data, 10));
+}
 #endif
 
 unsigned char string_indef_1_data[] = {0x7F, 0x60 /* Empty string */, 0xFF};
@@ -748,6 +775,9 @@ int main(void) {
       stream_test(test_string_int32_decoding),
 #ifdef EIGHT_BYTE_SIZE_T
       stream_test(test_string_int64_decoding),
+      stream_test(test_string_int64_length_overflow),
+      stream_test(test_string_int64_length_saturating),
+      stream_test(test_bytestring_int64_length_overflow),
 #endif
       stream_test(test_string_indef_decoding_1),
       stream_test(test_string_indef_decoding_2),
