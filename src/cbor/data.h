@@ -213,14 +213,14 @@ enum cbor_decoder_status {
   /** Decoding finished successfully (a callback has been invoked)
    *
    * Note that this does *not* mean that the buffer has been fully decoded;
-   * there may still be unread bytes for which no callback has been involved.
+   * there may still be unread bytes for which no callback has been invoked.
    */
   CBOR_DECODER_FINISHED,
   /** Not enough data to invoke a callback */
   // TODO: The name is inconsistent with CBOR_ERR_NOTENOUGHDATA. Retained for
   // backwards compatibility.
   CBOR_DECODER_NEDATA,
-  /** Bad data (reserved MTB, malformed value, etc.)  */
+  /** Bad data (reserved MTB, malformed value, etc.) */
   CBOR_DECODER_ERROR
 };
 
@@ -249,7 +249,7 @@ struct cbor_decoder_result {
    *    For example: A 1B buffer containing `0x19` (a 2B uint16 item) will
    *    set #required to 3 — the MTB byte plus two bytes of data.
    *
-   *  - If the buffer was empty (source_size == 0), #required is set to 1
+   *  - If the buffer was empty (`source_size == 0`), #required is set to 1
    *    since at least the initial MTB byte is needed.
    *
    *  - If the total does not fit into `size_t`, #required is set to `SIZE_MAX`.

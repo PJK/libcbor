@@ -98,10 +98,6 @@ exclude_patterns = ['breathe/*']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
-breathe_domain_by_extension = {
-        "h" : "C",
-        }
-#default_role = 'c:func'
 primary_domain = "cpp"
 
 # If true, '()' will be appended to :func: etc. cross-reference text.

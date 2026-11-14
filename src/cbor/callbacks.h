@@ -110,8 +110,8 @@ struct cbor_callbacks {
    * byte 0xE0 to 0xF3) and 32 to 255 (encoded as 0xF8 followed by the value).
    * Values 24 to 31 (0xF8 followed by a byte below 0x20) are not well-formed
    * and are reported as a decoding error instead
-   * (`RFC 8949 Section 3.3
-   * <https://www.rfc-editor.org/rfc/rfc8949#section-3.3>`_).
+   * ([RFC 8949 Section
+   * 3.3](https://www.rfc-editor.org/rfc/rfc8949#section-3.3)).
    *
    * Like every other member, this must not be `NULL`. Callback sets written
    * before this member existed must be updated; use
