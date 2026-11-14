@@ -82,6 +82,8 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_encode_map_start(size_t, unsigned char*,
 _CBOR_NODISCARD CBOR_EXPORT size_t cbor_encode_indef_map_start(unsigned char*,
                                                                size_t);
 
+/** Encodes a tag header (see the `CBOR_TAG_*` constants in `cbor/tags.h`, e.g.
+ * #CBOR_TAG_DATETIME_STRING, for RFC 8949 tags) */
 _CBOR_NODISCARD CBOR_EXPORT size_t cbor_encode_tag(uint64_t, unsigned char*,
                                                    size_t);
 
