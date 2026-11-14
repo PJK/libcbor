@@ -5,6 +5,9 @@ Template:
 Next
 ---------------------
 
+0.14.1 (2026-11-14)
+---------------------
+
 - SECURITY: Fix two bugs in `cbor_stream_decode` bounds checks for string and byte string lengths (reported by [Tajwarbot](https://github.com/Tajwarbot))
   - [GHSA-frh9-3gqx-pqg2](https://github.com/PJK/libcbor/security/advisories/GHSA-frh9-3gqx-pqg2): On platforms where `size_t` is narrower than 8 bytes, 8B lengths (`0x5B`, `0x7B`) were truncated before being checked against the input buffer, while the callback received the original 64-bit length. A callback that processed `length` bytes in 64-bit arithmetic could read past the end of the buffer. Affected 0.9.0 and newer; `cbor_load` was never affected
   - [GHSA-pj89-8hch-p7vp](https://github.com/PJK/libcbor/security/advisories/GHSA-pj89-8hch-p7vp): `cbor_decoder_result.required` overflowed for very large declared lengths, so it could come back smaller than the number of bytes already provided. Clients following the documented "accumulate `required` bytes, then retry" loop could spin forever. Affected 0.8.0 and newer, on all platforms
