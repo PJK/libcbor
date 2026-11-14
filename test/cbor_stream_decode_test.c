@@ -638,7 +638,7 @@ static void test_float8_decoding(void** _state _CBOR_UNUSED) {
   assert_double(-4.1);
   assert_decoder_result(9, CBOR_DECODER_FINISHED, decode(float8_data, 9));
 
-  assert_minimum_input_size(0, float8_data);
+  assert_minimum_input_size(9, float8_data);
 }
 
 unsigned char false_data[] = {0xF4};
