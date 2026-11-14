@@ -17,12 +17,13 @@ libcbor provides two decoding interfaces:
      - :func:`cbor_stream_decode`
    * - **Returns**
      - A fully-built ``cbor_item_t`` tree.
-     - Nothing. Fires a callback for each decoded value.
+     - A :type:`cbor_decoder_result` (status and byte counts); decoded values
+       are delivered via callbacks.
    * - **Callbacks**
      - None. Results available after the call returns.
-     - One callback per primitive, string chunk, or
-       collection boundary (e.g. ``array_start``,
-       ``uint8``, ``string_chunk``).
+     - One callback per primitive, definite string (or indefinite string
+       chunk), or collection/tag boundary (e.g. ``array_start``, ``uint8``,
+       ``string``).
    * - **Nesting**
      - Handled by the library.
      - Caller's responsibility. Nested structures
@@ -128,10 +129,14 @@ Concretely, the decoders will accept:
      - Inspect :func:`cbor_tag_value` and :func:`cbor_tag_item`;
        see :doc:`type_6_tags`
 
-Inputs that are not well-formed — truncated data, reserved additional
-information values, unexpected ``break`` codes, indefinite-length strings with
-chunks of the wrong type, etc. — are rejected with a :type:`cbor_error_code`
-describing the problem.
+:func:`cbor_load` rejects inputs that are not well-formed — truncated data,
+reserved additional information values, unexpected ``break`` codes,
+indefinite-length strings with chunks of the wrong type, etc. — with a
+:type:`cbor_error_code` describing the problem. Because
+:func:`cbor_stream_decode` is stateless, it checks single-item well-formedness
+only; multi-item structure (such as matching ``break`` codes or
+indefinite-length string chunk types) must be enforced by the caller (see
+:doc:`streaming_decoding`).
 
 Note that the terminology in the CBOR working group's
 `test vectors <https://github.com/cbor-wg/cbor-test-vectors>`_ and similar
