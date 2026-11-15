@@ -25,6 +25,9 @@ set(CBOR_BUFFER_GROWTH
 set(CBOR_MAX_STACK_SIZE
   "2048"
   CACHE STRING "maximum size for decoding context stack")
+set(CBOR_MAX_UNCHECKED_DECLARED_SIZE
+  "16"
+  CACHE STRING "Largest array or map size that cbor_load preallocates without checking the input")
 
 option(WITH_TESTS "[TEST] Build unit tests (requires CMocka and a C++ compiler)" OFF)
 

@@ -20,27 +20,16 @@
 #include "unicode.h"
 
 /**
- * Definite arrays and maps declaring up to this many items (pairs for maps) are
- * preallocated without checking the input, which keeps the check off the path
- * of the many small containers in typical data. Such a declaration can still
- * exceed what the input holds, but only by this much per container, and every
- * open container takes at least a byte of input.
- */
-#define MAX_UNCHECKED_DECLARED_SIZE 16
-
-/**
- * How many items to preallocate for a definite array or map declaring \p size
- * items of at least \p item_bytes bytes each.
+ * Number of items to preallocate for a definite array or map declaring \p size
+ * items of at least \p item_bytes bytes each
  *
- * Every item takes at least one byte, so a header declaring more items than
- * the rest of the input can hold describes input that will fail to decode.
- * The bytes counted are those after the header's first byte, minus one for
- * each item the open containers still expect after the ones they have in
- * progress.
+ * Above `CBOR_MAX_UNCHECKED_DECLARED_SIZE`, at most as many as fit in the rest
+ * of the input after one byte for each item the open containers still expect.
  */
 static size_t _cbor_builder_preallocation(
     const struct _cbor_decoder_context* ctx, size_t size, size_t item_bytes) {
-  if (size <= MAX_UNCHECKED_DECLARED_SIZE || ctx->read == NULL) return size;
+  if (size <= CBOR_MAX_UNCHECKED_DECLARED_SIZE || ctx->read == NULL)
+    return size;
   size_t after_header = ctx->source_size - *ctx->read - 1;
   size_t pending = _cbor_stack_pending(ctx->stack);
   size_t claimable =
@@ -68,8 +57,8 @@ void _cbor_builder_append(cbor_item_t* item,
         // into this array because if there are extra items, they will cause a
         // syntax error when decoded.
         CBOR_ASSERT(ctx->stack->top->subitems > 0);
-        // The array has storage for fewer items than declared only if the
-        // input could not hold them all (see cbor_builder_array_start_callback)
+        // Grow arrays preallocated short of their size (see
+        // cbor_builder_array_start_callback)
         cbor_item_t* array = ctx->stack->top->item;
         if (!cbor_array_push(array, item) &&
             !(_cbor_array_grow_definite(
@@ -107,9 +96,8 @@ void _cbor_builder_append(cbor_item_t* item,
         // key is added
         CBOR_ASSERT(!ctx->creation_failed);
       } else {
-        // Even record, this is a key. A definite map has storage for fewer
-        // pairs than declared only if the input could not hold them all (see
-        // cbor_builder_map_start_callback).
+        // Even record, this is a key. Grow definite maps preallocated short of
+        // their size.
         cbor_item_t* map = ctx->stack->top->item;
         if (!_cbor_map_add_key(map, item) &&
             !(cbor_map_is_definite(map) &&
@@ -344,10 +332,9 @@ void cbor_builder_string_start_callback(void* context) {
 void cbor_builder_array_start_callback(void* context, uint64_t size) {
   struct _cbor_decoder_context* ctx = context;
   CHECK_LENGTH(ctx, size);
-  // Unless the declared size is small, preallocate no more items than the
-  // input can hold. If the header declares more, the input is invalid; the
-  // array grows as items arrive (see _cbor_builder_append) so that decoding
-  // fails exactly where it would if the declared size had been allocated.
+  // An invalid input can declare more items than it holds. Preallocate only
+  // what fits and grow as items arrive, so that decoding fails where it would
+  // have with the declared size.
   cbor_item_t* res =
       cbor_new_definite_array(_cbor_builder_preallocation(ctx, size, 1));
   CHECK_RES(ctx, res);

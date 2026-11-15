@@ -117,6 +117,10 @@ The following configuration options will also be defined as macros [#]_ in ``<cb
      - Factor for buffer growth & shrinking
      - ``2``
      - Decimals > 1
+   * - ``CBOR_MAX_UNCHECKED_DECLARED_SIZE``
+     - Largest array or map size that ``cbor_load`` preallocates without checking the input
+     - ``16``
+     - Integers >= 0
 
 
 .. [#] ``ON`` & ``OFF`` will be translated to ``1`` and ``0`` using `cmakedefine <https://cmake.org/cmake/help/v3.2/command/configure_file.html?highlight=cmakedefine>`_.

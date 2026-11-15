@@ -147,21 +147,14 @@ libcbor's decoders as designed.
 .. note::
 
    Lengths declared in CBOR headers can be up to 2\ :sup:`64`\−1, but
-   ``cbor_load`` does not allocate more than the input can back:
+   ``cbor_load`` only allocates what the input can back. Strings are allocated
+   once all of their bytes are present. Definite arrays and maps declaring more
+   than ``CBOR_MAX_UNCHECKED_DECLARED_SIZE`` (16 by default) items are
+   preallocated only for as many items as the rest of the input can hold, and
+   grow if more arrive.
 
-   - **Definite-length strings and bytestrings** are allocated once all of
-     their bytes have been found in the input.
-   - **Definite-length arrays and maps** declaring more than 16 items (or
-     pairs) are preallocated only as far as the rest of the input can hold
-     their items, at one byte per item and two per map pair. A header that
-     declares more items describes input that cannot be decoded; the storage
-     then grows as items actually arrive, and decoding fails with the same
-     error as it would if the declared size had been allocated.
-
-   Its memory use is therefore proportional to the size of the input. Decoded
-   items take more memory than their encoding, though: on 64-bit platforms, a
-   few dozen bytes for each one-byte item such as a small integer. To bound
-   the memory ``cbor_load`` uses:
+   Memory use is therefore proportional to the input size, at a few dozen bytes
+   per decoded item on 64-bit platforms. To bound it:
 
    - Limit the size of its input.
    - For an absolute limit, install a capping allocator via

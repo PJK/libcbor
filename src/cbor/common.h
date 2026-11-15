@@ -111,8 +111,7 @@ extern bool _cbor_enable_assert;
 #define _CBOR_UNREACHABLE
 #endif
 
-// Keeps a rarely used function out of line so that it does not slow down its
-// callers
+// Keeps a rarely called function out of its callers' hot path
 #ifdef __GNUC__
 #define _CBOR_COLD __attribute__((__noinline__, __cold__))
 #else

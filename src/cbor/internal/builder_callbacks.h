@@ -22,13 +22,11 @@ struct _cbor_decoder_context {
   bool syntax_error;
   cbor_item_t* root;
   struct _cbor_stack* stack;
-  /** Size of the input, if \p read is set */
+  /** Size of the input */
   size_t source_size;
   /**
-   * Offset of the item being decoded in the input, or `NULL` if the builder is
-   * not driven by #cbor_load (e.g. `examples/cjson2cbor.c`). Bounds the
-   * storage preallocated for definite arrays and maps by what the rest of the
-   * input can hold; without it, the declared size is preallocated.
+   * Offset of the item being decoded, or `NULL` if the input size is unknown.
+   * Definite arrays and maps are then preallocated as declared.
    */
   const size_t* read;
 };
