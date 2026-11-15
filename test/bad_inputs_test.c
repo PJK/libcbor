@@ -37,24 +37,31 @@ static void test_3(void** _state _CBOR_UNUSED) {
   assert_size_equal(res.error.position, 1);
 }
 
-#ifdef SANE_MALLOC
+/* Map declaring ~3.2 * 10^9 pairs */
 unsigned char data4[] = {0xBA, 0xC1, 0xE8, 0x3E, 0xE7, 0x20, 0xA8};
 static void test_4(void** _state _CBOR_UNUSED) {
   item = cbor_load(data4, 7, &res);
   assert_null(item);
+#ifdef EIGHT_BYTE_SIZE_T
+  /* Only the pairs that fit in the input are preallocated */
+  assert_true(res.error.code == CBOR_ERR_NOTENOUGHDATA);
+  assert_size_equal(res.error.position, 7);
+#else
+  /* Twice the pair count, the number of items, does not fit in size_t */
   assert_true(res.error.code == CBOR_ERR_MEMERROR);
   assert_size_equal(res.error.position, 5);
+#endif
 }
 
+/* Array declaring ~3.7 * 10^9 items */
 unsigned char data5[] = {0x9A, 0xDA, 0x3A, 0xB2, 0x7F, 0x29};
 static void test_5(void** _state _CBOR_UNUSED) {
-  assert_true(res.error.code == CBOR_ERR_MEMERROR);
   item = cbor_load(data5, 6, &res);
   assert_null(item);
-  assert_size_equal(res.error.position, 5);
-  /* Indef string expectation mismatch */
+  /* Only the items that fit in the input are preallocated */
+  assert_true(res.error.code == CBOR_ERR_NOTENOUGHDATA);
+  assert_size_equal(res.error.position, 6);
 }
-#endif
 
 unsigned char data6[] = {0x7F, 0x21, 0x4C, 0x02, 0x40};
 static void test_6(void** _state _CBOR_UNUSED) {
@@ -65,15 +72,15 @@ static void test_6(void** _state _CBOR_UNUSED) {
 }
 
 #ifdef EIGHT_BYTE_SIZE_T
-/* Extremely high size value (overflows size_t in representation size). Only
- * works with 64b sizes */
+/* Extremely high size value (its storage size overflows size_t). Only the
+ * items that fit in the input are preallocated. Only works with 64b sizes */
 unsigned char data7[] = {0xA2, 0x9B, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00,
                          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 static void test_7(void** _state _CBOR_UNUSED) {
   item = cbor_load(data7, 16, &res);
   assert_null(item);
-  assert_true(res.error.code == CBOR_ERR_MEMERROR);
-  assert_size_equal(res.error.position, 10);
+  assert_true(res.error.code == CBOR_ERR_NOTENOUGHDATA);
+  assert_size_equal(res.error.position, 16);
 }
 #endif
 
@@ -100,11 +107,8 @@ static void test_9(void** _state _CBOR_UNUSED) {
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_1), cmocka_unit_test(test_2),
-      cmocka_unit_test(test_3),
-#ifdef SANE_MALLOC
-      cmocka_unit_test(test_4), cmocka_unit_test(test_5),
-#endif
-      cmocka_unit_test(test_6),
+      cmocka_unit_test(test_3), cmocka_unit_test(test_4),
+      cmocka_unit_test(test_5), cmocka_unit_test(test_6),
 #ifdef EIGHT_BYTE_SIZE_T
       cmocka_unit_test(test_7),
 #endif

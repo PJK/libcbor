@@ -14,11 +14,11 @@ memory limits when parsing untrusted data.
 
 .. note::
 
-   A capping allocator is the recommended way to bound memory consumption in ``cbor_load``. Because
-   definite-length arrays and maps pre-allocate storage for the declared number of elements, a crafted
-   input can trigger a very large allocation before any element data is read. A ``malloc`` wrapper that
-   returns ``NULL`` above a chosen threshold causes ``cbor_load`` to return ``CBOR_ERR_MEMERROR`` cleanly
-   rather than attempting the allocation. See :doc:`/getting_started` for a complete example.
+   A capping allocator puts an absolute limit on the memory ``cbor_load`` uses. Without one,
+   ``cbor_load`` uses memory proportional to the size of its input (see :doc:`decoding`), so limiting the
+   input size also bounds it. A ``malloc`` wrapper that returns ``NULL`` above a chosen threshold causes
+   ``cbor_load`` to return ``CBOR_ERR_MEMERROR`` cleanly once the threshold is reached. See
+   :doc:`/getting_started` for a complete example.
 
 .. code-block:: c
 

@@ -144,25 +144,22 @@ suites does not always make this distinction. Test cases that expect a
 decoder to *fail* on well-formed but invalid input are not applicable to
 libcbor's decoders as designed.
 
-.. warning::
+.. note::
 
-   ``cbor_load`` allocates memory sized by lengths declared in the CBOR header
-   before reading the corresponding data:
+   Lengths declared in CBOR headers can be up to 2\ :sup:`64`\−1, but
+   ``cbor_load`` only allocates what the input can back. Strings are allocated
+   once all of their bytes are present. Definite arrays and maps declaring more
+   than ``CBOR_MAX_UNCHECKED_DECLARED_SIZE`` items (16 by default, see
+   :doc:`/getting_started`) are preallocated only for as many items as the rest
+   of the input can hold, and grow if more arrive.
 
-   - **Definite-length arrays and maps** — storage for the declared element count.
-   - **Definite-length strings and bytestrings** — a buffer for the declared byte length.
+   Memory use is therefore proportional to the input size, at a few dozen bytes
+   per decoded item on 64-bit platforms. To bound it:
 
-   All of these lengths are encoded as a 64-bit integer, so ``cbor_load`` may
-   attempt an allocation of up to 2\ :sup:`64`\−1 bytes before any payload data
-   is read. ``malloc`` will normally refuse such a request and ``cbor_load``
-   will return ``CBOR_ERR_MEMERROR``, but on platforms with memory overcommit
-   (Linux by default) the allocation may silently appear to succeed.
-
-   Mitigations:
-
-   - Install a capping allocator via :func:`cbor_set_allocs` to bound total
-     memory consumption (see ``examples/capped_alloc.c`` for a self-contained
-     example).
+   - Limit the size of its input.
+   - For an absolute limit, install a capping allocator via
+     :func:`cbor_set_allocs` (see ``examples/capped_alloc.c`` for a
+     self-contained example).
    - Use the streaming decoder (:doc:`streaming_decoding`), which gives the
      application full control over memory allocation for each decoded item.
 

@@ -43,6 +43,19 @@ _CBOR_NODISCARD CBOR_NO_EXPORT bool _cbor_map_add_key(cbor_item_t* item,
 _CBOR_NODISCARD CBOR_NO_EXPORT bool _cbor_map_add_value(cbor_item_t* item,
                                                         cbor_item_t* value);
 
+/** Grow the storage of a full definite map
+ *
+ * For the decoder, which preallocates less than the declared size when the
+ * input cannot hold it. Grows by `CBOR_BUFFER_GROWTH`, to at most \p limit
+ * pairs.
+ *
+ * @param item A definite map with no free storage
+ * @param limit Maximum number of pairs, greater than the current size
+ * @return `false` if the reallocation failed
+ */
+_CBOR_NODISCARD CBOR_NO_EXPORT _CBOR_COLD bool _cbor_map_grow_definite(
+    cbor_item_t* item, size_t limit);
+
 #ifdef __cplusplus
 }
 #endif

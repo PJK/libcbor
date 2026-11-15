@@ -24,7 +24,8 @@ struct _cbor_stack_record* _cbor_stack_push(struct _cbor_stack* stack,
       _cbor_malloc(sizeof(struct _cbor_stack_record));
   if (new_top == NULL) return NULL;
 
-  *new_top = (struct _cbor_stack_record){stack->top, item, subitems};
+  *new_top = (struct _cbor_stack_record){stack->top, item, subitems,
+                                         _cbor_stack_pending(stack)};
   stack->top = new_top;
   stack->size++;
   return new_top;

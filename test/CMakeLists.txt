@@ -26,7 +26,6 @@ foreach(test_file ${TESTS})
   target_compile_definitions(${NAME} PRIVATE
     CBOR_TEST_VECTORS_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data/cbor-test-vectors"
     $<$<BOOL:${HUGE_FUZZ}>:HUGE_FUZZ>
-    $<$<BOOL:${SANE_MALLOC}>:SANE_MALLOC>
     $<$<BOOL:${PRINT_FUZZ}>:PRINT_FUZZ>
     $<$<BOOL:${HAVE_EIGHT_BYTE_SIZE_T}>:EIGHT_BYTE_SIZE_T>)
   add_test(NAME ${NAME} COMMAND ${NAME})

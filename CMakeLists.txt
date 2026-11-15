@@ -25,6 +25,9 @@ set(CBOR_BUFFER_GROWTH
 set(CBOR_MAX_STACK_SIZE
   "2048"
   CACHE STRING "maximum size for decoding context stack")
+set(CBOR_MAX_UNCHECKED_DECLARED_SIZE
+  "16"
+  CACHE STRING "Largest array or map size that cbor_load preallocates without checking the input")
 
 option(WITH_TESTS "[TEST] Build unit tests (requires CMocka and a C++ compiler)" OFF)
 
@@ -38,12 +41,6 @@ option(WITH_EXAMPLES "Build examples" ON)
 option(HUGE_FUZZ
   "[TEST] Run the fuzz test against 8GB of data instead of the default \
 smaller corpus. Do not use with memory instrumentation." OFF)
-
-option(SANE_MALLOC
-  "[TEST] Enable tests that assert cbor_load returns CBOR_ERR_MEMERROR for \
-crafted inputs that declare enormous collections. Only enable on platforms \
-where malloc refuses unreasonably large requests (i.e. NOT Linux with \
-overcommit). Has no effect on the library itself." OFF)
 
 option(PRINT_FUZZ "[TEST] Print each input processed by the fuzz test to stdout." OFF)
 

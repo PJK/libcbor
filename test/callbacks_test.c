@@ -337,7 +337,8 @@ static void test_append_array_failure(void** _state _CBOR_UNUSED) {
   };
   cbor_item_t* item = cbor_build_uint8(42);
 
-  _cbor_builder_append(item, &context);
+  // The array has no room for the item, and growing it fails
+  WITH_MOCK_MALLOC({ _cbor_builder_append(item, &context); }, 1, REALLOC_FAIL);
 
   assert_true(context.creation_failed);
   assert_false(context.syntax_error);
@@ -442,5 +443,5 @@ int main(void) {
       cmocka_unit_test(test_invalid_state_indef_break),
   };
 
-  cmocka_run_group_tests(tests, NULL, NULL);
+  return cmocka_run_group_tests(tests, NULL, NULL);
 }

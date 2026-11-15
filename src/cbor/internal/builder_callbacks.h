@@ -22,6 +22,13 @@ struct _cbor_decoder_context {
   bool syntax_error;
   cbor_item_t* root;
   struct _cbor_stack* stack;
+  /** Size of the input */
+  size_t source_size;
+  /**
+   * Offset of the item being decoded, or `NULL` if the input size is unknown.
+   * Definite arrays and maps are then preallocated as declared.
+   */
+  const size_t* read;
 };
 
 /** Internal helper: Append item to the top of the stack while handling errors.

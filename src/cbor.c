@@ -55,8 +55,12 @@ cbor_item_t* cbor_load(cbor_data source, size_t source_size,
   struct _cbor_stack stack = _cbor_stack_init();
 
   /* Target for callbacks */
-  struct _cbor_decoder_context context = (struct _cbor_decoder_context){
-      .stack = &stack, .creation_failed = false, .syntax_error = false};
+  struct _cbor_decoder_context context =
+      (struct _cbor_decoder_context){.stack = &stack,
+                                     .creation_failed = false,
+                                     .syntax_error = false,
+                                     .source_size = source_size,
+                                     .read = &result->read};
   struct cbor_decoder_result decode_result;
   *result =
       (struct cbor_load_result){.read = 0, .error = {.code = CBOR_ERR_NONE}};
