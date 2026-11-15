@@ -25,6 +25,10 @@ Community contributions are welcome as long as they align with the [project prio
     - Only add entries for changes that directly affect existing users of the library: API and ABI changes, bug fixes, behavior changes, and build changes that affect consumers.
     - Leave out documentation, tests, examples, CI, and other developer tooling.
 
+## Performance
+
+If a change may affect performance, compare it against `master` with [`bench/compare.sh`](bench/README.md) and include the report in the PR. Explain any increase in allocations.
+
 ## Interactions
 
 I work on libcbor on a best effort basis. The typical response time is a few days. 
