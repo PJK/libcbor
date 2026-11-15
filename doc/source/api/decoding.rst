@@ -149,9 +149,9 @@ libcbor's decoders as designed.
    Lengths declared in CBOR headers can be up to 2\ :sup:`64`\−1, but
    ``cbor_load`` only allocates what the input can back. Strings are allocated
    once all of their bytes are present. Definite arrays and maps declaring more
-   than ``CBOR_MAX_UNCHECKED_DECLARED_SIZE`` (16 by default) items are
-   preallocated only for as many items as the rest of the input can hold, and
-   grow if more arrive.
+   than ``CBOR_MAX_UNCHECKED_DECLARED_SIZE`` items (16 by default, see
+   :doc:`/getting_started`) are preallocated only for as many items as the rest
+   of the input can hold, and grow if more arrive.
 
    Memory use is therefore proportional to the input size, at a few dozen bytes
    per decoded item on 64-bit platforms. To bound it:
@@ -162,6 +162,21 @@ libcbor's decoders as designed.
      self-contained example).
    - Use the streaming decoder (:doc:`streaming_decoding`), which gives the
      application full control over memory allocation for each decoded item.
+
+.. note::
+
+   ``cbor_load`` bounds container and tag nesting depth to ``CBOR_MAX_STACK_SIZE``
+   (``2048`` by default; configurable at build time — see :doc:`/getting_started`),
+   returning ``CBOR_ERR_MEMERROR`` if an input exceeds the limit. Both
+   :func:`cbor_load` and :func:`cbor_decref` operate iteratively in constant
+   native stack space regardless of nesting depth. However, recursive
+   tree-walking routines — including :func:`cbor_serialize`,
+   :func:`cbor_serialized_size`, :func:`cbor_copy`, :func:`cbor_copy_definite`,
+   :func:`cbor_structurally_equal`, and ``cbor_describe``, as well as recursive
+   client code — use native call-stack frames proportional to the tree's depth.
+   Applications running on constrained thread stacks should lower
+   ``CBOR_MAX_STACK_SIZE``, enforce a shallower depth limit before traversing
+   decoded trees, or use :func:`cbor_stream_decode`.
 
 .. doxygenfunction:: cbor_load
 

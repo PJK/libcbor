@@ -117,6 +117,10 @@ The following configuration options will also be defined as macros [#]_ in ``<cb
      - Factor for buffer growth & shrinking
      - ``2``
      - Decimals > 1
+   * - ``CBOR_MAX_STACK_SIZE``
+     - Maximum container and tag nesting depth accepted by :func:`cbor_load`
+     - ``2048``
+     - Positive integers
    * - ``CBOR_MAX_UNCHECKED_DECLARED_SIZE``
      - Largest array or map size that ``cbor_load`` preallocates without checking the input
      - ``16``

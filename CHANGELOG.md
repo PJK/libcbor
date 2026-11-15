@@ -5,11 +5,12 @@ Template:
 Next
 ---------------------
 
-- [Preallocate definite arrays and maps in `cbor_load` only as far as the input can hold their items](https://github.com/PJK/libcbor/pull/469) ([#418](https://github.com/PJK/libcbor/issues/418), based on [#456](https://github.com/PJK/libcbor/pull/456) by [nabbi](https://github.com/nabbi))
+- BREAKING: [Preallocate definite arrays and maps in `cbor_load` only as far as the input can hold their items](https://github.com/PJK/libcbor/pull/469) ([#418](https://github.com/PJK/libcbor/issues/418), based on [#456](https://github.com/PJK/libcbor/pull/456) by [nabbi](https://github.com/nabbi))
   - Headers can declare up to 2^64 − 1 items, which `cbor_load` used to preallocate before reading any, so 5 bytes of input could request gigabytes. Declarations above `CBOR_MAX_UNCHECKED_DECLARED_SIZE` (new CMake option, 16 by default) are now preallocated only as far as the rest of the input can hold their items, and grow if more arrive. Valid input is preallocated as before
-  - Inputs declaring more items than can be allocated now fail with the error found further on, usually `CBOR_ERR_NOTENOUGHDATA`, instead of `CBOR_ERR_MEMERROR` or an out-of-memory kill
+  - Inputs declaring more items than can be allocated now fail with the error found further on, usually `CBOR_ERR_NOTENOUGHDATA`, and its position, instead of `CBOR_ERR_MEMERROR` or an out-of-memory kill. Clients that read more data on `CBOR_ERR_NOTENOUGHDATA` will keep reading on such inputs and need their own input size limit
   - Removed the test-only `SANE_MALLOC` CMake option; the tests it enabled no longer depend on how `malloc` handles huge requests
-
+- Make `_cbor_builder_append` and `_cbor_decref_free` iterative so `cbor_load` and `cbor_decref` run in constant native stack space regardless of nesting depth (reported by [PwnToday](https://github.com/PwnToday) in [#464](https://github.com/PJK/libcbor/issues/464))
+  - Previously, completing deeply nested definite arrays, definite maps, or tags up to `CBOR_MAX_STACK_SIZE` (`2048`) recursed on the call stack in `_cbor_builder_append`, and deallocating deep item trees recursed in `_cbor_decref_free`, overflowing constrained thread stacks or unoptimized/ASan stacks
 - Add `CBOR_TAG_*` macro constants in `cbor/tags.h` for the 15 tag numbers defined in RFC 8949 Section 3.4, Table 5 ([#166](https://github.com/PJK/libcbor/issues/166))
 - [Fix the streaming decoder minimum-input test helper to check each truncated prefix](https://github.com/PJK/libcbor/pull/465) (by [7thplanetyt](https://github.com/7thplanetyt))
 - [Document that item arguments must be valid and non-`NULL` unless stated otherwise, and assert it in Debug builds](https://github.com/PJK/libcbor/pull/460) ([#457](https://github.com/PJK/libcbor/issues/457))

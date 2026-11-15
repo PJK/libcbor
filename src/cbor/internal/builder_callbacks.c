@@ -38,107 +38,109 @@ static size_t _cbor_builder_preallocation(
 }
 
 // `_cbor_builder_append` takes ownership of `item`. If adding the item to
-// parent container fails, `item` will be deallocated to prevent memory.
+// parent container fails, `item` will be deallocated to prevent memory leaks.
 void _cbor_builder_append(cbor_item_t* item,
                           struct _cbor_decoder_context* ctx) {
-  if (ctx->stack->size == 0) {
-    /* Top level item */
-    ctx->root = item;
-    return;
-  }
-  /* Part of a bigger structure */
-  switch (ctx->stack->top->item->type) {
-    // Handle Arrays and Maps since they can contain subitems of any type.
-    // Byte/string construction from chunks is handled in the respective chunk
-    // handlers.
-    case CBOR_TYPE_ARRAY: {
-      if (cbor_array_is_definite(ctx->stack->top->item)) {
-        // We don't need an explicit check for whether the item still belongs
-        // into this array because if there are extra items, they will cause a
-        // syntax error when decoded.
-        CBOR_ASSERT(ctx->stack->top->subitems > 0);
-        // Grow arrays preallocated short of their size (see
-        // cbor_builder_array_start_callback)
-        cbor_item_t* array = ctx->stack->top->item;
-        if (!cbor_array_push(array, item) &&
-            !(_cbor_array_grow_definite(
-                  array, cbor_array_size(array) + ctx->stack->top->subitems) &&
-              cbor_array_push(array, item))) {
-          ctx->creation_failed = true;
+  while (ctx->stack->size > 0) {
+    /* Part of a bigger structure */
+    switch (ctx->stack->top->item->type) {
+      // Handle Arrays and Maps since they can contain subitems of any type.
+      // Byte/string construction from chunks is handled in the respective chunk
+      // handlers.
+      case CBOR_TYPE_ARRAY: {
+        if (cbor_array_is_definite(ctx->stack->top->item)) {
+          // We don't need an explicit check for whether the item still belongs
+          // into this array because if there are extra items, they will cause a
+          // syntax error when decoded.
+          CBOR_ASSERT(ctx->stack->top->subitems > 0);
+          // Grow arrays preallocated short of their size (see
+          // cbor_builder_array_start_callback)
+          cbor_item_t* array = ctx->stack->top->item;
+          if (!cbor_array_push(array, item) &&
+              !(_cbor_array_grow_definite(
+                    array,
+                    cbor_array_size(array) + ctx->stack->top->subitems) &&
+                cbor_array_push(array, item))) {
+            ctx->creation_failed = true;
+            cbor_decref(&item);
+            return;
+          }
           cbor_decref(&item);
-          break;
+          ctx->stack->top->subitems--;
+          if (ctx->stack->top->subitems == 0) {
+            item = ctx->stack->top->item;
+            _cbor_stack_pop(ctx->stack);
+            continue;
+          }
+          return;
+        } else {
+          /* Indefinite array, don't bother with subitems */
+          if (!cbor_array_push(ctx->stack->top->item, item)) {
+            ctx->creation_failed = true;
+          }
+          cbor_decref(&item);
+          return;
+        }
+      }
+      case CBOR_TYPE_MAP: {
+        // Handle both definite and indefinite maps the same initially.
+        // Note: We use 0 and 1 subitems to distinguish between keys and values
+        // in indefinite items
+        if (ctx->stack->top->subitems % 2) {
+          // Odd record, this is a value.
+          ctx->creation_failed =
+              !_cbor_map_add_value(ctx->stack->top->item, item);
+          // Adding a value never fails since the memory is allocated when the
+          // key is added
+          CBOR_ASSERT(!ctx->creation_failed);
+        } else {
+          // Even record, this is a key. Grow definite maps preallocated short
+          // of their size.
+          cbor_item_t* map = ctx->stack->top->item;
+          if (!_cbor_map_add_key(map, item) &&
+              !(cbor_map_is_definite(map) &&
+                _cbor_map_grow_definite(
+                    map, cbor_map_size(map) + ctx->stack->top->subitems / 2) &&
+                _cbor_map_add_key(map, item))) {
+            ctx->creation_failed = true;
+            cbor_decref(&item);
+            return;
+          }
         }
         cbor_decref(&item);
-        ctx->stack->top->subitems--;
-        if (ctx->stack->top->subitems == 0) {
-          cbor_item_t* stack_item = ctx->stack->top->item;
-          _cbor_stack_pop(ctx->stack);
-          _cbor_builder_append(stack_item, ctx);
+        if (cbor_map_is_definite(ctx->stack->top->item)) {
+          CBOR_ASSERT(ctx->stack->top->subitems > 0);
+          ctx->stack->top->subitems--;
+          if (ctx->stack->top->subitems == 0) {
+            item = ctx->stack->top->item;
+            _cbor_stack_pop(ctx->stack);
+            continue;
+          }
+          return;
+        } else {
+          ctx->stack->top->subitems ^=
+              1; /* Flip the indicator for indefinite items */
+          return;
         }
-      } else {
-        /* Indefinite array, don't bother with subitems */
-        if (!cbor_array_push(ctx->stack->top->item, item)) {
-          ctx->creation_failed = true;
-        }
+      }
+      case CBOR_TYPE_TAG: {
+        CBOR_ASSERT(ctx->stack->top->subitems == 1);
+        cbor_tag_set_item(ctx->stack->top->item, item);
+        cbor_decref(&item); /* Give up on our reference */
+        item = ctx->stack->top->item;
+        _cbor_stack_pop(ctx->stack);
+        continue;
+      }
+      // We have an item to append but nothing to append it to.
+      default: {
         cbor_decref(&item);
+        ctx->syntax_error = true;
+        return;
       }
-      break;
-    }
-    case CBOR_TYPE_MAP: {
-      // Handle both definite and indefinite maps the same initially.
-      // Note: We use 0 and 1 subitems to distinguish between keys and values in
-      // indefinite items
-      if (ctx->stack->top->subitems % 2) {
-        // Odd record, this is a value.
-        ctx->creation_failed =
-            !_cbor_map_add_value(ctx->stack->top->item, item);
-        // Adding a value never fails since the memory is allocated when the
-        // key is added
-        CBOR_ASSERT(!ctx->creation_failed);
-      } else {
-        // Even record, this is a key. Grow definite maps preallocated short of
-        // their size.
-        cbor_item_t* map = ctx->stack->top->item;
-        if (!_cbor_map_add_key(map, item) &&
-            !(cbor_map_is_definite(map) &&
-              _cbor_map_grow_definite(
-                  map, cbor_map_size(map) + ctx->stack->top->subitems / 2) &&
-              _cbor_map_add_key(map, item))) {
-          ctx->creation_failed = true;
-          cbor_decref(&item);
-          break;
-        }
-      }
-      cbor_decref(&item);
-      if (cbor_map_is_definite(ctx->stack->top->item)) {
-        CBOR_ASSERT(ctx->stack->top->subitems > 0);
-        ctx->stack->top->subitems--;
-        if (ctx->stack->top->subitems == 0) {
-          cbor_item_t* map_entry = ctx->stack->top->item;
-          _cbor_stack_pop(ctx->stack);
-          _cbor_builder_append(map_entry, ctx);
-        }
-      } else {
-        ctx->stack->top->subitems ^=
-            1; /* Flip the indicator for indefinite items */
-      }
-      break;
-    }
-    case CBOR_TYPE_TAG: {
-      CBOR_ASSERT(ctx->stack->top->subitems == 1);
-      cbor_tag_set_item(ctx->stack->top->item, item);
-      cbor_decref(&item); /* Give up on our reference */
-      cbor_item_t* tagged_item = ctx->stack->top->item;
-      _cbor_stack_pop(ctx->stack);
-      _cbor_builder_append(tagged_item, ctx);
-      break;
-    }
-    // We have an item to append but nothing to append it to.
-    default: {
-      cbor_decref(&item);
-      ctx->syntax_error = true;
     }
   }
+  /* Top level item */
+  ctx->root = item;
 }
 
 #define CHECK_RES(ctx, res)        \

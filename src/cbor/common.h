@@ -335,16 +335,17 @@ static inline cbor_item_t* cbor_incref(cbor_item_t* item) {
  * reference count reaches zero. Do not call directly; use #cbor_decref.
  *
  * Split from #cbor_decref so the fast path (decrement + zero check) can
- * inline while the recursive free logic — which dominates code size —
- * stays out of line.
+ * inline while the iterative tree-deallocation logic — which dominates code
+ * size — stays out of line.
  */
 CBOR_EXPORT void _cbor_decref_free(cbor_item_t* item);
 
 /** Decreases the item's reference count by one, deallocating the item if
  * needed
  *
- * In case the item is deallocated, the reference count of all items this
- * item references will also be #cbor_decref 'ed recursively.
+ * In case the item is deallocated, the reference count of any child items
+ * it references is transitively decremented as well, iteratively in constant
+ * stack space and with no additional allocations.
  *
  * The fast path (decrement, check for zero) is `static inline`; only the
  * uncommon deallocation branch calls into #_cbor_decref_free. This keeps
