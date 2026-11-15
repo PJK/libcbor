@@ -5,6 +5,8 @@ Template:
 Next
 ---------------------
 
+- Make `_cbor_builder_append` and `_cbor_decref_free` iterative so `cbor_load` and `cbor_decref` run in constant native stack space regardless of nesting depth (reported by [PwnToday](https://github.com/PwnToday) in [#464](https://github.com/PJK/libcbor/issues/464))
+  - Previously, completing deeply nested definite arrays, definite maps, or tags up to `CBOR_MAX_STACK_SIZE` (`2048`) recursed on the call stack in `_cbor_builder_append`, and deallocating deep item trees recursed in `_cbor_decref_free`, overflowing constrained thread stacks or unoptimized/ASan stacks
 - Add `CBOR_TAG_*` macro constants in `cbor/tags.h` for the 15 tag numbers defined in RFC 8949 Section 3.4, Table 5 ([#166](https://github.com/PJK/libcbor/issues/166))
 - [Fix the streaming decoder minimum-input test helper to check each truncated prefix](https://github.com/PJK/libcbor/pull/465) (by [7thplanetyt](https://github.com/7thplanetyt))
 - [Document that item arguments must be valid and non-`NULL` unless stated otherwise, and assert it in Debug builds](https://github.com/PJK/libcbor/pull/460) ([#457](https://github.com/PJK/libcbor/issues/457))
