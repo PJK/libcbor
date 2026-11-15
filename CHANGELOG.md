@@ -5,7 +5,7 @@ Template:
 Next
 ---------------------
 
-- [Preallocate definite arrays and maps in `cbor_load` only as far as the input can hold their items](https://github.com/PJK/libcbor/pull/PR_NUMBER) ([#418](https://github.com/PJK/libcbor/issues/418), based on [#456](https://github.com/PJK/libcbor/pull/456) by [nabbi](https://github.com/nabbi))
+- [Preallocate definite arrays and maps in `cbor_load` only as far as the input can hold their items](https://github.com/PJK/libcbor/pull/469) ([#418](https://github.com/PJK/libcbor/issues/418), based on [#456](https://github.com/PJK/libcbor/pull/456) by [nabbi](https://github.com/nabbi))
   - Headers can declare up to 2^64 − 1 items, and `cbor_load` used to allocate storage for all of them before reading any, so a 5-byte input could request gigabytes. For declarations of more than 16 items, it now preallocates at most as many items as the rest of the input can hold and grows the storage if more arrive, which keeps memory use proportional to the input size. Valid input is preallocated exactly as before
   - Inputs that declare more items than the platform can allocate now fail where the input runs out or turns out malformed (usually `CBOR_ERR_NOTENOUGHDATA`) rather than with `CBOR_ERR_MEMERROR` or an out-of-memory kill. The result no longer depends on memory overcommit
   - Removed the test-only `SANE_MALLOC` CMake option; the tests it enabled no longer depend on how `malloc` handles huge requests
