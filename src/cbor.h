@@ -35,9 +35,10 @@ extern "C" {
 
 /** Loads data item from a buffer
  *
- * Memory use is bounded in proportion to \p source_size: definite arrays and
- * maps declaring more than `CBOR_MAX_UNCHECKED_DECLARED_SIZE` items are only
- * preallocated for as many as the rest of the input can hold.
+ * Memory use is bounded in proportion to \p source_size, plus up to
+ * `CBOR_MAX_UNCHECKED_DECLARED_SIZE` slots per open container: definite arrays
+ * and maps declaring more items are only preallocated for as many as the rest
+ * of the input can hold.
  *
  * @param source The buffer
  * @param source_size

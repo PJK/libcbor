@@ -17,7 +17,7 @@ extern "C" {
  *
  * For the decoder, which preallocates less than the declared size when the
  * input cannot hold it. Grows by `CBOR_BUFFER_GROWTH`, to at most \p limit
- * items. New slots are `NULL`. Not exported from the shared library.
+ * items. New slots are `NULL`.
  *
  * @param array A definite array with no free storage
  * @param limit Maximum number of items, greater than the current size

@@ -37,7 +37,7 @@ struct _cbor_stack_record {
 
 /** Subitems \p record expects after the one in progress
  *
- * Indefinite items expect none in particular and use `subitems` otherwise.
+ * 0 for indefinite items (indefinite maps use `subitems` as a key/value flag).
  */
 static inline size_t _cbor_stack_record_pending(
     const struct _cbor_stack_record* record) {
