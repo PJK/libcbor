@@ -122,7 +122,7 @@ The following configuration options will also be defined as macros [#]_ in ``<cb
      - ``2048``
      - Positive integers
    * - ``CBOR_MAX_UNCHECKED_DECLARED_SIZE``
-     - Largest array or map size that ``cbor_load`` preallocates without checking the input
+     - Largest array or map size that ``cbor_load`` preallocates without checking the input. Large values bring back preallocation unbounded by the input size, up to this many slots per open container
      - ``16``
      - Integers >= 0
 
