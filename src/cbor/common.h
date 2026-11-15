@@ -318,6 +318,8 @@ CBOR_EXPORT bool cbor_is_undef(const cbor_item_t* item);
  * referred to are not updated.
  *
  * This function can be used to extend reference counting to client code.
+ * Every reference acquired with #cbor_incref must be released with
+ * #cbor_decref (or #cbor_intermediate_decref).
  *
  * Defined `static inline` so the single-instruction increment is emitted
  * directly at the call site — meaningful for hot loops that build
@@ -347,11 +349,27 @@ CBOR_EXPORT void _cbor_decref_free(cbor_item_t* item);
  * it references is transitively decremented as well, iteratively in constant
  * stack space and with no additional allocations.
  *
+ * `*item_ref` is set to `NULL` *only* when the reference count reaches zero
+ * and the item is deallocated. If other references still keep the item alive
+ * (`refcount > 0`), `*item_ref` is left unchanged and must not be accessed
+ * once those remaining references are released.
+ *
  * The fast path (decrement, check for zero) is `static inline`; only the
  * uncommon deallocation branch calls into #_cbor_decref_free. This keeps
  * every non-final decref a couple of instructions at the call site.
  *
- * @param item_ref Reference to an item. Will be set to `NULL` if deallocated
+ * \rst
+ * .. code-block:: c
+ *
+ *    cbor_item_t *array = cbor_new_definite_array(1);
+ *    cbor_item_t *elem = cbor_build_uint8(42);  // refcount == 1
+ *    cbor_array_push(array, elem);              // refcount == 2
+ *    cbor_decref(&elem);   // refcount == 1; elem is NOT set to NULL
+ *    cbor_decref(&array);  // frees both array and elem; array == NULL
+ * \endrst
+ *
+ * @param[in,out] item_ref Pointer to an item reference. `*item_ref` is set to
+ * `NULL` if deallocated, and left unchanged otherwise.
  */
 static inline void cbor_decref(cbor_item_t** item_ref) {
   cbor_item_t* item = *item_ref;
@@ -366,7 +384,10 @@ static inline void cbor_decref(cbor_item_t** item_ref) {
  * needed
  *
  * Convenience wrapper for #cbor_decref when its set-to-null behavior is
- * not needed
+ * not needed (for example, when releasing a temporary returned by
+ * #cbor_array_get or #cbor_tag_item without storing it in a variable).
+ * Unlike #cbor_move, this function *does* deallocate \p item when its
+ * reference count reaches zero.
  *
  * @param item Reference to an item
  */
@@ -374,12 +395,15 @@ CBOR_EXPORT void cbor_intermediate_decref(cbor_item_t* item);
 
 /** Get the item's reference count
  *
+ * Returns the number of direct references to \p item (initialized to `1` on
+ * creation, incremented by #cbor_incref, container mutators, and item
+ * getters, and decremented by #cbor_decref and #cbor_move).
+ *
  * \rst
  * .. warning::
- *   This does *not* account for transitive references.
+ *   This does *not* account for transitive references held on ancestor
+ *   containers.
  * \endrst
- *
- * @todo Add some inline examples for reference counting
  *
  * @param item the item
  * @return the reference count
@@ -391,13 +415,32 @@ CBOR_EXPORT size_t cbor_refcount(const cbor_item_t* item);
  *
  * Decreases the reference count by one, but does not deallocate the item
  * even if its refcount reaches zero. This is useful for passing
- * intermediate values to functions that increase reference count. Should
- * only be used with functions that `incref` their arguments.
+ * intermediate values to functions that increase reference count (such as
+ * #cbor_array_push, #cbor_map_add, or #cbor_build_tag) without holding a
+ * temporary variable. Should only be used with functions that `incref` their
+ * arguments.
  *
  * \rst
+ * .. code-block:: c
+ *
+ *    cbor_item_t *array = cbor_new_definite_array(1);
+ *    cbor_array_push(array, cbor_move(cbor_build_uint8(42)));
+ *    cbor_decref(&array);
+ *
  * .. warning::
- *   If the item is moved without correctly increasing the
- *   reference count afterwards, the memory will be leaked.
+ *   If the item is moved without increasing its reference count afterwards,
+ *   the memory will be leaked. In particular:
+ *
+ *   - If the receiving call fails (e.g., :func:`cbor_array_push`,
+ *     :func:`cbor_map_add`, or :func:`cbor_build_tag` fails due to allocation
+ *     failure or a full definite container), the moved item remains at
+ *     ``refcount == 0`` and is leaked.
+ *   - Passing ``cbor_move(cbor_build_*(...))`` directly into a container
+ *     mutator is unsafe when allocation can return ``NULL`` (e.g., with a
+ *     capping :func:`cbor_set_allocs`), because ``cbor_move(NULL)`` returns
+ *     ``NULL`` while mutators require non-``NULL`` items. Store the child in
+ *     a variable, check for ``NULL``, and release it with :func:`cbor_decref`
+ *     instead.
  * \endrst
  *
  * @param item Reference to an item, or `NULL`.

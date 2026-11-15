@@ -12,7 +12,7 @@ The single most important thing to keep in mind is: :type:`cbor_item_t` **is an 
 
 .. _valid-items:
 
-Unless a function's documentation explicitly states otherwise, every :type:`cbor_item_t` pointer passed to *libcbor* must reference a valid, live item of the type the function expects. In particular, ``NULL`` is not accepted. Where ``NULL`` is meaningful, the documentation says so (for example, :func:`cbor_tag_item` may return ``NULL``, and :func:`cbor_move` accepts it). Passing anything else results in undefined behavior: Debug builds check some of these preconditions with assertions, release builds do not check them.
+Unless a function's documentation explicitly states otherwise, every :type:`cbor_item_t` pointer passed to *libcbor* must reference a valid, live item of the type the function expects. In particular, ``NULL`` is not accepted. Where ``NULL`` is meaningful, the documentation says so (for example, :func:`cbor_tag_item` may return ``NULL``, and :func:`cbor_move` accepts it). Passing anything else results in undefined behavior: Debug builds check some of these preconditions with assertions, release builds do not check them. Functions also borrow their :type:`cbor_item_t` arguments without changing their reference counts unless documented otherwise; see :ref:`ownership-conventions` for the reference-counting rules across the API.
 
 The *libcbor* API closely follows the semantics outlined by `CBOR standard <https://www.rfc-editor.org/rfc/rfc8949.html>`_. This part of the documentation provides a short overview of the CBOR constructs, as well as a general introduction to the *libcbor* API. Remaining reference can be found in the following files structured by data types.
 

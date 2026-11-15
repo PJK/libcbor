@@ -50,16 +50,18 @@ cbor_serialized_size(const cbor_item_t* item);
  *
  * \rst
  * .. warning::
- *   It is the caller's responsibility to free the buffer using an appropriate
- *   ``free`` implementation.
+ *   It is the caller's responsibility to free ``*buffer`` using ``free`` (or
+ *   the custom ``free`` implementation configured via
+ *   :func:`cbor_set_allocs`).
  * \endrst
  *
  * @param item A data item
- * @param[out] buffer Buffer containing the result
- * @param[out] buffer_size Size of the \p buffer, or 0 on memory allocation
- * failure.
+ * @param[out] buffer Buffer containing the result, or `NULL` on failure
+ * @param[out] buffer_size Size of the \p buffer, or `NULL` to ignore. Set to 0
+ * on failure.
  * @return Length of the result in bytes
- * @return 0 on memory allocation failure, in which case \p buffer is `NULL`.
+ * @return 0 if memory allocation fails or #cbor_serialized_size returns 0, in
+ * which case \p buffer is set to `NULL`.
  */
 CBOR_EXPORT size_t cbor_serialize_alloc(const cbor_item_t* item,
                                         unsigned char** buffer,
@@ -149,7 +151,7 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_serialize_tag(const cbor_item_t* item,
                                                       cbor_mutable_data buffer,
                                                       size_t buffer_size);
 
-/** Serialize a
+/** Serialize a float or ctrl
  *
  * @param item A float or ctrl
  * @param[out] buffer Buffer to serialize to

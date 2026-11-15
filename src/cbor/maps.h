@@ -37,7 +37,7 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_map_allocated(const cbor_item_t* item);
  *
  * @param size The number of slots to preallocate
  * @return Reference to the new map item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using #cbor_decref.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_definite_map(size_t size);
@@ -45,7 +45,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_definite_map(size_t size);
 /** Create a new indefinite map
  *
  * @return Reference to the new map item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using #cbor_decref.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_indefinite_map(void);
@@ -56,10 +56,11 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_indefinite_map(void);
  * indefinite maps, the storage will be expanded as needed
  *
  * @param item A map
- * @param pair The key-value pair to add. Reference count of the #cbor_pair.key
- * and #cbor_pair.value will be increased by one.
+ * @param pair The key-value pair to add. Reference count of both
+ * #cbor_pair.key and #cbor_pair.value will be increased by one on success.
  * @return `true` on success, `false` if memory allocation failed (indefinite
- * maps) or the preallocated storage is full (definite maps)
+ * maps) or the preallocated storage is full (definite maps). On failure,
+ * neither item's reference count is increased and \p item is left intact.
  */
 _CBOR_NODISCARD CBOR_EXPORT bool cbor_map_add(cbor_item_t* item,
                                               struct cbor_pair pair);
@@ -81,9 +82,16 @@ _CBOR_NODISCARD CBOR_EXPORT bool cbor_map_is_indefinite(
 
 /** Get the pairs storage
  *
+ * Returns a borrowed pointer to the map's internal pair buffer without
+ * modifying any reference counts (unlike #cbor_map_get). Pairs may be
+ * reordered or modified in place as long as reference counts remain consistent
+ * (replacing a key or value requires #cbor_decref on the old item and
+ * #cbor_incref on the new one). The returned pointer is invalidated if the map
+ * reallocates (e.g., via #cbor_map_add on an indefinite map) or is
+ * deallocated.
+ *
  * @param item A map
- * @return Array of #cbor_map_size pairs. Manipulation is possible as long as
- * references remain valid.
+ * @return Array of #cbor_map_size pairs.
  * @return `NULL` if the map is empty (no storage is allocated for zero-size
  * maps; the pointer must not be dereferenced while #cbor_map_size is 0)
  */

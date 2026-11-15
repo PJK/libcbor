@@ -43,14 +43,20 @@ CBOR_EXPORT cbor_item_t* cbor_array_get(const cbor_item_t* item, size_t index);
 
 /** Set item by index
  *
- * If the index is out of bounds, the array is not modified and false is
- * returned. Creating arrays with holes is not possible.
+ * Creating arrays with holes is not possible. If \p index equals
+ * #cbor_array_size, \p value is appended (see #cbor_array_push). If \p index is
+ * less than #cbor_array_size, the existing item at \p index is replaced and its
+ * reference count is decreased by one using #cbor_decref (see
+ * #cbor_array_replace).
  *
  * @param item An array
- * @param value The item to assign. Its reference count will be increased by
- * one.
  * @param index The index (zero-based)
- * @return `true` on success, `false` on allocation failure.
+ * @param value The item to assign. Its reference count will be increased by
+ * one on success.
+ * @return `true` on success, `false` if \p index is out of bounds (`index >
+ * cbor_array_size(item)`), a definite array has no remaining capacity, or
+ * memory allocation fails. On failure, the array and all reference counts are
+ * left unchanged.
  */
 _CBOR_NODISCARD
 CBOR_EXPORT bool cbor_array_set(cbor_item_t* item, size_t index,
@@ -61,10 +67,12 @@ CBOR_EXPORT bool cbor_array_set(cbor_item_t* item, size_t index,
  * The reference to the item being replaced will be released using #cbor_decref.
  *
  * @param item An array
- * @param value The item to assign. Its reference count will be increased by
- * one.
  * @param index The index (zero-based)
- * @return true on success, false on allocation failure.
+ * @param value The item to assign. Its reference count will be increased by
+ * one on success.
+ * @return `true` on success, `false` if \p index is out of bounds (`index >=
+ * cbor_array_size(item)`). On failure, the array and all reference counts are
+ * left unchanged.
  */
 _CBOR_NODISCARD
 CBOR_EXPORT bool cbor_array_replace(cbor_item_t* item, size_t index,
@@ -88,8 +96,12 @@ CBOR_EXPORT bool cbor_array_is_indefinite(const cbor_item_t* item);
 
 /** Get the array contents
  *
- * The items may be reordered and modified as long as references remain
- * consistent.
+ * Returns a borrowed pointer to the array's internal item buffer without
+ * modifying any reference counts (unlike #cbor_array_get). The items may be
+ * reordered and modified in place as long as reference counts remain
+ * consistent (for example, replacing a slot requires #cbor_decref on the old
+ * item and #cbor_incref on the new one). The returned pointer is invalidated
+ * if the array reallocates (e.g., via #cbor_array_push) or is deallocated.
  *
  * @param item An array item
  * @return An array of #cbor_item_t pointers of size #cbor_array_size.
@@ -104,7 +116,7 @@ CBOR_EXPORT cbor_item_t** cbor_array_handle(const cbor_item_t* item);
  *
  * @param size Number of slots to preallocate
  * @return Reference to the new array item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using #cbor_decref.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD
@@ -113,7 +125,7 @@ CBOR_EXPORT cbor_item_t* cbor_new_definite_array(size_t size);
 /** Create new indefinite array
  *
  * @return Reference to the new array item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using #cbor_decref.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD
@@ -126,8 +138,10 @@ CBOR_EXPORT cbor_item_t* cbor_new_indefinite_array(void);
  *
  * @param array An array
  * @param pushee The item to push. Its reference count will be increased by
- * one.
- * @return `true` on success, `false` on failure
+ * one on success.
+ * @return `true` on success, `false` if a definite array is full or memory
+ * allocation fails. On failure, the refcount of \p pushee is not increased and
+ * \p array is left intact.
  */
 _CBOR_NODISCARD
 CBOR_EXPORT bool cbor_array_push(cbor_item_t* array, cbor_item_t* pushee);
