@@ -27,13 +27,45 @@ struct _cbor_stack_record {
    * upwards.
    */
   size_t subitems;
+  /**
+   * How many subitems the records below this one still expect, not counting
+   * the one each of them has in progress (see #_cbor_stack_record_pending).
+   * Saturates at `SIZE_MAX`.
+   *
+   * Only the top record receives subitems, so the records below do not change
+   * while this one is on the stack.
+   */
+  size_t pending_below;
 };
+
+/** How many subitems \p record expects after the one in progress
+ *
+ * For a definite array or map, that is one less than `subitems`. Tags expect
+ * one subitem, which is the one in progress. Indefinite items expect no
+ * particular count and use `subitems` for other purposes.
+ */
+static inline size_t _cbor_stack_record_pending(
+    const struct _cbor_stack_record* record) {
+  return record->subitems > 0 ? record->subitems - 1 : 0;
+}
 
 /** Stack handle - contents and size */
 struct _cbor_stack {
   struct _cbor_stack_record* top;
   size_t size;
 };
+
+/** How many subitems all records on \p stack still expect, not counting the
+ * ones in progress
+ *
+ * Saturates at `SIZE_MAX`.
+ */
+static inline size_t _cbor_stack_pending(const struct _cbor_stack* stack) {
+  if (stack->top == NULL) return 0;
+  size_t below = stack->top->pending_below;
+  size_t own = _cbor_stack_record_pending(stack->top);
+  return own > SIZE_MAX - below ? SIZE_MAX : below + own;
+}
 
 _CBOR_NODISCARD
 struct _cbor_stack _cbor_stack_init(void);

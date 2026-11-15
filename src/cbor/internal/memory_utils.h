@@ -23,6 +23,16 @@ bool _cbor_safe_to_add(size_t a, size_t b);
 _CBOR_NODISCARD
 size_t _cbor_safe_signaling_add(size_t a, size_t b);
 
+/** Capacity to grow a full buffer to
+ *
+ * @param capacity Current capacity
+ * @param limit Maximum capacity, greater than \p capacity
+ * @return \p capacity times `CBOR_BUFFER_GROWTH`, but at least
+ * \p capacity + 1 and at most \p limit
+ */
+_CBOR_NODISCARD
+size_t _cbor_grown_capacity(size_t capacity, size_t limit);
+
 /** Overflow-proof contiguous array allocation
  *
  * @param item_size

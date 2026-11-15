@@ -98,6 +98,22 @@ bool _cbor_map_add_key(cbor_item_t* item, cbor_item_t* key) {
   return true;
 }
 
+bool _cbor_map_grow_definite(cbor_item_t* item, size_t limit) {
+  CBOR_ASSERT(cbor_isa_map(item));
+  CBOR_ASSERT(cbor_map_is_definite(item));
+  struct _cbor_map_metadata* metadata = &item->metadata.map_metadata;
+  CBOR_ASSERT(metadata->end_ptr == metadata->allocated);
+  size_t new_allocation = _cbor_grown_capacity(metadata->allocated, limit);
+  unsigned char* new_data = _cbor_realloc_multiple(
+      item->data, sizeof(struct cbor_pair), new_allocation);
+  if (new_data == NULL) {
+    return false;
+  }
+  item->data = new_data;
+  metadata->allocated = new_allocation;
+  return true;
+}
+
 bool _cbor_map_add_value(cbor_item_t* item, cbor_item_t* value) {
   CBOR_ASSERT(cbor_isa_map(item));
   // _cbor_map_add_key must have left a pair with no value yet

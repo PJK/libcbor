@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 #include "arrays.h"
+#include "internal/array_utils.h"
 #include "internal/memory_utils.h"
 
 size_t cbor_array_size(const cbor_item_t* item) {
@@ -84,6 +85,25 @@ bool cbor_array_push(cbor_item_t* array, cbor_item_t* pushee) {
     ((cbor_item_t**)array->data)[metadata->end_ptr++] = pushee;
   }
   cbor_incref(pushee);
+  return true;
+}
+
+bool _cbor_array_grow_definite(cbor_item_t* array, size_t limit) {
+  CBOR_ASSERT(cbor_isa_array(array));
+  CBOR_ASSERT(cbor_array_is_definite(array));
+  struct _cbor_array_metadata* metadata = &array->metadata.array_metadata;
+  CBOR_ASSERT(metadata->end_ptr == metadata->allocated);
+  size_t new_allocation = _cbor_grown_capacity(metadata->allocated, limit);
+  cbor_item_t** new_data =
+      _cbor_realloc_multiple(array->data, sizeof(cbor_item_t*), new_allocation);
+  if (new_data == NULL) {
+    return false;
+  }
+  for (size_t i = metadata->allocated; i < new_allocation; i++) {
+    new_data[i] = NULL;
+  }
+  array->data = (unsigned char*)new_data;
+  metadata->allocated = new_allocation;
   return true;
 }
 

@@ -111,6 +111,14 @@ extern bool _cbor_enable_assert;
 #define _CBOR_UNREACHABLE
 #endif
 
+// Keeps a rarely used function out of line so that it does not slow down its
+// callers
+#ifdef __GNUC__
+#define _CBOR_COLD __attribute__((__noinline__, __cold__))
+#else
+#define _CBOR_COLD
+#endif
+
 typedef void* (*_cbor_malloc_t)(size_t);
 typedef void* (*_cbor_realloc_t)(void*, size_t);
 typedef void (*_cbor_free_t)(void*);
@@ -142,14 +150,12 @@ CBOR_EXPORT extern _cbor_free_t _cbor_free;
  * By default, libcbor will use the standard library `malloc`, `realloc`,
  * and `free`.
  *
- * A custom allocator is the intended mechanism for limiting memory
- * consumption when parsing untrusted CBOR data. Because definite-length
- * collections pre-allocate storage sized by the declared element count,
- * a crafted input can request a very large allocation before any element
- * data is read. A capping `custom_malloc` that returns NULL above a chosen
- * threshold will cause `cbor_load` to return `CBOR_ERR_MEMERROR` instead of
- * attempting the allocation. See `examples/capped_alloc.c` for a
- * self-contained demonstration.
+ * A custom allocator is the mechanism for putting an absolute limit on the
+ * memory consumed when parsing untrusted CBOR data. Without one, `cbor_load`
+ * uses memory proportional to the size of its input. A capping
+ * `custom_malloc` that returns NULL above a chosen threshold will cause
+ * `cbor_load` to return `CBOR_ERR_MEMERROR` once the threshold is reached.
+ * See `examples/capped_alloc.c` for a self-contained demonstration.
  *
  * \rst
  * .. warning::

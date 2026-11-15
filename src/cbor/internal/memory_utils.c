@@ -37,6 +37,15 @@ size_t _cbor_safe_signaling_add(size_t a, size_t b) {
   return 0;
 }
 
+size_t _cbor_grown_capacity(size_t capacity, size_t limit) {
+  CBOR_ASSERT(capacity < limit);
+  size_t grown = _cbor_safe_to_multiply(CBOR_BUFFER_GROWTH, capacity)
+                     ? CBOR_BUFFER_GROWTH * capacity
+                     : SIZE_MAX;
+  if (grown <= capacity) grown = capacity + 1;
+  return grown < limit ? grown : limit;
+}
+
 void* _cbor_alloc_multiple(size_t item_size, size_t item_count) {
   if (_cbor_safe_to_multiply(item_size, item_count)) {
     return _cbor_malloc(item_size * item_count);

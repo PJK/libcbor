@@ -46,12 +46,23 @@ static void test_realloc_multiple(void** _state _CBOR_UNUSED) {
   assert_null(_cbor_realloc_multiple(NULL, SIZE_MAX, 2));
 }
 
+static void test_grown_capacity(void** _state _CBOR_UNUSED) {
+  assert_size_equal(_cbor_grown_capacity(0, 10), 1);
+  assert_size_equal(_cbor_grown_capacity(1, 2), 2);
+  assert_size_equal(_cbor_grown_capacity(4, 1000),
+                    CBOR_BUFFER_GROWTH > 1 ? 4 * CBOR_BUFFER_GROWTH : 5);
+  assert_size_equal(_cbor_grown_capacity(9, 10), 10);
+  assert_size_equal(_cbor_grown_capacity(SIZE_MAX / 2 + 1, SIZE_MAX), SIZE_MAX);
+  assert_size_equal(_cbor_grown_capacity(SIZE_MAX - 1, SIZE_MAX), SIZE_MAX);
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_safe_multiply),
       cmocka_unit_test(test_safe_add),
       cmocka_unit_test(test_safe_signalling_add),
       cmocka_unit_test(test_realloc_multiple),
+      cmocka_unit_test(test_grown_capacity),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

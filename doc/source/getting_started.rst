@@ -94,10 +94,6 @@ The following options are **test-only**: they only affect test behaviour and hav
      - Run the :doc:`fuzz test </tests>` against 8 GB of data instead of the default smaller corpus. Slow; only useful for release validation.
      - ``OFF``
      - ``ON``, ``OFF``
-   * - ``SANE_MALLOC``
-     - Enable tests that assert ``cbor_load`` returns ``CBOR_ERR_MEMERROR`` for crafted inputs that declare enormous collections. These tests only pass on platforms where ``malloc`` refuses unreasonably large requests. Disable on Linux with memory overcommit enabled, where ``malloc`` succeeds for requests it cannot actually fulfil.
-     - ``OFF``
-     - ``ON``, ``OFF``
    * - ``PRINT_FUZZ``
      - Print each input processed by the fuzz test to stdout. Only useful for fuzz test debugging.
      - ``OFF``
