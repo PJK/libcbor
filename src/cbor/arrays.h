@@ -101,7 +101,8 @@ CBOR_EXPORT bool cbor_array_is_indefinite(const cbor_item_t* item);
  * reordered and modified in place as long as reference counts remain
  * consistent (for example, replacing a slot requires #cbor_decref on the old
  * item and #cbor_incref on the new one). The returned pointer is invalidated
- * if the array reallocates (e.g., via #cbor_array_push) or is deallocated.
+ * if the array reallocates (via #cbor_array_push on an indefinite array) or
+ * is deallocated.
  *
  * @param item An array item
  * @return An array of #cbor_item_t pointers of size #cbor_array_size.

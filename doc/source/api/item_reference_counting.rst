@@ -88,7 +88,8 @@ Ownership conventions across the API
        caller must release the returned reference with :func:`cbor_decref`.
    * - **Inspectors, scalar setters, serializers, and raw handles**
      - :func:`cbor_typeof`, ``cbor_isa_*``, ``cbor_is_*``, ``cbor_get_*``,
-       ``cbor_set_*``, ``cbor_serialize*``,
+       ``cbor_set_*``, ``cbor_serialize*`` (except
+       :func:`cbor_serialize_alloc`, see below),
        :func:`cbor_structurally_equal`, ``cbor_describe``,
        :func:`cbor_array_handle`, :func:`cbor_map_handle`,
        :func:`cbor_string_chunks_handle`,
@@ -109,6 +110,8 @@ Ownership conventions across the API
        the caller, who must free it with the matching ``free`` function.
        (In :doc:`streaming_decoding`, :type:`cbor_string_callback` receives
        a borrowed, non-null-terminated slice into ``source``.)
+
+.. _refcount-pitfalls:
 
 Common patterns and pitfalls
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -132,21 +135,16 @@ pointer once the last owner releases the item:
 directly to a container mutator (``cbor_array_push(array, cbor_build_uint8(42))``)
 leaks the caller's initial reference because ``cbor_array_push`` increments the
 refcount to 2. :func:`cbor_move` decrements the refcount by 1 without
-deallocating, avoiding a temporary variable when neither the inner builder nor
-the outer mutator can fail:
-
-.. code-block:: c
-
-   /* Concise form when allocation cannot fail and capacity is available */
-   cbor_item_t *array = cbor_new_definite_array(1);
-   cbor_array_push(array, cbor_move(cbor_build_uint8(42)));
-   cbor_decref(&array);
+deallocating, so ``cbor_array_push(array, cbor_move(cbor_build_uint8(42)))``
+leaves the element owned by the array alone. This concise form is used
+throughout the README and ``examples/``, and is fine for code that treats
+allocation failure as fatal.
 
 .. warning::
 
-   Avoid ``cbor_move(cbor_build_*(...))`` in code paths where allocations or
-   container insertions may fail (for example, under a capping allocator
-   installed with :func:`cbor_set_allocs`):
+   Code that must recover from allocation failures (for example, under a
+   capping allocator installed with :func:`cbor_set_allocs`) should not use
+   ``cbor_move(cbor_build_*(...))``:
 
    1. If ``cbor_build_*`` returns ``NULL``, ``cbor_move(NULL)`` returns
       ``NULL``, violating the non-``NULL`` precondition of container mutators.

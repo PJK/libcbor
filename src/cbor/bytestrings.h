@@ -69,10 +69,10 @@ CBOR_EXPORT cbor_mutable_data cbor_bytestring_handle(const cbor_item_t* item);
  * \endrst
  *
  * @param item A definite byte string
- * @param data The memory block, allocated via an allocator compatible with
- * #cbor_set_allocs (`malloc` by default). The caller gives up the ownership of
- * the block; libcbor will deallocate it when appropriate using the `free`
- * implementation configured using #cbor_set_allocs.
+ * @param data The memory block, allocated with the `malloc` implementation
+ * configured using `cbor_set_allocs` (`malloc` by default). The caller gives
+ * up the ownership of the block; libcbor will deallocate it when appropriate
+ * using the matching `free` implementation.
  * @param length Length of the data block. If 0, `data` may be `NULL`
  */
 CBOR_EXPORT void cbor_bytestring_set_handle(
