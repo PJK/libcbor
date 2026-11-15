@@ -46,6 +46,15 @@ static void test_realloc_multiple(void** _state _CBOR_UNUSED) {
   assert_null(_cbor_realloc_multiple(NULL, SIZE_MAX, 2));
 }
 
+static void test_alloc_multiple(void** _state _CBOR_UNUSED) {
+  unsigned char* data =
+      _cbor_alloc_multiple(/*item_size=*/1, /*item_count=*/10);
+  data[9] = 0x2b;  // Sanitizer will stop us if not ok
+  free(data);
+
+  assert_null(_cbor_alloc_multiple(SIZE_MAX, 2));
+}
+
 static void test_grown_capacity(void** _state _CBOR_UNUSED) {
   assert_size_equal(_cbor_grown_capacity(0, 10), 1);
   assert_size_equal(_cbor_grown_capacity(1, 2), 2);
@@ -62,6 +71,7 @@ int main(void) {
       cmocka_unit_test(test_safe_add),
       cmocka_unit_test(test_safe_signalling_add),
       cmocka_unit_test(test_realloc_multiple),
+      cmocka_unit_test(test_alloc_multiple),
       cmocka_unit_test(test_grown_capacity),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
