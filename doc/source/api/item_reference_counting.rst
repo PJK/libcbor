@@ -46,7 +46,7 @@ Reference counting
 
 As CBOR items may require complex cleanups at the end of their lifetime, there is a reference counting mechanism in place. This also enables a very simple GC when integrating *libcbor* into a managed environment. Every item starts its life (by either explicit creation, or as a result of parsing) with reference count set to 1. When the refcount reaches zero, it will be destroyed.
 
-Items containing nested items will be destroyed recursively - the refcount of every nested item will be decreased by one.
+Items containing nested items will be destroyed transitively — the refcount of every nested item will be decreased by one iteratively in constant stack space and with no additional allocations.
 
 The destruction is synchronous and renders any pointers to items with refcount zero invalid immediately after calling :func:`cbor_decref`.
 
