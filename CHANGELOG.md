@@ -5,16 +5,18 @@ Template:
 Next
 ---------------------
 
+0.15.0 (2026-11-15)
+---------------------
+
 - BREAKING: [Preallocate definite arrays and maps in `cbor_load` only as far as the input can hold their items](https://github.com/PJK/libcbor/pull/469) ([#418](https://github.com/PJK/libcbor/issues/418), based on [#456](https://github.com/PJK/libcbor/pull/456) by [nabbi](https://github.com/nabbi))
   - Headers can declare up to 2^64 − 1 items, which `cbor_load` used to preallocate before reading any, so 5 bytes of input could request gigabytes. Declarations above `CBOR_MAX_UNCHECKED_DECLARED_SIZE` (new CMake option, 16 by default) are now preallocated only as far as the rest of the input can hold their items, and grow if more arrive. Valid input is preallocated as before
   - Inputs declaring more items than can be allocated now fail with the error found further on, usually `CBOR_ERR_NOTENOUGHDATA`, and its position, instead of `CBOR_ERR_MEMERROR` or an out-of-memory kill. Clients that read more data on `CBOR_ERR_NOTENOUGHDATA` will keep reading on such inputs and need their own input size limit
   - Maps of 2^63 pairs or more on 64-bit platforms, and arrays of 2^32 items or more and maps of 2^31 pairs or more on 32-bit platforms, still fail with `CBOR_ERR_MEMERROR` after the header, since their item count does not fit in `size_t`
   - No public API change. The internal `struct _cbor_decoder_context` and `struct _cbor_stack_record` change layout. Their headers are installed, and code that uses them with the exported `cbor_builder_*` callbacks and `_cbor_stack_push` (as `examples/cjson2cbor.c` does) must be rebuilt
   - Removed the test-only `SANE_MALLOC` CMake option; the tests it enabled no longer depend on how `malloc` handles huge requests
-- Make `_cbor_builder_append` and `_cbor_decref_free` iterative so `cbor_load` and `cbor_decref` run in constant native stack space regardless of nesting depth (reported by [PwnToday](https://github.com/PwnToday) in [#464](https://github.com/PJK/libcbor/issues/464))
+- [Make `_cbor_builder_append` and `_cbor_decref_free` iterative so `cbor_load` and `cbor_decref` run in constant native stack space regardless of nesting depth](https://github.com/PJK/libcbor/pull/470) (reported by [PwnToday](https://github.com/PwnToday) in [#464](https://github.com/PJK/libcbor/issues/464))
   - Previously, completing deeply nested definite arrays, definite maps, or tags up to `CBOR_MAX_STACK_SIZE` (`2048`) recursed on the call stack in `_cbor_builder_append`, and deallocating deep item trees recursed in `_cbor_decref_free`, overflowing constrained thread stacks or unoptimized/ASan stacks
-- Add `CBOR_TAG_*` macro constants in `cbor/tags.h` for the 15 tag numbers defined in RFC 8949 Section 3.4, Table 5 ([#166](https://github.com/PJK/libcbor/issues/166))
-- [Fix the streaming decoder minimum-input test helper to check each truncated prefix](https://github.com/PJK/libcbor/pull/465) (by [7thplanetyt](https://github.com/7thplanetyt))
+- [Add `CBOR_TAG_*` macro constants in `cbor/tags.h` for the 15 tag numbers defined in RFC 8949 Section 3.4, Table 5](https://github.com/PJK/libcbor/pull/468) ([#166](https://github.com/PJK/libcbor/issues/166))
 - [Document that item arguments must be valid and non-`NULL` unless stated otherwise, and assert it in Debug builds](https://github.com/PJK/libcbor/pull/460) ([#457](https://github.com/PJK/libcbor/issues/457))
 - BREAKING: [Stop exporting the internal `_cbor_map_add_key` and `_cbor_map_add_value`](https://github.com/PJK/libcbor/pull/459) ([#458](https://github.com/PJK/libcbor/issues/458)); use `cbor_map_add` instead
 - [Stop linking the math library](https://github.com/PJK/libcbor/pull/455)
@@ -26,7 +28,6 @@ Next
   - The previous implementation was the BSD-2-Clause reference decoder from RFC 7049 Appendix D. The new one builds the single-precision bit pattern directly
 - [Allow building the library and examples without a C++ compiler when tests are disabled](https://github.com/PJK/libcbor/pull/451) (by [fhgffy](https://github.com/fhgffy))
   - Requires CMake 3.12 or newer. Older CMake versions and `WITH_TESTS=ON` still need a C++ compiler
-- [Replay fuzz test inputs with allocation failures](https://github.com/PJK/libcbor/pull/438) (by [Alb3e3](https://github.com/Alb3e3)), checking decoder error reporting and cleanup for every `malloc` and `realloc` failure ([#86](https://github.com/PJK/libcbor/issues/86))
 - BREAKING: [`cbor_encode_single` and `cbor_encode_double` now preserve NaN sign and payload bits](https://github.com/PJK/libcbor/pull/447)
   - Previously, every NaN was encoded as the canonical quiet NaN (`0x7FC00000` / `0x7FF8000000000000`), discarding the sign and payload. The bit pattern is now copied verbatim, matching `cbor_encode_half` since 0.14.0 ([#412](https://github.com/PJK/libcbor/pull/412)) and making decode/encode round trips of NaNs lossless at all three widths
   - As with half-floats, signaling NaN payloads are preserved on a best-effort basis: some CPUs (x87) set the quiet bit when the value passes through a register

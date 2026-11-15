@@ -22,6 +22,8 @@ Community contributions are welcome as long as they align with the [project prio
     - Code changes: Add tests
     - If necessary: Update documentation, including any links 
 3. Code changes: Update [the changelog](https://github.com/PJK/libcbor/blob/master/CHANGELOG.md). Do *not* change the version number.
+    - Only add entries for changes that directly affect existing users of the library: API and ABI changes, bug fixes, behavior changes, and build changes that affect consumers.
+    - Leave out documentation, tests, examples, CI, and other developer tooling.
 
 ## Interactions
 
