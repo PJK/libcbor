@@ -4,7 +4,7 @@
 
 # Usage: ./clang-format.sh <extra arguments>
 
-DIRS="src test examples"
+DIRS="src test examples bench"
 SOURCES=$(find ${DIRS} -name "*.c")
 SOURCES+=" $(find ${DIRS} -name "*.h")"
 SOURCES+=" $(find ${DIRS} -name "*.cpp")"

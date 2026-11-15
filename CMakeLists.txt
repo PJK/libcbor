@@ -38,6 +38,8 @@ endif()
 
 option(WITH_EXAMPLES "Build examples" ON)
 
+option(WITH_BENCHMARKS "[TEST] Build the benchmark harness in bench/" OFF)
+
 option(HUGE_FUZZ
   "[TEST] Run the fuzz test against 8GB of data instead of the default \
 smaller corpus. Do not use with memory instrumentation." OFF)
@@ -278,4 +280,8 @@ endif()
 
 if(WITH_EXAMPLES)
   add_subdirectory(examples)
+endif()
+
+if(WITH_BENCHMARKS)
+  add_subdirectory(bench)
 endif()

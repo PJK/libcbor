@@ -12,4 +12,4 @@ What changes and why
 	- [ ] If yes: I have marked them in the CHANGELOG ([example](https://github.com/PJK/libcbor/blob/87e2d48a127968d39f158cbfc2b79d6285bd039d/CHANGELOG.md?plain=1#L16))
 - [ ] Does this PR introduce any platform specific code?
 - [ ] Security: Does this PR potentially affect security?
-- [ ] Performance: Does this PR potentially affect performance?
+- [ ] Performance: Does this PR potentially affect performance? If yes, include the report from [`bench/compare.sh`](https://github.com/PJK/libcbor/blob/master/bench/README.md)
