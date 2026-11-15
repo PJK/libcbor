@@ -3,6 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
+#include <inttypes.h>
+#include <stdio.h>
+
 #include "assertions.h"
 #include "cbor.h"
 #include "test_allocator.h"
@@ -179,6 +182,92 @@ static void test_tag_creation(void** _state _CBOR_UNUSED) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_tag(42)); });
 }
 
+#ifdef LIBCBOR_TAGS_H
+#if CBOR_TAG_DATETIME_STRING != 0 || CBOR_TAG_SELF_DESCRIBED_CBOR != 55799
+#error "Unexpected CBOR_TAG_* value in preprocessor expression"
+#endif
+#endif
+
+static void test_known_tags(void** _state _CBOR_UNUSED) {
+  assert_size_equal(sizeof(CBOR_TAG_DATETIME_STRING), sizeof(uint64_t));
+  assert_size_equal(sizeof(CBOR_TAG_SELF_DESCRIBED_CBOR), sizeof(uint64_t));
+
+  char formatted[32];
+  assert_true(snprintf(formatted, sizeof(formatted), "%" PRIu64,
+                       CBOR_TAG_SELF_DESCRIBED_CBOR) > 0);
+  assert_string_equal(formatted, "55799");
+
+  struct known_tag_case {
+    uint64_t tag_value;
+    unsigned char expected_wire[4];
+    size_t expected_wire_len;
+  };
+  /* Each case tags uint8(0) (encoded as 0x00) with an RFC 8949 Table 5 tag. */
+  const struct known_tag_case cases[] = {
+      {CBOR_TAG_DATETIME_STRING, {0xC0, 0x00}, 2},
+      {CBOR_TAG_DATETIME_EPOCH, {0xC1, 0x00}, 2},
+      {CBOR_TAG_UNSIGNED_BIGNUM, {0xC2, 0x00}, 2},
+      {CBOR_TAG_NEGATIVE_BIGNUM, {0xC3, 0x00}, 2},
+      {CBOR_TAG_DECIMAL_FRACTION, {0xC4, 0x00}, 2},
+      {CBOR_TAG_BIGFLOAT, {0xC5, 0x00}, 2},
+      {CBOR_TAG_EXPECTED_BASE64URL, {0xD5, 0x00}, 2},
+      {CBOR_TAG_EXPECTED_BASE64, {0xD6, 0x00}, 2},
+      {CBOR_TAG_EXPECTED_BASE16, {0xD7, 0x00}, 2},
+      {CBOR_TAG_ENCODED_CBOR, {0xD8, 0x18, 0x00}, 3},
+      {CBOR_TAG_URI, {0xD8, 0x20, 0x00}, 3},
+      {CBOR_TAG_BASE64URL, {0xD8, 0x21, 0x00}, 3},
+      {CBOR_TAG_BASE64, {0xD8, 0x22, 0x00}, 3},
+      {CBOR_TAG_MIME_MESSAGE, {0xD8, 0x24, 0x00}, 3},
+      {CBOR_TAG_SELF_DESCRIBED_CBOR, {0xD9, 0xD9, 0xF7, 0x00}, 4},
+  };
+
+  size_t matched_in_switch = 0;
+  for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); i++) {
+    cbor_item_t* built =
+        cbor_build_tag(cases[i].tag_value, cbor_move(cbor_build_uint8(0)));
+    assert_non_null(built);
+
+    unsigned char encoded[8];
+    size_t encoded_len = cbor_serialize(built, encoded, sizeof(encoded));
+    assert_size_equal(encoded_len, cases[i].expected_wire_len);
+    assert_memory_equal(encoded, cases[i].expected_wire,
+                        cases[i].expected_wire_len);
+
+    cbor_item_t* loaded = cbor_load(encoded, encoded_len, &res);
+    assert_non_null(loaded);
+    assert_int_equal(res.error.code, CBOR_ERR_NONE);
+    assert_size_equal(res.read, encoded_len);
+    assert_true(cbor_isa_tag(loaded));
+    assert_true(cbor_tag_value(loaded) == cases[i].tag_value);
+
+    switch (cbor_tag_value(loaded)) {
+      case CBOR_TAG_DATETIME_STRING:
+      case CBOR_TAG_DATETIME_EPOCH:
+      case CBOR_TAG_UNSIGNED_BIGNUM:
+      case CBOR_TAG_NEGATIVE_BIGNUM:
+      case CBOR_TAG_DECIMAL_FRACTION:
+      case CBOR_TAG_BIGFLOAT:
+      case CBOR_TAG_EXPECTED_BASE64URL:
+      case CBOR_TAG_EXPECTED_BASE64:
+      case CBOR_TAG_EXPECTED_BASE16:
+      case CBOR_TAG_ENCODED_CBOR:
+      case CBOR_TAG_URI:
+      case CBOR_TAG_BASE64URL:
+      case CBOR_TAG_BASE64:
+      case CBOR_TAG_MIME_MESSAGE:
+      case CBOR_TAG_SELF_DESCRIBED_CBOR:
+        matched_in_switch++;
+        break;
+      default:
+        fail();
+    }
+
+    cbor_decref(&loaded);
+    cbor_decref(&built);
+  }
+  assert_size_equal(matched_in_switch, sizeof(cases) / sizeof(cases[0]));
+}
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_refcounting),
@@ -195,6 +284,7 @@ int main(void) {
       cmocka_unit_test(test_tag_item_null),
       cmocka_unit_test(test_move_null),
       cmocka_unit_test(test_tag_creation),
+      cmocka_unit_test(test_known_tags),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);
 }

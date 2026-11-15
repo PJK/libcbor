@@ -124,7 +124,7 @@ Concretely, the decoders will accept:
      - Iterate :func:`cbor_map_handle` and compare keys with
        :func:`cbor_structurally_equal`; see :doc:`type_5_maps`
    * - Tag whose content has an inadmissible type,
-       e.g. tag 1 (epoch date) applied to a map
+       e.g. tag 1 (``CBOR_TAG_DATETIME_EPOCH``) applied to a map
      - `5.3.2 <https://www.rfc-editor.org/rfc/rfc8949#section-5.3.2>`_
      - Inspect :func:`cbor_tag_value` and :func:`cbor_tag_item`;
        see :doc:`type_6_tags`

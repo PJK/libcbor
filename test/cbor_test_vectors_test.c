@@ -211,7 +211,8 @@ static bool integer_magnitude(cbor_item_t* item, unsigned char** magnitude,
     return true;
   }
   if (cbor_isa_tag(item) &&
-      (cbor_tag_value(item) == 2 || cbor_tag_value(item) == 3)) {
+      (cbor_tag_value(item) == CBOR_TAG_UNSIGNED_BIGNUM ||
+       cbor_tag_value(item) == CBOR_TAG_NEGATIVE_BIGNUM)) {
     // cbor_tag_item returns a new reference
     cbor_item_t* content = cbor_tag_item(item);
     if (!cbor_isa_bytestring(content)) {
@@ -228,7 +229,7 @@ static bool integer_magnitude(cbor_item_t* item, unsigned char** magnitude,
     assert_non_null(*magnitude);
     memcpy(*magnitude, raw + skip, *length);
     free(raw);
-    *negative = cbor_tag_value(item) == 3;
+    *negative = cbor_tag_value(item) == CBOR_TAG_NEGATIVE_BIGNUM;
     return true;
   }
   return false;
