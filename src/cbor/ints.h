@@ -115,7 +115,7 @@ CBOR_EXPORT void cbor_mark_negint(cbor_item_t* item);
  * The width cannot be changed once allocated. The value is not initialized.
  *
  * @return Reference to the new positive integer item. The item's reference
- * count is initialized to one and must be released using #cbor_decref.
+ * count is initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_int8(void);
@@ -125,7 +125,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_int8(void);
  * The width cannot be changed once allocated. The value is not initialized.
  *
  * @return Reference to the new positive integer item. The item's reference
- * count is initialized to one and must be released using #cbor_decref.
+ * count is initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_int16(void);
@@ -135,7 +135,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_int16(void);
  * The width cannot be changed once allocated. The value is not initialized.
  *
  * @return Reference to the new positive integer item. The item's reference
- * count is initialized to one and must be released using #cbor_decref.
+ * count is initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_int32(void);
@@ -145,7 +145,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_int32(void);
  * The width cannot be changed once allocated. The value is not initialized.
  *
  * @return Reference to the new positive integer item. The item's reference
- * count is initialized to one and must be released using #cbor_decref.
+ * count is initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_int64(void);
@@ -154,7 +154,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_int64(void);
  *
  * @param value the value to use
  * @return Reference to the new positive integer item. The item's reference
- * count is initialized to one and must be released using #cbor_decref.
+ * count is initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_uint8(uint8_t value);
@@ -163,7 +163,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_uint8(uint8_t value);
  *
  * @param value the value to use
  * @return Reference to the new positive integer item. The item's reference
- * count is initialized to one and must be released using #cbor_decref.
+ * count is initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_uint16(uint16_t value);
@@ -172,7 +172,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_uint16(uint16_t value);
  *
  * @param value the value to use
  * @return Reference to the new positive integer item. The item's reference
- * count is initialized to one and must be released using #cbor_decref.
+ * count is initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_uint32(uint32_t value);
@@ -181,7 +181,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_uint32(uint32_t value);
  *
  * @param value the value to use
  * @return Reference to the new positive integer item. The item's reference
- * count is initialized to one and must be released using #cbor_decref.
+ * count is initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_uint64(uint64_t value);
@@ -190,7 +190,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_uint64(uint64_t value);
  *
  * @param value the value to use (the logical value is `-value - 1`)
  * @return Reference to the new negative integer item. The item's reference
- * count is initialized to one and must be released using #cbor_decref.
+ * count is initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_negint8(uint8_t value);
@@ -199,7 +199,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_negint8(uint8_t value);
  *
  * @param value the value to use (the logical value is `-value - 1`)
  * @return Reference to the new negative integer item. The item's reference
- * count is initialized to one and must be released using #cbor_decref.
+ * count is initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_negint16(uint16_t value);
@@ -208,7 +208,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_negint16(uint16_t value);
  *
  * @param value the value to use (the logical value is `-value - 1`)
  * @return Reference to the new negative integer item. The item's reference
- * count is initialized to one and must be released using #cbor_decref.
+ * count is initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_negint32(uint32_t value);
@@ -217,7 +217,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_negint32(uint32_t value);
  *
  * @param value the value to use (the logical value is `-value - 1`)
  * @return Reference to the new negative integer item. The item's reference
- * count is initialized to one and must be released using #cbor_decref.
+ * count is initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_negint64(uint64_t value);

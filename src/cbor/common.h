@@ -318,12 +318,12 @@ CBOR_EXPORT bool cbor_is_undef(const cbor_item_t* item);
  * referred to are not updated.
  *
  * This function can be used to extend reference counting to client code.
- * Every reference acquired with #cbor_incref must be released with
- * #cbor_decref (or #cbor_intermediate_decref).
+ * Every reference acquired with `cbor_incref` must be released with
+ * `cbor_decref` (or #cbor_intermediate_decref).
  *
  * Defined `static inline` so the single-instruction increment is emitted
  * directly at the call site — meaningful for hot loops that build
- * #cbor_item_t trees, where every constructed item touches the refcount.
+ * `cbor_item_t` trees, where every constructed item touches the refcount.
  *
  * @param item Reference to an item
  * @return The input \p item
@@ -333,10 +333,10 @@ static inline cbor_item_t* cbor_incref(cbor_item_t* item) {
   return item;
 }
 
-/** Slow path of #cbor_decref: performs the actual deallocation once the
- * reference count reaches zero. Do not call directly; use #cbor_decref.
+/** Slow path of `cbor_decref`: performs the actual deallocation once the
+ * reference count reaches zero. Do not call directly; use `cbor_decref`.
  *
- * Split from #cbor_decref so the fast path (decrement + zero check) can
+ * Split from `cbor_decref` so the fast path (decrement + zero check) can
  * inline while the iterative tree-deallocation logic — which dominates code
  * size — stays out of line.
  */
@@ -355,7 +355,7 @@ CBOR_EXPORT void _cbor_decref_free(cbor_item_t* item);
  * once those remaining references are released.
  *
  * The fast path (decrement, check for zero) is `static inline`; only the
- * uncommon deallocation branch calls into #_cbor_decref_free. This keeps
+ * uncommon deallocation branch calls into `_cbor_decref_free`. This keeps
  * every non-final decref a couple of instructions at the call site.
  *
  * \rst
@@ -377,7 +377,7 @@ static inline void cbor_decref(cbor_item_t** item_ref) {
 /** Decreases the item's reference count by one, deallocating the item if
  * needed
  *
- * Convenience wrapper for #cbor_decref when its set-to-null behavior is
+ * Convenience wrapper for `cbor_decref` when its set-to-null behavior is
  * not needed, for example when releasing a function parameter or a pointer
  * that is about to go out of scope. Unlike #cbor_move, this function *does*
  * deallocate \p item when its reference count reaches zero.
@@ -388,10 +388,11 @@ CBOR_EXPORT void cbor_intermediate_decref(cbor_item_t* item);
 
 /** Get the item's reference count
  *
- * Returns the number of direct references to \p item: initialized to `1` on
- * creation, incremented by #cbor_incref, container mutators, and item
- * getters, and decremented by #cbor_decref, #cbor_intermediate_decref,
- * #cbor_move, and by container mutators that replace \p item in a slot.
+ * Returns the number of direct references to `item`: initialized to `1` on
+ * creation, incremented by `cbor_incref`, container mutators, and item
+ * getters, and decremented by `cbor_decref`, #cbor_intermediate_decref,
+ * #cbor_move, and when an owning container or tag is deallocated or
+ * replaces `item` in a slot.
  *
  * \rst
  * .. warning::

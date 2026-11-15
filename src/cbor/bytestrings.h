@@ -124,7 +124,7 @@ CBOR_EXPORT bool cbor_bytestring_add_chunk(cbor_item_t* item,
  * The handle is initialized to `NULL` and length to 0
  *
  * @return Reference to the new bytestring item. The item's reference count is
- * initialized to one and must be released using #cbor_decref.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD
@@ -135,7 +135,7 @@ CBOR_EXPORT cbor_item_t* cbor_new_definite_bytestring(void);
  * The chunks array is initialized to `NULL` and chunk count to 0
  *
  * @return Reference to the new bytestring item. The item's reference count is
- * initialized to one and must be released using #cbor_decref.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD
@@ -148,7 +148,7 @@ CBOR_EXPORT cbor_item_t* cbor_new_indefinite_bytestring(void);
  * @param handle Block of binary data
  * @param length Length of \p handle
  * @return Reference to the new bytestring item. The item's reference count is
- * initialized to one and must be released using #cbor_decref.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD

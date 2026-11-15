@@ -116,7 +116,7 @@ extern "C" {
  * @param value The tag value (number); see the `CBOR_TAG_*` constants (e.g.
  * #CBOR_TAG_DATETIME_STRING) for RFC 8949 tags, or pass any 64-bit tag number.
  * @return Reference to the new tag. Its reference count is initialized to one
- * (must be released using #cbor_decref) and it points to a `NULL` item.
+ * (must be released using `cbor_decref`) and it points to a `NULL` item.
  * @return `NULL` if memory allocation fails.
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_tag(uint64_t value);
@@ -128,7 +128,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_tag(uint64_t value);
  * been set yet.
  *
  * If non-NULL, increases the reference count of the underlying item. The
- * returned reference must be released using #cbor_decref.
+ * returned reference must be released using `cbor_decref`.
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_tag_item(const cbor_item_t* tag);
 
@@ -158,7 +158,7 @@ CBOR_EXPORT void cbor_tag_set_item(cbor_item_t* tag, cbor_item_t* tagged_item);
  * @param item The item to tag. Its reference count will be increased by
  * one on success.
  * @return Reference to the new tag item. The item's reference count is
- * initialized to one and must be released using #cbor_decref.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails. In that case, the reference count
  * of \p item is not increased.
  */

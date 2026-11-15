@@ -36,7 +36,7 @@ CBOR_EXPORT size_t cbor_array_allocated(const cbor_item_t* item);
  * @return Reference to the item, or `NULL` in case of boundary violation.
  *
  * Increases the reference count of the underlying item. The returned reference
- * must be released using #cbor_decref.
+ * must be released using `cbor_decref`.
  */
 _CBOR_NODISCARD
 CBOR_EXPORT cbor_item_t* cbor_array_get(const cbor_item_t* item, size_t index);
@@ -46,7 +46,7 @@ CBOR_EXPORT cbor_item_t* cbor_array_get(const cbor_item_t* item, size_t index);
  * Creating arrays with holes is not possible. If \p index equals
  * #cbor_array_size, \p value is appended (see #cbor_array_push). If \p index is
  * less than #cbor_array_size, the existing item at \p index is replaced and its
- * reference count is decreased by one using #cbor_decref (see
+ * reference count is decreased by one using `cbor_decref` (see
  * #cbor_array_replace).
  *
  * @param item An array
@@ -64,7 +64,8 @@ CBOR_EXPORT bool cbor_array_set(cbor_item_t* item, size_t index,
 
 /** Replace item at an index
  *
- * The reference to the item being replaced will be released using #cbor_decref.
+ * The reference to the item being replaced will be released using
+ * `cbor_decref`.
  *
  * @param item An array
  * @param index The index (zero-based)
@@ -99,13 +100,13 @@ CBOR_EXPORT bool cbor_array_is_indefinite(const cbor_item_t* item);
  * Returns a borrowed pointer to the array's internal item buffer without
  * modifying any reference counts (unlike #cbor_array_get). The items may be
  * reordered and modified in place as long as reference counts remain
- * consistent (for example, replacing a slot requires #cbor_decref on the old
- * item and #cbor_incref on the new one). The returned pointer is invalidated
+ * consistent (for example, replacing a slot requires `cbor_decref` on the old
+ * item and `cbor_incref` on the new one). The returned pointer is invalidated
  * if the array reallocates (via #cbor_array_push on an indefinite array) or
  * is deallocated.
  *
  * @param item An array item
- * @return An array of #cbor_item_t pointers of size #cbor_array_size.
+ * @return An array of `cbor_item_t` pointers of size #cbor_array_size.
  * @return `NULL` if the array is empty (no storage is allocated for
  * zero-size arrays; the pointer must not be dereferenced while
  * #cbor_array_size is 0)
@@ -117,7 +118,7 @@ CBOR_EXPORT cbor_item_t** cbor_array_handle(const cbor_item_t* item);
  *
  * @param size Number of slots to preallocate
  * @return Reference to the new array item. The item's reference count is
- * initialized to one and must be released using #cbor_decref.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD
@@ -126,7 +127,7 @@ CBOR_EXPORT cbor_item_t* cbor_new_definite_array(size_t size);
 /** Create new indefinite array
  *
  * @return Reference to the new array item. The item's reference count is
- * initialized to one and must be released using #cbor_decref.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD

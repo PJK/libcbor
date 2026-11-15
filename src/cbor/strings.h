@@ -141,7 +141,7 @@ _CBOR_NODISCARD CBOR_EXPORT bool cbor_string_add_chunk(cbor_item_t* item,
  * The handle is initialized to `NULL` and length to 0
  *
  * @return Reference to the new string item. The item's reference count is
- * initialized to one and must be released using #cbor_decref.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_definite_string(void);
@@ -151,7 +151,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_definite_string(void);
  * The chunks array is initialized to `NULL` and chunkcount to 0
  *
  * @return Reference to the new string item. The item's reference count is
- * initialized to one and must be released using #cbor_decref.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_indefinite_string(void);
@@ -166,7 +166,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_indefinite_string(void);
  *
  * @param val A null-terminated UTF-8 string
  * @return Reference to the new string item. The item's reference count is
- * initialized to one and must be released using #cbor_decref.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_string(const char* val);
@@ -181,7 +181,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_string(const char* val);
  * @param val A UTF-8 string, at least \p length bytes long
  * @param length Length (in bytes) of the string passed in \p val.
  * @return Reference to the new string item. The item's reference count is
- * initialized to one and must be released using #cbor_decref.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_stringn(const char* val,

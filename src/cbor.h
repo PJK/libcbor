@@ -43,7 +43,7 @@ extern "C" {
  * @param source_size
  * @param[out] result Result indicator. #CBOR_ERR_NONE on success
  * @return Decoded CBOR item. The item's reference count is initialized to one
- * and must be released using #cbor_decref.
+ * and must be released using `cbor_decref`.
  * @return `NULL` on failure. In that case, \p result contains the location and
  * description of the error.
  */
@@ -59,7 +59,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_load(
  *
  * @param item item to copy. Its reference count is not modified.
  * @return Reference to the new item. The item's reference count is initialized
- * to one and must be released using #cbor_decref.
+ * to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_copy(cbor_item_t* item);
@@ -70,7 +70,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_copy(cbor_item_t* item);
  *
  * @param item item to copy. Its reference count is not modified.
  * @return Reference to the new item. The item's reference count is initialized
- * to one and must be released using #cbor_decref.
+ * to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_copy_definite(cbor_item_t* item);

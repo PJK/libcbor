@@ -29,7 +29,7 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_map_size(const cbor_item_t* item);
 /** Get the size of the allocated storage
  *
  * @param item A map
- * @return Allocated storage size (as the number of #cbor_pair items)
+ * @return Allocated storage size (as the number of `cbor_pair` items)
  */
 _CBOR_NODISCARD CBOR_EXPORT size_t cbor_map_allocated(const cbor_item_t* item);
 
@@ -37,7 +37,7 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_map_allocated(const cbor_item_t* item);
  *
  * @param size The number of slots to preallocate
  * @return Reference to the new map item. The item's reference count is
- * initialized to one and must be released using #cbor_decref.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_definite_map(size_t size);
@@ -45,7 +45,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_definite_map(size_t size);
 /** Create a new indefinite map
  *
  * @return Reference to the new map item. The item's reference count is
- * initialized to one and must be released using #cbor_decref.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_indefinite_map(void);
@@ -57,7 +57,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_indefinite_map(void);
  *
  * @param item A map
  * @param pair The key-value pair to add. Reference count of both
- * #cbor_pair.key and #cbor_pair.value will be increased by one on success.
+ * `pair.key` and `pair.value` will be increased by one on success.
  * @return `true` on success, `false` if memory allocation failed (indefinite
  * maps) or the preallocated storage is full (definite maps). On failure,
  * neither item's reference count is increased and \p item is left intact.
@@ -85,8 +85,8 @@ _CBOR_NODISCARD CBOR_EXPORT bool cbor_map_is_indefinite(
  * Returns a borrowed pointer to the map's internal pair buffer without
  * modifying any reference counts (unlike #cbor_map_get). Pairs may be
  * reordered or modified in place as long as reference counts remain consistent
- * (replacing a key or value requires #cbor_decref on the old item and
- * #cbor_incref on the new one). The returned pointer is invalidated if the map
+ * (replacing a key or value requires `cbor_decref` on the old item and
+ * `cbor_incref` on the new one). The returned pointer is invalidated if the map
  * reallocates (e.g., via #cbor_map_add on an indefinite map) or is
  * deallocated.
  *
@@ -109,7 +109,7 @@ _CBOR_NODISCARD CBOR_EXPORT struct cbor_pair* cbor_map_handle(
  * integers), which lets them implement a cheaper, type-specific comparator
  * instead of a fully generic one. The parameter also allows callers to plug
  * in any desired semantics — structural equality via
- * #cbor_structurally_equal, a data-model comparator that ignores encoding
+ * `cbor_structurally_equal`, a data-model comparator that ignores encoding
  * width, a case-insensitive string comparator, etc. — without the library
  * having to anticipate every use case.
  *
@@ -132,7 +132,7 @@ _CBOR_NODISCARD CBOR_EXPORT struct cbor_pair* cbor_map_handle(
  *             must not be `NULL`
  * @return The first matching value with its reference count incremented by
  *         one, or `NULL` if no key matched. The caller is responsible for
- *         releasing the returned item with #cbor_decref.
+ *         releasing the returned item with `cbor_decref`.
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_map_get(
     const cbor_item_t* map, const cbor_item_t* key,
