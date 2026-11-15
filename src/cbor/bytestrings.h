@@ -60,10 +60,19 @@ CBOR_EXPORT cbor_mutable_data cbor_bytestring_handle(const cbor_item_t* item);
 
 /** Set the handle to the binary data
  *
+ * \rst
+ * .. warning::
+ *   Any buffer previously attached to ``item`` is *not* freed. Calling this on
+ *   an item that already owns a buffer (e.g., created with
+ *   :func:`cbor_build_bytestring`) will leak the previous buffer unless the
+ *   caller frees :func:`cbor_bytestring_handle` first.
+ * \endrst
+ *
  * @param item A definite byte string
- * @param data The memory block. The caller gives up the ownership of the block.
- * libcbor will deallocate it when appropriate using the `free` implementation
- * configured using #cbor_set_allocs
+ * @param data The memory block, allocated with the `malloc` implementation
+ * configured using `cbor_set_allocs` (`malloc` by default). The caller gives
+ * up the ownership of the block; libcbor will deallocate it when appropriate
+ * using the matching `free` implementation.
  * @param length Length of the data block. If 0, `data` may be `NULL`
  */
 CBOR_EXPORT void cbor_bytestring_set_handle(
@@ -72,11 +81,15 @@ CBOR_EXPORT void cbor_bytestring_set_handle(
 
 /** Get the handle to the array of chunks
  *
- * Manipulations with the memory block (e.g. sorting it) are allowed, but the
- * validity and the number of chunks must be retained.
+ * Returns a borrowed pointer to the internal chunk array without modifying any
+ * reference counts. Manipulations with the memory block (e.g. sorting it) are
+ * allowed as long as reference counts and #cbor_bytestring_chunk_count remain
+ * consistent. The returned pointer is invalidated if
+ * #cbor_bytestring_add_chunk reallocates the array or \p item is deallocated.
  *
- * @param item A indefinite byte string
- * @return array of #cbor_bytestring_chunk_count definite bytestrings
+ * @param item An indefinite byte string
+ * @return Array of #cbor_bytestring_chunk_count definite bytestrings, or `NULL`
+ * if no chunks have been added yet
  */
 _CBOR_NODISCARD
 CBOR_EXPORT cbor_item_t** cbor_bytestring_chunks_handle(
@@ -97,10 +110,10 @@ CBOR_EXPORT size_t cbor_bytestring_chunk_count(const cbor_item_t* item);
  * May realloc the chunk storage.
  *
  * @param item An indefinite byte string
- * @param chunk A definite byte string. Its reference count will be be increased
- * by one.
- * @return true on success, false on realloc failure. In that case, the refcount
- * of `chunk` is not increased and the `item` is left intact.
+ * @param chunk A definite byte string. Its reference count will be increased
+ * by one on success.
+ * @return `true` on success, `false` on realloc failure. In that case, the
+ * refcount of \p chunk is not increased and \p item is left intact.
  */
 _CBOR_NODISCARD
 CBOR_EXPORT bool cbor_bytestring_add_chunk(cbor_item_t* item,
@@ -111,7 +124,7 @@ CBOR_EXPORT bool cbor_bytestring_add_chunk(cbor_item_t* item,
  * The handle is initialized to `NULL` and length to 0
  *
  * @return Reference to the new bytestring item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD
@@ -122,7 +135,7 @@ CBOR_EXPORT cbor_item_t* cbor_new_definite_bytestring(void);
  * The chunks array is initialized to `NULL` and chunk count to 0
  *
  * @return Reference to the new bytestring item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD
@@ -130,12 +143,12 @@ CBOR_EXPORT cbor_item_t* cbor_new_indefinite_bytestring(void);
 
 /** Creates a new byte string and initializes it
  *
- * The `handle` will be copied to a newly allocated block
+ * The \p handle data will be copied to a newly allocated block
  *
  * @param handle Block of binary data
- * @param length Length of `data`
+ * @param length Length of \p handle
  * @return Reference to the new bytestring item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD

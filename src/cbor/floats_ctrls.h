@@ -87,7 +87,7 @@ _CBOR_NODISCARD CBOR_EXPORT bool cbor_get_bool(const cbor_item_t* item);
  * The width cannot be changed once the item is created
  *
  * @return Reference to the new ctrl item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_ctrl(void);
@@ -97,7 +97,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_ctrl(void);
  * The width cannot be changed once the item is created
  *
  * @return Reference to the new float item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_float2(void);
@@ -107,7 +107,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_float2(void);
  * The width cannot be changed once the item is created
  *
  * @return Reference to the new float item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_float4(void);
@@ -117,7 +117,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_float4(void);
  * The width cannot be changed once the item is created
  *
  * @return Reference to the new float item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_float8(void);
@@ -125,7 +125,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_float8(void);
 /** Constructs new null ctrl item
  *
  * @return Reference to the new null item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_null(void);
@@ -133,7 +133,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_null(void);
 /** Constructs new undef ctrl item
  *
  * @return Reference to the new undef item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_undef(void);
@@ -142,7 +142,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_new_undef(void);
  *
  * @param value The value to use
  * @return Reference to the new boolean item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_bool(bool value);
@@ -200,7 +200,7 @@ _CBOR_NODISCARD CBOR_EXPORT uint8_t cbor_ctrl_value(const cbor_item_t* item);
  *
  * @param value the value to use
  * @return Reference to the new float item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_float2(float value);
@@ -209,7 +209,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_float2(float value);
  *
  * @param value the value to use
  * @return Reference to the new float item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_float4(float value);
@@ -218,7 +218,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_float4(float value);
  *
  * @param value the value to use
  * @return Reference to the new float item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_float8(double value);
@@ -230,7 +230,7 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_float8(double value);
  * encoding; the resulting item will serialize, but decoders (including
  * libcbor's own) will reject the output
  * @return Reference to the new ctrl item. The item's reference count is
- * initialized to one.
+ * initialized to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_build_ctrl(uint8_t value);

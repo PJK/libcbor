@@ -318,10 +318,12 @@ CBOR_EXPORT bool cbor_is_undef(const cbor_item_t* item);
  * referred to are not updated.
  *
  * This function can be used to extend reference counting to client code.
+ * Every reference acquired with `cbor_incref` must be released with
+ * `cbor_decref` (or #cbor_intermediate_decref).
  *
  * Defined `static inline` so the single-instruction increment is emitted
  * directly at the call site — meaningful for hot loops that build
- * #cbor_item_t trees, where every constructed item touches the refcount.
+ * `cbor_item_t` trees, where every constructed item touches the refcount.
  *
  * @param item Reference to an item
  * @return The input \p item
@@ -331,10 +333,10 @@ static inline cbor_item_t* cbor_incref(cbor_item_t* item) {
   return item;
 }
 
-/** Slow path of #cbor_decref: performs the actual deallocation once the
- * reference count reaches zero. Do not call directly; use #cbor_decref.
+/** Slow path of `cbor_decref`: performs the actual deallocation once the
+ * reference count reaches zero. Do not call directly; use `cbor_decref`.
  *
- * Split from #cbor_decref so the fast path (decrement + zero check) can
+ * Split from `cbor_decref` so the fast path (decrement + zero check) can
  * inline while the iterative tree-deallocation logic — which dominates code
  * size — stays out of line.
  */
@@ -347,11 +349,21 @@ CBOR_EXPORT void _cbor_decref_free(cbor_item_t* item);
  * it references is transitively decremented as well, iteratively in constant
  * stack space and with no additional allocations.
  *
+ * `*item_ref` is set to `NULL` *only* when the reference count reaches zero
+ * and the item is deallocated. If other references still keep the item alive
+ * (`refcount > 0`), `*item_ref` is left unchanged and must not be accessed
+ * once those remaining references are released.
+ *
  * The fast path (decrement, check for zero) is `static inline`; only the
- * uncommon deallocation branch calls into #_cbor_decref_free. This keeps
+ * uncommon deallocation branch calls into `_cbor_decref_free`. This keeps
  * every non-final decref a couple of instructions at the call site.
  *
- * @param item_ref Reference to an item. Will be set to `NULL` if deallocated
+ * \rst
+ * See :ref:`refcount-pitfalls` for an example.
+ * \endrst
+ *
+ * @param[in,out] item_ref Pointer to an item reference. `*item_ref` is set to
+ * `NULL` if deallocated, and left unchanged otherwise.
  */
 static inline void cbor_decref(cbor_item_t** item_ref) {
   cbor_item_t* item = *item_ref;
@@ -365,8 +377,10 @@ static inline void cbor_decref(cbor_item_t** item_ref) {
 /** Decreases the item's reference count by one, deallocating the item if
  * needed
  *
- * Convenience wrapper for #cbor_decref when its set-to-null behavior is
- * not needed
+ * Convenience wrapper for `cbor_decref` when its set-to-null behavior is
+ * not needed, for example when releasing a function parameter or a pointer
+ * that is about to go out of scope. Unlike #cbor_move, this function *does*
+ * deallocate \p item when its reference count reaches zero.
  *
  * @param item Reference to an item
  */
@@ -374,12 +388,17 @@ CBOR_EXPORT void cbor_intermediate_decref(cbor_item_t* item);
 
 /** Get the item's reference count
  *
+ * Returns the number of direct references to `item`: initialized to `1` on
+ * creation, incremented by `cbor_incref`, container mutators, and item
+ * getters, and decremented by `cbor_decref`, #cbor_intermediate_decref,
+ * #cbor_move, and when an owning container or tag is deallocated or
+ * replaces `item` in a slot.
+ *
  * \rst
  * .. warning::
- *   This does *not* account for transitive references.
+ *   This does *not* account for transitive references held on ancestor
+ *   containers.
  * \endrst
- *
- * @todo Add some inline examples for reference counting
  *
  * @param item the item
  * @return the reference count
@@ -391,13 +410,25 @@ CBOR_EXPORT size_t cbor_refcount(const cbor_item_t* item);
  *
  * Decreases the reference count by one, but does not deallocate the item
  * even if its refcount reaches zero. This is useful for passing
- * intermediate values to functions that increase reference count. Should
- * only be used with functions that `incref` their arguments.
+ * intermediate values to functions that increase reference count without
+ * holding a temporary variable. Should only be used with functions that
+ * `incref` their arguments.
  *
  * \rst
+ * Typical receivers are :func:`cbor_array_push`, :func:`cbor_map_add`, and
+ * :func:`cbor_build_tag`:
+ *
+ * .. code-block:: c
+ *
+ *    cbor_item_t *array = cbor_new_definite_array(1);
+ *    cbor_array_push(array, cbor_move(cbor_build_uint8(42)));
+ *    cbor_decref(&array);
+ *
  * .. warning::
- *   If the item is moved without correctly increasing the
- *   reference count afterwards, the memory will be leaked.
+ *   If the item is moved without increasing its reference count afterwards,
+ *   the memory will be leaked. This happens when the receiving call fails,
+ *   so code that must recover from allocation failures should not use this
+ *   pattern; see :ref:`refcount-pitfalls`.
  * \endrst
  *
  * @param item Reference to an item, or `NULL`.

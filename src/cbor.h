@@ -43,7 +43,8 @@ extern "C" {
  * @param source The buffer
  * @param source_size
  * @param[out] result Result indicator. #CBOR_ERR_NONE on success
- * @return Decoded CBOR item. The item's reference count is initialized to one.
+ * @return Decoded CBOR item. The item's reference count is initialized to one
+ * and must be released using `cbor_decref`.
  * @return `NULL` on failure. In that case, \p result contains the location and
  * description of the error.
  */
@@ -57,9 +58,9 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_load(
  * alias or point to any items from the original \p item. All the reference
  * counts in the new structure are set to one.
  *
- * @param item item to copy
+ * @param item item to copy. Its reference count is not modified.
  * @return Reference to the new item. The item's reference count is initialized
- * to one.
+ * to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_copy(cbor_item_t* item);
@@ -68,9 +69,9 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_copy(cbor_item_t* item);
  *
  * Deep copy semantics follow #cbor_copy
  *
- * @param item item to copy
+ * @param item item to copy. Its reference count is not modified.
  * @return Reference to the new item. The item's reference count is initialized
- * to one.
+ * to one and must be released using `cbor_decref`.
  * @return `NULL` if memory allocation fails
  */
 _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_copy_definite(cbor_item_t* item);
@@ -78,6 +79,13 @@ _CBOR_NODISCARD CBOR_EXPORT cbor_item_t* cbor_copy_definite(cbor_item_t* item);
 #if CBOR_PRETTY_PRINTER
 #include <stdio.h>
 
+/** Pretty-print an item to a stream for debugging
+ *
+ * Traverses \p item recursively without modifying any reference counts.
+ *
+ * @param item The item to describe
+ * @param out Output stream
+ */
 CBOR_EXPORT void cbor_describe(cbor_item_t* item, FILE* out);
 #endif
 

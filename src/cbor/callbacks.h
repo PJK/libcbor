@@ -30,7 +30,17 @@ typedef void (*cbor_int64_callback)(void*, uint64_t);
 /** Callback prototype */
 typedef void (*cbor_simple_callback)(void*);
 
-/** Callback prototype */
+/** Callback prototype for byte string and text string data
+ *
+ * Called for each definite byte string or text string, including each chunk
+ * of an indefinite one.
+ *
+ * \rst
+ * The ``cbor_data`` pointer points directly into the ``source`` buffer passed
+ * to :func:`cbor_stream_decode`: no copy is made, the slice is valid only for
+ * the lifetime of ``source``, and it is not null-terminated.
+ * \endrst
+ */
 typedef void (*cbor_string_callback)(void*, cbor_data, uint64_t);
 
 /** Callback prototype */
