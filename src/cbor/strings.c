@@ -129,7 +129,20 @@ unsigned char* cbor_string_handle(const cbor_item_t* item) {
 
 size_t cbor_string_codepoint_count(const cbor_item_t* item) {
   CBOR_ASSERT(cbor_isa_string(item));
-  return item->metadata.string_metadata.codepoint_count;
+  if (cbor_string_is_definite(item)) {
+    return item->metadata.string_metadata.codepoint_count;
+  }
+
+  size_t codepoint_count = 0;
+  for (size_t i = 0; i < cbor_string_chunk_count(item); i++) {
+    size_t chunk_codepoint_count =
+        cbor_string_codepoint_count(cbor_string_chunks_handle(item)[i]);
+    if (!_cbor_safe_to_add(codepoint_count, chunk_codepoint_count)) {
+      return 0;
+    }
+    codepoint_count += chunk_codepoint_count;
+  }
+  return codepoint_count;
 }
 
 bool cbor_string_is_definite(const cbor_item_t* item) {

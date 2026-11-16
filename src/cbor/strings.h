@@ -32,7 +32,10 @@ _CBOR_NODISCARD CBOR_EXPORT size_t cbor_string_length(const cbor_item_t* item);
 /** The number of codepoints in this string
  *
  * Might differ from `cbor_string_length` if there are multibyte codepoints.
- * If the string data is not valid UTF-8, returns 0.
+ * For definite strings, returns 0 if the data is not valid UTF-8. For
+ * indefinite strings, returns the sum of the current chunks' codepoint counts;
+ * empty or invalid UTF-8 chunks contribute zero, so inspect each chunk to
+ * distinguish them. Returns 0 if the sum would overflow.
  *
  * @param item A string
  * @return The number of codepoints in this string

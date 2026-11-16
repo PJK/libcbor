@@ -37,7 +37,9 @@ decoding:
       // Not valid UTF-8, handle according to your protocol's requirements
     }
 
-For indefinite-length strings, check each chunk from
+For indefinite-length strings, :func:`cbor_string_codepoint_count` returns the
+sum of the current chunks' counts. Empty and invalid chunks both contribute
+zero, so this aggregate is not sufficient for validation. Check each chunk from
 :func:`cbor_string_chunks_handle` individually. Note that per RFC 8949, every
 chunk must be valid UTF-8 on its own; a multibyte codepoint must not be split
 across chunks.

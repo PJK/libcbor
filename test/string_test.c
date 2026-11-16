@@ -207,6 +207,7 @@ static void test_short_indef_string(void** _state _CBOR_UNUSED) {
   assert_true(cbor_string_length(string) == 0);
   assert_true(cbor_string_is_indefinite(string));
   assert_true(cbor_string_chunk_count(string) == 1);
+  assert_size_equal(cbor_string_codepoint_count(string), 1);
   assert_true(res.read == 5);
   assert_true(cbor_isa_string(cbor_string_chunks_handle(string)[0]));
   assert_true(cbor_string_length(cbor_string_chunks_handle(string)[0]) == 1);
@@ -300,6 +301,52 @@ static void test_string_zero_length_malloc_null(void** _state _CBOR_UNUSED) {
   });
 }
 
+static void test_indefinite_codepoint_count(void** _state _CBOR_UNUSED) {
+  cbor_item_t* string = cbor_new_indefinite_string();
+  cbor_item_t* first = cbor_build_string("h\xc3\xa9llo");
+  cbor_item_t* second = cbor_build_string(" world");
+
+  assert_true(cbor_string_add_chunk(string, first));
+  assert_size_equal(cbor_string_codepoint_count(string), 5);
+  assert_true(cbor_string_add_chunk(string, second));
+  assert_size_equal(cbor_string_codepoint_count(string), 11);
+
+  unsigned char* old_handle = cbor_string_handle(first);
+  unsigned char* new_handle = malloc(3);
+  assert_non_null(new_handle);
+  memcpy(new_handle, "abc", 3);
+  cbor_string_set_handle(first, new_handle, 3);
+  free(old_handle);
+  assert_size_equal(cbor_string_codepoint_count(string), 9);
+
+  cbor_item_t* copy = cbor_copy(string);
+  assert_non_null(copy);
+  assert_size_equal(cbor_string_codepoint_count(copy), 9);
+  cbor_item_t* definite_copy = cbor_copy_definite(string);
+  assert_non_null(definite_copy);
+  assert_size_equal(cbor_string_codepoint_count(definite_copy), 9);
+
+  cbor_item_t* invalid = cbor_new_definite_string();
+  unsigned char* invalid_handle = malloc(1);
+  assert_non_null(invalid_handle);
+  *invalid_handle = 0xC5;
+  cbor_string_set_handle(invalid, invalid_handle, 1);
+  assert_true(cbor_string_add_chunk(string, invalid));
+  assert_size_equal(cbor_string_codepoint_count(string), 9);
+
+  cbor_item_t* empty = cbor_build_string("");
+  assert_true(cbor_string_add_chunk(string, empty));
+  assert_size_equal(cbor_string_codepoint_count(string), 9);
+
+  cbor_decref(&empty);
+  cbor_decref(&invalid);
+  cbor_decref(&definite_copy);
+  cbor_decref(&copy);
+  cbor_decref(&first);
+  cbor_decref(&second);
+  cbor_decref(&string);
+}
+
 static void test_string_add_chunk(void** _state _CBOR_UNUSED) {
   WITH_MOCK_MALLOC(
       {
@@ -316,6 +363,22 @@ static void test_string_add_chunk(void** _state _CBOR_UNUSED) {
         cbor_decref(&string);
       },
       5, MALLOC, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
+}
+
+static void test_indefinite_codepoint_count_overflow(
+    void** _state _CBOR_UNUSED) {
+  cbor_item_t* string = cbor_new_indefinite_string();
+  cbor_item_t* first = cbor_build_string("a");
+  cbor_item_t* second = cbor_build_string("b");
+  assert_true(cbor_string_add_chunk(string, first));
+  assert_true(cbor_string_add_chunk(string, second));
+
+  first->metadata.string_metadata.codepoint_count = SIZE_MAX;
+  assert_size_equal(cbor_string_codepoint_count(string), 0);
+
+  cbor_decref(&first);
+  cbor_decref(&second);
+  cbor_decref(&string);
 }
 
 static void test_add_chunk_reallocation_overflow(void** _state _CBOR_UNUSED) {
@@ -397,7 +460,9 @@ int main(void) {
       cmocka_unit_test(test_inline_creation),
       cmocka_unit_test(test_string_creation),
       cmocka_unit_test(test_string_zero_length_malloc_null),
+      cmocka_unit_test(test_indefinite_codepoint_count),
       cmocka_unit_test(test_string_add_chunk),
+      cmocka_unit_test(test_indefinite_codepoint_count_overflow),
       cmocka_unit_test(test_add_chunk_reallocation_overflow),
       cmocka_unit_test(test_set_handle),
       cmocka_unit_test(test_set_handle_multibyte_codepoint),
