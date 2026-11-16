@@ -288,7 +288,11 @@ cbor_item_t* cbor_copy(cbor_item_t* item) {
       return res;
     }
     case CBOR_TYPE_TAG: {
-      cbor_item_t* item_copy = cbor_copy(cbor_move(cbor_tag_item(item)));
+      cbor_item_t* tagged_item = cbor_tag_item(item);
+      if (tagged_item == NULL) {
+        return cbor_new_tag(cbor_tag_value(item));
+      }
+      cbor_item_t* item_copy = cbor_copy(cbor_move(tagged_item));
       if (item_copy == NULL) {
         return NULL;
       }
@@ -450,8 +454,11 @@ cbor_item_t* cbor_copy_definite(cbor_item_t* item) {
       return res;
     }
     case CBOR_TYPE_TAG: {
-      cbor_item_t* item_copy =
-          cbor_copy_definite(cbor_move(cbor_tag_item(item)));
+      cbor_item_t* tagged_item = cbor_tag_item(item);
+      if (tagged_item == NULL) {
+        return cbor_new_tag(cbor_tag_value(item));
+      }
+      cbor_item_t* item_copy = cbor_copy_definite(cbor_move(tagged_item));
       if (item_copy == NULL) {
         return NULL;
       }
@@ -580,8 +587,13 @@ static void _cbor_nested_describe(cbor_item_t* item, FILE* out, int indent) {
     case CBOR_TYPE_TAG: {
       _cbor_type_marquee(out, "CBOR_TYPE_TAG", indent);
       fprintf(out, "Value: %" PRIu64 "\n", cbor_tag_value(item));
-      _cbor_nested_describe(cbor_move(cbor_tag_item(item)), out,
-                            indent + indent_offset);
+      cbor_item_t* tagged_item = cbor_tag_item(item);
+      if (tagged_item == NULL) {
+        fprintf(out, "%*sNo tagged item\n", indent + indent_offset, " ");
+      } else {
+        _cbor_nested_describe(cbor_move(tagged_item), out,
+                              indent + indent_offset);
+      }
       break;
     }
     case CBOR_TYPE_FLOAT_CTRL: {

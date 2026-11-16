@@ -5,6 +5,8 @@ Template:
 Next
 ---------------------
 
+- Fix `cbor_copy`, `cbor_copy_definite`, and `cbor_describe` for tags with no item set
+
 0.15.0 (2026-11-15)
 ---------------------
 

@@ -153,6 +153,19 @@ static void test_tag(void** _state _CBOR_UNUSED) {
   cbor_decref(&copy);
 }
 
+static void test_empty_tag(void** _state _CBOR_UNUSED) {
+  item = cbor_new_tag(10);
+
+  copy = cbor_copy(item);
+  assert_non_null(copy);
+  assert_true(cbor_isa_tag(copy));
+  assert_int_equal(cbor_tag_value(copy), 10);
+  assert_null(cbor_tag_item(copy));
+
+  cbor_decref(&item);
+  cbor_decref(&copy);
+}
+
 static void test_ctrls(void** _state _CBOR_UNUSED) {
   item = cbor_new_null();
   assert_true(cbor_is_null(copy = cbor_copy(item)));
@@ -513,6 +526,19 @@ static void test_definite_tag(void** _state _CBOR_UNUSED) {
   cbor_decref(&tmp);
 }
 
+static void test_definite_empty_tag(void** _state _CBOR_UNUSED) {
+  item = cbor_new_tag(10);
+
+  copy = cbor_copy_definite(item);
+  assert_non_null(copy);
+  assert_true(cbor_isa_tag(copy));
+  assert_int_equal(cbor_tag_value(copy), 10);
+  assert_null(cbor_tag_item(copy));
+
+  cbor_decref(&item);
+  cbor_decref(&copy);
+}
+
 static void test_definite_tag_nested(void** _state _CBOR_UNUSED) {
   item = cbor_build_tag(10, cbor_move(cbor_new_indefinite_array()));
 
@@ -825,6 +851,17 @@ static void test_map_second_key_failure(void** _state _CBOR_UNUSED) {
   cbor_decref(&item);
 }
 
+static void test_empty_tag_alloc_failure(void** _state _CBOR_UNUSED) {
+  item = cbor_new_tag(1);
+
+  WITH_FAILING_MALLOC({ assert_null(cbor_copy(item)); });
+  assert_size_equal(cbor_refcount(item), 1);
+  WITH_FAILING_MALLOC({ assert_null(cbor_copy_definite(item)); });
+  assert_size_equal(cbor_refcount(item), 1);
+
+  cbor_decref(&item);
+}
+
 static void test_tag_item_alloc_failure(void** _state _CBOR_UNUSED) {
   item = cbor_build_tag(1, cbor_move(cbor_build_uint8(42)));
 
@@ -858,6 +895,7 @@ int main(void) {
       cmocka_unit_test(test_def_map),
       cmocka_unit_test(test_indef_map),
       cmocka_unit_test(test_tag),
+      cmocka_unit_test(test_empty_tag),
       cmocka_unit_test(test_ctrls),
       cmocka_unit_test(test_floats),
       cmocka_unit_test(test_alloc_failure_simple),
@@ -882,6 +920,7 @@ int main(void) {
       cmocka_unit_test(test_map_value_alloc_failure),
       cmocka_unit_test(test_map_add_failure),
       cmocka_unit_test(test_map_second_key_failure),
+      cmocka_unit_test(test_empty_tag_alloc_failure),
       cmocka_unit_test(test_tag_item_alloc_failure),
       cmocka_unit_test(test_tag_alloc_failure),
       cmocka_unit_test(test_definite_uints),
@@ -908,6 +947,7 @@ int main(void) {
       cmocka_unit_test(test_definite_map_key_alloc_failure),
       cmocka_unit_test(test_definite_map_value_alloc_failure),
       cmocka_unit_test(test_definite_tag),
+      cmocka_unit_test(test_definite_empty_tag),
       cmocka_unit_test(test_definite_tag_nested),
       cmocka_unit_test(test_definite_tag_alloc_failure),
       cmocka_unit_test(test_definite_ctrls),
