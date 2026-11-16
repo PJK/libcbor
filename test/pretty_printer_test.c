@@ -186,6 +186,14 @@ static void test_tag(void** _state _CBOR_UNUSED) {
   cbor_decref(&item);
 }
 
+static void test_empty_tag(void** _state _CBOR_UNUSED) {
+  cbor_item_t* item = cbor_new_tag(42);
+  assert_describe_result(item,
+                         "[CBOR_TYPE_TAG] Value: 42\n"
+                         "    No tagged item\n");
+  cbor_decref(&item);
+}
+
 static void test_floats(void** _state _CBOR_UNUSED) {
   cbor_item_t* item = cbor_new_indefinite_array();
   assert_true(cbor_array_push(item, cbor_move(cbor_build_bool(true))));
@@ -222,6 +230,7 @@ int main(void) {
       cmocka_unit_test(test_definite_map),
       cmocka_unit_test(test_indefinite_map),
       cmocka_unit_test(test_tag),
+      cmocka_unit_test(test_empty_tag),
       cmocka_unit_test(test_floats),
   };
   return cmocka_run_group_tests(tests, NULL, NULL);

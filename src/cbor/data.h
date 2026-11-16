@@ -105,8 +105,7 @@ struct _cbor_bytestring_metadata {
 /** Strings specific metadata */
 struct _cbor_string_metadata {
   size_t length;
-  size_t codepoint_count; /* Sum of chunks' codepoint_counts for indefinite
-                             strings */
+  size_t codepoint_count; /* Definite strings only */
   _cbor_dst_metadata type;
 };
 
